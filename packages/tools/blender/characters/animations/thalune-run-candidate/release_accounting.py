@@ -6,6 +6,7 @@ require_assertions(__debug__)
 import hashlib,importlib.util,json,os,shutil,subprocess,sys,time
 from pathlib import Path
 import packet_budget as budget
+from inspector import error_receipt
 HERE=Path(__file__).resolve().parent
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -56,14 +57,23 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     """An audit refusal holds the unit and is evidence; it must not erase its summary."""
     audits=[];errors=[]
     for handle in handles:
+        before=len(handle.get('auditObservations', []))
         try:audits.append(audit_one(handle))
-        except BaseException as error:errors.append({'type':type(error).__name__,'message':str(error),'attemptPath':handle['path']})
+        except BaseException as error:
+            audits.extend(handle.get('auditObservations', [])[before:])
+            errors.append({**error_receipt(error),'attemptPath':handle['path']})
+    receipts={h['path']:h['receipt'] for h in handles if 'receipt' in h}
+    fallbacks={path:receipt for path,receipt in receipts.items() if receipt.get('persistenceFailures')}
     refs=[];paths=[j['path'] for j in jobs]
     for path in paths:
         try:
-            receipt=load(path);refs.append({'path':path,'sha256':sha(path)})
+            saved=load(path);refs.append({'path':path,'sha256':sha(path)})
+            receipt=receipts.get(path,saved)
             assert receipt.get('cleanupFailure') is None,'Attempt cleanup remains unproved: '+path
-        except BaseException as error:errors.append({'type':type(error).__name__,'message':str(error),'attemptPath':path})
+            assert not receipt.get('persistenceFailures'),'Attempt receipt persistence failed: '+path
+        except BaseException as error:
+            if path in receipts:fallbacks[path]=receipts[path]
+            errors.append({**error_receipt(error),'attemptPath':path})
     accounted=bool(jobs) and len(jobs)==len(handles)==len(audits) and len(set(paths))==len(paths)
     accounted=accounted and all(isinstance(x,dict) and x.get('releaseProved') is True and x['kernel']['live']==0 and x['kernel']['coalition_absent'] is True for x in audits) and [x.get('attemptPath') for x in audits]==paths
     if not accounted:errors.append({'type':'TerminalAttemptAccountingFailure','message':'Every allocation attempt requires its own positive terminal audit','attempts':len(jobs),'handles':len(handles),'audits':len(audits)})
@@ -73,7 +83,8 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     if errors:
         result['status']='HOLD'
         if result['primaryFailure'] is None:result['primaryFailure']={'type':'TerminalAuditFailure','message':'Terminal resource release unproved; see terminalAuditFailures'}
-    # Full native observations remain in their exact private receipts; packet stores bounded references.
+    # Failed receipt paths may contain stale bytes. Preserve complete in-memory evidence in the proof summary.
+    result['receiptFallbacks']=[{'attemptPath':path,'receipt':receipt} for path,receipt in fallbacks.items()]
     result['jobs']=refs
     encoded=(json.dumps(result,indent=2)+'\n').encode()
     if len(encoded)>budget.RECORD_BYTES:

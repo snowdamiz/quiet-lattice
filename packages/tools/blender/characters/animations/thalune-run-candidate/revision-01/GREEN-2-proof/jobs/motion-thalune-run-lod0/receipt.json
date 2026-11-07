@@ -1,0 +1,91 @@
+{
+  "name": "motion-thalune-run-lod0",
+  "primaryFailure": null,
+  "cleanupFailure": {
+    "type": "AssertionError",
+    "message": "Launch registration is still present",
+    "details": {}
+  },
+  "persistenceFailures": [],
+  "terminal": null,
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "--import",
+    "/synthetic/tsx",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/entry.mjs",
+    "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/readiness.json",
+    "motion-thalune-run-lod0",
+    "/private/tmp/thalune-adverse-v4ofxdr9/packet/captures/motion-thalune-run-lod0"
+  ],
+  "phase": "start",
+  "privateTmp": {
+    "path": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/private",
+    "admission": {
+      "synthetic": true
+    }
+  },
+  "actualExecutables": {},
+  "observerEvents": [],
+  "outcome": "completed",
+  "exits": {
+    "capture": 0
+  },
+  "ownedAllocation": {
+    "out": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/owned-job",
+    "scratch": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/owned-job/scratch",
+    "target": "inert",
+    "coalition_id": "123"
+  },
+  "drain": {
+    "drained": true,
+    "clean": true,
+    "rawDrainUnknown": {
+      "preserved": true
+    }
+  },
+  "drainMembers": [],
+  "drainKernel": {
+    "live": 0,
+    "coalition_absent": true,
+    "unknownKernel": {
+      "raw": 91
+    }
+  },
+  "profiles": {
+    "all_absent": true
+  },
+  "cache": {
+    "all_bytes_preserved": true,
+    "namespace_removed": true
+  },
+  "releaseAudits": [
+    {
+      "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": false,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknownKernel": {
+          "raw": 91
+        }
+      },
+      "members": [],
+      "births": [],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert"
+      ],
+      "registrationExit": 0,
+      "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+      "registrationStderr": "RAW_REGISTRATION_ERROR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "failure": {
+        "type": "AssertionError",
+        "message": "Launch registration is still present",
+        "details": {}
+      }
+    }
+  ]
+}

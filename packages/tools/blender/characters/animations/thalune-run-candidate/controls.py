@@ -244,7 +244,7 @@ for fault in [None,'allocation','constructor-before-boundary','constructor-after
     adapter.temp=SimpleNamespace(create_private_tmp=allocate,preserve_private_tmp=preserve,executable_path=refuse)
     adapter.support=SimpleNamespace(StageReceipts=lambda *args:SimpleNamespace(observe=lambda:None,require_browser=lambda:None))
     handle=dict(job=None,private=None,path=c.paths(local['packetRoot'],local['proofRoot'],ready['jobs'][0])['receipt'])
-    with patch.object(subprocess,'run',lambda *a,**k:SimpleNamespace(returncode=0 if fault=='registration' else 1)):
+    with patch.object(subprocess,'run',lambda *a,**k:SimpleNamespace(returncode=0 if fault=='registration' else 1,stdout='',stderr='')):
         receipt=adapter.run(ready['jobs'][0],handle)
         if fault is None:
             caller.require_release(receipt);assert adapter.audit(handle)['releaseProved']

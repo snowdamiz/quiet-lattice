@@ -105,7 +105,8 @@ def run_sequence(ready, adapter, packet, proof, check=lambda: None, writer=write
             writer(proof/'attempts.json', jobs)
             receipt = adapter.run(definition, handle)
             receipts[definition['id']] = receipt
-            if receipt.get('primaryFailure') is not None: result['primaryFailure'] = receipt['primaryFailure']
+            result['primaryFailure'] = (receipt.get('primaryFailure') or receipt.get('cleanupFailure') or
+                                        next(iter(receipt.get('persistenceFailures', [])), None))
             writer(proof/'returned-receipts.json', receipts)
             require_release(receipt)
             assert receipt['name'] == definition['id']
@@ -122,7 +123,11 @@ def run_sequence(ready, adapter, packet, proof, check=lambda: None, writer=write
         adapter.inspect_packet(ready)
         result['status'] = 'CAPTURED_PENDING_VISUAL_REVIEW'
     except BaseException as error:
-        if result['primaryFailure'] is None: result['primaryFailure'] = error_receipt(error)
+        result['dispatchFailure'] = error_receipt(error)
+        receipt = handles[-1].get('receipt', {}) if handles else {}
+        if result['primaryFailure'] is None:
+            result['primaryFailure'] = (receipt.get('primaryFailure') or receipt.get('cleanupFailure') or
+                                       next(iter(receipt.get('persistenceFailures', [])), None) or result['dispatchFailure'])
     finally:
         persist_terminal_summary(result, handles, adapter.audit, jobs, proof, packet, started)
     return result
@@ -143,6 +148,7 @@ class StationAdapter:
         out = Path(paths['receipt']).parent
         receipt = dict(name=definition['id'], primaryFailure=None, cleanupFailure=None,
                        persistenceFailures=[], terminal=None)
+        handle['receipt'] = receipt  # Available to terminal accounting even if no receipt write succeeds.
         job = private = admission = None
         def persist():
             try: write(paths['receipt'], receipt)
@@ -202,8 +208,11 @@ class StationAdapter:
                 with self.core.deadline(ready['cleanupSeconds']):
                     assert job is not None and getattr(job, 'coalition_id', None), 'Retain allocation: no durable owned boundary'
                     drained = job.drain(ready['cleanupSeconds']); receipt['drain'] = drained
-                    assert drained['drained'] and drained['clean'] and not self.core.coalition_members(job.coalition_id)
-                    assert self.core.kernel_tasks(job.coalition_id)['live'] == 0
+                    receipt['drainMembers'] = self.core.coalition_members(job.coalition_id)
+                    receipt['drainKernel'] = self.core.kernel_tasks(job.coalition_id)
+                    assert drained['drained'] and drained['clean'], 'Owned drain did not prove clean release'
+                    assert not receipt['drainMembers'], 'Coalition members remain after drain'
+                    assert receipt['drainKernel']['live'] == 0, 'Kernel tasks remain after drain'
                     job.archive(profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
                     profiles = json.loads((job.out/'profile_release.json').read_text()); receipt['profiles'] = profiles
                     assert profiles['all_absent']
@@ -216,22 +225,44 @@ class StationAdapter:
                     receipt['archiveBytesObservedAfterRelease'] = size
                     assert size <= ready['limits']['maxArchiveStageBytes'], 'Archive acceptance cap exceeded; retain all bytes'
             except BaseException as error: receipt['cleanupFailure'] = error_receipt(error)
-            persist()
+            receipt['releaseAudits'] = list(handle.get('auditObservations', []))
+            try: persist()
+            except BaseException:
+                pass  # persist recorded the write error; return the complete receipt via the registered handle.
         return receipt
 
     def audit(self, handle):
         job, private = handle['job'], handle['private']
-        assert job is not None and getattr(job, 'coalition_id', None) and private is not None, 'Unprovable attempted allocation'
-        kernel = self.core.kernel_tasks(job.coalition_id)
-        members = self.core.coalition_members(job.coalition_id)
-        births = [dict(pid=int(pid), recorded=old, current=self.core.identity(int(pid))) for pid, old in job.known.items()]
-        registration = subprocess.run(['/bin/launchctl', 'print', job.target], capture_output=True, text=True, timeout=3)
-        item = dict(attemptPath=handle['path'], kernel=kernel, members=members, births=births,
-                    registrationExit=registration.returncode, scratchAbsent=not job.scratch.exists(), privateTmpAbsent=not private.exists())
-        assert kernel['live'] == 0 and kernel['coalition_absent'] and not members and registration.returncode != 0
-        assert item['scratchAbsent'] and item['privateTmpAbsent']
-        assert all(b['current'] is None or b['current']['birth'] != b['recorded']['birth'] for b in births)
-        item['releaseProved'] = True
+        item = dict(attemptPath=handle['path'], releaseProved=False)
+        handle.setdefault('auditObservations', []).append(item)
+        try:
+            assert job is not None and getattr(job, 'coalition_id', None) and private is not None, 'Unprovable attempted allocation'
+            item['kernel'] = self.core.kernel_tasks(job.coalition_id)
+            item['members'] = self.core.coalition_members(job.coalition_id)
+            item['births'] = []
+            for pid, old in job.known.items():
+                birth = dict(pid=int(pid), recorded=old)
+                item['births'].append(birth)
+                birth['current'] = self.core.identity(int(pid))
+            argv = ['/bin/launchctl', 'print', job.target]
+            item['registrationArgv'] = argv
+            registration = subprocess.run(argv, capture_output=True, text=True, timeout=3)
+            item['registrationExit'] = registration.returncode
+            item['registrationStdout'] = registration.stdout
+            item['registrationStderr'] = registration.stderr
+            item['scratchAbsent'] = not job.scratch.exists()
+            item['privateTmpAbsent'] = not private.exists()
+            assert item['kernel']['live'] == 0, 'Kernel coalition has live tasks'
+            assert item['kernel']['coalition_absent'] is True, 'Kernel coalition is still present'
+            assert not item['members'], 'Coalition members remain'
+            assert item['registrationExit'] != 0, 'Launch registration is still present'
+            assert item['scratchAbsent'], 'Owned scratch namespace remains'
+            assert item['privateTmpAbsent'], 'Private TMP namespace remains'
+            assert all(b['current'] is None or b['current']['birth'] != b['recorded']['birth'] for b in item['births']), 'Recorded process birth remains live'
+            item['releaseProved'] = True
+        except BaseException as error:
+            item['failure'] = error_receipt(error)
+            raise
         return item
 
     inspect = staticmethod(inspect_capture)

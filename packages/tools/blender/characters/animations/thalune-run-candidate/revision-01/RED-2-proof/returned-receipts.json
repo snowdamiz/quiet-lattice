@@ -1,0 +1,55 @@
+{
+  "motion-thalune-run-lod0": {
+    "name": "motion-thalune-run-lod0",
+    "primaryFailure": null,
+    "cleanupFailure": {
+      "type": "AssertionError",
+      "message": "",
+      "details": {}
+    },
+    "persistenceFailures": [],
+    "terminal": null,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "--import",
+      "/synthetic/tsx",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-red-j19hhrpa/candidate/entry.mjs",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-red-j19hhrpa/candidate/readiness.json",
+      "motion-thalune-run-lod0",
+      "/private/tmp/thalune-adverse-qv30ll1a/packet/captures/motion-thalune-run-lod0"
+    ],
+    "phase": "start",
+    "privateTmp": {
+      "path": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/private",
+      "admission": {
+        "synthetic": true
+      }
+    },
+    "actualExecutables": {},
+    "observerEvents": [],
+    "outcome": "completed",
+    "exits": {
+      "capture": 0
+    },
+    "ownedAllocation": {
+      "out": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/owned-job",
+      "scratch": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/owned-job/scratch",
+      "target": "inert",
+      "coalition_id": "123"
+    },
+    "drain": {
+      "drained": true,
+      "clean": true,
+      "rawDrainUnknown": {
+        "preserved": true
+      }
+    },
+    "profiles": {
+      "all_absent": true
+    },
+    "cache": {
+      "all_bytes_preserved": true,
+      "namespace_removed": true
+    }
+  }
+}

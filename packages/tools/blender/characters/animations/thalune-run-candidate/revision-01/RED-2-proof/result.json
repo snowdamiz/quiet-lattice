@@ -1,0 +1,40 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "",
+    "details": {}
+  },
+  "runtimeAuthorization": false,
+  "terminalAudit": [],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "",
+      "attemptPath": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "AssertionError",
+      "message": "Attempt cleanup remains unproved: /private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "attemptPath": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 1,
+      "handles": 1,
+      "audits": 0
+    }
+  ],
+  "nativeJobs": 1,
+  "pipelineSeconds": 0.002912584022851661,
+  "outputBytes": 0,
+  "freeBytesAfter": 108468465664,
+  "terminalReleaseProved": false,
+  "jobs": [
+    {
+      "path": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "77ca0b7e6a564f60d669feccde37db56206dc89c567470d3637728357a4a5b94"
+    }
+  ]
+}

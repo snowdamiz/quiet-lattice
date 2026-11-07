@@ -1,0 +1,172 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "Launch registration is still present",
+    "details": {}
+  },
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "AssertionError",
+    "message": "",
+    "details": {}
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": false,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknownKernel": {
+          "raw": 91
+        }
+      },
+      "members": [],
+      "births": [],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert"
+      ],
+      "registrationExit": 0,
+      "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+      "registrationStderr": "RAW_REGISTRATION_ERROR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "failure": {
+        "type": "AssertionError",
+        "message": "Launch registration is still present",
+        "details": {}
+      }
+    }
+  ],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Launch registration is still present",
+      "details": {},
+      "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "AssertionError",
+      "message": "Attempt cleanup remains unproved: /private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "details": {},
+      "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 1,
+      "handles": 1,
+      "audits": 1
+    }
+  ],
+  "nativeJobs": 1,
+  "pipelineSeconds": 0.00434775001485832,
+  "outputBytes": 0,
+  "freeBytesAfter": 108384550912,
+  "terminalReleaseProved": false,
+  "receiptFallbacks": [
+    {
+      "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "receipt": {
+        "name": "motion-thalune-run-lod0",
+        "primaryFailure": null,
+        "cleanupFailure": {
+          "type": "AssertionError",
+          "message": "Launch registration is still present",
+          "details": {}
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "--import",
+          "/synthetic/tsx",
+          "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/entry.mjs",
+          "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/readiness.json",
+          "motion-thalune-run-lod0",
+          "/private/tmp/thalune-adverse-v4ofxdr9/packet/captures/motion-thalune-run-lod0"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/private",
+          "admission": {
+            "synthetic": true
+          }
+        },
+        "actualExecutables": {},
+        "observerEvents": [],
+        "outcome": "completed",
+        "exits": {
+          "capture": 0
+        },
+        "ownedAllocation": {
+          "out": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/owned-job",
+          "scratch": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/owned-job/scratch",
+          "target": "inert",
+          "coalition_id": "123"
+        },
+        "drain": {
+          "drained": true,
+          "clean": true,
+          "rawDrainUnknown": {
+            "preserved": true
+          }
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknownKernel": {
+            "raw": 91
+          }
+        },
+        "profiles": {
+          "all_absent": true
+        },
+        "cache": {
+          "all_bytes_preserved": true,
+          "namespace_removed": true
+        },
+        "releaseAudits": [
+          {
+            "attemptPath": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+            "releaseProved": false,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true,
+              "unknownKernel": {
+                "raw": 91
+              }
+            },
+            "members": [],
+            "births": [],
+            "registrationArgv": [
+              "/bin/launchctl",
+              "print",
+              "inert"
+            ],
+            "registrationExit": 0,
+            "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+            "registrationStderr": "RAW_REGISTRATION_ERROR",
+            "scratchAbsent": true,
+            "privateTmpAbsent": true,
+            "failure": {
+              "type": "AssertionError",
+              "message": "Launch registration is still present",
+              "details": {}
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "path": "/private/tmp/thalune-adverse-v4ofxdr9/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "14b32af50ef755070e23d19bd9978323ff7ada78e39385071c239b6c15a5f8c1"
+    }
+  ]
+}

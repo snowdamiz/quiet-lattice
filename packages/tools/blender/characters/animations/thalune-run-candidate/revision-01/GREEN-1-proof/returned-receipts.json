@@ -1,0 +1,122 @@
+{
+  "motion-thalune-run-lod0": {
+    "name": "motion-thalune-run-lod0",
+    "primaryFailure": {
+      "type": "RuntimeError",
+      "message": "ORIGINAL_START_FAILURE",
+      "details": {}
+    },
+    "cleanupFailure": null,
+    "persistenceFailures": [
+      {
+        "type": "OSError",
+        "message": "FINAL_RECEIPT_WRITE_FAILURE",
+        "details": {}
+      }
+    ],
+    "terminal": {
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknownKernel": {
+          "raw": 91
+        }
+      },
+      "registrationAbsent": true,
+      "scratchAndTmpAbsent": true,
+      "audit": {
+        "attemptPath": "/private/tmp/thalune-adverse-ldndfspd/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "releaseProved": true,
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknownKernel": {
+            "raw": 91
+          }
+        },
+        "members": [],
+        "births": [],
+        "registrationArgv": [
+          "/bin/launchctl",
+          "print",
+          "inert"
+        ],
+        "registrationExit": 1,
+        "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+        "registrationStderr": "RAW_REGISTRATION_ERROR",
+        "scratchAbsent": true,
+        "privateTmpAbsent": true
+      }
+    },
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "--import",
+      "/synthetic/tsx",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/entry.mjs",
+      "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-green-vmlmb_q1/candidate/readiness.json",
+      "motion-thalune-run-lod0",
+      "/private/tmp/thalune-adverse-ldndfspd/packet/captures/motion-thalune-run-lod0"
+    ],
+    "phase": "start",
+    "privateTmp": {
+      "path": "/private/tmp/thalune-adverse-ldndfspd/proof/jobs/motion-thalune-run-lod0/private",
+      "admission": {
+        "synthetic": true
+      }
+    },
+    "ownedAllocation": {
+      "out": "/private/tmp/thalune-adverse-ldndfspd/proof/jobs/motion-thalune-run-lod0/owned-job",
+      "scratch": "/private/tmp/thalune-adverse-ldndfspd/proof/jobs/motion-thalune-run-lod0/owned-job/scratch",
+      "target": "inert",
+      "coalition_id": "123"
+    },
+    "drain": {
+      "drained": true,
+      "clean": true,
+      "rawDrainUnknown": {
+        "preserved": true
+      }
+    },
+    "drainMembers": [],
+    "drainKernel": {
+      "live": 0,
+      "coalition_absent": true,
+      "unknownKernel": {
+        "raw": 91
+      }
+    },
+    "profiles": {
+      "all_absent": true
+    },
+    "cache": {
+      "all_bytes_preserved": true,
+      "namespace_removed": true
+    },
+    "archiveBytesObservedAfterRelease": 1054,
+    "releaseAudits": [
+      {
+        "attemptPath": "/private/tmp/thalune-adverse-ldndfspd/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "releaseProved": true,
+        "kernel": {
+          "live": 0,
+          "coalition_absent": true,
+          "unknownKernel": {
+            "raw": 91
+          }
+        },
+        "members": [],
+        "births": [],
+        "registrationArgv": [
+          "/bin/launchctl",
+          "print",
+          "inert"
+        ],
+        "registrationExit": 1,
+        "registrationStdout": "RAW_REGISTRATION_OUTPUT",
+        "registrationStderr": "RAW_REGISTRATION_ERROR",
+        "scratchAbsent": true,
+        "privateTmpAbsent": true
+      }
+    ]
+  }
+}

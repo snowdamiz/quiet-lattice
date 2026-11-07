@@ -1,0 +1,56 @@
+[
+  {
+    "mode": "final-receipt-write-after-start-error",
+    "root": "/private/tmp/thalune-adverse-hm3e9_tx",
+    "started": [
+      "start"
+    ],
+    "status": "HOLD",
+    "primaryFailure": {
+      "type": "OSError",
+      "message": "FINAL_RECEIPT_WRITE_FAILURE",
+      "details": {}
+    },
+    "nativeJobs": 1,
+    "terminalAuditFailures": [],
+    "originalStartFailureRetained": false,
+    "rawKernelRetained": true,
+    "rawRegistrationRetained": false
+  },
+  {
+    "mode": "raw-audit-refusal",
+    "root": "/private/tmp/thalune-adverse-qv30ll1a",
+    "started": [
+      "start"
+    ],
+    "status": "HOLD",
+    "primaryFailure": {
+      "type": "AssertionError",
+      "message": "",
+      "details": {}
+    },
+    "nativeJobs": 1,
+    "terminalAuditFailures": [
+      {
+        "type": "AssertionError",
+        "message": "",
+        "attemptPath": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json"
+      },
+      {
+        "type": "AssertionError",
+        "message": "Attempt cleanup remains unproved: /private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "attemptPath": "/private/tmp/thalune-adverse-qv30ll1a/proof/jobs/motion-thalune-run-lod0/receipt.json"
+      },
+      {
+        "type": "TerminalAttemptAccountingFailure",
+        "message": "Every allocation attempt requires its own positive terminal audit",
+        "attempts": 1,
+        "handles": 1,
+        "audits": 0
+      }
+    ],
+    "originalStartFailureRetained": false,
+    "rawKernelRetained": false,
+    "rawRegistrationRetained": false
+  }
+]

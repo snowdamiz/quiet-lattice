@@ -1,0 +1,39 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "OSError",
+    "message": "FINAL_RECEIPT_WRITE_FAILURE",
+    "details": {}
+  },
+  "runtimeAuthorization": false,
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/thalune-adverse-hm3e9_tx/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "unknownKernel": {
+          "raw": 91
+        }
+      },
+      "members": [],
+      "births": [],
+      "registrationExit": 1,
+      "scratchAbsent": true,
+      "privateTmpAbsent": true,
+      "releaseProved": true
+    }
+  ],
+  "terminalAuditFailures": [],
+  "nativeJobs": 1,
+  "pipelineSeconds": 0.0033989590010605752,
+  "outputBytes": 0,
+  "freeBytesAfter": 108468502528,
+  "terminalReleaseProved": true,
+  "jobs": [
+    {
+      "path": "/private/tmp/thalune-adverse-hm3e9_tx/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "de91517e6b2a61805894f44599b2619a1f4573dc42fb55c2521f30e3f2724b4e"
+    }
+  ]
+}

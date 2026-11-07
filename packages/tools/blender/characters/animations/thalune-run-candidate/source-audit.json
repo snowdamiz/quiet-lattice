@@ -1,18 +1,26 @@
 {
   "status": "PASS_SOURCE_ONLY_NO_RUNTIME",
+  "revision": "01",
+  "reviewedHead": "20023a3845f351c18df9cf8cd95190bfa28a00e6",
+  "reviewedTree": "6a68e31908c4501cafde3d9d38b083d6c8a93ef1",
   "base": "e1ed4752805ee92be561db81910ee1bc1a87b1d9",
   "retainedAnimation": "49ae87cbdb8671f7988b1bed4358d49d4cdc6b58",
-  "sourceFiles": 19,
-  "sourceAndDataBindings": 26,
+  "sourceFiles": 20,
+  "sourceAndDataBindings": 27,
   "softwareBindings": 4,
   "recoveryRows": 21,
   "exactRecoveredBytesVerified": true,
-  "sourceControls": 126,
+  "existingPureControls": 126,
+  "newEvidenceControls": 20,
+  "sourceControls": 146,
   "disabledEntryControls": 4,
+  "totalControls": 150,
+  "reviewReproductions": 2,
   "runtimeJobs": 0,
   "outputNamespaceAbsent": true,
   "consumedAttemptAbsent": true,
   "animationLfsHydrated": false,
+  "priorReportsUnchanged": true,
   "files": [
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/REPORT.md",
@@ -26,13 +34,13 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
-      "bytes": 16934,
-      "sha256": "ef69976647b76d7f48747ba2e2f099323846e5b349b316fa5ee75e8542068212"
+      "bytes": 18864,
+      "sha256": "286213e87852e97e99fe8217eb91f1604a4d9e04b799ffb649056ff863fd1cb3"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
-      "bytes": 3500,
-      "sha256": "0d44a04523f628dbaf9985be22f8860d4f9acb583a02c48385f9f207b6a2fe11"
+      "bytes": 3656,
+      "sha256": "c19ebbabec9f6b733eb42460d6191c97a5aac4f71df82729e2e29d920fa62863"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/contract.py",
@@ -46,8 +54,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/controls.py",
-      "bytes": 17791,
-      "sha256": "e560fc1675800de193da268faf7953a5924263ce0e3a815e6d9d452d751503d2"
+      "bytes": 17811,
+      "sha256": "59e847fedebca4078cc3a61230f26d62448ed6aa534aa861e2172d796b25a314"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/disabled-entry-controls.json",
@@ -58,6 +66,11 @@
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs",
       "bytes": 22629,
       "sha256": "f7f6f17a3dcf4aaa6cee1e814673eee7ec0b686cbdee0592d09bb42670c53a55"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/evidence-controls.py",
+      "bytes": 11631,
+      "sha256": "e9f9ca838647ffd474f9b0f9dc377816e67c6b1112c86af26d7632b0eea731c1"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/freeze.py",
@@ -101,8 +114,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
-      "bytes": 208690,
-      "sha256": "6fa2cbde4f198b3a7842f2328527f701ade094a512b2f3ab04bd6c6f332c77d9"
+      "bytes": 208965,
+      "sha256": "a6ad6ef8425a2997ebbfbe3a53eff5e831735a1a9f01c3f842c90dc935586574"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/recovery-provenance.json",
@@ -116,8 +129,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/release_accounting.py",
-      "bytes": 6130,
-      "sha256": "7581c63ad73b20499577885d04688060e321cf85f458d7bf101388aa0a126076"
+      "bytes": 6769,
+      "sha256": "93fc7a7a7b6503ab5593fc0384e354848cfc4ec5753c4e43d7503997dae3ba60"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/round4_capture_children.py",
@@ -138,6 +151,191 @@
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/run_round4_remaining8.py",
       "bytes": 31906,
       "sha256": "4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "7eebfd8a27f9fe01c2e8b716fbe75a968033758911631e1932cbe9f5d6fdc8ae"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 825,
+      "sha256": "14bbce6ebc9c80a41f6cc2d973450b34a24456bfc6094c6007b1d9ed8cdf357c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/result.json",
+      "bytes": 5703,
+      "sha256": "9abea4f54d32a9a4a51f9aa0c291b00b252a17c6d1f2b86aec58ede6402c164d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/returned-receipts.json",
+      "bytes": 3463,
+      "sha256": "61291d9f8ee79202351414b7de231f7d1821ffe21cccb2c14c786dc1edfd70e2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "def90b9e71c19cff990b10d3ea52ab367dcee5dc6ec0176f7043ff2737c9f859"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 2491,
+      "sha256": "14b32af50ef755070e23d19bd9978323ff7ada78e39385071c239b6c15a5f8c1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/result.json",
+      "bytes": 5425,
+      "sha256": "3978016c7c2df1300d137f2f29fd569687a257901cac4059ea906ca4d69c2531"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/returned-receipts.json",
+      "bytes": 2704,
+      "sha256": "34780b6cfcf05c95d8e2bae7eb48898d79bcab0092e2230af558669088bda6c3"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-review-repro-results.json",
+      "bytes": 2054,
+      "sha256": "80d42bdfa0dfc0d36eecc60561cde4f0dc3b49aa439f4bed403fbef09bdc249d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "6f2cb99c1dae068fe7126c397d534b455049ce243a5d51a4008e0fabde307964"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 821,
+      "sha256": "de91517e6b2a61805894f44599b2619a1f4573dc42fb55c2521f30e3f2724b4e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/result.json",
+      "bytes": 1010,
+      "sha256": "eab42dd0adda4768e7a7ee6c91b26d659fb08cc35f2020045efb3bd392fce8f4"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "f2c0b02a5c2dc3cbca489c3b75d2985cb2d36df0081a5c8af7b6a6e1a3837003"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1522,
+      "sha256": "77ca0b7e6a564f60d669feccde37db56206dc89c567470d3637728357a4a5b94"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/result.json",
+      "bytes": 1248,
+      "sha256": "5da6dcc89c82e6178199fa2a9712efc3ed14f320d6c524f9fa94be0c868eef3b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/returned-receipts.json",
+      "bytes": 1659,
+      "sha256": "163e0a03f354b9d49bfa940e35d94c9d9b8b108316b5094d64204cf12bbfe54d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-results.json",
+      "bytes": 1607,
+      "sha256": "7d0b741396afc3927d18f1c5851cb3ccdfa3a730fbb4cb381558dd9a6bc75dba"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/REPORT.md",
+      "bytes": 10794,
+      "sha256": "22e67b89cc81dbf692f64dedd2f2602c572627687910427ab03f64d208ad1954"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/disabled-entry-controls.json",
+      "bytes": 5579,
+      "sha256": "1c89c0a16cf95abe36013e8120d4aaac2f49d8e3adefb455219ed0136a5f3368"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/evidence-controls.json",
+      "bytes": 7000,
+      "sha256": "2373b47e50fbf51d6e8432f642c416543c56b661d3d5ecad1393b4147d7ccbca"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/independent-review-20023a3.md",
+      "bytes": 11588,
+      "sha256": "3e26d8159710e35ef9bd06f595c1ab31c0d1c71efc05c4f9a3262325aeb34a95"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/node-controls-run.json",
+      "bytes": 475,
+      "sha256": "f9baaa8c30d2f9a197498f211e6b0db1c7f5bb10057f8970f490d669b9f6f5ab"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/preflight.json",
+      "bytes": 524,
+      "sha256": "d5d9b232e7c93342b02d4c08bac1032507e080875e669087f54fbf572bb62353"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/preservation.json",
+      "bytes": 1346,
+      "sha256": "9da1bc54b6cea01e8dd5edb4435084aad99e658ee323bf76935f1337ff9dc3d4"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/provenance.json",
+      "bytes": 1478,
+      "sha256": "855815598f3f24755dafd5c5d4ced5e06c67eb468f4e023c122221e065935a85"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/pure-node-controls.json",
+      "bytes": 2053,
+      "sha256": "1e3f9bda4512cd8ea5257d97ea65095831774dff76bf32f6ad8e94a4a6f68d53"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/pure-python-controls.json",
+      "bytes": 10577,
+      "sha256": "2ea780fe646f7825a3e69a2d9ce93ad2af0528c5cb8a660fd05f3de2a6e5f500"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/python-controls-run.json",
+      "bytes": 368,
+      "sha256": "97b2eff055466509da378600448c3b5c3af8c9fa5e00d381c4834ad998dc1188"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/review-repro.py",
+      "bytes": 3202,
+      "sha256": "d4d898b8b0f8ec21936e299d2a574a23a0c0708ac492f7c5e25d25cc97fad059"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py",
