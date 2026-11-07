@@ -459,7 +459,7 @@ class CacheSnapshotControls(unittest.TestCase):
                         error = OSError('DESTINATION_CLOSE_AFTER_REAL_CLOSE');error.rawClose = b'OUTPUT';raise error
                 def fdopen(*a, **kw):
                     stream = original_fdopen(*a, **kw)
-                    return Input(stream) if active else stream
+                    return Output(stream) if len(a) > 1 and a[1] == 'wb' else Input(stream) if active else stream
                 def open_path(path, *a, **kw):
                     stream = original_open(path, *a, **kw)
                     return Output(stream) if a and a[0] == 'xb' and path.name == 'source' else stream
@@ -626,8 +626,65 @@ class InspectorControls(unittest.TestCase):
                     corrupted = bytearray(data)
                     corrupted[29] ^= 1
                     file.write_bytes(corrupted)
-                    with self.assertRaises((OSError, SyntaxError)):
+                    with self.assertRaises((OSError, SyntaxError, ValueError)):
                         inspector.decode_image(file, (8, 6), fmt)
+
+    def test_png_palette_cardinality_order_and_stream_contract_on_real_decoder(self):
+        import struct
+        import zlib
+        from PIL import Image
+        def chunk(kind, data): return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data)&0xffffffff)
+        with tempfile.TemporaryDirectory(prefix='fauna-png-container-') as temp:
+            path=Path(temp)/'image.png';Image.new('RGB',(8,6),(20,80,140)).save(path);original=path.read_bytes()
+            for fault in ('valid-none','valid-one','valid-256','empty','duplicate','257','partial-entry','after-idat','extra-deflate','bad-filter'):
+                with self.subTest(fault=fault):
+                    plte=chunk(b'PLTE',b'\x00\x00\x00')
+                    extra={'valid-none':b'','valid-one':plte,'valid-256':chunk(b'PLTE',bytes(768)),'empty':chunk(b'PLTE',b''),'duplicate':plte+plte,'257':chunk(b'PLTE',bytes(771)),'partial-entry':chunk(b'PLTE',bytes(2))}.get(fault,b'')
+                    data=original[:33]+extra+original[33:]
+                    if fault=='after-idat':data=original[:-12]+plte+original[-12:]
+                    if fault in ('extra-deflate','bad-filter'):
+                        pixels=(b'\x05' if fault=='bad-filter' else b'\x00')+bytes(24)
+                        compressed=zlib.compress(pixels*6)+(b'EXTRA' if fault=='extra-deflate' else b'')
+                        data=original[:33]+chunk(b'IDAT',compressed)+original[-12:]
+                    path.write_bytes(data)
+                    if fault.startswith('valid'):inspector.decode_image(path,(8,6),'PNG')
+                    else:
+                        with self.assertRaises(ValueError):inspector.decode_image(path,(8,6),'PNG')
+
+    def test_inspector_reads_only_admitted_bytes_and_reuses_the_decoded_snapshot(self):
+        from PIL import Image
+        for fault in ('growth','replace-after-read','fifo','parent-link','close'):
+            with self.subTest(fault=fault),tempfile.TemporaryDirectory(prefix='fauna-decoder-boundary-') as temp:
+                base=Path(temp).resolve();parent=base/'images';parent.mkdir();path=parent/'image.png';Image.new('RGB',(8,6)).save(path)
+                admitted=path.stat();real_open,real_fdopen=os.open,os.fdopen;reads=[];changed=[];fds=[]
+                class Input:
+                    def __init__(self, stream):self.stream=stream
+                    def read(self,n):
+                        if fault=='growth':
+                            with path.open('ab') as writer:writer.truncate(32*1024**2+7)
+                        data=self.stream.read(n);reads.append((n,len(data)))
+                        if fault=='replace-after-read':path.write_bytes(b'NOT AN IMAGE')
+                        return data
+                    def close(self):
+                        self.stream.close()
+                        if fault=='close':raise OSError('DECODER_CLOSE_AFTER_REAL_CLOSE')
+                def open_at(name,flags,*a,**kw):
+                    if str(name)==path.name and not changed and fault in ('fifo','parent-link'):
+                        changed.append(fault)
+                        if fault=='fifo':path.rename(path.with_suffix('.retained'));os.mkfifo(path)
+                        else:parent.rename(base/'retained');parent.symlink_to(base/'retained',target_is_directory=True)
+                    fd=real_open(name,flags,*a,**kw);fds.append(fd);return fd
+                def fdopen(fd,*a,**kw):
+                    stream=real_fdopen(fd,*a,**kw)
+                    return Input(stream) if os.fstat(fd).st_ino==admitted.st_ino else stream
+                with patch.object(os,'open',open_at),patch.object(os,'fdopen',fdopen):
+                    if fault=='replace-after-read':inspector.decode_image(path,(8,6),'PNG')
+                    else:
+                        with self.assertRaises((inspector.file_io.Refused,OSError)):inspector.decode_image(path,(8,6),'PNG')
+                if fault in ('fifo','parent-link'):self.assertEqual(reads,[]);self.assertEqual(changed,[fault])
+                else:self.assertEqual(reads,[(admitted.st_size+1,admitted.st_size+(fault=='growth'))])
+                for fd in fds:
+                    with self.assertRaises(OSError):os.fstat(fd)
 
     def test_complete_synthetic_packet_has_no_missing_extra_or_unbound_output(self):
         self.check_complete_synthetic_packet('correction')
@@ -737,11 +794,11 @@ class InspectorControls(unittest.TestCase):
             self.assertEqual(accepted['decodedImages'], 219 if broad else 81)
             self.assertLess(accepted['outputBytes'], (12 if broad else 4) * 1024**2)
             (output / 'extra.png').write_bytes(b'x')
-            with self.assertRaisesRegex(ValueError, 'Missing/extra'):
+            with self.assertRaisesRegex(inspector.file_io.Refused, 'entry/evidence cap'):
                 inspector.inspect(ready, unit)
             (output / 'extra.png').unlink()
             (output / 'extra-directory').mkdir()
-            with self.assertRaisesRegex(ValueError, 'Unexpected output directory'):
+            with self.assertRaisesRegex(inspector.file_io.Refused, 'entry/evidence cap'):
                 inspector.inspect(ready, unit)
             (output / 'extra-directory').rmdir()
             held = (output / '16x9.png').read_bytes()
@@ -764,13 +821,14 @@ class BoundaryControls(unittest.TestCase):
             path = Path(tempdir) / 'partial.json'
             payload = {'observation': 'retained'}
             size = len((json.dumps(payload, sort_keys=True, indent=2) + '\n').encode())
-            original_open = Path.open
+            original_fdopen = os.fdopen
             class CloseError:
-                def __enter__(self): self.stream = original_open(path, 'xb'); return self.stream
-                def __exit__(self, *a): self.stream.close(); raise OSError('AFTER_CLOSE')
+                def __init__(self, stream): self.stream = stream
+                def write(self, data): return self.stream.write(data)
+                def close(self): self.stream.close(); raise OSError('AFTER_CLOSE')
             try:
                 caller._receipt_bytes = 32 * 1024 * 1024 - size
-                with patch.object(Path, 'open', return_value=CloseError()), self.assertRaisesRegex(OSError, 'AFTER_CLOSE'):
+                with patch.object(os, 'fdopen', side_effect=lambda *a, **kw: CloseError(original_fdopen(*a, **kw))), self.assertRaisesRegex(OSError, 'AFTER_CLOSE'):
                     caller.persist(path, payload)
                 self.assertEqual(caller.read_json(path), payload)
                 self.assertEqual(caller._receipt_bytes, 32 * 1024 * 1024)
@@ -782,7 +840,7 @@ class BoundaryControls(unittest.TestCase):
 
     @contextmanager
     def boundary(self, *, deadline_at=None, cancel=False, timeout=None, allocation=False,
-                 publication=None, all_sinks=False, clean=False, real_git=False):
+                 publication=None, all_sinks=False, clean=False, real_git=False, producer=None):
         """Actual caller/helper bodies; only native boundaries and scratch paths are inert."""
         helpers_dir = HERE.parents[4] / 'assets/blend/stations/_authoring'
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-boundary-') as tempdir:
@@ -859,6 +917,7 @@ class BoundaryControls(unittest.TestCase):
             helpers = {'round4_job_boundary': core, 'run_round4_browser_proof': temp, 'run_round4_remaining8': support}
             ready = {'generatedCaches': [], 'stationDirectory': str(helpers_dir), 'uid': os.getuid(), 'node': 'NEVER_EXECUTED',
                      'path': 'CPU_ONLY', 'browserCache': 'NEVER_EXECUTED', 'root': str(base), 'decoderPython': 'NEVER_EXECUTED'}
+            if producer is not None: producer(core, support, exact, helpers_dir, calls, raised, ready)
             spec = {'evidence': str(evidence), 'consumption': str(base / 'consumed.json'), 'authorizationId': 'CPU',
                     'output': str(base / 'output'), 'budget': {'fileCount': 82}}
             record = {'unit': 'first', 'head': 'CPU_HEAD', 'readinessSha256': 'CPU_SHA', 'authorizationId': 'CPU', 'spec': spec}
@@ -891,6 +950,7 @@ class BoundaryControls(unittest.TestCase):
             else:
                 Path(spec['consumption']).write_text(json.dumps(record))  # No real grant/consume dispatch.
             original_persist, original_read, original_run, original_open = caller.persist, caller.read_json, caller.run_unit, Path.open
+            original_fdopen = os.fdopen
             original_process_run = subprocess.run
             def persist(p, value):
                 name = Path(p).name; writes.append(name)
@@ -918,12 +978,14 @@ class BoundaryControls(unittest.TestCase):
                         self.stream.flush()
                         raise OSError('FINAL_WRITE_ERROR_AFTER_BYTES')
                     return value
-                def __exit__(self, *a):
-                    self.stream.__exit__(*a)
+                def close(self):
+                    self.stream.close()
                     if publication == 'after-close': raise OSError('FINAL_CLOSE_ERROR_AFTER_BYTES')
-            def opened(p, *a, **kw):
-                stream = original_open(p, *a, **kw)
-                return FaultyStream(stream) if publication in ('after-write', 'after-close') and p.name == 'result.json' and a and a[0] == 'xb' else stream
+            def opened(fd, *a, **kw):
+                stream = original_fdopen(fd, *a, **kw)
+                result_path = evidence / 'result.json'
+                is_result = a and a[0] == 'wb' and result_path.exists() and os.fstat(fd).st_ino == result_path.stat().st_ino
+                return FaultyStream(stream) if publication in ('after-write', 'after-close') and is_result else stream
             def decoder(*a, **kw):
                 if real_git and a[0][0] == '/usr/bin/git': return original_process_run(*a, **kw)
                 calls.append('decoder')
@@ -936,7 +998,7 @@ class BoundaryControls(unittest.TestCase):
             before_path = list(sys.path); caller._receipt_bytes = 0
             try:
                 consumption_patch = patch.object(caller, 'consume', wraps=caller.consume) if real_git else patch.object(caller, 'consume', return_value=(spec, record))
-                with patch.object(sys, 'argv', ['caller', '--execute', first_unit, '--grant', first_grant]), patch.object(caller, 'READY', ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': 'CPU'}), patch.object(caller, 'read_json', side_effect=lambda p, *a, **kw: ready if p == caller.READY else original_read(p, *a, **kw)), consumption_patch as consumption, patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}), patch.object(caller, 'run_unit', side_effect=run), patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=decoder), patch.object(caller, 'verify_legacy'), patch.object(Path, 'open', opened), redirect_stderr(FailedSink() if all_sinks else io.StringIO()), redirect_stdout(FailedSink() if all_sinks else io.StringIO()):
+                with patch.object(sys, 'argv', ['caller', '--execute', first_unit, '--grant', first_grant]), patch.object(caller, 'READY', ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': 'CPU'}), patch.object(caller, 'read_json', side_effect=lambda p, *a, **kw: ready if p == caller.READY else original_read(p, *a, **kw)), consumption_patch as consumption, patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}), patch.object(caller, 'run_unit', side_effect=run), patch.object(caller, 'snapshot_caches'), patch.object(caller.importlib, 'import_module', side_effect=lambda n: helpers[n]), patch.object(caller, 'observed_thresholds', return_value={}), patch.object(caller, 'persist', side_effect=persist), patch.object(caller.subprocess, 'run', side_effect=decoder), patch.object(caller, 'verify_legacy'), patch.object(os, 'fdopen', opened), redirect_stderr(FailedSink() if all_sinks else io.StringIO()), redirect_stdout(FailedSink() if all_sinks else io.StringIO()):
                     exitcode = caller.main()
                 self.assertEqual(consumption.call_count, 1)
             finally:
@@ -967,6 +1029,88 @@ class BoundaryControls(unittest.TestCase):
     def next_consumption(self, case):
         with patch.object(caller, 'READY', case.ready_path), patch.dict(os.environ, {'FAUNA_CAPTURE_GRANT': case.next_spec['authorizationId']}), patch.object(caller, 'verify_bindings', return_value={'scope': 'INERT_CPU_FIXTURE'}):
             return caller.consume(case.ready, case.second_unit, case.next_spec['grant'])
+
+    def test_actual_bootstrap_and_observer_producers_survive_helper_and_all_sink_failures(self):
+        for phase in ('bootstrap-0', 'bootstrap-17', 'bootstrap-timeout', 'observer-timeout', 'observer-cancel'):
+            for all_sinks in (False, True):
+                with self.subTest(phase=phase, all_sinks=all_sinks):
+                    producer_facts = []
+                    def producer(core, support, exact, helpers_dir, calls, raised, ready):
+                        ready['resolver'] = {'selectedExecutable': {'path': 'INERT_BROWSER'}}
+                        job_class, initialize = core.StationJob, core.StationJob.__init__
+                        def init(job, *a, **kw):
+                            initialize(job, *a, **kw);job.registered=False;job.root={'pid':1234567};job.state.update(exits={}, errors=[])
+                        job_class.__init__ = init
+                        def write(path, value):
+                            raise OSError('SECONDARY_HELPER_WRITE')
+                        namespace = {'signal': signal, 'time': time, 'contextmanager': contextmanager, 'write': write, 'os': os}
+                        exact(helpers_dir / 'round4_job_boundary.py', ['DeadlineExpired', 'deadline'], namespace)
+                        exact(helpers_dir / 'round4_job_boundary.py', [], namespace, 'save');job_class.save=namespace['save']
+                        def command(argv, **kw):
+                            calls.append('inert-capture')  # Also arms the existing all-sink injection.
+                            if phase.endswith(('timeout', 'cancel')):
+                                error = KeyboardInterrupt('ORIGINAL_CANCEL') if phase.endswith('cancel') else subprocess.TimeoutExpired(argv, 2, output=b'PRIMARY\x00\xff', stderr=b'STDERR\xfe')
+                                error.unknown = {'recovery': b'FUTURE\x00\x80'};producer_facts.append(caller.failure(error));raised.append(error);raise error
+                            value = SimpleNamespace(args=argv, returncode=17 if phase=='bootstrap-17' else 0, stdout=b'BOOT\x00\xff', stderr=b'ERR\xfe', unknown={'recovery': b'FUTURE\x80'})
+                            producer_facts.append(caller.raw_value(value));return value
+                        if phase.startswith('bootstrap'):
+                            namespace['subprocess']=SimpleNamespace(run=command)
+                            exact(helpers_dir / 'round4_job_boundary.py', [], namespace, 'start');job_class.start=namespace['start']
+                        else:
+                            exact(helpers_dir / 'round4_job_boundary.py', [], namespace, 'wait');job_class.wait=namespace['wait'];job_class.status=lambda job:job.state
+                            job_class.members=lambda job:[] if producer_facts else [{'pid':1234567, 'birth':[1,2]}]
+                            observer_ns={'Path':Path,'time':time,'json':json,'os':os,'re':re,'subprocess':SimpleNamespace(run=command),'write':write,'utc':lambda:'CPU_ONLY','failure':caller.failure}
+                            exact(helpers_dir / 'run_round4_browser_proof.py', ['current_commands','parse_launch'], observer_ns)
+                            exact(helpers_dir / 'run_round4_remaining8.py', ['StageReceipts'], observer_ns);support.StageReceipts=observer_ns['StageReceipts']
+                    with self.boundary(all_sinks=all_sinks, producer=producer) as case:
+                        result=case.result
+                        self.assertEqual(case.exitcode, 1);self.assertFalse(result['accepted']);self.assertNotIn('decoder',case.calls)
+                        self.assertEqual(case.calls.count('inert-capture'),1);self.assertEqual(len(producer_facts),1)
+                        if phase.startswith('bootstrap'):
+                            attempt=result['raw']['startAttempt'];self.assertTrue(attempt['registrationUncertain']);self.assertFalse(attempt['registered'])
+                            self.assertEqual(len(attempt['commands']),1);self.assertEqual(attempt['target'],'CPU_ONLY_NO_LAUNCH');self.assertTrue(attempt['scratch']);self.assertTrue(attempt['output'])
+                            row=attempt['commands'][0]
+                            self.assertEqual(row['failure'] if phase.endswith('timeout') else row['returned'],producer_facts[0])
+                            self.assertEqual(attempt['helperFailure']['message'], 'SECONDARY_HELPER_WRITE' if not phase.endswith('timeout') else producer_facts[0]['message'])
+                        else:
+                            self.assertEqual({k:v for k,v in result['raw']['captureObserver']['failure'].items() if k!='phase'},producer_facts[0])
+                        if phase.endswith(('timeout','cancel')): self.assertEqual(result['primaryFailure'],producer_facts[0])
+                        elif phase=='bootstrap-17': self.assertEqual(result['primaryFailure']['message'],'Owned launchd bootstrap failed')
+                        else:self.assertEqual(result['primaryFailure']['message'],'SECONDARY_HELPER_WRITE')
+                        if phase in ('bootstrap-17','observer-timeout'):self.assertTrue(any(x['message']=='SECONDARY_HELPER_WRITE' for x in result['secondaryFailures']))
+                        if all_sinks:
+                            self.assertEqual(result['publication']['status'],'UNABLE_TO_PERSIST_COMPLETE_RESULT')
+                            self.assertTrue(any(x.get('receipt')=='stderr' for x in result['persistenceFailures']))
+                        else:self.assertEqual(caller.read_json(case.evidence/'result.json')['primaryFailure'],result['primaryFailure'])
+
+    def test_cache_destination_ancestor_and_leaf_races_never_write_foreign_bytes(self):
+        for fault in ('parent-symlink', 'parent-regular', 'leaf-symlink', 'leaf-fifo', 'leaf-regular', 'mkdir-parent-symlink'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-copy-destination-') as temp:
+                base=Path(temp).resolve();cache=base/'cache';(cache/'sub').mkdir(parents=True);(cache/'sub/payload').write_bytes(b'OWNED_BYTES')
+                evidence=base/'evidence';evidence.mkdir();outside=base/'foreign';outside.mkdir();foreign=outside/'payload';foreign.write_bytes(b'FOREIGN')
+                target=evidence/'cache-before-0/sub/payload';events=[];fds=[];real_open,real_mkdir=os.open,os.mkdir
+                def attack():
+                    events.append(fault)
+                    if fault.startswith(('parent','mkdir')):
+                        parent=target.parent if not fault.startswith('mkdir') else evidence/'cache-before-0'
+                        parent.rename(base/'retained-parent')
+                        if fault=='parent-regular':parent.mkdir()
+                        else:parent.symlink_to(outside,target_is_directory=True)
+                    elif fault=='leaf-symlink':target.symlink_to(foreign)
+                    elif fault=='leaf-fifo':os.mkfifo(target)
+                    else:target.write_bytes(b'FOREIGN')
+                def open_at(name, flags, *a, **kw):
+                    if str(name)=='payload' and flags & os.O_WRONLY and not events:attack()
+                    fd=real_open(name,flags,*a,**kw);fds.append(fd);return fd
+                def mkdir_at(name,*a,**kw):
+                    if fault=='mkdir-parent-symlink' and str(name)=='sub' and not events:attack()
+                    return real_mkdir(name,*a,**kw)
+                with patch.object(os,'open',open_at),patch.object(os,'mkdir',mkdir_at):
+                    with self.assertRaises((caller.Refused,OSError)) as caught:caller.snapshot_caches({'generatedCaches':[str(cache)],'budget':{'cacheSnapshotCapBytes':64}},evidence)
+                self.assertEqual(events,[fault]);self.assertEqual(foreign.read_bytes(),b'FOREIGN');self.assertFalse((outside/'sub').exists())
+                self.assertFalse((evidence/'cache-before.json').exists());self.assertFalse(caught.exception.cacheObservation['complete'])
+                for fd in fds:
+                    with self.assertRaises(OSError):os.fstat(fd)
 
     def test_actual_admission_uses_one_authenticated_snapshot_for_result_and_consumption(self):
         for key in ('result', 'consumption'):
@@ -1000,7 +1144,7 @@ class BoundaryControls(unittest.TestCase):
                     return value
                 with patch.object(os, 'fdopen', opened), patch.object(caller, 'read_json', side_effect=restore), self.assertRaises(caller.Refused):
                     self.next_consumption(case)
-                self.assertEqual(reads, [(2 * 1024 * 1024 + 1, len(failed_bytes))])
+                self.assertEqual(reads, [(len(failed_bytes) + 1, len(failed_bytes))])
                 self.assertEqual(schedule, ['replace-after-real-read', 'restore-after-real-parse'])
                 self.assertEqual(path.read_bytes(), failed_bytes)
                 for field in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[field]).exists())
@@ -1067,7 +1211,7 @@ class BoundaryControls(unittest.TestCase):
                     if fault in ('oversized', 'symlink', 'directory'): self.assertEqual(reads, [])
                     else:
                         self.assertEqual(len(reads), 1)
-                        self.assertEqual(reads[0], (maximum + 1, maximum + 1 if fault == 'growth' else len(raw)))
+                        self.assertEqual(reads[0], (len(raw) + 1, len(raw) + 1 if fault == 'growth' else len(raw)))
                     if fault == 'unknown-fields': self.assertEqual(snapshots[0][0]['futureMetadata'], value['futureMetadata'])
                     if fault == 'after-snapshot-growth': self.assertNotEqual(record['grantSha256'], caller.sha(path))
                     self.assertEqual(case.calls.count('inert-start'), 1)
@@ -1217,9 +1361,9 @@ class BoundaryControls(unittest.TestCase):
                     if fault in ('empty-object', 'exact-cap'): self.assertEqual(caller.read_json(path, maximum), {})
                     else:
                         with self.assertRaises(caller.Refused): caller.read_json(path, maximum)
-                self.assertEqual(len(reads), 1); self.assertEqual(reads[0][0], maximum + 1)
+                self.assertEqual(len(reads), 1); self.assertEqual(reads[0][0], maximum + 1 if fault == 'exact-cap' else 11)
                 self.assertLessEqual(reads[0][1], maximum + 1)
-                if fault == 'growth-sentinel': self.assertEqual(reads[0][1], maximum + 1)
+                if fault == 'growth-sentinel': self.assertEqual(reads[0][1], 11)
 
     def test_actual_artifact_admission_rejects_leaf_and_ancestor_races(self):
         for fault in ('fifo', 'symlink', 'regular', 'parent-symlink', 'parent-regular', 'parent-before-open'):

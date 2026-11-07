@@ -37,6 +37,33 @@ export function controlledWrite(output, plan, writes, file, data, maximum = 16 *
   writes.push({ path: relative, bytes: bytes.length, sha256: sha(bytes) });
 }
 
+export function describe(error) {
+  const seen = new Map();
+  const raw = (value, location = '$') => {
+    if (value === undefined) return { type: 'undefined' };
+    if (typeof value === 'bigint' || typeof value === 'symbol' || typeof value === 'function') return { type: typeof value, value: String(value) };
+    if (typeof value === 'number' && !Number.isFinite(value)) return { type: 'number', value: String(value) };
+    if (value === null || typeof value !== 'object') return value;
+    if (seen.has(value)) return { reference: seen.get(value) };
+    seen.set(value, location);
+    if (ArrayBuffer.isView(value))
+      return { type: value.constructor.name, base64: Buffer.from(value.buffer, value.byteOffset, value.byteLength).toString('base64') };
+    if (value instanceof ArrayBuffer) return { type: 'ArrayBuffer', base64: Buffer.from(value).toString('base64') };
+    if (Array.isArray(value)) return value.map((item, index) => raw(item, `${location}[${index}]`));
+    const fields = {};
+    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(value)))
+      fields[key] = 'value' in descriptor ? raw(descriptor.value, `${location}.${key}`) : { accessor: true };
+    return fields;
+  };
+  const details = raw(error);
+  return {
+    name: error?.name ?? typeof error,
+    message: error?.message ?? String(error),
+    ...(details && Object.hasOwn(details, 'code') ? { code: details.code } : {}),
+    raw: details,
+  };
+}
+
 function installAudit(kind) {
   const w = window,
     g = w.game,
@@ -191,7 +218,6 @@ export async function main() {
     plan = outputPlan(spec.aspect, spec.kind),
     writes = [];
   const result = { accepted: false, primaryFailure: null, cleanupFailures: [], persistenceFailures: [], unit, writes, pages: 0, launched: 0, returned: null };
-  const describe = (error) => ({ name: error?.name ?? typeof error, message: error?.message ?? String(error), ...(error?.code ? { code: error.code } : {}) });
   const reportingErrors = new Set();
   let metadataBytes = 0;
   let launched = 0,
@@ -337,7 +363,13 @@ export async function main() {
     requireFact(writes.length === plan.length && pages === 2 && launched === 1, 'Incomplete one-screen output');
     for (const b of ready.bindings) requireFact(sha(fs.readFileSync(b.path)) === b.sha256, 'Source changed during capture');
   } catch (error) {
-    if (!reportingErrors.has(error)) result.primaryFailure = describe(error);
+    if (!reportingErrors.has(error)) {
+      result.captureFailure = describe(error);
+      if (error instanceof AggregateError && error.errors.length) {
+        result.primaryFailure = describe(error.errors[0]);
+        result.cleanupFailures.push(...error.errors.slice(1).map((value, index) => ({ phase: 'captureUi', ordinal: index + 1, ...describe(value) })));
+      } else result.primaryFailure = describe(error);
+    }
     Object.assign(result, { returned, pages, launched });
     attemptReceipt('returned-entry-failure.json', result);
   } finally {

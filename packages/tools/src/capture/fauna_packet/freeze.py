@@ -128,6 +128,15 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     files += [ROOT / p for p in ('package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.base.json', 'packages/client/vite.config.js', 'packages/client/package.json', 'packages/shared/package.json', 'packages/tools/package.json')]
     tracked = subprocess.check_output(['/usr/bin/git', 'ls-files', '-z', 'packages/client/src', 'packages/client/public', 'packages/shared/src', 'packages/tools/src/capture'], cwd=ROOT).decode().split('\0')
     files += [ROOT / p for p in tracked if p and '/fauna_packet/' not in p]
+    shared_review = Path('/private/tmp/p1-e14-t15-independent-gzn1kbbe/REPORT.txt')
+    shared_files = {
+        'packages/tools/src/capture/capture.ts': '42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d',
+        'packages/tools/src/capture/capture.lifecycle.test.ts': 'ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18',
+    }
+    caller.require(caller.sha(shared_review) == '944f849660b40540f253612159f49f02c31083a83b178cbabee5171326591af9', 'Shared T15 review changed')
+    for name, digest in shared_files.items():
+        caller.require(caller.sha(ROOT / name) == digest, 'Reviewed shared capture source changed: ' + name)
+    files.append(shared_review)
     files += [p for p in HERE.iterdir() if p.is_file() and p.name != 'readiness.json']
     product_names = ['packages/client/src/Game.js', 'packages/client/src/gameplay/Fauna.js', 'packages/client/src/ui/HUD.js',
                      'packages/client/src/net/combat.js', 'packages/client/src/remote/RemoteEntities.js', 'packages/client/src/remote/replay.js',
@@ -178,6 +187,12 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
         'decoderDependencies': caller.tree_binding(DECODER_SITE / 'PIL'),
         'productBindings': {p: caller.sha(ROOT / p) for p in product_names},
         'productSourceHead': PRODUCT_HEAD, 'currentProductSourceReview': {'head': PRODUCT_HEAD, 'verdict': 'PASS', 'basis': 'Fresh source review PASS reported by parent; caller and runtime gates remain separate'},
+        'sharedCaptureSourceReview': {'head': '38b6c4b58db43146df20cd760808d1461d7a667b',
+                                     'tree': 'b8ba53c6acdf6eb604b9c046a8165f1985634be8',
+                                     'adoptedCommit': 'c360967ab2bdba096bd2949c70fe679e8b7d68b3',
+                                     'stablePatchId': '8e90cd71186b236a00402a6bd9b985256e9b5ec7',
+                                     'verdict': 'SOURCE_PASS', 'runtimeEnabled': False,
+                                     'report': binding(shared_review), 'files': shared_files},
         'priorProductSourceReview': {'verdict': 'PASS', 'historicalOnly': True, 'head': '2f36cdb2d6bdd1f40428b6b48c2c27fddbdcfcae',
                                     'path': str(PRODUCT_REVIEW), 'sha256': PRODUCT_REVIEW_SHA},
         'generatedCaches': caches, 'initialCacheBytes': initial_cache_bytes, 'cacheOwnerFreezeObservation': cache_owner_receipt,

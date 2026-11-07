@@ -1,11 +1,18 @@
 """Independent CPU decoder/receipt inspector. Does not import the caller or launch APIs."""
 import hashlib
+import importlib.util
+import io
+import struct
+import zlib
 import json
 import math
 from pathlib import Path
 import sys
 
 sys.dont_write_bytecode = True
+_file_spec = importlib.util.spec_from_file_location('fauna_inspector_file_io', Path(__file__).with_name('file_io.py'))
+file_io = importlib.util.module_from_spec(_file_spec)
+_file_spec.loader.exec_module(file_io)
 
 
 def check(value, message):
@@ -18,9 +25,7 @@ def digest(data):
 
 
 def load(path, limit=2 * 1024 * 1024):
-    p = Path(path)
-    check(p.is_file() and not p.is_symlink() and p.stat().st_size <= limit, 'Unsafe/oversized receipt: ' + str(p))
-    return json.loads(p.read_bytes())
+    return file_io.bounded_read(path, limit, keep=True, finish=lambda data, _: json.loads(data))
 
 
 def finite(values, count):
@@ -84,14 +89,59 @@ def turn_oracle(observations, trace):
     check([(e['frame'], e['amount']) for e in trace['events']] == expected_events and all(e['consumed'] is True for e in trace['events']), 'Readout/event receipts disagree')
 
 
-def decode_image(file, dimensions, image_format):
+def png_container(data, dimensions):
+    check(data[:8] == b'\x89PNG\r\n\x1a\n', 'Invalid PNG signature')
+    offset, palette, idat_started, idat_ended = 8, False, False, False
+    header, compressed = None, []
+    while offset < len(data):
+        check(offset + 12 <= len(data), 'Truncated PNG chunk')
+        size = int.from_bytes(data[offset:offset + 4], 'big')
+        kind = data[offset + 4:offset + 8]
+        end = offset + 12 + size
+        check(end <= len(data) and all(65 <= c <= 90 or 97 <= c <= 122 for c in kind) and not kind[2] & 32, 'Invalid PNG chunk length/type')
+        body = memoryview(data)[offset + 8:end - 4]
+        check(zlib.crc32(memoryview(data)[offset + 4:end - 4]) & 0xffffffff == int.from_bytes(data[end - 4:end], 'big'), 'PNG CRC mismatch')
+        check(header is not None or kind == b'IHDR', 'PNG IHDR must be first')
+        if kind == b'IHDR':
+            check(header is None and offset == 8 and size == 13, 'Duplicate/invalid PNG IHDR')
+            header = struct.unpack('>IIBBBBB', body)
+            width, height, depth, color, compression, filtering, interlace = header
+            check((width, height) == dimensions and depth == 8 and color in (2, 6) and compression == filtering == interlace == 0, 'Unexpected PNG screenshot header')
+        elif kind == b'PLTE':
+            check(not palette and not idat_started and size > 0 and size % 3 == 0 and size <= 256 * 3, 'Invalid/duplicate/out-of-order PNG PLTE')
+            palette = True
+        elif kind == b'IDAT':
+            check(not idat_ended, 'Noncontiguous PNG IDAT')
+            idat_started = True
+            compressed.append(body)
+        elif kind == b'IEND':
+            check(size == 0 and idat_started and end == len(data), 'Invalid PNG IEND')
+            row_bytes = dimensions[0] * (3 if header[3] == 2 else 4) + 1
+            expected = row_bytes * dimensions[1]
+            decoder = zlib.decompressobj()
+            pixels = decoder.decompress(b''.join(compressed), expected + 1)
+            check(len(pixels) == expected and decoder.eof and not decoder.unconsumed_tail and not decoder.unused_data, 'Invalid/oversized PNG pixel stream')
+            check(all(pixels[i] <= 4 for i in range(0, expected, row_bytes)), 'Invalid PNG row filter')
+            return
+        else:
+            check(kind[0] & 32, 'Unknown critical PNG chunk')
+        if idat_started and kind != b'IDAT':
+            idat_ended = True
+        offset = end
+    check(False, 'Missing PNG IEND')
+
+
+def decode_image(file, dimensions, image_format, data=None):
     from PIL import Image
-    data = file.read_bytes()
+    if data is None:
+        data, _ = file_io.bounded_read(file, 16 * 1024 * 1024, keep=True)
     check(data.endswith(b'\xff\xd9') if image_format == 'JPEG' else data.endswith(bytes.fromhex('0000000049454e44ae426082')), 'Malformed image terminal bytes')
-    with Image.open(file) as image:
+    if image_format == 'PNG':
+        png_container(data, dimensions)
+    with Image.open(io.BytesIO(data)) as image:
         check(image.size == dimensions and image.format == image_format, 'Decoded image dimensions/format differ')
         image.verify()
-    with Image.open(file) as image:
+    with Image.open(io.BytesIO(data)) as image:
         image.load()
         check(image.mode in ('RGB', 'RGBA'), 'Unexpected screenshot pixel mode')
 
@@ -195,13 +245,9 @@ def inspect(ready, unit):
         if aspect == spec['aspect']:
             expected.extend('_frames/%03d.jpg' % i for i in range(frames))
             expected.extend(('readout.txt', 'clip-sheet.png'))
-    actual = []
-    for p in output.rglob('*'):
-        check(not p.is_symlink() and (p.is_file() or p.is_dir()), 'Unsafe output entry')
-        if p.is_dir():
-            check(p == output / '_frames', 'Unexpected output directory')
-        if p.is_file():
-            actual.append(str(p.relative_to(output)))
+    inventory = file_io.tree_plan(output, (stills + frames + 1) * 16 * 1024 * 1024 + 16384, entry_cap=len(expected) + 1)
+    actual = [row['path'] for row in inventory['files']]
+    check(inventory['directories'] == {'_frames'}, 'Unexpected output directory')
     check(sorted(actual) == sorted(expected) and len(actual) == stills + frames + 2, 'Missing/extra output/count')
     result = load(evidence / 'entry-result.json')
     check(result['accepted'] is True and result['primaryFailure'] is None and not result.get('cleanupFailures') and not result.get('persistenceFailures') and result['unit'] == unit and result['pages'] == 2 and result['launched'] == 1, 'Raw entry outcome refused')
@@ -214,27 +260,28 @@ def inspect(ready, unit):
         methods = load(evidence / ('page-source-%d.json' % page))
         check(methods['actual'] == methods['expectedMethods'] == sources['expectedMethods'], 'Actual page/source method mismatch')
     observations_path = evidence / 'capture-observations.jsonl'
-    check(observations_path.stat().st_size <= (16 if broad else 2) * 1024 * 1024, 'Observation journal exceeds cap')
-    observations = [json.loads(row) for row in observations_path.read_text().splitlines()]
+    journal, _ = file_io.bounded_read(observations_path, (16 if broad else 2) * 1024 * 1024, keep=True)
+    observations = [json.loads(row) for row in journal.splitlines()]
     photo_paths = [name for name in expected if name not in ('clip-sheet.png', 'readout.txt')]
     check([r['path'] for r in observations] == photo_paths and len(observations) == stills + frames, 'Missing/reordered actual observations')
-    total = 0
+    total, digests, readout = 0, {}, None
     for index, name in enumerate(expected):
         file = output / name
         limit = 16384 if name == 'readout.txt' else 16 * 1024 * 1024
-        size = file.stat().st_size
+        size = inventory['pins'][str(file.absolute())].st_size
         check(0 < size <= limit, 'Per-file cap exceeded')
-        data = file.read_bytes()
-        check(result['writes'][index] == {'path': name, 'bytes': size, 'sha256': digest(data)}, 'Raw output bytes/index mismatch')
+        data, digests[name] = file_io.bounded_read(file, size, inventory['pins'], keep=True)
+        check(result['writes'][index] == {'path': name, 'bytes': size, 'sha256': digests[name]}, 'Raw output bytes/index mismatch')
         total += size
         if name == 'readout.txt':
+            readout = data.decode('utf-8')
             continue
         if name == 'clip-sheet.png':
             dimensions = (2400, 1526 if broad else 1228 if spec['aspect'] == '16x9' else 972)
         else:
             width = 2520 if name.startswith('21x9') or name.startswith('_frames/') and spec['aspect'] == '21x9' else 1920
             dimensions = (width, 1080)
-        decode_image(file, dimensions, 'JPEG' if name.endswith('.jpg') else 'PNG')
+        decode_image(file, dimensions, 'JPEG' if name.endswith('.jpg') else 'PNG', data)
     for row in observations:
         name, raw = row['path'], row['after']
         if broad:
@@ -244,7 +291,7 @@ def inspect(ready, unit):
         width = 2520 if name.startswith('21x9') or name.startswith('_frames/') and spec['aspect'] == '21x9' else 1920
         viewport = [width, 1080]
         check(row['ordinal'] == expected.index(name) and row['sourceBindings'] == ready['productBindings'], 'Observation source/order differs')
-        check(row['sha256'] == digest((output / name).read_bytes()), 'Observation image binding differs')
+        check(row['sha256'] == digests[name], 'Observation image binding differs')
         check(raw['viewport'] == raw['canvas'] == viewport and row['before']['gameTime'] == raw['gameTime'] and row['before']['clipTime'] == raw['clipTime'], 'Actual viewport/time changed during screenshot')
         check(all(n['sameRecord'] is True and isinstance(n['incarnation'], int) for n in raw['numbers']), 'HUD number changed incarnation')
         if '-kill' in name and not broad:
@@ -260,7 +307,6 @@ def inspect(ready, unit):
             i = int(Path(name).stem)
             check(raw['phase'] == 'turn' and raw['traceFrame']['frame'] == i and abs(raw['traceFrame']['ms'] - (i + 1) * 1000 / 60) < 0.001, 'Actual frame clock/order differs')
             check(raw['target']['id'] == 602 and (raw['target']['visible'] or not raw['numbers']), 'Actual turn target association lost')
-    readout = (output / 'readout.txt').read_text()
     if broad:
         broad_oracle(observations, readout)
     else:
@@ -276,5 +322,5 @@ if __name__ == '__main__':
         sys.path.insert(0, ready['decoderSite'])
         print(json.dumps(inspect(ready, sys.argv[2]), sort_keys=True))
     except BaseException as error:
-        print(json.dumps({'accepted': False, 'failure': {'type': type(error).__name__, 'message': str(error)}}), file=sys.stderr)
+        print(json.dumps({'accepted': False, 'failure': file_io.failure(error)}), file=sys.stderr)
         raise SystemExit(1)

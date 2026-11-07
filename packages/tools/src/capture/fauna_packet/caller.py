@@ -6,12 +6,11 @@ if not __debug__ or sys.flags.optimize != 0 or os.environ.get('PYTHONOPTIMIZE', 
 sys.dont_write_bytecode = True
 
 import argparse
-import base64
-import copy
 from contextlib import contextmanager
 import datetime
 import hashlib
 import importlib
+import importlib.util
 import json
 import linecache
 from pathlib import Path
@@ -35,18 +34,19 @@ CACHE_ENTRY_CAP = 256
 CACHE_ENTRY_METADATA_CAP = 1024
 
 
-class Refused(RuntimeError):
-    pass
+# Load only the shared, pure file boundary; do not add this directory to sys.path
+# (inspect.py would shadow the standard library inspector used by helpers).
+_file_spec = importlib.util.spec_from_file_location('fauna_file_io', HERE / 'file_io.py')
+file_io = importlib.util.module_from_spec(_file_spec)
+_file_spec.loader.exec_module(file_io)
+Refused, require = file_io.Refused, file_io.require
+same_entry, controlled_path, bounded_read = file_io.same_entry, file_io.controlled_path, file_io.bounded_read
+failure, raw_value, tree_plan = file_io.failure, file_io.raw_value, file_io.tree_plan
 
 
 class GrantAdmission(NamedTuple):
     spec: dict
     predecessor_outputs: tuple
-
-
-def require(condition, message):
-    if not condition:
-        raise Refused(message)
 
 
 def optimization_guard():
@@ -60,102 +60,6 @@ def sha(path):
         for block in iter(lambda: stream.read(1024 * 1024), b''):
             h.update(block)
     return h.hexdigest()
-
-
-def same_entry(a, b, directory=False):
-    return (a.st_dev, a.st_ino, stat.S_IFMT(a.st_mode)) == (b.st_dev, b.st_ino, stat.S_IFMT(b.st_mode)) and (directory or a.st_size == b.st_size)
-
-
-@contextmanager
-def controlled_path(path, maximum=None, expected=None, directory=False):
-    """Keep the supplied pathname and pin every no-follow ancestor through the read."""
-    p = Path(path).absolute()
-    require('..' not in p.parts, 'Unsafe controlled path: ' + str(p))
-    expected = expected or {}
-    descriptors, routes = [], []
-    stream = primary = None
-    try:
-        parent = os.open(p.anchor, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_DIRECTORY)
-        descriptors.append(parent)
-        fd = parent
-        opened = os.fstat(parent)
-        current = Path(p.anchor)
-        for i, name in enumerate(p.parts[1:]):
-            current = current / name
-            is_directory = i < len(p.parts) - 2 or directory
-            before = os.stat(name, dir_fd=parent, follow_symlinks=False)
-            require(stat.S_ISDIR(before.st_mode) if is_directory else stat.S_ISREG(before.st_mode), 'Unsafe controlled entry: ' + str(current))
-            if str(current) in expected:
-                require(same_entry(before, expected[str(current)], is_directory), 'Controlled entry changed before open: ' + str(current))
-            if not is_directory:
-                require(before.st_size <= maximum, 'Unsafe/oversized controlled file: ' + str(p))
-            flags = os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | (os.O_DIRECTORY if is_directory else 0)
-            fd = os.open(name, flags, dir_fd=parent)
-            descriptors.append(fd)
-            opened = os.fstat(fd)
-            require(same_entry(before, opened, is_directory), 'Controlled entry changed during open: ' + str(current))
-            require(stat.S_ISDIR(opened.st_mode) if is_directory else stat.S_ISREG(opened.st_mode) and opened.st_size <= maximum, 'Unsafe opened entry: ' + str(current))
-            routes.append((parent, name, opened, is_directory, str(current)))
-            parent = fd
-        def validate_route(ancestors_only=False):
-            for parent_fd, name, observed, is_directory, label in routes:
-                if ancestors_only and not is_directory:
-                    continue
-                require(same_entry(os.stat(name, dir_fd=parent_fd, follow_symlinks=False), observed, is_directory), 'Controlled pathname changed: ' + label)
-        validate_route()
-        if not directory:
-            stream = os.fdopen(fd, 'rb', buffering=0, closefd=False)
-        yield (fd if directory else stream), opened, {label: info for _, _, info, _, label in routes}
-        # Leaf bytes already form the authenticated snapshot; keep the ancestor route pinned.
-        validate_route(ancestors_only=True)
-    except BaseException as error:
-        primary = error
-        raise
-    finally:
-        pending = primary
-        closes = ([('stream.close', stream.close, descriptors[-1])] if stream is not None else [])
-        closes += [('os.close', lambda fd=fd: os.close(fd), fd) for fd in reversed(descriptors)]
-        for operation, close, fd in closes:
-            try:
-                close()
-            except BaseException as error:
-                fact = {'operation': operation, 'path': str(p), 'descriptor': fd, **failure(error)}
-                if pending is None:
-                    pending = error
-                pending.metadata_close_failures = getattr(pending, 'metadata_close_failures', []) + [fact]
-        if primary is None and pending is not None:
-            raise pending
-
-
-def bounded_read(path, maximum, expected=None, keep=False, sink=None, finish=None):
-    """One descriptor snapshot supplies all bytes, the digest and optional bounded copy."""
-    observation = {'path': str(path), 'maximum': maximum, 'readBytes': 0, 'copiedBytes': 0}
-    try:
-        with controlled_path(path, maximum, expected) as (stream, opened, _):
-            observation.update(dev=opened.st_dev, inode=opened.st_ino, bytes=opened.st_size)
-            digest, pieces = hashlib.sha256(), []
-            while True:
-                count = maximum + 1 if keep else min(1024 * 1024, opened.st_size - observation['readBytes'] + 1)
-                data = stream.read(count)
-                observation['readBytes'] += len(data)
-                require(observation['readBytes'] <= opened.st_size, 'Controlled file grew during read: ' + str(path))
-                if not data:
-                    break
-                digest.update(data)
-                if keep:
-                    pieces.append(data)
-                if sink is not None:
-                    written = sink.write(data)
-                    observation['copiedBytes'] += written
-                    require(written == len(data), 'Generated cache snapshot write incomplete; copied bytes retained')
-                if keep:
-                    break
-            require(observation['readBytes'] == opened.st_size, 'Controlled file truncated during read: ' + str(path))
-            value = (b''.join(pieces) if keep else None), digest.hexdigest()
-            return finish(*value) if finish is not None else value
-    except BaseException as error:
-        error.controlled_read = observation
-        raise
 
 
 def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
@@ -175,35 +79,8 @@ def persist(path, value):
     require(len(data) <= 1024 * 1024, 'Controlled receipt exceeds 1 MiB')
     require(_receipt_bytes + len(data) <= 32 * 1024 * 1024, 'Python controlled receipts exceed aggregate 32 MiB cap')
     _receipt_bytes += len(data)  # Reserve even if close reports failure after bytes were written.
-    with Path(path).open('xb') as stream:
-        stream.write(data)
-
-
-def failure(error):
-    facts = dict(vars(error))
-    # TimeoutExpired.stdout aliases output; retain both public observations.
-    if isinstance(error, subprocess.TimeoutExpired):
-        facts['stdout'] = error.stdout
-        facts['stderr'] = error.stderr
-    return {'type': type(error).__name__, 'message': str(error),
-            'args': raw_value(error.args), 'attributes': raw_value(facts)}
-
-
-def raw_value(value):
-    """Keep every field of helper observations, including future/unknown fields."""
-    if isinstance(value, dict):
-        return {str(k): raw_value(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [raw_value(v) for v in value]
-    if isinstance(value, Path):
-        return str(value)
-    if isinstance(value, (bytes, bytearray, memoryview)):
-        data = bytes(value)
-        return {'type': type(value).__name__, 'base64': base64.b64encode(data).decode('ascii'),
-                'preview': data[:512].decode('utf-8', errors='backslashreplace')}
-    if hasattr(value, '__dict__'):
-        return raw_value(vars(value))
-    return copy.deepcopy(value)
+    with file_io.exclusive_writer(path) as stream:
+        require(stream.write(data) == len(data), 'Controlled receipt write incomplete')
 
 
 def observed_release(result, evidence, name, function, job, *args, **kwargs):
@@ -275,44 +152,6 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
                 result['persistenceFailures'].append({'receipt': name + '/result', **failure(error)})
                 if not isinstance(error, Exception):
                     raise
-
-
-def tree_plan(root, maximum, entry_cap=CACHE_ENTRY_CAP, metadata_cap=CACHE_ENTRY_METADATA_CAP, observation=None):
-    """Admit every entry and aggregate size before any payload read."""
-    root = Path(root).absolute()
-    observation = observation if observation is not None else {'entries': [], 'bytes': 0}
-    files, directories, pins = [], set(), {}
-    with controlled_path(root.parent, directory=True) as (parent, _, route):
-        pins.update(route)
-        try:
-            info = os.stat(root.name, dir_fd=parent, follow_symlinks=False)
-        except FileNotFoundError:
-            return {'root': root, 'files': [], 'directories': set(), 'pins': pins}
-        require(stat.S_ISDIR(info.st_mode), 'Unsafe tree root: ' + str(root))
-        pins[str(root)] = info
-    pending = [root]
-    while pending:
-        directory = pending.pop()
-        with controlled_path(directory, expected=pins, directory=True) as (fd, _, route):
-            pins.update(route)
-            with os.scandir(fd) as entries:
-                for entry in entries:
-                    path = directory / entry.name
-                    info = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
-                    is_directory = stat.S_ISDIR(info.st_mode)
-                    require(is_directory or stat.S_ISREG(info.st_mode), 'Unsafe tree entry: ' + str(path))
-                    name = str(path.relative_to(root))
-                    fact = {'path': name, 'source': str(path), 'bytes': info.st_size if not is_directory else 0, 'type': 'directory' if is_directory else 'file', 'dev': info.st_dev, 'inode': info.st_ino}
-                    require(len(observation['entries']) < entry_cap and len(json.dumps(fact).encode()) <= metadata_cap, 'Controlled tree entry/evidence cap exceeded')
-                    observation['entries'].append(fact)
-                    if is_directory:
-                        directories.add(name); pending.append(path)
-                    else:
-                        observation['bytes'] += info.st_size
-                        require(observation['bytes'] <= maximum, 'Generated cache/artifact inventory exceeds controlled cap')
-                        files.append({'path': name, 'bytes': info.st_size})
-                    pins[str(path)] = info
-    return {'root': root, 'files': sorted(files, key=lambda row: row['path']), 'directories': directories, 'pins': pins}
 
 
 def hash_plan(plan, rows=None):
@@ -510,8 +349,8 @@ def consume(ready, unit, grant_path):
     record = {'authorizationId': grant['authorizationId'], 'unit': unit, 'head': head, 'readinessSha256': readiness_sha,
               'grantSha256': grant_sha, 'spec': spec, 'utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
     persist(spec['consumption'], record)  # O_EXCL remains consumed even if a later allocation fails.
-    Path(spec['evidence']).mkdir(mode=0o700)
-    Path(spec['output']).mkdir(mode=0o700)
+    file_io.make_directory(spec['evidence'])
+    file_io.make_directory(spec['output'])
     persist(Path(spec['evidence']) / 'admission.json', record)
     return spec, record
 
@@ -563,32 +402,19 @@ def snapshot_caches(ready, evidence):
                 before = []
                 rows.append({'source': str(plan['root']), 'snapshot': str(destination), 'files': before})
                 hash_plan(plan, before)
-                destination.mkdir(mode=0o700)
+                destination_pins = file_io.make_directory(destination)
                 copied_rows = []
                 for row in before:
                     target = destination / row['path']
-                    target.parent.mkdir(parents=True, exist_ok=True)
+                    for parent in reversed(target.relative_to(destination).parents):
+                        if str(parent) != '.':
+                            destination_pins.update(file_io.make_directory(destination / parent, expected=destination_pins, exist_ok=True))
                     copy_fact = {'source': str(plan['root'] / row['path']), 'destination': str(target), 'admittedBytes': row['bytes'], 'complete': False}
-                    require(len(json.dumps(copy_fact).encode()) <= CACHE_ENTRY_METADATA_CAP, 'Cache copy evidence cap exceeded')
+                    require(len(json.dumps({**copy_fact, 'destinationDev': 2**64 - 1, 'destinationInode': 2**64 - 1, 'writtenBytes': row['bytes']}).encode()) <= CACHE_ENTRY_METADATA_CAP, 'Cache copy evidence cap exceeded')
                     observation['copies'].append(copy_fact)
-                    # Output is exclusive; the source is read through the same guarded descriptor.
-                    primary = None
-                    dst = target.open('xb', buffering=0)
-                    try:
+                    with file_io.exclusive_writer(target, expected=destination_pins, observation=copy_fact) as dst:
                         _, digest = bounded_read(plan['root'] / row['path'], row['bytes'], plan['pins'], sink=dst)
                         require(digest == row['sha256'], 'Generated cache changed during snapshot')
-                    except BaseException as error:
-                        primary = error
-                        raise
-                    finally:
-                        try:
-                            dst.close()
-                        except BaseException as error:
-                            fact = {'path': str(target), **failure(error)}
-                            if primary is None:
-                                error.cache_copy_close = fact
-                                raise
-                            primary.cache_copy_close = fact
                     copy_fact['complete'] = True
                     copied_rows.append({**row, 'sha256': digest})
                 admitted_bytes = sum(row['bytes'] for row in before)
@@ -674,10 +500,49 @@ def accept_outcome(raw):
     require(raw.get('inspection', {}).get('accepted') is True and not raw.get('persistenceFailures'), 'Artifact/persistence acceptance failed')
 
 
+def observed_start(result, job):
+    """Save bootstrap facts at the real producer, before the immutable helper writes."""
+    attempt = {'commands': [], 'helperFailure': None, 'registered': False, 'registrationUncertain': False,
+               'target': getattr(job, 'target', None), 'scratch': str(job.scratch), 'output': str(job.out)}
+    result['raw']['startAttempt'] = attempt
+    namespace = job.start.__globals__
+    original = namespace.get('subprocess')
+    def run(*args, **kwargs):
+        row = {'args': raw_value(args), 'kwargs': raw_value(kwargs), 'returned': None, 'failure': None}
+        attempt['commands'].append(row)
+        attempt['registrationUncertain'] = True
+        try:
+            value = original.run(*args, **kwargs)
+        except BaseException as error:
+            row['failure'] = failure(error)
+            result['primaryFailure'] = failure(error)
+            raise
+        row['returned'] = raw_value(value)
+        if value.returncode != 0:
+            result['primaryFailure'] = failure(Refused('Owned launchd bootstrap failed'))
+        return value
+    try:
+        if original is not None:
+            namespace['subprocess'] = SimpleNamespace(run=run)
+        return job.start()
+    except BaseException as error:
+        attempt['helperFailure'] = failure(error)
+        if result['primaryFailure'] is not None:
+            result['secondaryFailures'].append({'phase': 'bootstrap-helper', **failure(error)})
+        raise
+    finally:
+        if original is not None:
+            namespace['subprocess'] = original
+        attempt['registered'] = getattr(job, 'registered', False)
+        attempt['jobState'] = raw_value(job.state)
+        if attempt['registered']:
+            attempt['registrationUncertain'] = False
+
+
 def run_unit(ready, spec, record):
     evidence = Path(spec['evidence'])
     result = {'accepted': False, 'checksPassed': False, 'admission': raw_value(record),
-              'primaryFailure': None, 'cleanupFailures': [], 'persistenceFailures': [], 'raw': {}}
+              'primaryFailure': None, 'secondaryFailures': [], 'cleanupFailures': [], 'persistenceFailures': [], 'raw': {}}
     def receipt(name, value):
         try:
             persist(evidence / name, value)
@@ -707,13 +572,32 @@ def run_unit(ready, spec, record):
                    'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1'}
             job = core.StationJob.__new__(core.StationJob)
             core.StationJob.__init__(job, evidence / 'owned-job', argv, ready['root'], capture_seconds=600, env=env)
-            job.start()
+            observed_start(result, job)
             observer = support.StageReceipts(job, ready, private)  # Unchanged ordinary-launch path.
             started = time.monotonic()
+            observation = {'calls': 0, 'failure': None, 'lastReturned': {}}
+            result['raw']['captureObserver'] = observation
             def observe():
-                observer.observe()
-                observed_thresholds(ready, job, private)
-            outcome = job.wait(max(0.001, 600 - (time.monotonic() - started)), observe)
+                observation['calls'] += 1
+                for phase, call in (('StageReceipts.observe', observer.observe), ('observed_thresholds', lambda: observed_thresholds(ready, job, private))):
+                    try:
+                        value = call()
+                        observation['lastReturned'][phase] = raw_value(value)
+                    except BaseException as error:
+                        # StationJob.wait normalizes Exception; retain the original first.
+                        observation['failure'] = {'phase': phase, **failure(error)}
+                        if result['primaryFailure'] is None:
+                            result['primaryFailure'] = observation['failure'].copy()
+                            result['primaryFailure'].pop('phase')
+                        observation['jobState'] = raw_value(job.state)
+                        observation['observerState'] = raw_value({k: v for k, v in vars(observer).items() if k not in ('job', 'ready')})
+                        raise
+            try:
+                outcome = job.wait(max(0.001, 600 - (time.monotonic() - started)), observe)
+            except BaseException as error:
+                if observation['failure'] is not None and failure(error) != result['primaryFailure']:
+                    result['secondaryFailures'].append({'phase': 'capture-wait', **failure(error)})
+                raise
             result['raw'].update(outcome=outcome, exits=dict(job.state['exits']))
             result['raw']['jobStateAfterCapture'] = raw_value(job.state)
             receipt('returned-capture-outcome.json', result['raw'])
@@ -721,7 +605,8 @@ def run_unit(ready, spec, record):
             observer.require_browser()
     except BaseException as error:
         interrupted = not isinstance(error, Exception) or isinstance(error, CacheDeadlineExpired)
-        result['primaryFailure'] = failure(error)
+        if result['primaryFailure'] is None:
+            result['primaryFailure'] = failure(error)
         allocation = getattr(error, 'private_tmp_allocation', None)
         if allocation is not None:
             result['raw']['privateTmpAllocation'] = raw_value(allocation)
@@ -779,6 +664,7 @@ def run_unit(ready, spec, record):
             raise Refused('Capture/cleanup failed; raw outcome retained')
         result['raw']['outputManifest'] = read_json(evidence / 'entry-result.json')['writes']
         command = [ready['decoderPython'], '-I', '-B', str(HERE / 'inspect.py'), str(READY), record['unit']]
+        result['raw']['inspectionCommand'] = {'argv': command, 'result': None}
         decoded = subprocess.run(command, capture_output=True, text=True, timeout=45,
                                  env={'PATH': ready['path'], 'PYTHONOPTIMIZE': '0', 'PYTHONDONTWRITEBYTECODE': '1'})
         result['raw']['inspectionCommand'] = {'argv': command, 'result': raw_value(decoded)}
