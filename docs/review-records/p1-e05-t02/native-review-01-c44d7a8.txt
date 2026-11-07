@@ -1,0 +1,79 @@
+VERDICT: REVISE — SOURCE/CPU prerequisite implementation only.
+
+TASK: P1.E05.T02 native189 prerequisites.
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-11167406
+Branch: codex/task/P1-E05-T02-thalune-reel-candidate
+HEAD: c44d7a8597644e942b38345f37e269c13af063e6
+Tree: f8d102c85e00e3f2b00ae33bdf4dc2b927aad00a
+Base: c61699dcde61ff9dee699be7e0b7d42ae06ff326
+Base tree: 1b67a7289191a8dde2f28e68808e704dc51ee0b4
+A = packages/tools/blender/characters/animations/thalune-run-candidate
+Fresh evidence: /tmp/t02-native189-independent-VXo4dc
+
+Two blocking P2 findings are independently reproduced. Both fail closed; neither is a false successful capture or an authorization bypass.
+
+R4-1 [P2] Preserve the resource failure before the post-wait receipt write.
+Location: A/caller.py:273-276, with resource exception capture at 263-267 and fallback at 279-280.
+The retained StationJob.wait normalizes an observer exception into observer_failed, or a DeadlineExpired into timed_out. The new callback stores the original exception in resourceFailures. After wait returns, caller persists exits before promoting resourceFailures[0] to primaryFailure. If that persist raises, the outer catch selects the later OSError as primary. The original RSS cause remains in resourceFailures and rssObservations, but is no longer the primary error returned to the dispatcher. This is a new crossing of the established primary-error precedence contract, rather than recurrence of the old final-write-only defect.
+Reproduction: adverse-v2.py invokes actual native.run_sequence -> inherited StationAdapter.run -> exact retained StationJob.wait/deadline with inert job allocation, OS facts and codec boundaries. A first RSS sample succeeds; the next either raises TimeoutExpired with partial non-UTF8 stdout/stderr and an unknown field, returns a missing PID, exceeds 8 GiB, or fires a real SIGALRM DeadlineExpired. The following receipt write raises POST_WAIT_RECEIPT_FAILURE. In all four cases the final primary is OSError/POST_WAIT_RECEIPT_FAILURE; the corresponding control without the write error retains the original primary. Every case remains HOLD, starts one job, drains normally, and dispatches no validator. Timers are disarmed afterward.
+Evidence: adverse-results-v2.json entries timeout-receipt-fail, missing-receipt-fail, excess-receipt-fail, deadline-receipt-fail, with full result, receipt, raw details and action order. The script exits 0 because it asserts the defect, not because those four product outcomes pass.
+Correction direction: establish the first resource failure as primary in the callback, or immediately after wait before any fallible persistence/worker-result read. Keep later write/read failures separate. Exercise the same crossing for actual DeadlineExpired and TimeoutExpired.
+
+R4-2 [P2] Enforce cache inventory limits before unbounded enumeration/hashing, and bind file reads to validated file descriptors.
+Location: A/resource_admission.py:21-28 and :136-138. The read uses A/inspector.py:25-29.
+CacheLease.check calls tree() in full before enforcing 384 MiB/4096 entries. tree() materializes sorted rglob output and hashes each file to EOF; the limit is consequently an acceptance check after work, not the promised bounded cache input. A concurrently replaced regular file also reaches the blocking pathname-open hash after its lstat/is_file checks.
+Reproduction 1: a real sparse cache file of 402,653,185 bytes (384 MiB + 1) was processed by the actual CacheLease.check/tree/sha path. Instrumentation wrapped actual stream.read calls without altering their data. Exactly 402,653,185 bytes were read before Vite snapshot exceeds archive reserve. No owners, cache-copy, native or codec process was needed. The file is retained in the fresh scratch directory.
+Reproduction 2: after actual lstat/is_file and immediately before sha opens that same scratch pathname, the probe replaces the file with a real FIFO. The real open blocks until an actual 0.1-second retained helper deadline interrupts it. The code does not reject the replacement before opening. This does not escape the enclosing phase deadline, and is not evidence of an OS quota or native ownership problem; it does demonstrate the unbounded/racy inventory boundary.
+Evidence: adverse-results-v2.json entries cache-over-limit-reads-to-eof and cache-stat-open-FIFO; adverse-v2.py. Exit 0 means both adverse behaviors were reproduced.
+Correction direction: enumerate incrementally with an entry ceiling; stat/type/ownership and aggregate byte admission before content reads; use no-follow/nonblocking opens with descriptor identity/type/size reconciliation and a bounded read budget. Reconcile the inventory before copying. Preserve original caches, spent leases and observed failures.
+
+ADVISORY (not a third blocker): resource_admission.py:72 compares post-read member sets but does not check duplicate multiplicity. An injected membersAfter=[sameIdentity,sameIdentity] with kernel live=1 is accepted. The real helper ordinarily enumerates distinct kernel PIDs; no real-kernel duplicate was produced. A len/uniqueness check would make post-read reconciliation as strict as the pre-read check. Recorded as rss-duplicate-after in adverse-results-v2.json, not represented as a native failure.
+
+PRIOR FINDINGS / CLAIMS
+1. Caller final-receipt persistence masked an original job failure: original narrow defect remains FIXED. The final persist catches its own failure, live handles retain receipts, the dispatcher preserves a previously assigned primary. Fresh evidence20, terminal30, prior29 and native69 cover those old cases. R4-1 is the new resource-observer/post-wait-write crossing where a primary has not yet been assigned.
+2. Failed release assertions discarded kernel/registration/partial observations: FIXED, no demonstrated regression. Actual audit registers observations before fallible reads, retains stdout/stderr/unknown fields and refuses release. Fresh old and timed suites exercise this. Later clean audit does not erase a prior cleanup failure or promote acceptance.
+3. Combined final/returned/terminal proof failures escaped without packet fallback: FIXED, no demonstrated regression. Proof and packet are independent attempts, complete in-memory results survive all file/stream sinks failing, packet overflow remains explicitly partial, and no durable-complete claim is inferred. prior29 and terminal30 were rerun.
+4. Library fresh-receipt overwrite fix 83b145e integrated in c61699d: PRESERVED. No change outside A; protected library/assets/body/playback bytes and 252 unchanged prior combined-manifest rows match. The previous 28 tests / 126 clip-person pairs / 42 actions are inherited exact-base evidence, not rerun or newly claimed.
+5. Worker-reported actual base rgb-primary failure masking TimeoutExpired: confirmed RED on c61699d and GREEN here via the actual encode/error boundary with inert Popen, primary object identity, partial bytes and unknown details. Current retain_failure attaches evidence, records persistence errors and rethrows the original exception.
+6. Worker-reported parse-grant/re-hash-path split: confirmed RED on actual c61699d caller and GREEN on current consume using real file replacement. Current grant digest and semantic value come from one capped snapshot. This is independent replay of the supplied reproducible RED/GREEN harness, not a new native grant.
+7. Fauna lessons: actual SIGALRM propagation/cleanup stopping and partial exception details remain covered. Current bounded admission_json snapshot refuses oversized, growth, symlink and FIFO inputs, preserves authenticated failed receipt semantics across a replacement, and refuses boolean false as worker exit zero. Native success is deliberately provisional; actual future runner OS exit must still be observed by its parent. This review does not claim a synthetic returned object proves caller OS exit.
+
+FRESH EXECUTION AND COUNT AUDIT
+All 302 supplied controls passed once run under their exact bound environment:
+- 18 Node + 108 Python + 20 evidence + 30 terminal = 176 source controls.
+- Four actual disabled CLI invocations exit 1 as expected = existing total 180.
+- 12 timed + 3 publication = 15.
+- Prior-independent matrix replay = 29.
+- New native189 controls = 69.
+- Bounded metadata controls = 7.
+- Actual historical/current grant-race RED/GREEN controls = 2.
+180 + 15 + 29 + 69 + 7 + 2 = 302. Preflight is extra, not counted. The expected historical RED reproductions and disabled refusals are counted as controls, never described as native success.
+
+The actual supplied source was inspected before execution. Node/Python entry/control suites block process launches. Native189 controls use actual task dispatch/adapter/worker/parser/deadline bodies with inert OS/native ports, real temp-Git operations and real SIGALRM. No source or retained report was rewritten. The scratch run-controls.py differs only to replay the retained prior29.py against this fresh scratch source path. The admission RED/GREEN script differs only in report destination. All command/log paths and resulting counts are retained.
+
+Initial new-suite run exited 1 at the exact PATH assertion (39 earlier controls passed; the 40th case refused). Its native69.json, stderr and command ledger remain. The corrected invocation sets PATH from the pinned readiness, changes no implementation, and passes all 69. This environmental refusal is not a source defect and is not included twice in totals.
+
+Independent additional work:
+- adverse-v2.py: 17 cases, exit 0. Ten pass/refusal controls; four primary-order defect reproductions; two cache-boundary reproductions; one duplicate-members advisory reproduction. Not labeled 17 product passes.
+- full-producer-v2.py: exit 0. Actual DiagnosticStream and actual rgb-primary.encode consumed all 189 full-size diagnostic PNGs through an inert encoder stdin. An independent periodic-channel/block construction compared every RGB byte: 1,175,731,200 bytes total. It independently computed all 189 RGBA hashes, checked frame-map IDs/order/PTS/hashes, and observed no retained PNG files. Actual positive validator and surplus bodies consumed inert probe/RGB/RGBA/190-frame stdout. Positive189 accepted; 190 refused. All emitted encode/probe/decode argv have their required single-thread settings. No ffmpeg/ffprobe process ran, so codec correctness/inheritance remains unqualified.
+- Initial independent scripts used /tmp spellings rather than resolved /private/tmp paths, correctly failed existing alias guards, and were retained. v2 changes only scratch path resolution/new destinations. These are harness corrections, not source fixes.
+- Artifact verification: 19 root Python AST parses; 2,349 source/data bindings; 12 software bindings; 37 candidate index files; 263 source audit files; 336 combined manifest files; 157 retained inventory inputs all match current bytes and sizes where supplied. All changed JSON artifacts were read/parsed; complete base-to-head diff is retained as full.diff. Both flags are false. Native plan/proposal hashes match. Combined reserve remains exactly 22,066,626,560, with four copy slots and eleven 1 GiB archive slots. Actual later capture jobs/stages/limits/storage are byte-equivalent as values to the base.
+- Source-only preflight exits 0, reporting 378 motion frames, eight stills, five planned jobs, zero runtime jobs. git diff --check base HEAD exits 0. No product JS/TS delta exists; prior exact-base type/lint evidence is reused. No broad library/Blender validation was repeated.
+
+COMMANDS / EXITS
+Bound Python: /Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
+Bound Node: /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node
+Cwd for runs: pinned checkout above. Python uses -B; no bytecode writes. Sequential suites; at most two CPU test processes at once.
+- Python -B <evidence>/run-controls.py -> 0. Full per-command argv/cwd/exits in control-commands.json; driver.log and individual stdout/stderr retained.
+- Python -B <evidence>/run-new.py -> 1 (PATH mismatch), retained new-commands.json/new-driver.log/native69.*.
+- Python -B <evidence>/run-new-bound.py -> 0. new-bound-commands.json: native69-bound, metadata7, admission2 all 0.
+- Python -B <evidence>/adverse.py -> 1 (review-harness path alias); adverse-results.json retained.
+- Python -B <evidence>/adverse-v2.py -> 0; adverse-v2.log and adverse-results-v2.json.
+- Python -B <evidence>/full-producer.py -> 1 (review-harness path alias at frame-map publication after 189 comparisons).
+- Python -B <evidence>/full-producer-v2.py -> 0; full-producer-v2.log and full-producer.json.
+- Python -B <evidence>/verify-artifacts.py -> 0; artifact-verification.json/log.
+
+PRESERVATION / LIMITATIONS
+before.json and after.json record clean status and identical HEAD/tree/base tree, plus hashes and sizes for every tracked working file. No source, tracked retained evidence, assets, helpers, branch, commit or index mutation was made. All new scripts/evidence are in fresh /tmp namespaces. Runtime and nativeFixtureAuthorization remain false; the real prospective run/grant/consumption/cancel/cache-lease paths remain absent. The only synthetic grants were CPU fixtures in fresh temporary repositories; no actual capture/native grant was created or consumed. No native media/GPU/browser/Vite/Blender/codec/service/DB/hydration, push, PR, main, merge or visual grading occurred. No nested subagents were used.
+
+This is an implementation REVISE, not a request for another human approval. Parent authorization policy is unchanged. Resolve R4-1/R4-2 and independently review the correction before this source prerequisite can pass. Native qualification, real resource behavior, cache ownership on a running checkout, actual capture/visual quality, whole T02 completion and gameplay integration remain outside this review.
