@@ -1,9 +1,9 @@
 {
-  "status": "BLOCKED_STOCK_EXPORT_MATERIAL_VALIDATION",
-  "base_commit": "11aadb57dbd34146dd7d1afda3e8aa8958d62cbf",
+  "status": "SOURCE_AND_EXPORT_VALIDATED_INSTALLED_VISUAL_QUALIFICATION_PENDING",
+  "base_commit": "cd7e764a0fa8f8ced39ffe98cc42f65a5932c43a",
   "source": {
     "path": "assets/blend/hulls/lark.blend",
-    "sha256": "99eb526b4c97aaf725f97079ffea9ba545e5000b9ca14c848e11ab7b2058b5ab"
+    "sha256": "aabde4a8048f9c791a27b192080f182b97f5407a85676de592e5b9092e58411a"
   },
   "rejected_export": {
     "path": "packages/tools/blender/hulls/lark-round5/export-evidence/final-candidate-revise-export/hulls__lark.glb.rejected.glb",
@@ -11,9 +11,10 @@
     "bytes": 19792116
   },
   "canonical_export": {
-    "installed": false,
-    "sha256": "06cf7ca1b620d8f7b6fbf65969deba511c7c13cb5d00eb7712be7c19a72729a6",
-    "status": "STALE_UNCHANGED"
+    "installed": true,
+    "path": "packages/client/public/models/hulls/lark.glb",
+    "sha256": "6f3a0774a8539435779985afdaca4322a2bea9a798fa51ad4a88f2ba27c88b55",
+    "status": "VALIDATED"
   },
   "source_validation": {
     "checks": {
@@ -31,15 +32,15 @@
       "naming": "PASS",
       "triangles": "PASS",
       "lods": "PASS",
-      "materials": "FAIL",
+      "materials": "PASS",
       "scale": "PASS"
     },
-    "fail": 2,
+    "fail": 0,
     "warn": 1
   },
   "validation_paths": [
     "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json",
-    "packages/tools/blender/hulls/lark-round5/export-evidence/final-candidate-revise-export/hulls__lark.glb.json"
+    "packages/tools/blender/hulls/lark-round5/export-evidence/seam-final2-revise-export/hulls__lark.glb.json"
   ],
   "source_density": {
     "roles": 23,
@@ -3760,18 +3761,19 @@
     ]
   },
   "livery_mapping_primitives": 15,
-  "source_changes_this_unit": [],
-  "blocker": "Stock export rejects HollowSeam: missing emissive texture and uniform base-color under its UVs. Requires genuine source material/UV authoring and renewed visual inspection; no validator bypass or rejected canonical install.",
+  "source_changes_this_unit": [
+    "Saved HollowSeam emissive atlas connection at strength 0.5 and mapped seam/glyph UVs to existing teal band; packed atlas pixels unchanged."
+  ],
   "pending": [
-    "Whole-shell 15\u201330% UNQUALIFIED; dorsal-only 19.64%",
-    "Final support-face glyph correction not rerendered",
-    "Final wear ORM correction not rerendered",
-    "Production body/collider, dynamics, flicker, performance and other-hull comparison are external parent gates"
+    "Whole-shell 15\u201330% UNQUALIFIED; dorsal subset only 19.64%",
+    "Final wear appearance unqualified",
+    "Glyph closeup inspected; full-husk glyph readability unqualified",
+    "Parent runtime, performance, production body/colliders, flicker and blind round 5 remain"
   ],
   "preview_ledger": {
-    "conservative_used": 44,
+    "conservative_used": 45,
     "limit": 48,
-    "new": 0,
+    "new": 1,
     "bytes": 13612025,
     "files": [
       {
@@ -3953,9 +3955,16 @@
         "path": "packages/tools/blender/hulls/lark-round5/previews/wear2-shell.png",
         "bytes": 446498,
         "sha256": "e6cb5a0e0b7c5968751d680813911ebcc02982c23c6867a7f4b4db0923894f75"
+      },
+      {
+        "path": "packages/tools/blender/hulls/lark-round5/previews/seam-final-closeup.png",
+        "bytes": 326155,
+        "sha256": "43a5a48964afed886fd8a1dfbdd5836071aa2f199a4455b26dd0ea75f06e3429"
       }
     ],
-    "inspection_this_unit": [],
+    "inspection_this_unit": [
+      "Exact final CPU closeup: pale restrained teal broken glyph strokes visible on dark support, partly occluded by foreground rib. No overall visual PASS or final wear qualification."
+    ],
     "prior_inspection_receipts": [
       "glyph-receipt.json",
       "wear2-receipt.json",
@@ -3965,23 +3974,51 @@
   },
   "resource": [
     {
-      "exit": 1,
-      "peak_rss": 4669374464,
-      "seconds": 221.78579524997622
+      "exit": 0,
+      "peak_rss": 4091379712,
+      "seconds": 5.134364374971483
     },
     {
       "exit": 0,
-      "peak_rss": 2199306240,
-      "seconds": 7.1888164159609005
+      "peak_rss": 5025923072,
+      "seconds": 222.88148216699483
+    },
+    {
+      "exit": 0,
+      "peak_rss": 2219409408,
+      "seconds": 7.185429625038523
+    },
+    {
+      "exit": 0,
+      "peak_rss": 1053671424,
+      "seconds": 5.133506375015713
     }
   ],
   "cleanup": {
-    "deleted": [],
-    "reason": "Retain rejected artifact and scratch as current failure evidence; inherited intermediates preserved"
+    "deleted": [
+      "packages/tools/blender/hulls/lark-round5/seam-scratch"
+    ],
+    "bytes": 147285977,
+    "inherited_work_preserved": true,
+    "free_bytes_after": 127361462272
   },
   "next_capture_inventory": [
-    "After material integration repair: one permitted exact final glyph/husk view, CPU denoise GPU off",
-    "Parent: final livery lineup, production-body boarding/colliders, dynamics, flicker, performance, other hull comparison"
+    "3 conservative preview slots remain; no further capture authorized in this unit",
+    "Parent runtime/performance/production body/flicker/blind round 5"
   ],
-  "manifest_identity": "Receipt excludes its own hash and final containing commit/tree to avoid circular identity; final commit/tree reported to parent."
+  "manifest_identity": "Receipt excludes its own hash and final containing commit/tree to avoid circular identity; final commit/tree reported to parent.",
+  "extensions": [
+    "EXT_meshopt_compression",
+    "KHR_materials_clearcoat",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_variants",
+    "KHR_mesh_quantization",
+    "KHR_texture_basisu"
+  ],
+  "evidence_hashes": {
+    "packages/tools/blender/hulls/lark-round5/seam-authoring.json": "aab32d166a7e9fd6ea7a48f289a54a08d9ce37e3ea86ab0ea2d134337b17365e",
+    "packages/tools/blender/hulls/lark-round5/seam-decoded.json": "17f642934706cbedfd0bf7abfdf3814cd14a39f8fad6cec5bdbd2d85f26db949",
+    "packages/tools/blender/hulls/lark-round5/candidate-source-validation.json": "b6248a5e936d60635118a98eddf86f1e4decfd466bee58af59b249ce25ebacf7",
+    "packages/tools/blender/hulls/lark-round5/export-evidence/seam-final2-revise-export/hulls__lark.glb.json": "ad9bd6e35e6bc9ef1730c83dd6f5e4630361a3134fe7197d501ff08b2f38c0a4"
+  }
 }
