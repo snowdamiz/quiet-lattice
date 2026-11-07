@@ -1,0 +1,51 @@
+SEALED INDEPENDENT SOURCE REVIEW — REVISE
+
+Instrumentation: 506bd292e73da91c935c5903e27be1b7721354a8
+Tree: 17212ae3a417bf4ad625acb2f3dd5342e10a5c16
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-bc5d9fcc
+Actual caller: 54c969dff016ff576fe89f751d58b86b1057ab95
+Tree: b6feaada99dd7c5ea35bed13add0b8c356fd3e16
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc
+All inspected source bytes match their pinned Git blobs. Both worktrees were clean before and after review. See SEAL.json for file hashes and review-artifact hashes.
+
+Scope verdicts
+- Logger durability/failure contract: REVISE (R2).
+- Per-channel decomposition against the pinned material/channel functions: PASS within the source/fake-port scope below.
+- Exact proposed integration snippet: REVISE (R1 and R3).
+- Adoption: NOT INSTALLED. No current export behavior or export PASS is claimed. Any adoption remains a separately reviewed edit.
+
+R1 — P1 — Documented insertion fails before export starts.
+INTEGRATION.md:9 specifies insertion immediately after export_saved.py:36. Its PhaseLog(out / "bake-phases.jsonl") at INTEGRATION.md:38 evaluates out immediately, but the pinned caller only defines out at export_saved.py:43. Executing the exact fenced code with the globals available at line 36 raises NameError: name 'out' is not defined. sys, ROOT, Path, json, os and bake are available; out is not. Move installation after out is bound (while retaining its position outside bounded_material), or initialize the attempt path explicitly before use. Review the concrete adopted caller, not only this isolated package.
+Reproduction: Review.test_exact_snippet_at_documented_insertion_must_execute in adversarial_review.py; see the retained traceback.
+
+R2 — P2 — A failed terminal append can still be loaded as success.
+phase_log.py:128-144 writes the entire newline-terminated JSON record before fsync and close. If terminal fsync fails, or close fails after writing, invoke/finish raises but the complete success line remains visible. load at lines 164-188 accepts it and _closed at lines 195-204 reports status=success. This contradicts INTEGRATION.md:55's unconditional guarantee that a terminal-write failure leaves unfinished and does not write success.
+Both injected terminal EIO cases reproduced: caller received OSError, reader returned success. This does NOT demonstrate a channel was marked successful without executing; the fake channel did return. It demonstrates that failed/unacknowledged log publication is indistinguishable from accepted completion, violating the requested failure contract. Partial writes without the final newline were conservative in the tested case.
+Resolve the completion/publication contract and conservative reader behavior; cover write, fsync and close fault points. If the intended contract is only channel execution completion regardless of logging acknowledgment, explicitly revise that contract for parent review rather than claim failed logging can never expose success. The existing chmod tests only fail at open and do not cover this case.
+Reproduction: Review.test_terminal_fsync_failure_must_not_report_success and Review.test_terminal_close_failure_must_not_report_success.
+
+R3 — P2 — started.json availability is not guaranteed before the child.
+INTEGRATION.md:29 says run.py writes started.json before export starts. The pinned run.py starts subprocess.Popen at line 175 and writes started.json at line 178. resource_snapshot immediately reads it at INTEGRATION.md:31 without a readiness protocol. An exact-AST execution of the existing launch block with fake Popen lets the child call resource_snapshot before Popen returns: it sees FileNotFoundError. No real export timing failure is asserted; this is a possible scheduling order, exposed deterministically through fake ports. The normal slow Blender initialization does not create an ordering guarantee.
+Correct the documentation and specify a bounded availability/precondition policy for adoption. Keep supervisor limits unchanged and do not invent fallback values. Publication after launch is existing caller behavior; this proposed snippet introduces the dependency.
+Reproduction: Review.test_exact_run_launch_block_child_can_observe_missing_started_json; Review.test_started_receipt_is_written_after_launch_in_actual_run. These pass by confirming the hazardous ordering, rather than treating it as healthy integration.
+
+Verified source/fake-port behavior
+The actual _bake_channels at bake.py:157-187 has only material lookup and an image dict outside its loop. Splitting its todo into one-item lists preserves this pinned loop's bake order and merged dict order. Actual bake_material returns the original todo list, not the image dict returned by the supplied fake material. The additional harness runs the actual material/channel/isolate/select/target/rewire bodies and the exact bounded_material definition at export_saved.py:32-36. Fake Blender/material/system ports and a fake _finish pixel-processing boundary prevent native work. No NumPy pixel math, Blender engine, saved mesh evaluation or image correctness was exercised.
+Eight success scenarios cover all six relevant channels, linked/unlinked AO, normal-only and automatic AO addition. Compared stock versus wrapped port traces, node/image state, Surface restoration, other-material guard restoration, isolation restoration, returned todo and stdout agree. Forty failure scenarios cover RuntimeError, KeyboardInterrupt, SystemExit, a custom BaseException and an exception whose repr raises, at operation and finish boundaries, with and without a secondary terminal logging SystemExit. Original exception identity and observed cleanup agree; later channels do not execute and frame context resets.
+The actual admission hook is retained and runs before stock material setup and channel operations; denial prevents channel work and resource snapshots. Counts run before that hook, as documented. No new admission policy, changed resolution/samples, output skipping, retry, cache or supervisor-bound change was introduced by this package.
+A forked bounded fake channel process killed itself with SIGKILL during roughness. Exit was exactly -SIGKILL. It left baseColor=success followed by roughness=unfinished, with Mule_Accent.001 / mule_damaged identity and no truncated line. This supports attribution after a synced start, not prediction of the historical timeout channel.
+
+Dependency/resource audit
+Once out is defined and the instrumentation files are available in the target checkout, the snippet has the required caller imports. The target path is ROOT/packages/tools/blender/hulls/mule-phase-instrumentation; this package must be transferred to the target before adoption (it is absent at the caller pin). checkpoint has already imported the local run module. Actual export.py:162/181 constructs variant-prefixed labels and passes a list of mesh users; longest-prefix mapping is correct for mule, mule_damaged and mule_husked.
+run.py:153-155 writes limits.wall_seconds and limits.rss_mib, matching the snippet's keys and KiB conversion. Retained export-c/started.json has wall_seconds=5400 and rss_mib=8192. Fake nondefault limits (321 seconds / 123 MiB) are read exactly; process-group filtering excludes other groups and sums RSS correctly. Actual resources() parsed fake macOS vm_stat and ps output correctly. No live memory measurement or performance result is claimed.
+Resources on both terminal and start records are the pre-channel snapshot; the docs disclose that, so terminal resources are not an end-of-channel sample. Mesh counts count triangles in each supplied object's original mesh using calc_loop_triangles; no evaluated-modifier geometry claim is supported. Time values are monotonic write timestamps, separate from checkpoint wall-clock timestamps. These measurements and fsyncs add overhead under the existing wall bound; no speedup is claimed.
+
+Validation / reproduction
+- Supplied tests: 17/17 PASS, captured in supplied-tests.txt; subprocess bounded to 30 seconds.
+- Independent review suite: 13 test methods, 10 pass, 2 failures and 1 error, captured in adversarial-tests.txt. The failures are the two R2 fault points; the error is R1. Success and exception methods contain the 8 and 40 subcases described above. Overall suite bounded to 30 seconds; SIGKILL fake child bounded to 5 seconds.
+- Run: python3 -B <artifact-directory>/adversarial_review.py
+- Run supplied: PYTHONDONTWRITEBYTECODE=1 python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-bc5d9fcc/packages/tools/blender/hulls/mule-phase-instrumentation/test_phase_log.py -v
+The review harness loads pinned source from the paths above and only writes disposable test data under its own artifact directory. Verify SEAL.json before using it after either checkout changes.
+
+Remaining gates and exclusions
+R1/R2/R3 need resolution and an exact adopted-caller review. No Blender/bake/export/native/browser/product runtime, shared or author edits, PR, push, merge or Trunk actions occurred. Only local Python fake tests and their subprocesses ran. The original failure report was read as context: it locates the old failure at material admission and cannot identify a channel. The real export remains uninstrumented and its prior failed acceptance is not closed by these tests.

@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-11-07T19:54:56.957932+00:00",
+  "verdict": "REVISE",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "pins": {
+    "instrumentation": {
+      "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-bc5d9fcc",
+      "head": "506bd292e73da91c935c5903e27be1b7721354a8",
+      "tree": "17212ae3a417bf4ad625acb2f3dd5342e10a5c16",
+      "status_porcelain": "",
+      "files_sha256": {
+        "packages/tools/blender/hulls/mule-phase-instrumentation/phase_log.py": "c90f97ef33a5030c5f9c1423de149374135fd2d8c41478b7181c44a89f1f7464",
+        "packages/tools/blender/hulls/mule-phase-instrumentation/test_phase_log.py": "c23ae6872a2e45eb11d0b3dc7a66fa357bd4963360b394b250cdd75c22affa05",
+        "packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md": "b1ca24d7c8265f58a46c2e7fe347ea339af0dce92e348e8da6f23035d5fba3d8"
+      }
+    },
+    "caller": {
+      "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-6a5efbfc",
+      "head": "54c969dff016ff576fe89f751d58b86b1057ab95",
+      "tree": "b6feaada99dd7c5ea35bed13add0b8c356fd3e16",
+      "status_porcelain": "",
+      "files_sha256": {
+        "packages/tools/blender/artlib/bake.py": "be51b0ad697d5e74c5b8431a3f74f8d8b944cf607e04cf4d78529591f9939ebb",
+        "packages/tools/blender/artlib/export.py": "a776e5cf1882da493ae7ece35dbb2bd1cd917e24f47d5805036f2cf5d292335c",
+        "packages/tools/blender/hulls/mule-round4/export_saved.py": "4de95616c22e0312449ea8a7b18cbc34fc76bf60af17e460e70930a081152565",
+        "packages/tools/blender/hulls/mule-round4/run.py": "309884c3fae9f280705312fc84f65832043cc39ef8d7bb821b97dd8423ed27c4",
+        "packages/tools/blender/hulls/mule-round4/checkpoint.py": "783005fdfd81b6c9d2c7813c5b129c8977a0e01b711f0ae43dd7efee3263cb23"
+      }
+    }
+  },
+  "review_artifacts_sha256": {
+    "REPORT.txt": "a41eee4a97f84d98b6a3623b97c88c783f91c18754d7b005f579b0e0d2057182",
+    "adversarial_review.py": "310d6583d4ac4e194c583be01a793c5cd52494277918dafa12399ede2c111695",
+    "supplied-tests.txt": "52e607b67b5c9c6e95cbcd7711704592f9d3c53012fc249b5288af6c0589a099",
+    "adversarial-tests.txt": "86930c6a8f0930b9e8c55ecc7ed1361acf3af3c5010004498ab3ac16aa0a902b"
+  }
+}

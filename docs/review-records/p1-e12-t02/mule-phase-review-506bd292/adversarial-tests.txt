@@ -1,0 +1,58 @@
+OBSERVED child sees missing started.json in exact launch block with fake Popen
+OBSERVED started.json publication order={"launch": 175, "receipt": 178}
+OBSERVED terminal close failed, reader status=success
+OBSERVED terminal fsync failed, reader status=success
+test_actual_bounded_material_admission_still_prevents_channel (__main__.Review.test_actual_bounded_material_admission_still_prevents_channel) ... ok
+test_actual_failure_paths_preserve_exception_and_cleanup (__main__.Review.test_actual_failure_paths_preserve_exception_and_cleanup) ... ok
+test_actual_material_channels_state_order_return_output_all_paths (__main__.Review.test_actual_material_channels_state_order_return_output_all_paths) ... ok
+test_actual_run_resources_with_fake_system_ports (__main__.Review.test_actual_run_resources_with_fake_system_ports) ... ok
+test_exact_run_launch_block_child_can_observe_missing_started_json (__main__.Review.test_exact_run_launch_block_child_can_observe_missing_started_json) ... ok
+test_exact_snippet_at_documented_insertion_must_execute (__main__.Review.test_exact_snippet_at_documented_insertion_must_execute) ... ERROR
+test_partial_terminal_write_stays_unfinished (__main__.Review.test_partial_terminal_write_stays_unfinished) ... ok
+test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished (__main__.Review.test_sigkill_in_actual_channel_body_leaves_exact_channel_unfinished) ... ok
+test_snippet_with_out_defined_preserves_admission_and_resource_values (__main__.Review.test_snippet_with_out_defined_preserves_admission_and_resource_values) ... ok
+test_start_fsync_failure_prevents_bake (__main__.Review.test_start_fsync_failure_prevents_bake) ... ok
+test_started_receipt_is_written_after_launch_in_actual_run (__main__.Review.test_started_receipt_is_written_after_launch_in_actual_run) ... ok
+test_terminal_close_failure_must_not_report_success (__main__.Review.test_terminal_close_failure_must_not_report_success) ... FAIL
+test_terminal_fsync_failure_must_not_report_success (__main__.Review.test_terminal_fsync_failure_must_not_report_success) ... FAIL
+
+======================================================================
+ERROR: test_exact_snippet_at_documented_insertion_must_execute (__main__.Review.test_exact_snippet_at_documented_insertion_must_execute)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/mule-phase-review-506bd29-20261107-0_90fz_z/adversarial_review.py", line 211, in test_exact_snippet_at_documented_insertion_must_execute
+    exec(compile('\n'*11+SNIPPET,str(INSTR/'INTEGRATION.md'),'exec'),env)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-bc5d9fcc/packages/tools/blender/hulls/mule-phase-instrumentation/INTEGRATION.md", line 38, in <module>
+    PhaseLog(out / "bake-phases.jsonl"),
+             ^^^
+NameError: name 'out' is not defined. Did you mean: 'oct'?
+
+======================================================================
+FAIL: test_terminal_close_failure_must_not_report_success (__main__.Review.test_terminal_close_failure_must_not_report_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/mule-phase-review-506bd29-20261107-0_90fz_z/adversarial_review.py", line 292, in test_terminal_close_failure_must_not_report_success
+    self.assertEqual(status,'unfinished')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'success' != 'unfinished'
+- success
++ unfinished
+
+
+======================================================================
+FAIL: test_terminal_fsync_failure_must_not_report_success (__main__.Review.test_terminal_fsync_failure_must_not_report_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/mule-phase-review-506bd29-20261107-0_90fz_z/adversarial_review.py", line 207, in test_terminal_fsync_failure_must_not_report_success
+    self.assertEqual(status,'unfinished')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'success' != 'unfinished'
+- success
++ unfinished
+
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.269s
+
+FAILED (failures=2, errors=1)
