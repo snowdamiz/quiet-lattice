@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -19,10 +20,21 @@ def consumer(attempt, manifest, exports):
         T05_EXPORT_ROOT=str(exports),
         T05_RUN_ID=attempt.id,
     )
+    # Invoke the installed lockfile pin directly. pnpm exec can verify/install
+    # dependencies through a scratch workspace's shared node_modules aliases.
+    node = shutil.which("node")
+    cli = ROOT / "node_modules/vitest/vitest.mjs"
+    package = cli.with_name("package.json")
+    version = subprocess.run(
+        [node, "--version"], capture_output=True, text=True, check=True, timeout=10
+    ).stdout.strip()
+    if version != "v22.23.3" or json.loads(package.read_text())["version"] != "5.0.5":
+        raise RuntimeError(
+            "T05 consumer requires Node 22.23.3 and installed Vitest 5.0.5"
+        )
     command = [
-        "pnpm",
-        "exec",
-        "vitest",
+        node,
+        str(cli),
         "run",
         "packages/client/test/floraAssets.test.js",
         "--maxWorkers=1",
@@ -45,6 +57,9 @@ def consumer(attempt, manifest, exports):
     row = {
         "run_id": attempt.id,
         "command": command,
+        "node_version": version,
+        "vitest_version": "5.0.5",
+        "vitest_entry_sha256": sha(cli),
         "exit": result.returncode,
         "manifest_sha256": sha(manifest),
         "exports": {stem: sha(exports / (stem + ".glb")) for stem in STEMS},

@@ -9,9 +9,11 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+from file_protocol import absolute, error_fact, read_bound, verify_bound
+
 ROOT = Path(__file__).resolve().parents[4]
 STEMS = ("non_tree_foliage", "non_tree_resources", "non_tree_stone")
-DEFAULT_EVIDENCE = ROOT / "assets/renders/flora/t05/revision7"
+DEFAULT_EVIDENCE = ROOT / "assets/renders/flora/t05/revision8"
 
 
 def sha(path):
@@ -94,22 +96,21 @@ class Attempt:
             raise
 
     def snapshot(self, path, category):
-        path = Path(path).resolve()
+        path = absolute(path)
         target = self.path / "inputs" / category / "flora" / path.name
         row = {
             "path": str(path),
+            "resolved_path": None,
             "snapshot": str(target.relative_to(self.path)),
             "sha256": None,
         }
         self.inputs.append(row)
-        data = path.read_bytes()
-        row["sha256"] = hashlib.sha256(data).hexdigest()
-        row["bytes"] = len(data)
+        observed, data = read_bound(path)
+        row.update(observed)
         target.parent.mkdir(parents=True, exist_ok=True)
         with target.open("xb") as stream:
             stream.write(data)
-        if sha(path) != row["sha256"]:
-            raise RuntimeError(f"input changed during snapshot: {path}")
+        verify_bound(row)
         if category == "sources" and data.startswith(
             b"version https://git-lfs.github.com/spec/v1"
         ):
@@ -118,9 +119,9 @@ class Attempt:
 
     def assert_stable(self):
         for row in self.inputs:
-            for p in (Path(row["path"]), self.path / row["snapshot"]):
-                if row["sha256"] is None or sha(p) != row["sha256"]:
-                    raise RuntimeError(f"input changed during attempt: {p}")
+            verify_bound(row)
+            if sha(self.path / row["snapshot"]) != row["sha256"]:
+                raise RuntimeError(f"input changed during attempt: {row['snapshot']}")
         start = json.loads((self.path / "start.json").read_text())
         for path, digest in start["tool_hashes"].items():
             if sha(ROOT / path) != digest:
@@ -133,37 +134,65 @@ class Attempt:
             self.assert_stable()
         after = []
         for row in self.inputs:
-            observed = {}
-            for label, path in (
-                ("current", Path(row["path"])),
-                ("snapshot", self.path / row["snapshot"]),
-            ):
-                try:
-                    observed[label] = sha(path)
-                except OSError:
-                    observed[label] = None
-            after.append({"path": row["path"], **observed})
+            observed = {
+                "path": row["path"],
+                "current": None,
+                "resolved_path": None,
+                "snapshot": None,
+                "errors": [],
+            }
+            try:
+                bound, _ = read_bound(row["path"])
+                observed.update(
+                    current=bound["sha256"], resolved_path=bound["resolved_path"]
+                )
+            except (OSError, RuntimeError, ValueError) as error:
+                observed["errors"].append(error_fact(error))
+            try:
+                observed["snapshot"] = sha(self.path / row["snapshot"])
+            except OSError as error:
+                observed["errors"].append(error_fact(error))
+            after.append(observed)
         if status == "PASS" and any(
-            row["sha256"] != obs[key]
+            row["sha256"] != obs["current"]
+            or row["sha256"] != obs["snapshot"]
+            or row["resolved_path"] != obs["resolved_path"]
             for row, obs in zip(self.inputs, after)
-            for key in ("current", "snapshot")
         ):
             raise RuntimeError("input changed while sealing attempt")
+        # Failure evidence may contain an unreadable quarantined regular entry.
+        # Preserve its raw error and keep current FAIL; never turn a closure error
+        # into an unsealed RUNNING state or leave a prior success selected.
+        closure = {}
+        closure_errors = {}
+        for p in sorted(self.path.rglob("*")):
+            if p.is_dir() and not p.is_symlink():
+                continue
+            name = str(p.relative_to(self.path))
+            try:
+                if p.is_symlink():
+                    raise ValueError(f"evidence is an alias: {p}")
+                bound, _ = read_bound(p)
+                closure[name] = bound["sha256"]
+            except (OSError, RuntimeError, ValueError) as error:
+                closure[name] = None
+                closure_errors[name] = error_fact(error)
+        if status == "PASS" and closure_errors:
+            raise RuntimeError(
+                "cannot seal successful evidence: " + repr(closure_errors)
+            )
         receipt = {
-            "schema": 1,
+            "schema": 2,
             "run_id": self.id,
             "operation": self.operation,
             "status": status,
             "inputs": self.inputs,
             "after": after,
+            "closure_errors": closure_errors,
             **details,
         }
         write_json(self.path / "receipt.json", receipt)
-        closure = {
-            str(p.relative_to(self.path)): sha(p)
-            for p in sorted(self.path.rglob("*"))
-            if p.is_file()
-        }
+        closure["receipt.json"] = sha(self.path / "receipt.json")
         write_json(self.path / "closure.json", closure)
         atomic_json(
             self.evidence / "latest.json",
@@ -218,7 +247,9 @@ def consume_current(evidence):
             raise ValueError(f"evidence changed: {name}")
     receipt = json.loads(receipt_path.read_text())
     if (
-        receipt["status"] != "PASS"
+        receipt.get("schema") != 2
+        or receipt.get("closure_errors")
+        or receipt["status"] != "PASS"
         or receipt["run_id"] != current["run_id"]
         or receipt["operation"] != "validate"
     ):
@@ -229,11 +260,12 @@ def consume_current(evidence):
     ) != 6:
         raise ValueError("incomplete input pairs")
     for row in receipt["inputs"]:
-        if (
-            sha(row["path"]) != row["sha256"]
-            or sha(folder / row["snapshot"]) != row["sha256"]
-        ):
-            raise ValueError(f"validated input changed: {row['path']}")
+        try:
+            verify_bound(row)
+        except (OSError, RuntimeError, ValueError) as error:
+            raise ValueError(f"validated input changed: {row['path']}") from error
+        if sha(folder / row["snapshot"]) != row["sha256"]:
+            raise ValueError(f"validated snapshot changed: {row['snapshot']}")
     source_manifest = json.loads((folder / "source_manifest.json").read_text())
     export_manifest = json.loads((folder / "export_manifest.json").read_text())
     consumer = json.loads((folder / "consumer.json").read_text())
@@ -277,6 +309,12 @@ def consume_current(evidence):
     if len(receipt.get("after", [])) != 6 or any(
         row["current"] != hashes[Path(row["path"]).name]
         or row["snapshot"] != row["current"]
+        or row.get("resolved_path")
+        != next(
+            item["resolved_path"]
+            for item in receipt["inputs"]
+            if item["path"] == row["path"]
+        )
         for row in receipt["after"]
     ):
         raise ValueError("before/after hash mismatch")
@@ -284,6 +322,12 @@ def consume_current(evidence):
     for name, digest in start["tool_hashes"].items():
         if sha(ROOT / name) != digest:
             raise ValueError(f"validation tool changed: {name}")
+    # Recheck caller aliases after all evidence IO, not only at entry.
+    for row in receipt["inputs"]:
+        try:
+            verify_bound(row)
+        except (OSError, RuntimeError, ValueError) as error:
+            raise ValueError(f"validated input changed: {row['path']}") from error
     # Re-read the mutable selector after consuming the immutable closure.
     if json.loads((evidence / "latest.json").read_text()) != current:
         raise ValueError("current attempt changed while consuming receipt")

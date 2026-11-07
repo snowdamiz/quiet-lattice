@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from file_protocol import archive_outputs
 from receipts import STEMS, Attempt, sha
 
 
@@ -9,18 +10,8 @@ def export_transaction(src_root, out_root, evidence, invoke, source_check, extra
     """Preserve prior output before discovery; only publish a complete successful batch."""
     with Attempt(evidence, "export") as attempt:
         outputs = [Path(out_root) / "flora" / (stem + ".glb") for stem in STEMS]
-        history = attempt.path / "prior-assets"
-        history.mkdir()
-        prior = {}
-        # No stale runtime output survives a missing/corrupt source or an exception.
-        for path in outputs:
-            if path.exists():
-                prior[path.name] = sha(path)
-                path.rename(history / path.name)
-        from receipts import write_json
-
-        write_json(attempt.path / "prior-assets.json", prior)
         try:
+            archive_outputs(outputs, attempt.path / "prior-assets")
             for stem in STEMS:
                 attempt.snapshot(
                     Path(src_root) / "flora" / (stem + ".blend"), "sources"
@@ -57,12 +48,6 @@ def export_transaction(src_root, out_root, evidence, invoke, source_check, extra
                 qualification="export only; run validate_exports.py",
             )
         except BaseException:
-            # Keep partially published bytes as evidence too, without replacing
-            # earlier rejected exports or prior successful runtime bytes.
-            failed = attempt.path / "failed-publication"
-            failed.mkdir()
-            for path in outputs:
-                if path.exists():
-                    path.rename(failed / path.name)
+            archive_outputs(outputs, attempt.path / "failed-publication")
             raise
     return 0
