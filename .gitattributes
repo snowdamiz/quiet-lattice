@@ -2,3 +2,20 @@
 assets/renders/** filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 packages/client/public/models/**/*.glb filter=lfs diff=lfs merge=lfs -text
+
+# Backup-only LFS storage for preserved authoring and recovery files.
+"/assets/blend/hulls/kestrel.blend1" filter=lfs diff=lfs merge=lfs -text
+"/assets/blend/hulls/lark.blend1" filter=lfs diff=lfs merge=lfs -text
+"/assets/blend/hulls/mule.blend1" filter=lfs diff=lfs merge=lfs -text
+"/assets/blend/hulls/swift.blend1" filter=lfs diff=lfs merge=lfs -text
+"/packages/client/public/audio/music/music_planet_1.ogg" filter=lfs diff=lfs merge=lfs -text
+"/packages/client/public/audio/music/music_planet_2.ogg" filter=lfs diff=lfs merge=lfs -text
+"/packages/client/public/audio/music/music_space_1.ogg" filter=lfs diff=lfs merge=lfs -text
+"/packages/client/public/audio/music/music_space_2.ogg" filter=lfs diff=lfs merge=lfs -text
+"/packages/client/public/audio/music/music_title.ogg" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/blender/reports/hulls__kestrel.glb.rejected.glb" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/blender/reports/hulls__swift.glb.rejected.glb" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/attachments/den-pad-after-6f433a8fc4cf2514162e185c72af3821f9d06a4a.png" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/attachments/den-pad-before-efb1bd3f3fd0b58c8c79cc478eed2dd1beb7f08f.png" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-after.png" filter=lfs diff=lfs merge=lfs -text
+"/packages/tools/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-before.png" filter=lfs diff=lfs merge=lfs -text

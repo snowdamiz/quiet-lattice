@@ -1,0 +1,489 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/hulls/kestrel.blend",
+  "family": "hulls",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-01T08:28:43Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 15
+  },
+  "assets": [
+    {
+      "asset": "kestrel",
+      "variants": [
+        {
+          "id": "kestrel",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 118715,
+            "1": 59711,
+            "2": 21953,
+            "3": 3647
+          },
+          "implicitLods": false,
+          "dims": [
+            14.24,
+            14.937,
+            3.818
+          ],
+          "materials": [
+            "Kestrel_Accent",
+            "Kestrel_Spore",
+            "Kestrel_Hull",
+            "Kestrel_Dark",
+            "Kestrel_Trim",
+            "Kestrel_EngineGlow",
+            "Kestrel_Glass",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "kestrel_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 118467,
+            "1": 59600,
+            "2": 21914,
+            "3": 3635
+          },
+          "implicitLods": false,
+          "dims": [
+            14.24,
+            14.937,
+            3.818
+          ],
+          "materials": [
+            "KestrelDmg_Accent",
+            "KestrelDmg_Spore",
+            "KestrelDmg_Hull",
+            "KestrelDmg_Dark",
+            "KestrelDmg_Trim",
+            "KestrelDmg_EngineGlow",
+            "KestrelDmg_Glass",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "kestrel_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 119331,
+            "1": 59988,
+            "2": 22038,
+            "3": 3673
+          },
+          "implicitLods": false,
+          "dims": [
+            14.24,
+            14.937,
+            3.818
+          ],
+          "materials": [
+            "KestrelHusk_HuskAccent",
+            "KestrelHusk_Spore",
+            "KestrelHusk_HuskHull",
+            "KestrelHusk_HuskDark",
+            "KestrelHusk_HuskTrim",
+            "KestrelHusk_HuskEngineGlow",
+            "KestrelHusk_DeadNavRed",
+            "KestrelHusk_DeadNavGreen",
+            "KestrelHusk_DeadNavWhite",
+            "KestrelHusk_HuskGlass"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "kestrel.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "kestrel",
+          "message": "LOD0 118,715 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "kestrel/kestrel_damaged",
+          "message": "LOD0 118,467 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "kestrel/kestrel_husked",
+          "message": "LOD0 119,331 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "kestrel",
+          "message": "118,715 > 59,711 > 21,953 > 3,647 triangles; LOD3 3.1% of LOD0"
+        },
+        {
+          "subject": "kestrel/kestrel_damaged",
+          "message": "118,467 > 59,600 > 21,914 > 3,635 triangles; LOD3 3.1% of LOD0"
+        },
+        {
+          "subject": "kestrel/kestrel_husked",
+          "message": "119,331 > 59,988 > 22,038 > 3,673 triangles; LOD3 3.1% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "Accent (KestrelDmg_Accent)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Accent (KestrelDmg_Accent)",
+          "message": "base colour/roughness map kestrel_damaged_Accent_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (KestrelDmg_Dark)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Dark (KestrelDmg_Dark)",
+          "message": "base colour map kestrel_damaged_Dark_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (KestrelDmg_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Hull (KestrelDmg_Hull)",
+          "message": "base colour map kestrel_damaged_Hull_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "KestrelDmg_Spore",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "KestrelDmg_Spore",
+          "message": "base colour map kestrel_damaged_Spore_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (KestrelDmg_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Trim (KestrelDmg_Trim)",
+          "message": "base colour/roughness map kestrel_damaged_Trim_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (KestrelHusk_HuskAccent)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "Accent (KestrelHusk_HuskAccent)",
+          "message": "base colour/emissive map kestrel_husked_Accent_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (KestrelHusk_HuskDark)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "Dark (KestrelHusk_HuskDark)",
+          "message": "base colour/emissive map kestrel_husked_Dark_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (KestrelHusk_HuskHull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "Hull (KestrelHusk_HuskHull)",
+          "message": "base colour/emissive map kestrel_husked_Hull_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (KestrelHusk_HuskTrim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "Trim (KestrelHusk_HuskTrim)",
+          "message": "base colour/emissive map kestrel_husked_Trim_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "KestrelHusk_Spore",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "KestrelHusk_Spore",
+          "message": "base colour map kestrel_husked_Spore_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (Kestrel_Accent)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Accent (Kestrel_Accent)",
+          "message": "base colour/roughness map kestrel_Accent_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (Kestrel_Dark)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Dark (Kestrel_Dark)",
+          "message": "base colour map kestrel_Dark_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (Kestrel_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Hull (Kestrel_Hull)",
+          "message": "base colour map kestrel_Hull_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Kestrel_Spore",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "warn",
+          "subject": "Kestrel_Spore",
+          "message": "base colour map kestrel_Spore_decal is 1024x1024; class hero targets 4096 px"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (Kestrel_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "warn",
+          "subject": "Trim (Kestrel_Trim)",
+          "message": "base colour/roughness map kestrel_Trim_decal is 1024x1024; class hero targets 4096 px"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "Accent (KestrelDmg_Accent)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Dark (KestrelDmg_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "EngineGlow (KestrelDmg_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (KestrelDmg_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (KestrelDmg_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "KestrelDmg_Spore",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Trim (KestrelDmg_Trim)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "NavGreen (KestrelHusk_DeadNavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (KestrelHusk_DeadNavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (KestrelHusk_DeadNavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (KestrelHusk_HuskAccent)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Dark (KestrelHusk_HuskDark)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "EngineGlow (KestrelHusk_HuskEngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (KestrelHusk_HuskGlass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (KestrelHusk_HuskHull)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Trim (KestrelHusk_HuskTrim)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "KestrelHusk_Spore",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Accent (Kestrel_Accent)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Dark (Kestrel_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "EngineGlow (Kestrel_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (Kestrel_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (Kestrel_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Kestrel_Spore",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Trim (Kestrel_Trim)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "NavGreen (LIB_NavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen (LIB_NavGreen.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "kestrel",
+          "message": "longest side 14.94 m within 6-80 m"
+        },
+        {
+          "subject": "kestrel/kestrel_damaged",
+          "message": "longest side 14.94 m within 6-80 m"
+        },
+        {
+          "subject": "kestrel/kestrel_husked",
+          "message": "longest side 14.94 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}

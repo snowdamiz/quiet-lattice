@@ -1,0 +1,357 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/hulls/swift.glb",
+  "family": "hulls",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-01T03:32:43Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "swift",
+      "variants": [
+        {
+          "id": "swift_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 67947,
+            "1": 26361,
+            "2": 13129,
+            "3": 1903
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "NavRed",
+            "NavGreen",
+            "NavWhite",
+            "EngineGlow",
+            "Trim",
+            "Hull",
+            "SwiftDmg_Crystal",
+            "Dark",
+            "Accent",
+            "Glass"
+          ],
+          "gpuTextureMB": 309.3
+        },
+        {
+          "id": "swift_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 66365,
+            "1": 25809,
+            "2": 12813,
+            "3": 1637
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "EngineGlow",
+            "Trim",
+            "Hull",
+            "SwiftHusk_Crystal",
+            "Dark",
+            "Accent",
+            "NavRed",
+            "NavGreen",
+            "NavWhite",
+            "Glass"
+          ],
+          "gpuTextureMB": 368.0
+        },
+        {
+          "id": "swift",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 68411,
+            "1": 24778,
+            "2": 13224,
+            "3": 1950
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "NavRed",
+            "NavGreen",
+            "NavWhite",
+            "EngineGlow",
+            "Trim",
+            "Hull",
+            "Swift_Crystal",
+            "Accent",
+            "Dark",
+            "Glass"
+          ],
+          "gpuTextureMB": 298.7
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift.glb",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift/swift_damaged",
+          "message": "LOD0 67,947 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "LOD0 66,365 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "swift",
+          "message": "LOD0 68,411 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 3.8 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift/swift_damaged",
+          "message": "67,947 > 26,361 > 13,129 > 1,903 triangles; LOD3 2.8% of LOD0"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "66,365 > 25,809 > 12,813 > 1,637 triangles; LOD3 2.5% of LOD0"
+        },
+        {
+          "subject": "swift",
+          "message": "68,411 > 24,778 > 13,224 > 1,950 triangles; LOD3 2.9% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Accent",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Dark",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "EngineGlow",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Glass",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Hull",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "NavGreen",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "SwiftDmg_Crystal",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "SwiftHusk_Crystal",
+          "message": "pbr: base colour, roughness, normal, AO"
+        },
+        {
+          "subject": "Swift_Crystal",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "Trim",
+          "message": "pbr: base colour, roughness, normal, AO, emissive"
+        },
+        {
+          "subject": "textures",
+          "message": "57 KTX2 map(s) (17 UASTC, 40 ETC1S) with full mip chains, 78.1 MB"
+        },
+        {
+          "subject": "swift/swift_damaged",
+          "message": "textures take 309 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "textures take 368 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        },
+        {
+          "subject": "swift",
+          "message": "textures take 299 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the hero budget of 512 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/hulls/swift.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "swift/swift_damaged",
+          "message": "longest side 11.52 m within 6-80 m"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "longest side 11.52 m within 6-80 m"
+        },
+        {
+          "subject": "swift",
+          "message": "longest side 11.52 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}

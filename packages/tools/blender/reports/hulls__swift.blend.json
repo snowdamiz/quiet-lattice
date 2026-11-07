@@ -1,0 +1,414 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/hulls/swift.blend",
+  "family": "hulls",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-01T08:28:48Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "swift",
+      "variants": [
+        {
+          "id": "swift",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 68411,
+            "1": 24778,
+            "2": 13224,
+            "3": 1950
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "Swift_EngineGlow",
+            "Swift_Trim",
+            "Swift_Hull",
+            "Swift_Crystal",
+            "Swift_Accent",
+            "Swift_Dark",
+            "Swift_Glass",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "swift_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 67947,
+            "1": 26361,
+            "2": 13129,
+            "3": 1903
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "SwiftDmg_EngineGlow",
+            "SwiftDmg_Trim",
+            "SwiftDmg_Hull",
+            "SwiftDmg_Crystal",
+            "SwiftDmg_Dark",
+            "SwiftDmg_Accent",
+            "SwiftDmg_Glass",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "swift_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 66365,
+            "1": 25809,
+            "2": 12813,
+            "3": 1637
+          },
+          "implicitLods": false,
+          "dims": [
+            10.026,
+            11.521,
+            3.937
+          ],
+          "materials": [
+            "SwiftHusk_HuskEngineGlow",
+            "SwiftHusk_HuskTrim",
+            "SwiftHusk_HuskHull",
+            "SwiftHusk_Crystal",
+            "SwiftHusk_HuskDark",
+            "SwiftHusk_HuskAccent",
+            "SwiftHusk_DeadNavRed",
+            "SwiftHusk_DeadNavGreen",
+            "SwiftHusk_DeadNavWhite",
+            "SwiftHusk_HuskGlass"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift",
+          "message": "LOD0 68,411 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "swift/swift_damaged",
+          "message": "LOD0 67,947 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "LOD0 66,365 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "swift",
+          "message": "68,411 > 24,778 > 13,224 > 1,950 triangles; LOD3 2.9% of LOD0"
+        },
+        {
+          "subject": "swift/swift_damaged",
+          "message": "67,947 > 26,361 > 13,129 > 1,903 triangles; LOD3 2.8% of LOD0"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "66,365 > 25,809 > 12,813 > 1,637 triangles; LOD3 2.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "Accent (SwiftDmg_Accent)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "SwiftDmg_Crystal",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (SwiftDmg_Dark)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (SwiftDmg_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (SwiftDmg_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "SwiftHusk_Crystal",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (SwiftHusk_HuskAccent)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (SwiftHusk_HuskDark.001)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (SwiftHusk_HuskHull)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (SwiftHusk_HuskTrim)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (Swift_Accent)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Swift_Crystal",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (Swift_Dark)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (Swift_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (Swift_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry), emissive"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "NavGreen (LIB_NavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen (LIB_NavGreen.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (SwiftDmg_Accent)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "SwiftDmg_Crystal",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Dark (SwiftDmg_Dark)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "EngineGlow (SwiftDmg_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (SwiftDmg_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (SwiftDmg_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Trim (SwiftDmg_Trim)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "SwiftHusk_Crystal",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "NavGreen (SwiftHusk_DeadNavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (SwiftHusk_DeadNavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (SwiftHusk_DeadNavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (SwiftHusk_HuskAccent)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Dark (SwiftHusk_HuskDark.001)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "EngineGlow (SwiftHusk_HuskEngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (SwiftHusk_HuskGlass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (SwiftHusk_HuskHull)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Trim (SwiftHusk_HuskTrim)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Accent (Swift_Accent)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Swift_Crystal",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        },
+        {
+          "subject": "Dark (Swift_Dark)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "EngineGlow (Swift_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (Swift_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (Swift_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Trim (Swift_Trim)",
+          "message": "pbr: base colour, roughness, normal, emissive"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "swift",
+          "message": "longest side 11.52 m within 6-80 m"
+        },
+        {
+          "subject": "swift/swift_damaged",
+          "message": "longest side 11.52 m within 6-80 m"
+        },
+        {
+          "subject": "swift/swift_husked",
+          "message": "longest side 11.52 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}

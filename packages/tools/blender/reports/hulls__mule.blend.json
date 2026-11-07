@@ -1,0 +1,404 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/hulls/mule.blend",
+  "family": "hulls",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-01T08:28:47Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "mule",
+      "variants": [
+        {
+          "id": "mule",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 141922,
+            "1": 53118,
+            "2": 16912,
+            "3": 6463
+          },
+          "implicitLods": false,
+          "dims": [
+            21.872,
+            19.037,
+            5.993
+          ],
+          "materials": [
+            "Mule_Hull",
+            "Mule_Dark",
+            "Mule_Nacre",
+            "Mule_Accent",
+            "Mule_Trim",
+            "Mule_Glass",
+            "Mule_EngineGlow",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "mule_damaged",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 148688,
+            "1": 56916,
+            "2": 18285,
+            "3": 7226
+          },
+          "implicitLods": false,
+          "dims": [
+            21.871,
+            19.037,
+            6.172
+          ],
+          "materials": [
+            "MuleDmg_Hull",
+            "MuleDmg_Dark",
+            "MuleDmg_Accent",
+            "MuleDmg_Nacre",
+            "MuleDmg_Trim",
+            "MuleDmg_Glass",
+            "MuleDmg_EngineGlow",
+            "LIB_NavRed",
+            "LIB_NavGreen",
+            "LIB_NavWhite"
+          ]
+        },
+        {
+          "id": "mule_husked",
+          "class": "hero",
+          "classFrom": "family default",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 138478,
+            "1": 59720,
+            "2": 16925,
+            "3": 6539
+          },
+          "implicitLods": false,
+          "dims": [
+            21.872,
+            19.037,
+            5.993
+          ],
+          "materials": [
+            "MuleHusk_HuskHull",
+            "MuleHusk_HuskDark",
+            "MuleHusk_HuskAccent",
+            "MuleHusk_HuskTrim",
+            "MuleHusk_HuskGlass",
+            "MuleHusk_HuskEngineGlow",
+            "MuleHusk_DeadNavRed",
+            "MuleHusk_DeadNavGreen",
+            "MuleHusk_DeadNavWhite"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "mule.blend",
+          "message": "3 variant(s) in 1 asset(s) follow the hulls rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "mule",
+          "message": "LOD0 141,922 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "mule/mule_damaged",
+          "message": "LOD0 148,688 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        },
+        {
+          "subject": "mule/mule_husked",
+          "message": "LOD0 138,478 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "mule",
+          "message": "141,922 > 53,118 > 16,912 > 6,463 triangles; LOD3 4.6% of LOD0"
+        },
+        {
+          "subject": "mule/mule_damaged",
+          "message": "148,688 > 56,916 > 18,285 > 7,226 triangles; LOD3 4.9% of LOD0"
+        },
+        {
+          "subject": "mule/mule_husked",
+          "message": "138,478 > 59,720 > 16,925 > 6,539 triangles; LOD3 4.7% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [
+        {
+          "level": "info",
+          "subject": "Accent (MuleDmg_Accent)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (MuleDmg_Dark)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (MuleDmg_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "MuleDmg_Nacre",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (MuleDmg_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (MuleHusk_HuskAccent)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (MuleHusk_HuskDark)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (MuleHusk_HuskHull)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (MuleHusk_HuskTrim)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Accent (Mule_Accent)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Dark (Mule_Dark)",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Hull (Mule_Hull)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        },
+        {
+          "level": "info",
+          "subject": "Mule_Nacre",
+          "message": "baked at export: base colour, roughness, metallic, normal, AO (baked from the geometry), emissive"
+        },
+        {
+          "level": "info",
+          "subject": "Trim (Mule_Trim)",
+          "message": "baked at export: base colour, roughness, normal, AO (baked from the geometry)"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "NavGreen (LIB_NavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavGreen (LIB_NavGreen.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (LIB_NavRed.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (LIB_NavWhite.001)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (MuleDmg_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "Dark (MuleDmg_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "EngineGlow (MuleDmg_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (MuleDmg_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (MuleDmg_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "MuleDmg_Nacre",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Trim (MuleDmg_Trim)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "NavGreen (MuleHusk_DeadNavGreen)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavRed (MuleHusk_DeadNavRed)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "NavWhite (MuleHusk_DeadNavWhite)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Accent (MuleHusk_HuskAccent)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Dark (MuleHusk_HuskDark)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "EngineGlow (MuleHusk_HuskEngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (MuleHusk_HuskGlass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (MuleHusk_HuskHull)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Trim (MuleHusk_HuskTrim)",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Accent (Mule_Accent)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "Dark (Mule_Dark)",
+          "message": "pbr: base colour, roughness, metallic, normal"
+        },
+        {
+          "subject": "EngineGlow (Mule_EngineGlow)",
+          "message": "signal material (engine-driven glow (engine exhaust, nav lights, lamps): the game scales the glow, the colour comes from the model)"
+        },
+        {
+          "subject": "Glass (Mule_Glass)",
+          "message": "glass material (glass (LIB_Glass): constant colour and roughness allowed; reflection does the work)"
+        },
+        {
+          "subject": "Hull (Mule_Hull)",
+          "message": "pbr: base colour, roughness, normal"
+        },
+        {
+          "subject": "Mule_Nacre",
+          "message": "pbr: base colour, roughness, metallic, normal, emissive"
+        },
+        {
+          "subject": "Trim (Mule_Trim)",
+          "message": "pbr: base colour, roughness, normal"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "mule",
+          "message": "longest side 21.87 m within 6-80 m"
+        },
+        {
+          "subject": "mule/mule_damaged",
+          "message": "longest side 21.87 m within 6-80 m"
+        },
+        {
+          "subject": "mule/mule_husked",
+          "message": "longest side 21.87 m within 6-80 m"
+        }
+      ]
+    }
+  ]
+}
