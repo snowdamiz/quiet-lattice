@@ -1,0 +1,499 @@
+{
+  "index_checks": [
+    {
+      "path": "/private/tmp/lark-visual-packet-8b6c360-la4haroc/TIMING.json",
+      "match": true
+    },
+    {
+      "path": "/private/tmp/lark-visual-packet-8b6c360-la4haroc/review/hulls/lark/lark/lark_damaged/perf.json",
+      "match": true
+    },
+    {
+      "path": "/private/tmp/lark-visual-packet-8b6c360-la4haroc/review/hulls/lark/lark/lark_husked/perf.json",
+      "match": true
+    },
+    {
+      "path": "/private/tmp/lark-visual-packet-8b6c360-la4haroc/review/hulls/lark/lark/perf.json",
+      "match": true
+    }
+  ],
+  "rows": [
+    {
+      "variant": "lark_damaged",
+      "case": "noon-lush",
+      "scene": {
+        "cpuMsMedian": 3.1,
+        "cpuMsP95": 3.6,
+        "gpuMsMedian": 26.161,
+        "gpuMsP95": 28.213,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 682,
+        "triangles": 3625616
+      },
+      "hidden": {
+        "cpuMsMedian": 3,
+        "cpuMsP95": 3.5,
+        "gpuMsMedian": 24.904,
+        "gpuMsP95": 27.077,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 670,
+        "triangles": 3513754
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.182,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.76,
+          1.873
+        ],
+        "gpuMsCi95": [
+          0.998,
+          1.306
+        ],
+        "cpuMsIqr": [
+          0.037,
+          0.263
+        ],
+        "spreadMs": 1.113,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 1.257
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark_damaged",
+      "case": "night-exotic",
+      "scene": {
+        "cpuMsMedian": 4.6,
+        "cpuMsP95": 5.6,
+        "gpuMsMedian": 27.376,
+        "gpuMsP95": 32.435,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1310,
+        "triangles": 3974204
+      },
+      "hidden": {
+        "cpuMsMedian": 4.5,
+        "cpuMsP95": 5.6,
+        "gpuMsMedian": 26.227,
+        "gpuMsP95": 30.063,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1298,
+        "triangles": 3862342
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.168,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.126,
+          1.425
+        ],
+        "gpuMsCi95": [
+          1.147,
+          1.201
+        ],
+        "cpuMsIqr": [
+          0.05,
+          0.3
+        ],
+        "spreadMs": 0.298,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 1.149
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark_damaged",
+      "case": "open-space",
+      "scene": {
+        "cpuMsMedian": 0.7,
+        "cpuMsP95": 1.2,
+        "gpuMsMedian": 4.141,
+        "gpuMsP95": 4.832,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 44,
+        "triangles": 160467
+      },
+      "hidden": {
+        "cpuMsMedian": 0.5,
+        "cpuMsP95": 0.7,
+        "gpuMsMedian": 2.764,
+        "gpuMsP95": 3.233,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 1.361,
+        "drawCalls": 12,
+        "triangles": 111862,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.231,
+          1.527
+        ],
+        "gpuMsCi95": [
+          1.282,
+          1.426
+        ],
+        "cpuMsIqr": [
+          0.15,
+          0.3
+        ],
+        "spreadMs": 0.296,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.377
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark_husked",
+      "case": "noon-lush",
+      "scene": {
+        "cpuMsMedian": 3,
+        "cpuMsP95": 3.8,
+        "gpuMsMedian": 25.836,
+        "gpuMsP95": 29.222,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 682,
+        "triangles": 3626836
+      },
+      "hidden": {
+        "cpuMsMedian": 2.9,
+        "cpuMsP95": 3.5,
+        "gpuMsMedian": 24.025,
+        "gpuMsP95": 27.979,
+        "gpuSamples": 240,
+        "disjoint": 0,
+        "drawCalls": 670,
+        "triangles": 3514090
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 1.286,
+        "drawCalls": 12,
+        "triangles": 112746,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 240,
+        "blocks": 120,
+        "gpuMsIqr": [
+          0.701,
+          2.043
+        ],
+        "gpuMsCi95": [
+          1.121,
+          1.493
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.3
+        ],
+        "spreadMs": 1.342,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.1,
+          "gpuMs": 1.811
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark_husked",
+      "case": "night-exotic",
+      "scene": {
+        "cpuMsMedian": 4.3,
+        "cpuMsP95": 5.1,
+        "gpuMsMedian": 27.457,
+        "gpuMsP95": 33.243,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1310,
+        "triangles": 3973173
+      },
+      "hidden": {
+        "cpuMsMedian": 4.1,
+        "cpuMsP95": 4.9,
+        "gpuMsMedian": 26.286,
+        "gpuMsP95": 33.839,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1298,
+        "triangles": 3860427
+      },
+      "asset": {
+        "cpuMs": 0.25,
+        "gpuMs": 1.174,
+        "drawCalls": 12,
+        "triangles": 112746,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.132,
+          1.38
+        ],
+        "gpuMsCi95": [
+          1.164,
+          1.203
+        ],
+        "cpuMsIqr": [
+          0.15,
+          0.35
+        ],
+        "spreadMs": 0.248,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.171
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark_husked",
+      "case": "open-space",
+      "scene": {
+        "cpuMsMedian": 0.6,
+        "cpuMsP95": 0.9,
+        "gpuMsMedian": 4.066,
+        "gpuMsP95": 4.32,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 44,
+        "triangles": 161351
+      },
+      "hidden": {
+        "cpuMsMedian": 0.4,
+        "cpuMsP95": 0.7,
+        "gpuMsMedian": 2.749,
+        "gpuMsP95": 2.927,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.2,
+        "gpuMs": 1.325,
+        "drawCalls": 12,
+        "triangles": 112746,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.23,
+          1.402
+        ],
+        "gpuMsCi95": [
+          1.279,
+          1.373
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.25
+        ],
+        "spreadMs": 0.172,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.317
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark",
+      "case": "noon-lush",
+      "scene": {
+        "cpuMsMedian": 2.9,
+        "cpuMsP95": 3.5,
+        "gpuMsMedian": 23.05,
+        "gpuMsP95": 26.779,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 682,
+        "triangles": 3621771
+      },
+      "hidden": {
+        "cpuMsMedian": 2.7,
+        "cpuMsP95": 3.5,
+        "gpuMsMedian": 21.444,
+        "gpuMsP95": 25.356,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 670,
+        "triangles": 3514717
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.235,
+        "drawCalls": 12,
+        "triangles": 107054,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.885,
+          1.6
+        ],
+        "gpuMsCi95": [
+          1.11,
+          1.48
+        ],
+        "cpuMsIqr": [
+          0.087,
+          0.25
+        ],
+        "spreadMs": 0.715,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.606
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark",
+      "case": "night-exotic",
+      "scene": {
+        "cpuMsMedian": 4.6,
+        "cpuMsP95": 5.6,
+        "gpuMsMedian": 27.464,
+        "gpuMsP95": 34.327,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1310,
+        "triangles": 3955106
+      },
+      "hidden": {
+        "cpuMsMedian": 4.4,
+        "cpuMsP95": 5.4,
+        "gpuMsMedian": 26.403,
+        "gpuMsP95": 33.641,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 1298,
+        "triangles": 3848052
+      },
+      "asset": {
+        "cpuMs": 0.15,
+        "gpuMs": 1.083,
+        "drawCalls": 12,
+        "triangles": 107054,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          0.785,
+          1.562
+        ],
+        "gpuMsCi95": [
+          0.98,
+          1.164
+        ],
+        "cpuMsIqr": [
+          0.05,
+          0.3
+        ],
+        "spreadMs": 0.777,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.061
+        }
+      },
+      "errors": []
+    },
+    {
+      "variant": "lark",
+      "case": "open-space",
+      "scene": {
+        "cpuMsMedian": 0.6,
+        "cpuMsP95": 0.9,
+        "gpuMsMedian": 3.843,
+        "gpuMsP95": 4.193,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 44,
+        "triangles": 155659
+      },
+      "hidden": {
+        "cpuMsMedian": 0.4,
+        "cpuMsP95": 0.7,
+        "gpuMsMedian": 2.749,
+        "gpuMsP95": 3.086,
+        "gpuSamples": 120,
+        "disjoint": 0,
+        "drawCalls": 32,
+        "triangles": 48605
+      },
+      "asset": {
+        "cpuMs": 0.175,
+        "gpuMs": 1.094,
+        "drawCalls": 12,
+        "triangles": 107054,
+        "method": "paired: shown-minus-hidden differences of adjacent frames, each ABBA block's two pairs averaged; median and spread over the blocks",
+        "pairs": 120,
+        "blocks": 60,
+        "gpuMsIqr": [
+          1.039,
+          1.159
+        ],
+        "gpuMsCi95": [
+          1.065,
+          1.132
+        ],
+        "cpuMsIqr": [
+          0.1,
+          0.25
+        ],
+        "spreadMs": 0.12,
+        "reliable": true,
+        "ciTargetMs": 0.25,
+        "unpaired": {
+          "cpuMs": 0.2,
+          "gpuMs": 1.094
+        }
+      },
+      "errors": []
+    }
+  ]
+}
