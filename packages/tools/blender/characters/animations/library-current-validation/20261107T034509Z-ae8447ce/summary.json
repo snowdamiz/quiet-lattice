@@ -1,0 +1,61 @@
+{
+  "validatedAt": "2026-11-07T03:47:20.477093+00:00",
+  "savedActions": 42,
+  "exportBoundaryNegativeControls": 10,
+  "clipPeoplePairs": 126,
+  "deformationPhases": [0.16, 0.33, 0.5, 0.67, 0.84],
+  "sampledDeformedVertices": 510720,
+  "pairMaxMovementRangeM": [0.257526405250105, 1.0999509332885844],
+  "maxRelativeRotationErrorRad": 1.3978528260658475e-7,
+  "exports": [
+    {
+      "species": "thalune",
+      "exportSha256": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+      "binarySha256": "23b8fea21a6484f0f8fe21ccd74d646ea49b349f7176f37e1ac44114029a57d7",
+      "gltfMeshNodes": 96,
+      "loadedSkinnedMeshNodes": 216
+    },
+    {
+      "species": "ixari",
+      "exportSha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+      "binarySha256": "48ed2ec14b5373a1c4371c29ea9c5ad81423c2024ac329ccc99ae52075a5de24",
+      "gltfMeshNodes": 96,
+      "loadedSkinnedMeshNodes": 216
+    },
+    {
+      "species": "ulgani",
+      "exportSha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+      "binarySha256": "62f64b9ab1f32570beb6f69e74c142a972c3284a5424d491d482f54356e3c1fc",
+      "gltfMeshNodes": 96,
+      "loadedSkinnedMeshNodes": 176
+    }
+  ],
+  "neutralSourceTargetPairs": 9,
+  "maxNeutralVertexShiftM": 1.7706557267871736e-8,
+  "nonneutralSourceTargetPairs": 9,
+  "unadaptedTranslationFailure": [
+    {
+      "species": "thalune",
+      "samples": 14041,
+      "maxShiftM": 0
+    },
+    {
+      "species": "ixari",
+      "samples": 14675,
+      "maxShiftM": 0.06211050707245722
+    },
+    {
+      "species": "ulgani",
+      "samples": 10854,
+      "maxShiftM": 0.06440258749218
+    }
+  ],
+  "loopChecks": 16,
+  "contactChecks": 21,
+  "maxContactHeightResidualM": 0.00660269316337142,
+  "protectedAssetCount": 10,
+  "assetsUnchanged": true,
+  "visualAcceptance": false,
+  "performanceAcceptance": false,
+  "integratedPlaybackAcceptance": false
+}
