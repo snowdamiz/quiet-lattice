@@ -12,6 +12,13 @@ export function traceObserverProposal() {
     runtimeAuthorized: false,
     binding: null,
     grant: null,
+    disabledNativeSource: {
+      entry: 'packages/tools/src/capture/trace_observer_packet/launch.py',
+      freezer: 'packages/tools/src/capture/trace_observer_packet/freeze.py',
+      binding: 'packages/tools/src/capture/trace_observer_packet/local-binding.json',
+      requiresFreshReviewedReadinessAndGrant: true,
+      requiresParentObservedOSExitAndHashes: true,
+    },
     scene: observerScene,
     plan: observerPlan,
     bounds: observerBounds,

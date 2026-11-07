@@ -857,8 +857,17 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
   if (
     options.protocol !== observerProtocol ||
     !/^bwt-[a-f0-9]{32}$/.test(options.prefix) ||
+    !Array.isArray(options.rendererPids) ||
     !options.rendererPids.length ||
-    !options.rendererPids.every((pid) => Number.isSafeInteger(pid) && pid > 1)
+    options.rendererPids.length > 64 ||
+    Array.from({ length: options.rendererPids.length }, (_, i) => i).some(
+      (i) =>
+        !Object.hasOwn(options.rendererPids, i) ||
+        !Number.isSafeInteger(options.rendererPids[i]) ||
+        options.rendererPids[i] < 2 ||
+        options.rendererPids[i] > 2147483647,
+    ) ||
+    new Set(options.rendererPids).size !== options.rendererPids.length
   )
     throw new Error('Invalid fixed observer protocol/identity');
   const pins = parseObserverPins(options.pins),
@@ -1027,10 +1036,13 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           options.trace.on('close', lost);
           listening = true;
           receipt.categories = await owned(() => options.trace.send({ method: 'Tracing.getCategories' }), 5000, 'categories', step);
+          const categories = isRecord(receipt.categories) ? receipt.categories.categories : null;
           if (
             !isRecord(receipt.categories) ||
-            !Array.isArray(receipt.categories.categories) ||
-            !receipt.categories.categories.every((v) => typeof v === 'string') ||
+            !Array.isArray(categories) ||
+            categories.length > 4096 ||
+            Array.from(categories).some((v, i) => !Object.hasOwn(categories, i) || typeof v !== 'string' || !v.length || v.length > 256 || v.includes('\0')) ||
+            !browserTraceCategories.every((required) => categories.includes(required)) ||
             Buffer.byteLength(JSON.stringify(receipt.categories)) > categoryReplyBytes
           )
             throw new Error('Malformed category receipt');

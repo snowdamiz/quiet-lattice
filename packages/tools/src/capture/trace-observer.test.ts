@@ -2,9 +2,11 @@ import { EventEmitter } from 'node:events';
 import vm from 'node:vm';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { dispatchBrowserDiagnostic, observerProbePageCall, captureBrowserWork } from './browser-work-probe.ts';
-import { ObserverError, traceLimits, type ObserverOptions, type ObserverPacket, type TraceCommand } from './browser-work-trace.ts';
+import { ObserverError, traceLimits, browserTraceCategories, type ObserverOptions, type ObserverPacket, type TraceCommand } from './browser-work-trace.ts';
 import { observerAssetSha256, observerDigest, observerPlan, observerRequiredSources, observerScene, parseObserverPins } from './trace-observer-report.ts';
 import { traceObserverEntry, traceObserverProposal } from './trace-observer.ts';
+import { runAdapter, AdapterFailure } from './trace_observer_packet/adapter.ts';
+import { EvidenceStore } from './trace_observer_packet/evidence.ts';
 import { bounded } from './native-trace.ts';
 
 const at = '2026-11-06T12:00:00.000Z';
@@ -178,7 +180,7 @@ function fixture(
       send: async (command) => {
         commands.push({ index, command });
         config.onCommand?.(command, emitter, index);
-        if (command.method === 'Tracing.getCategories') return { categories: [] };
+        if (command.method === 'Tracing.getCategories') return { categories: [...browserTraceCategories] };
         if (command.method === 'Tracing.start') {
           if (active) throw new Error('Trace already active');
           active = true;
@@ -1088,5 +1090,127 @@ describe('R2 indexed evidence and decision boundaries', () => {
     expect(r.summary?.decision).toBe(decision);
     expect(r.summary?.criteria).toMatchObject({ mixedSigns: mixed, similar: decision === 'targeted-workload-next' });
     expect(r.summary?.budgetQualified).toBe(false);
+  });
+});
+
+describe('R3 advisory admission boundaries in the new native caller unit', () => {
+  it.each([Array(3), Object.assign(Array(3), { 0: 12, 2: 13 }), [NaN], [Infinity], [0], [1], [2147483648]].map((value) => ({ value })))(
+    'rejects invalid real renderer PIDs $value before port effects',
+    async ({ value: rendererPids }) => {
+      const f = fixture();
+      f.options.rendererPids = rendererPids as number[];
+      await expect(dispatchBrowserDiagnostic(f.options)).rejects.toThrow();
+      expect(f.commands).toEqual([]);
+      expect(f.calls).toEqual([]);
+    },
+  );
+  it.each([Array(3), Object.assign(Array(3), { 0: 'blink.user_timing', 2: 'v8.execute' }), [NaN], [], ['blink.user_timing']].map((value) => ({ value })))(
+    'rejects incomplete category receipt $value before tracing starts',
+    async ({ value: categories }) => {
+      const f = fixture(),
+        send = f.options.trace.send;
+      f.options.trace.send = (command) => (command.method === 'Tracing.getCategories' ? Promise.resolve({ categories }) : send(command));
+      const r = await failed(f);
+      expect(r.steps).toHaveLength(1);
+      expect(methods(f)).not.toContain('Tracing.start');
+      expect(f.calls).toEqual([]);
+    },
+  );
+});
+
+describe('concrete adapter with inert native ports', () => {
+  function adapterFixture(config: Parameters<typeof fixture>[0] = {}) {
+    const f = fixture(config),
+      files = new Map<string, Buffer>();
+    const store = new EvidenceStore(['/synthetic/primary', '/synthetic/fallback'], (path, bytes) => {
+      files.set(path, bytes);
+    });
+    const ports = {
+      trace: f.options.trace,
+      pageCall: (input: Parameters<typeof observerProbePageCall>[0]) => f.options.probe.call(input.action, input.workClass, input.id, input.arm),
+      cancel: f.options.probe.cancel,
+      observeDevice: async () => device,
+      host: async () => ({
+        ...((await f.options.observe()) as { at: string; monotonicMs: number; logicalCores: number; load: number[]; errors: unknown[] }),
+        externalContenders: 'unknown-not-excluded' as const,
+      }),
+      close: async () => {},
+    };
+    const admission = { prefix: f.options.prefix, rendererPids: [12], pins: pins(), maxLoad: [2, 2, 2] };
+    return { f, ports, admission, store, files };
+  }
+  it('uses the actual dispatcher, fixed inventory, zero off trace calls, and closes all on streams', async () => {
+    const { f, ports, admission, store, files } = adapterFixture();
+    const packet = await runAdapter(admission, ports, store, f.abort.signal);
+    expect(packet.status).toBe('observed');
+    expect(packet.totals).toMatchObject({
+      preparations: 12,
+      frames: 10,
+      dependentPasses: 48,
+      preflightFences: 36,
+      controlFences: 24,
+      png: 0,
+      queries: 0,
+      segments: 6,
+    });
+    expect(f.commands.every((c) => observerPlan[c.index].arm === 'on')).toBe(true);
+    expect(methods(f).filter((m) => m === 'IO.close')).toHaveLength(6);
+    expect(files.has('/synthetic/primary/packet.json')).toBe(true);
+    expect(files.get('/synthetic/primary/adapter-terminal.json')?.toString()).toContain('EXTERNAL_CONTROLLER_REQUIRED');
+  });
+  it.each(['load', 'device', 'page', 'cancel', 'write', 'all-sinks', 'close'])(
+    'retains failed %s facts without claiming physical settlement',
+    async (fault) => {
+      const { f, ports, admission, store } = adapterFixture();
+      let active = store;
+      if (fault === 'load')
+        ports.host = async () => ({
+          ...((await f.options.observe()) as Awaited<ReturnType<typeof ports.host>>),
+          load: [NaN, 1, 1],
+          externalContenders: 'unknown-not-excluded',
+        });
+      if (fault === 'device') ports.observeDevice = async () => ({ ...device, renderer: 'changed' });
+      if (fault === 'page') ports.pageCall = async () => ({ value: null, failure: '', markers: [], pageErrors: [] });
+      if (fault === 'cancel') f.abort.abort('');
+      if (fault === 'write' || fault === 'all-sinks')
+        active = new EvidenceStore(['/primary', '/fallback'], (path) => {
+          if (fault === 'all-sinks' || path.startsWith('/primary')) throw new Error('injected write/close/publication failure');
+        });
+      if (fault === 'close')
+        ports.close = async () => {
+          throw new Error('close failure');
+        };
+      await expect(runAdapter(admission, ports, active, f.abort.signal)).rejects.toBeInstanceOf(AdapterFailure);
+      expect(active.raw.size).toBeGreaterThan(0);
+      expect(f.calls.length).toBeLessThanOrEqual(24);
+      if (fault === 'all-sinks') expect(Object.keys(active.receipt().undurable).length).toBeGreaterThan(0);
+    },
+  );
+  it('cuts off late host replies before new device work and keeps failure snapshots detached', async () => {
+    vi.useFakeTimers();
+    const { f, ports, admission, store } = adapterFixture();
+    let release = (_value: Awaited<ReturnType<typeof ports.host>>) => {};
+    const raw = await ports.host();
+    ports.host = () =>
+      new Promise((resolve) => {
+        release = resolve;
+      });
+    const deviceCall = vi.fn(ports.observeDevice);
+    ports.observeDevice = deviceCall;
+    const pending = runAdapter(admission, ports, store, f.abort.signal).catch((error: unknown) => error);
+    await vi.advanceTimersByTimeAsync(1);
+    f.abort.abort(new Error('cancel pending host'));
+    await vi.runAllTimersAsync();
+    const failure = await pending;
+    expect(failure).toBeInstanceOf(AdapterFailure);
+    if (!(failure instanceof AdapterFailure)) throw new Error('Expected detached adapter failure');
+    const saved = JSON.stringify(failure.facts),
+      count = store.raw.size;
+    release(raw);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(deviceCall).not.toHaveBeenCalled();
+    expect(store.raw.size).toBe(count);
+    expect(JSON.stringify(failure.facts)).toBe(saved);
+    expect(JSON.stringify(failure.facts)).toContain('ports-unsettled');
   });
 });
