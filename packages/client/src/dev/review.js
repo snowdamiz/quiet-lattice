@@ -17,6 +17,7 @@ import { maskColors, textureMemory } from '../gameplay/modelLibrary.js';
 import { GLOW as FLORA_GLOW } from '../gameplay/floraModels.js';
 import { gameLook } from '@astra/shared/art';
 import { nodeReviewModel } from '../gameplay/Flora.js';
+import { nativeWorkClassProbe } from './native-work-class-probe.js';
 
 /** `node/<resource>`: a procedural resource node (P1.E13.T02), built by the flora in place of a .glb, its near and far
  * models as LOD0 and LOD1. Anything else: null, and the asset loads from public/models. */
@@ -1188,6 +1189,34 @@ export class Review {
   gpuTimer() {
     if (this._timer === undefined) this._timer = this.game.engine.renderer.getContext().getExtension('EXT_disjoint_timer_query_webgl2') || null;
     return this._timer;
+  }
+
+  device() {
+    const gl = this.game.engine.renderer.getContext();
+    const debug = gl.getExtension('WEBGL_debug_renderer_info');
+    return {
+      vendor: gl.getParameter(debug ? debug.UNMASKED_VENDOR_WEBGL : gl.VENDOR),
+      renderer: gl.getParameter(debug ? debug.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+      version: gl.getParameter(gl.VERSION),
+      shadingLanguage: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+      context: gl.getContextAttributes(),
+      contextLost: gl.isContextLost(),
+    };
+  }
+
+  glErrors() {
+    const gl = this.game.engine.renderer.getContext();
+    const errors = [];
+    for (let i = 0; i < 32; i++) {
+      const error = gl.getError();
+      if (error === gl.NO_ERROR) break;
+      errors.push(error);
+    }
+    return errors;
+  }
+
+  nativeWorkClassProbe(action, workClass) {
+    return nativeWorkClassProbe(this, action, workClass);
   }
 
   /** Waits on the GPU for the frame just drawn (a 1×1 read of the default framebuffer). */

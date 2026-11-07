@@ -1,0 +1,264 @@
+{
+  "base": "2f54def2aa82ef92fcd46e6654f9a375e1437d11",
+  "retainedHead": "7fb34e4eeeb320cb591982d524a80abe1842dfc8",
+  "reviewed": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+  "implementation": "907439e9c5984f756a42eb32d0a69631885a84b7",
+  "scope": "Tool import closure and diagnostic-only Review API recovery. No historical runtime evidence, grant, asset, renderer or standard perf changes. capture.ts recovered exactly for exported pinned asset adapter, Review types and root-aware server dependency. No runtime executed.",
+  "files": [
+    {
+      "path": "packages/tools/src/capture/browser-work-probe.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "d00e657efe427e650d8be6cf2bcb97e6eed2c8e1",
+      "sha256": "df5621ca41d700bc9679bf829125dc6ddc57e4bd965c4b37e7927b4bf67d00ab",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "e86697c1c6c82d07cbd180a9e92a9a802d4ecfbe",
+      "sha256": "5071fe317fecf4769e2cd9515150edcdae83fd1c8953b994ebfa78f127d7250e",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "6b978b5d2121d12e4e111601f914248ccdc8ba45",
+      "sha256": "3472a02000fb515a256f70a855e7fdc11112c6635d42f3d9146b1158d9253dfa",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-vite-child.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "e5ad9a0523e8de469f5d80f6257e2b74874d0c89",
+      "sha256": "e2b57f663679a91e1992ddcbd45a1c38d9647111577f943705063ae04de5150d",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-trace.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "1545773d324b01baca2ac6b234cac50a64adff74",
+      "sha256": "63a7479c513178b59261e1d3389ec9f7c742a18e9379d5d041b9a293fed729cf",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-work-class-budget.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "eee965e67c77435eb1371611294a283795e2b4e1",
+      "sha256": "69a3462dd91e62f72c5cfa7674bc3a59c7d0e7aca0c6dce378c179c357613e77",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-pass-probe.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "b9a5f096392bb958c4744bab3af2b345f3aefeb0",
+      "sha256": "25cc79dbc7af54e91c19532188aaa2e6c5f8a4e09b3add14f525c7d9a02bf968",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "f2cb00a8f6ef118602e09fd8ab3f00ec80ad4335",
+      "sha256": "141e6c2a17f0e1bd264dfb9e23e7f14ba57eeeaba8d360a10e4d76b3043414eb",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-report.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "cb7e9dad1c4342889103c5a6d8d05297b9e7b902",
+      "sha256": "9245871df3a043e30fc886aeb6183a9401337a32728201c6c40b7ec4c303b3c1",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-page.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "20f9d544ea69fbf34b84738cba5a384c1ec1299a",
+      "sha256": "06806e2458dd22f19a7b30efccdbf04df8519d4d646933b69543a3979ddf14b8",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/native-recorder-observer.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "ac355bcdc168a6202be75345f573453bddd95910",
+      "sha256": "2a61864e3cd2a03e8397879b836f62531f1c66db5cce2074bb77ffb791700e16",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/benchmark-runs.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "75f4660613e7e58fb2d32456d93cd619fde6e625",
+      "sha256": "501b7c086f06415decd35b4b5c3fcb1b4ba0dac7b4fb95b548ed7219f38f4cb2",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/timer-boundaries.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "c24ac912fb90f558bb01d167af466e34d342eb3b",
+      "sha256": "3e8143ce8f1ec3b10d54cad9636e909861c3f15acfd44153c07659cc35cfe8c0",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-capture.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "0a3440412bfd129166da6e448f29a04ccf4abca0",
+      "sha256": "ab1d87ea7b2ae71e820465fc93da3062b66c20028767829f4cc4836ccf29fe4b",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-checkpoint.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "20e43beee342f7c6dad463138b8c55b2b6b49d13",
+      "sha256": "155e734b47030a7b49f3f24e625b7daf701a87e04ce7984e27d81b8afafe9592",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-context.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "f82ec41bcae282497f619d7ecf98cd0b4b6fd1fc",
+      "sha256": "b27f35ae5f6bd787e28ec11e921f0c58f295eccc895d59496c62cf6feb433987",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-launch.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "2b0695cd93ee9b239efa32e892bcde5c0799eba0",
+      "sha256": "315b0254b2738071d2449b1b5f3a039b5a7b2d61c2422cb40be9a21342a6f8c1",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-protocol.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "96c7a016a69a5029462afa2ee4065b586657aaa9",
+      "sha256": "4adf3bee4416d0c0ec4b8c234791d5290659b7f773a7d0e61eaa9f4efd90acc1",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-report.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "2938ddb967f883707ce63984af4f88bf268e66d9",
+      "sha256": "b2b4f0858c5f5cf6e182ea55400d4e5c2adff15f5092b674b3f9879295e0bd4a",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-serialization.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "264b249cec9b61dafdfca7f1b50ce35304b3e27a",
+      "sha256": "4741f694788deb132aad6e49693f8daddad6cd73f844c4b4e3ff609f2e275f00",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/browser-work-trace.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "9869f8da3f947f56b0777c674a3daa30725ae780",
+      "sha256": "ca96915bdfe9c1ef2af1091a3f833715c52c7470eeac36f3950aa4288de25853",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-trace.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "37dc8da7c537a94d68167a08d11bf9cabfb2b1cc",
+      "sha256": "c05ca6de9c09a4d1d6ac5af3ddf4ae8ad8ebfe2c41cd3df265aaa6338fb12c81",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/cloud-march-serialization.test.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "f6e469139ff489071a0d8c5db0c6eeec87a20a8d",
+      "sha256": "75b15095a9df505f8f915d95fb4d8ab1603939fadc5110ea398926f77ddb4364",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/tools/src/capture/capture.ts",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "1872eb4bffb7c87150c77055a4896f43ce611bab",
+      "sha256": "b249dd78151757635bd1100cf8faca5572dfb45bdeff0361c9d40f9fbaebd634",
+      "priorSha256": "3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc",
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "8f46eee997b3d9ff3c46a4684ab35f268b90e24f",
+      "sha256": "b7845f43884f21bce25aaea163dc0f2573880c8a45eb9893188ccc3960c94ba4",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/native-work-class-probe.test.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "fe492861b924e4bf8ca964d0a5ffc59fe9304759",
+      "sha256": "5b38c8bc8d527536d7e165f0d5e697f46d959d0dc940a2de22391de235c9de95",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "2cac32c261141c0304ac7f98d2937e5fee0d8170",
+      "sha256": "9a37496be513d5cf6fe263ab6f127a4a5b29e9e2f48c0482992b4cfdef85f852",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/gpu-completion.test.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "8849f3d050965b86ef0f49a0555545b2f6d8a8dd",
+      "sha256": "b0a48f24850fc25655cc3afe3ef759c39ae9dc8368f5052621de2cd173364429",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/dependent-output.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "6c60d6a26941374065fb453b9fb6562934c3fd6b",
+      "sha256": "96107d34a95f02b5aa596303943c1c66e97d307f71fa247f9631401ca03032bf",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/dependent-output.test.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "8c6e12c6f7b451a22b27d509ea6e020769f3fc76",
+      "sha256": "abf42bd3cccae7b11f7562bf9ea12d64153166af1057ee79d98c9ccf1d35e106",
+      "priorSha256": null,
+      "recovery": "exact-file"
+    },
+    {
+      "path": "packages/client/src/dev/review.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "recovery": "exact nativeWorkClassProbe import/wrapper and device/glErrors methods only; perf/warmUp/renderer untouched",
+      "sha256": "c76bb8d590d822340567381bf2460f36cc23bb9788b242532558ea96fbcd19fc",
+      "priorSha256": "4203df1c5817a9cf7db852976149e3481d4d0b84adf77c826f42b7d9309a2033"
+    },
+    {
+      "path": "packages/client/test/timer-renderer.js",
+      "source": "1479d0ebaa79cd546eddfa1e0d6f029c77064af8",
+      "blob": "47a3bdcf062081170c6988d15acad2055f3ca610",
+      "sha256": "19c2b0a7bca749e5772c1d6bda663b68f463bae0f7274205731a526136fa3b2e",
+      "priorSha256": null,
+      "recovery": "exact-file CPU fixture"
+    }
+  ]
+}
