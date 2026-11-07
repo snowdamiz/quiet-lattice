@@ -1,0 +1,92 @@
+{
+  "at": "2026-11-07T09:34:21.892877+00:00",
+  "launcherExit": {
+    "pid": 88082,
+    "startedAt": 1794043952.383115,
+    "finishedAt": 1794043968.642982,
+    "exit": 1
+  },
+  "accepted": false,
+  "candidate": false,
+  "failure": {
+    "allocation": null,
+    "args": [
+      "Unbound owned executable: /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService"
+    ],
+    "attributes": {},
+    "cause": null,
+    "context": null,
+    "facts": null,
+    "message": "Unbound owned executable: /System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService",
+    "rawComplete": true,
+    "type": "AssertionError"
+  },
+  "secondary": [
+    {
+      "allocation": null,
+      "args": [
+        "Temporary namespace copy differs"
+      ],
+      "attributes": {},
+      "cause": null,
+      "context": null,
+      "facts": null,
+      "message": "Temporary namespace copy differs",
+      "rawComplete": true,
+      "type": "AssertionError"
+    }
+  ],
+  "knownPids": [
+    88082,
+    88108,
+    88109,
+    88110,
+    88111,
+    88112,
+    88543,
+    88545,
+    88546,
+    88585,
+    88597,
+    88599,
+    88606,
+    88607,
+    88613,
+    88619,
+    88620,
+    88621,
+    88622,
+    88625,
+    88626,
+    88627,
+    88628,
+    88632
+  ],
+  "ps": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "registration": {
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.1acc63bbad774a02bd7aed126a6a39a8\" in domain for user gui: 501\n"
+  },
+  "kernelTerminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "drained": true,
+  "namespacePreserved": "/private/tmp/sbr-_notzfdy",
+  "namespaceExists": true,
+  "profilePaths": [],
+  "openNamespaceHandles": {
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "physicalPacketSettlement": "UNPROVED",
+  "resultSha256": "aee820eb5bfc48ad76f3f592fbbde0e9c7c037e8fadc623f0ed1cf13bac2fd44",
+  "browserLaunchSha256": "040e1cb8afefc847d360eb4f93b0ff899242d383eef854564222ed6f4f955ca7",
+  "gpuReleased": true
+}

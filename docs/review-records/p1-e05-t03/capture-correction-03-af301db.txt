@@ -1,0 +1,203 @@
+# Appendix C.2 — P1.E05.T03 combined R3 correction and guarded activation
+
+TASK: Correct combined VMR3-1/VMR3-2, bind the exact Apple encoder prerequisite, and prepare the enabled candidate for independent R4.
+
+STATUS: Implementation and focused SOURCE/CPU verification complete. Independent R4 pending. Enabled source is awaiting a separate parent-issued one-unit grant after R4 PASS/current capacity/GPU schedule. No native or visual acceptance, actual grant, consumption, output or autonomous retry.
+
+SUMMARY: Receipt identity/success/manifest fields now retain an explicit stable protocol schema; only observation fields use reversible bounded graph encoding. Full real-helper CPU process chains preserve ordinary shared admissions and cyclic/unknown bytes through actual durable writes, OS exits, parent reads and successor admission. A common timeline validator checks every saved endpoint against actual fixed-step clocks and conservative Multitool raise/sway reachability, including initial settle, underwater recovery and switches. Exact Apple encoder/signature/route bindings extend only the executable prerequisite; unchanged StageReceipts still enforces current ownership.
+
+PIN: task/P1-E05-T03 at /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8. Base 80d348154d1fc9497d6989bf3f3544859e7b0477, tree e26072bb4d628922fe3720ccfd60f848e1627215. Final commit HEAD/tree and clean post-commit check are recorded in the external POST-COMMIT.json and C2-FINAL.md in /private/tmp/vm-r3-fix-bpmhg9qg; this avoids a self-referential tracked commit hash. Readiness SHA256 96ba3864a03d06efe44de93c15d6a5a92f40ba14791220b5bffd7282c6571f38. Product/art anchor 05909e4f74d1c6acf64a5be110f3e44af18b7bc5 remains unchanged. Shared T15 adoption dea07963a32227cc3eaecad86d128026350b9082 retains exact patch parity with 38b6c4b58db43146df20cd760808d1461d7a667b.
+
+FILES: Only this task-local packet: boundary.py, caller.py, bindings.py, entry.mjs, inspect_packet.py; the corresponding tests, new protocol_child.py/test_protocol.py/test_encoder.py; inventory's two flags, readiness, README and this new exclusive evidence/report. No runtime, assets, shared capture/T15 tests, helpers, source validation or orchestration documents changed. Prior reports remain separate and byte-identical.
+
+VERIFY:
+
+- 65 Python methods PASS: 22 existing boundary/native/revision + 4 R2 regression + 5 protocol + 3 encoder + 31 inspector. The 31 inspector methods include all 26 prior method ASTs unchanged. No double-counting of repeat runs.
+- 23 Node tests PASS, including 42 falsy/cyclic durable/fallback/all-sink publication scenarios. Additional 72 combined actual productionCapture -> unchanged captureReview failure scenarios PASS with ordered primary/browser/Vite facts. Inert Playwright/native ports only.
+- Exact-base RED receipt replay: actual helper shared-admission alias, child OS exit0/durable true, successor refused (`Predecessor failed/provisional contract`). Copied-alias isolation control admitted. GREEN same real-boundary replay: both OS exit0 and successor admitted. Full protocol test: 7 real CPU caller processes/101 synthetic file payloads, actual writes and unchanged scratch HEAD; parent observes exits, authenticates exact receipt snapshots and dispatches only after the actual successor gate. Output payloads and decoder port in this process proof are inert, not PNG/native qualification.
+- Failed publication, all-sinks failure, refused drain, post-return OS failure, changed receipt hash and reauthenticated wrong schema all stop the next job before allocation. Positive actual Node admit consumes the Python-produced consumption schema. Existing actual FIFO, bounded-read, cyclic callback/drain/SIGALRM and original/secondary error tests remain passing.
+- Exact-base RED inspector accepts 9 impossible underwater transitions and a zero-time sway reversal. GREEN all 10 retained counterexamples refuse; matching controls pass. New full-CLI regression suite: 261 calls, 55 valid exit0 and 206 expected exit1. Actual unchanged Multitool/fixture CPU oracle: 14 timelines, 224 endpoints, 57 transition scenarios; all 14 complete authenticated oracle packets pass, including zero-dt reset/already-settled and extra cooling controls. Reachability is conservative; it is not proof of every unseen input or visual quality.
+- Encoder: actual CPU codesign verification, exact path/167280-byte/SHA256/rootowner/nonwritable route checks PASS. Inert actual StageReceipts controls cover accepted bound owned member, missing binding, wrong UID/birth/coalition/binary and nonmember. No encoder process launched and no ownership inferred for external XPC services.
+- Enabled actual CLIs: 14 missing-auth refusals (caller + entry for each unit), expected exit1; all prospective paths stay absent. Explicit disabled gate and actual malformed hash/schema/claim cases remain controls, not a claim that this source is disabled.
+- Scoped ESLint/Prettier, all 15 Python source ASTs and git diff whitespace PASS. Reused unchanged 100 shared lifecycle controls, 110 client controls and four-package typecheck have exact source/dependency/toolchain and command/log SHA proof in freeze.json. No extra broad suite, package manager invocation, install or shared dependency write.
+
+All exact argv/cwd/environment/exits/log hashes: evidence/combined-r3-activation/COMMANDS.md and archived commands.jsonl; decoder/commands.json and REPORT.txt preserve all per-CLI cases. Direct Node is /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node, SHA256 06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b. Python launcher, self-observed kernel, decoder/Pillow, tsx/esbuild/browser, codesign and Apple encoder routes/identities are in readiness. At most two CPU workers across lanes; each suite is serial.
+
+FAILURES RETAINED: RED is intentionally non-green. Decoder's exact-base new regression tests exit1 with 105 assertion failures; full raw text retained. Two scratch oracle loaders initially failed (`ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, then unsupported transform mode), an outer packet harness lacked Pillow PYTHONPATH, one scratch dispatch accidentally reran the passing 31-test suite, and v3 mislabeled one standalone switch setup. All sources/logs remain; corrected v4 with installed TypeScript transpileModule runs the complete frozen runtime. No failure was rewritten as PASS. Parent runtime/protocol checks exit0, including probes whose asserted adverse child exits are1. The first staged whitespace check exited2 for one extra trailing blank line in the new COMMANDS.md; its exact failure is retained as staged-diff-red.txt and corrected before commit. See decoder/REPORT.txt for full tails and counts.
+
+DECISIONS:
+
+1. `viewmodel-consumption/1` and `viewmodel-result/1` keep protocol keys at the root. `observations` uses `observationEncoding: raw-graph-or-tree/1`; shared/cyclic unknown values are retained together. Primary failure and secondary/persistence failure lists remain explicit root fields. Protocol cycles refuse; ordinary shared protocol values retain ordinary JSON value semantics. Every actual consumer enforces the schema, authenticates once and reuses that snapshot. Successful disk records remain accepted:false/AWAITING_CALLER_COMPLETION until parent-observed OS exit0.
+2. Timeline checks cover every endpoint, not only named raises. Existing stricter 24-step raise/switch predicates remain. Positive raise obeys <= previous + 2.6*elapsed; sway obeys exp(-9*elapsed) toward clamped 0.035/0.03 targets. Initial fixture setup and frame/last-dt constraints are checked. Downward resets, zero-dt settled states, extra cooling and actual producer awaits remain valid. No product/fixture pose or render count changed.
+3. Apple binding is the narrow prerequisite requested from effects diagnosis/source 6b4073305af21efe5c6cf5ecc09f78406b637a42. Exact binary SHA256 a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5; designated requirement identifier com.apple.coremedia.videoencoder and anchor apple; platform26, CDHash 1a44901103cc99a0b15b19f81156f25748c3a0d9. Its historical effects publication/cap diagnosis is not reproduced VM evidence. No segmented effects framework was copied; unchanged helper ownership checks and VM receipt ceilings remain.
+4. Source activation is explicitly authorized for combined R4 review. Caller/entry/inventory/readiness gates true, executionStatus ENABLED_AWAITING_PARENT_GRANT; allUnitsQualified/nativeQualified false. New identity viewmodel-packet-r4-bpmhg9qg. All 31 new and 31 old prospective paths absent. Parent alone grants a unit after R4/current capacity/GPU scheduling. The README authorization example contains placeholders only; it is not a grant. Final HEAD is bound by any future external grant, not by a circular readiness field.
+
+ADMISSION LEDGER: unchanged 7 units/101 files = 94 PNGs + 7 readouts. review-* each 12 files: output184565760, admission5402312704. view-thalune19: output302022656, admission5754683392. view-ixari/view-ulgani21 each: output335577088, admission5855346688. return-thalune4: output50348032, admission4999659520. Admission = three output copies + 4848615424 fixed reserve bytes (64MiB metadata,64MiB cache snapshot,2GiB profile,1GiB privateTMP,128MiB helper log,256MiB cache growth,16MiB filesystem,1GiB safety). PNG16MiB; full-view readout32KiB, review/return16KiB. Capture600s/cleanup60s/CPUdecode45s/cachecopy30s. These remain observed reserve ceilings, not OS quotas. No inventory/render/state/LOD/material or budget reduction. Requested LOD2/actual LOD0 and Muzzle-only overlay remain truthful.
+
+PROTECTED HASH PROOF: all 822 files:6 accepted bodies,6 viewmodel sources/exports,6 CPU previews,745 review packets,59 retained runtime/history. Protected manifest SHA256 09d67b371caa811a47c621d0131870d9541dd2e288315e59a7c4d8416fb19b4e. All four helpers and protected historical reports unchanged; all 666 original R3 indexed evidence files and 286 additional prior report/probe/source hashes reverified. Before readiness refresh, 12994 of 13004 prior tracked working files were unchanged and the only10 differences were authorized packet edits. Final audit repeats after commit. Full individual asset/helper/report SHA tables are in freeze.json.gz (also raw in the archive) and the preserved protected-audit.txt.
+
+Source digest outside packet cfd22c5cf2d6736cce266f26f39b1c0bd76e04f1eb292915aed12791fa40d0d4; ignored inventory 2fde53955b2b8855c9cae24565e0ba0c300667c203f4001e2ae2d56b0d58f552; node_modules tree c9ca9b99ea32b544e006174013458c83feb842f339634b4746d694f236e681dc (12848 files/288634535B), browser tree5fb8dcd8d2606ed66b09d4e545ba7f264b0bb2bb129022db4369de534b2a9645, Pillow tree6addcbac6ae4bd93ca6cfe79295d32b2d30662040f466ca4f554057df33a8b1c unchanged. Prior reviewer disclosed an8213-byte ignored Vitest cache file moved into its evidence; no foreign restoration was performed here, and current dependencies/ignored inventory match the reviewed baseline.
+
+OUT OF SCOPE: Native/browser/GPU/Metal/codec/Blender/services/DB, actual captures, screenshot cleanup, source art regeneration, gameplay/T04 clips, full GPU smoke/CI/visual acceptance, server authority, grants, push/PR/main/merge. All current results are source or synthetic CPU proofs. Native footprint/timing/cohort ownership and appearance remain pending. Parent schedules Fauna priority and the first unit after R4.
+
+ARTIFACTS: New exclusive /private/tmp/vm-r3-fix-bpmhg9qg, immutable original source copies, RED/GREEN process recipes, raw actual receipts and seven-process chain manifests, decoder raw packets/commands/oracle, CPU Apple signature facts, freeze.json, COMMANDS.md. Committed evidence archive and its readback SHA manifest/index are under evidence/combined-r3-activation. All regular scratch evidence is archived with bounded readback; nonregular FIFO/symlink identities are recorded without following/opening them. Original scratch/history retained. No screenshots or native previews were created.
+
+FINAL COMMITTED PIN
+
+base: 80d348154d1fc9497d6989bf3f3544859e7b0477
+
+baseTree: e26072bb4d628922fe3720ccfd60f848e1627215
+
+head: af301db512343f2d578e68b8cfdbe7f72bfe794d
+
+tree: 70fa16f7484cf5af0e9d150b49e7c3269fe675e2
+
+branch: task/P1-E05-T03
+
+clean: True
+
+readinessSha256: 96ba3864a03d06efe44de93c15d6a5a92f40ba14791220b5bffd7282c6571f38
+
+inventorySha256: 5c08f26d1fdd8c2ed074293b2efcd5bed18d410cbe1f2bd3ea14100db996c67e
+
+Actual post-commit caller --check exit0: {"status": "ENABLED_AWAITING_PARENT_GRANT", "runtimeEnabled": true, "entryEnabled": true, "allUnitsQualified": false, "nativeQualified": false}. All 31 new paths and 31 historical paths remain absent. Entire worktree is clean; no push/PR/merge.
+
+Evidence archive SHA256 2e51b706baa41e738510ac2b9da689c869cac9f994352a02381c9528ead932a0, 12581408 bytes; readback verified 23220 regular files / 758570646 logical bytes. Eight nonregular identities retained without following/opening. POST-COMMIT.json SHA256 165909a449f1969efd391ca15b65a38820329d935b242de2e87cf9809aa2139c.
+
+Exact protected body/viewmodel identities (all other 822-file entries remain in freeze.json and the protected manifest):
+
+| File | SHA256 |
+|---|---|
+| assets/blend/characters/thalune.blend | d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b |
+| packages/client/public/models/characters/thalune.glb | dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27 |
+| assets/blend/characters/ixari.blend | 9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c |
+| packages/client/public/models/characters/ixari.glb | 1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b |
+| assets/blend/characters/ulgani.blend | 06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b |
+| packages/client/public/models/characters/ulgani.glb | 9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682 |
+| assets/blend/characters/viewmodels/fp_thalune.blend | 46d483c8cc0b10f555dc35f60008d64f7b883d392daa4bf4e87abb91da97b1db |
+| packages/client/public/models/characters/viewmodels/fp_thalune.glb | b4859735bd2f203bd30ca41705a156858cc362dd6de1000d308bd1e12b53e76f |
+| assets/blend/characters/viewmodels/fp_ixari.blend | 44c408a64b59353810119640471b2faf9506da57250bdb47e7ce067445f2c4b5 |
+| packages/client/public/models/characters/viewmodels/fp_ixari.glb | 78f90acfc0087b63e97c3ae50cb7c1f5e045e447e12975b6ec21a0dd5f038abc |
+| assets/blend/characters/viewmodels/fp_ulgani.blend | aabb32cb139c544d7a57f2fe22c34931fe720d2215e02936876f2dd02dd1aa3b |
+| packages/client/public/models/characters/viewmodels/fp_ulgani.glb | 8319097e97e3ccf2f9fdcbbe114742ea45f1f24eb8ba98420f12678d3511e954 |
+
+Retained helper SHA256:
+
+| File | SHA256 |
+|---|---|
+| assets/blend/stations/_authoring/round4_job_boundary.py | 3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c |
+| assets/blend/stations/_authoring/round4_capture_children.py | e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07 |
+| assets/blend/stations/_authoring/run_round4_browser_proof.py | f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab |
+| assets/blend/stations/_authoring/run_round4_remaining8.py | 4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8 |
+
+Final command additions after the archived snapshot (earlier commands and all decoder invocations remain archived):
+
+```json
+{
+  "name": "archive",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/vm-r3-fix-bpmhg9qg/package_evidence.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 9.243748124979902,
+  "logSha256": "eef4e78b8884806297dc7a9bf64ce29003a947dc5da64b3164bc66216338d74f",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "staged-diff-red",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 2,
+  "seconds": 0.010561542003415525,
+  "logSha256": "d4c5e7f9ca42052925b071448b3e06e3c3f7a8b5dea28b6048e468e6a1fc0e4c",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "staged-diff-green",
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.012343291018623859,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "commit",
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "fix(P1-E05-T03): stabilize capture receipts and enable guarded candidate"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.14207004196941853,
+  "logSha256": "71d928ef5dcac022ceeebd19cedf252a3e558fd8ad70184c2ab69d6c83f5cfe2",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp"
+  }
+}
+```
+
+```json
+{
+  "name": "postcommit",
+  "argv": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/vm-r3-fix-bpmhg9qg/postcommit.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 11.46948195900768,
+  "logSha256": "d5604a860fc2a7837479504bedd61f36b4391502824b650dc7bbb19f310e0ae5",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/vm-r3-fix-bpmhg9qg/tmp"
+  }
+}
+```
+
+Next handoff: independent R4 of this exact enabled source/receipt/timeline/encoder candidate. Parent alone may issue the first unit grant after PASS/current capacity/GPU schedule. This report is not a grant. No native capture was attempted.
