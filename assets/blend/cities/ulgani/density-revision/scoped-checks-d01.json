@@ -1,0 +1,51 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/Users/andreyyurlov/.cache/uv/archive-v0/WyPP-INgLOFz4con/bin/ruff",
+        "check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/andreyyurlov/.cache/uv/archive-v0/WyPP-INgLOFz4con/bin/ruff",
+        "format",
+        "--check",
+        "packages/tools/blender/cities/ulgani"
+      ],
+      "exit": 0,
+      "stdout": "30 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "packages/tools/blender/cities/ulgani",
+        "-p",
+        "test_*.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "...\n----------------------------------------------------------------------\nRan 3 tests in 5.644s\n\nOK\n"
+    },
+    {
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "--check",
+        "packages/tools/blender/cities/ulgani/decode_meshopt.mjs"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "pythonAST": "PASS"
+}

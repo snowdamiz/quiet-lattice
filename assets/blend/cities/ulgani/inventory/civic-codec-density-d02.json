@@ -1,0 +1,1072 @@
+{
+  "source": "assets/blend/cities/ulgani_civic.blend",
+  "sha256": "d86081101d11ebe00cb004ebc398336544d80202b870bb18490285c7fed9c3d2",
+  "assets": [
+    {
+      "id": "ulgani_plaza",
+      "title": "Root Commons",
+      "role": "plaza",
+      "class": "building",
+      "bounds": [
+        [
+          -29.717727661132812,
+          -27.5,
+          -1.5831547975540161
+        ],
+        [
+          30.448196411132812,
+          27.5,
+          5.625821113586426
+        ]
+      ],
+      "height": 7.208975911140442,
+      "footprintRadius": 30.53647559439226,
+      "lodTriangles": [
+        54040,
+        16211,
+        5404,
+        1891
+      ],
+      "lodNodes": [
+        "ulgani_plaza_LOD0",
+        "ulgani_plaza_LOD1",
+        "ulgani_plaza_LOD2",
+        "ulgani_plaza_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -27,
+            0.18
+          ],
+          "to": [
+            0,
+            27,
+            0.18
+          ],
+          "width": 6,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_plaza",
+          "position": [
+            22.1054630279541,
+            8.567203521728516,
+            3.700000047683716
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 10
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_plaza",
+          "position": [
+            -9.346039772033691,
+            20.263341903686523,
+            3.700000047683716
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 10
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_plaza",
+          "position": [
+            -22.1054630279541,
+            -8.567203521728516,
+            3.700000047683716
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 10
+          }
+        },
+        {
+          "name": "Light_Spore3_ulgani_plaza",
+          "position": [
+            9.346039772033691,
+            -20.263341903686523,
+            3.700000047683716
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 10
+          }
+        },
+        {
+          "name": "Interact_Recall_ulgani_plaza",
+          "position": [
+            0.0,
+            0.0,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "recall",
+            "dispatch": "T01_T02_pending"
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_plaza_Threshold-1",
+        "COL_ulgani_plaza_Threshold1",
+        "COL_ulgani_plaza_Deck0",
+        "COL_ulgani_plaza_Deck1",
+        "COL_ulgani_plaza_Deck2",
+        "COL_ulgani_plaza_Deck3",
+        "COL_ulgani_plaza_Deck4",
+        "COL_ulgani_plaza_Deck5",
+        "COL_ulgani_plaza_Deck6",
+        "COL_ulgani_plaza_Deck7",
+        "COL_ulgani_plaza_Deck8",
+        "COL_ulgani_plaza_Deck9",
+        "COL_ulgani_plaza_Deck10",
+        "COL_ulgani_plaza_Deck11",
+        "COL_ulgani_plaza_GatheringRoot0",
+        "COL_ulgani_plaza_GatheringRoot1",
+        "COL_ulgani_plaza_GatheringRoot2",
+        "COL_ulgani_plaza_GatheringRoot3"
+      ]
+    },
+    {
+      "id": "ulgani_market",
+      "title": "Cap Market",
+      "role": "market",
+      "class": "building",
+      "bounds": [
+        [
+          -15.88909912109375,
+          -12.5,
+          0.0
+        ],
+        [
+          15.224098205566406,
+          12.5,
+          12.035801887512207
+        ]
+      ],
+      "height": 12.035801887512207,
+      "footprintRadius": 16.428880175868674,
+      "lodTriangles": [
+        19136,
+        5739,
+        1911,
+        669
+      ],
+      "lodNodes": [
+        "ulgani_market_LOD0",
+        "ulgani_market_LOD1",
+        "ulgani_market_LOD2",
+        "ulgani_market_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -9.48,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            9.48,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -12,
+            0.18
+          ],
+          "to": [
+            0,
+            12,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        },
+        {
+          "from": [
+            0,
+            -12,
+            0.18
+          ],
+          "to": [
+            0,
+            -3.5999999999999996,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_market_ulgani_market",
+          "position": [
+            0.0,
+            -3.5999999046325684,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "market",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_market",
+          "position": [
+            -8.25,
+            -6.599999904632568,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_market",
+          "position": [
+            8.25,
+            6.599999904632568,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_market_Threshold-1",
+        "COL_ulgani_market_Threshold1",
+        "COL_ulgani_market_Deck0",
+        "COL_ulgani_market_Deck1",
+        "COL_ulgani_market_Deck2",
+        "COL_ulgani_market_Deck3",
+        "COL_ulgani_market_Deck4",
+        "COL_ulgani_market_Deck5",
+        "COL_ulgani_market_Deck6",
+        "COL_ulgani_market_Deck7",
+        "COL_ulgani_market_Deck8",
+        "COL_ulgani_market_Deck9",
+        "COL_ulgani_market_Deck10",
+        "COL_ulgani_market_Deck11",
+        "COL_ulgani_market_RootPillar0",
+        "COL_ulgani_market_EdgeWall0",
+        "COL_ulgani_market_RootPillar1",
+        "COL_ulgani_market_RootPillar3",
+        "COL_ulgani_market_EdgeWall3",
+        "COL_ulgani_market_RootPillar4",
+        "COL_ulgani_market_EdgeWall4",
+        "COL_ulgani_market_RootPillar5",
+        "COL_ulgani_market_RootPillar7",
+        "COL_ulgani_market_EdgeWall7",
+        "COL_ulgani_market_UpperRib1_0",
+        "COL_ulgani_market_UpperRib1_1",
+        "COL_ulgani_market_UpperRib1_2",
+        "COL_ulgani_market_UpperRib1_3",
+        "COL_ulgani_market_UpperRib1_4",
+        "COL_ulgani_market_UpperRib1_5",
+        "COL_ulgani_market_UpperRib1_6",
+        "COL_ulgani_market_UpperRib1_7",
+        "COL_ulgani_market_UpperRib2_0",
+        "COL_ulgani_market_UpperRib2_1",
+        "COL_ulgani_market_UpperRib2_2",
+        "COL_ulgani_market_UpperRib2_3",
+        "COL_ulgani_market_UpperRib2_4",
+        "COL_ulgani_market_UpperRib2_5",
+        "COL_ulgani_market_UpperRib2_6",
+        "COL_ulgani_market_UpperRib2_7",
+        "COL_ulgani_market_Crown0"
+      ]
+    },
+    {
+      "id": "ulgani_city_master",
+      "title": "House of Grafting",
+      "role": "city_master",
+      "class": "building",
+      "bounds": [
+        [
+          -13.475083351135254,
+          -14.221799850463867,
+          0.0
+        ],
+        [
+          14.033842086791992,
+          13.5,
+          17.04755401611328
+        ]
+      ],
+      "height": 17.04755401611328,
+      "footprintRadius": 15.6639419341948,
+      "lodTriangles": [
+        21696,
+        6508,
+        2168,
+        758
+      ],
+      "lodNodes": [
+        "ulgani_city_master_LOD0",
+        "ulgani_city_master_LOD1",
+        "ulgani_city_master_LOD2",
+        "ulgani_city_master_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -10.27,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            10.27,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -13,
+            0.18
+          ],
+          "to": [
+            0,
+            13,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        },
+        {
+          "from": [
+            0,
+            -13,
+            0.18
+          ],
+          "to": [
+            0,
+            -3.9,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_city_master_ulgani_city_master",
+          "position": [
+            0.0,
+            -3.9000000953674316,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "city_master",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_city_master",
+          "position": [
+            -6.599999904632568,
+            -7.150000095367432,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_city_master",
+          "position": [
+            6.599999904632568,
+            7.150000095367432,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_city_master_Threshold-1",
+        "COL_ulgani_city_master_Threshold1",
+        "COL_ulgani_city_master_Deck0",
+        "COL_ulgani_city_master_Deck1",
+        "COL_ulgani_city_master_Deck2",
+        "COL_ulgani_city_master_Deck3",
+        "COL_ulgani_city_master_Deck4",
+        "COL_ulgani_city_master_Deck5",
+        "COL_ulgani_city_master_Deck6",
+        "COL_ulgani_city_master_Deck7",
+        "COL_ulgani_city_master_Deck8",
+        "COL_ulgani_city_master_Deck9",
+        "COL_ulgani_city_master_Deck10",
+        "COL_ulgani_city_master_Deck11",
+        "COL_ulgani_city_master_RootPillar0",
+        "COL_ulgani_city_master_EdgeWall0",
+        "COL_ulgani_city_master_RootPillar1",
+        "COL_ulgani_city_master_RootPillar3",
+        "COL_ulgani_city_master_EdgeWall3",
+        "COL_ulgani_city_master_RootPillar4",
+        "COL_ulgani_city_master_EdgeWall4",
+        "COL_ulgani_city_master_RootPillar5",
+        "COL_ulgani_city_master_RootPillar7",
+        "COL_ulgani_city_master_EdgeWall7",
+        "COL_ulgani_city_master_UpperRib1_0",
+        "COL_ulgani_city_master_UpperRib1_1",
+        "COL_ulgani_city_master_UpperRib1_2",
+        "COL_ulgani_city_master_UpperRib1_3",
+        "COL_ulgani_city_master_UpperRib1_4",
+        "COL_ulgani_city_master_UpperRib1_5",
+        "COL_ulgani_city_master_UpperRib1_6",
+        "COL_ulgani_city_master_UpperRib1_7",
+        "COL_ulgani_city_master_UpperRib2_0",
+        "COL_ulgani_city_master_UpperRib2_1",
+        "COL_ulgani_city_master_UpperRib2_2",
+        "COL_ulgani_city_master_UpperRib2_3",
+        "COL_ulgani_city_master_UpperRib2_4",
+        "COL_ulgani_city_master_UpperRib2_5",
+        "COL_ulgani_city_master_UpperRib2_6",
+        "COL_ulgani_city_master_UpperRib2_7",
+        "COL_ulgani_city_master_Crown0",
+        "COL_ulgani_city_master_Crown1"
+      ]
+    },
+    {
+      "id": "ulgani_compact",
+      "title": "Compact Root Registry",
+      "role": "compact",
+      "class": "building",
+      "bounds": [
+        [
+          -12.93869400024414,
+          -11.5,
+          -0.03342132270336151
+        ],
+        [
+          16.296300888061523,
+          11.5,
+          20.055946350097656
+        ]
+      ],
+      "height": 20.089367672801018,
+      "footprintRadius": 16.31603417011031,
+      "lodTriangles": [
+        30486,
+        9145,
+        3048,
+        1066
+      ],
+      "lodNodes": [
+        "ulgani_compact_LOD0",
+        "ulgani_compact_LOD1",
+        "ulgani_compact_LOD2",
+        "ulgani_compact_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -8.690000000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            8.690000000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -11,
+            0.18
+          ],
+          "to": [
+            0,
+            11,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        },
+        {
+          "from": [
+            0,
+            -11,
+            0.18
+          ],
+          "to": [
+            0,
+            -3.3,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_compact_ulgani_compact",
+          "position": [
+            0.0,
+            -3.299999952316284,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "compact",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_compact",
+          "position": [
+            -7.150000095367432,
+            -6.050000190734863,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_compact",
+          "position": [
+            7.150000095367432,
+            6.050000190734863,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_compact_Threshold-1",
+        "COL_ulgani_compact_Threshold1",
+        "COL_ulgani_compact_Deck0",
+        "COL_ulgani_compact_Deck1",
+        "COL_ulgani_compact_Deck2",
+        "COL_ulgani_compact_Deck3",
+        "COL_ulgani_compact_Deck4",
+        "COL_ulgani_compact_Deck5",
+        "COL_ulgani_compact_Deck6",
+        "COL_ulgani_compact_Deck7",
+        "COL_ulgani_compact_Deck8",
+        "COL_ulgani_compact_Deck9",
+        "COL_ulgani_compact_Deck10",
+        "COL_ulgani_compact_Deck11",
+        "COL_ulgani_compact_RootPillar0",
+        "COL_ulgani_compact_EdgeWall0",
+        "COL_ulgani_compact_RootPillar1",
+        "COL_ulgani_compact_RootPillar3",
+        "COL_ulgani_compact_EdgeWall3",
+        "COL_ulgani_compact_RootPillar4",
+        "COL_ulgani_compact_EdgeWall4",
+        "COL_ulgani_compact_RootPillar5",
+        "COL_ulgani_compact_RootPillar7",
+        "COL_ulgani_compact_EdgeWall7",
+        "COL_ulgani_compact_UpperRib1_0",
+        "COL_ulgani_compact_UpperRib1_1",
+        "COL_ulgani_compact_UpperRib1_2",
+        "COL_ulgani_compact_UpperRib1_3",
+        "COL_ulgani_compact_UpperRib1_4",
+        "COL_ulgani_compact_UpperRib1_5",
+        "COL_ulgani_compact_UpperRib1_6",
+        "COL_ulgani_compact_UpperRib1_7",
+        "COL_ulgani_compact_UpperRib2_0",
+        "COL_ulgani_compact_UpperRib2_1",
+        "COL_ulgani_compact_UpperRib2_2",
+        "COL_ulgani_compact_UpperRib2_3",
+        "COL_ulgani_compact_UpperRib2_4",
+        "COL_ulgani_compact_UpperRib2_5",
+        "COL_ulgani_compact_UpperRib2_6",
+        "COL_ulgani_compact_UpperRib2_7",
+        "COL_ulgani_compact_UpperRib3_0",
+        "COL_ulgani_compact_UpperRib3_1",
+        "COL_ulgani_compact_UpperRib3_2",
+        "COL_ulgani_compact_UpperRib3_3",
+        "COL_ulgani_compact_UpperRib3_4",
+        "COL_ulgani_compact_UpperRib3_5",
+        "COL_ulgani_compact_UpperRib3_6",
+        "COL_ulgani_compact_UpperRib3_7",
+        "COL_ulgani_compact_UpperRib4_0",
+        "COL_ulgani_compact_UpperRib4_1",
+        "COL_ulgani_compact_UpperRib4_2",
+        "COL_ulgani_compact_UpperRib4_3",
+        "COL_ulgani_compact_UpperRib4_4",
+        "COL_ulgani_compact_UpperRib4_5",
+        "COL_ulgani_compact_UpperRib4_6",
+        "COL_ulgani_compact_UpperRib4_7",
+        "COL_ulgani_compact_Crown0",
+        "COL_ulgani_compact_Crown1"
+      ]
+    },
+    {
+      "id": "ulgani_chorus_listener",
+      "title": "Listening Canopy",
+      "role": "chorus_listener",
+      "class": "building",
+      "bounds": [
+        [
+          -10.896500587463379,
+          -16.519712448120117,
+          0.0
+        ],
+        [
+          12.629643440246582,
+          15.562420845031738,
+          15.041958808898926
+        ]
+      ],
+      "height": 15.041958808898926,
+      "footprintRadius": 16.859294384944697,
+      "lodTriangles": [
+        26348,
+        7903,
+        2633,
+        921
+      ],
+      "lodNodes": [
+        "ulgani_chorus_listener_LOD0",
+        "ulgani_chorus_listener_LOD1",
+        "ulgani_chorus_listener_LOD2",
+        "ulgani_chorus_listener_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -11.850000000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            11.850000000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -15,
+            0.18
+          ],
+          "to": [
+            0,
+            15,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        },
+        {
+          "from": [
+            0,
+            -15,
+            0.18
+          ],
+          "to": [
+            0,
+            -4.5,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Interact_chorus_listener_ulgani_chorus_listener",
+          "position": [
+            0.0,
+            -4.5,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "chorus_listener",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_chorus_listener",
+          "position": [
+            -6.050000190734863,
+            -8.25,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_chorus_listener",
+          "position": [
+            6.050000190734863,
+            8.25,
+            3.299999952316284
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_chorus_listener_Threshold-1",
+        "COL_ulgani_chorus_listener_Threshold1",
+        "COL_ulgani_chorus_listener_Deck0",
+        "COL_ulgani_chorus_listener_Deck1",
+        "COL_ulgani_chorus_listener_Deck2",
+        "COL_ulgani_chorus_listener_Deck3",
+        "COL_ulgani_chorus_listener_Deck4",
+        "COL_ulgani_chorus_listener_Deck5",
+        "COL_ulgani_chorus_listener_Deck6",
+        "COL_ulgani_chorus_listener_Deck7",
+        "COL_ulgani_chorus_listener_Deck8",
+        "COL_ulgani_chorus_listener_Deck9",
+        "COL_ulgani_chorus_listener_Deck10",
+        "COL_ulgani_chorus_listener_Deck11",
+        "COL_ulgani_chorus_listener_RootPillar0",
+        "COL_ulgani_chorus_listener_EdgeWall0",
+        "COL_ulgani_chorus_listener_RootPillar1",
+        "COL_ulgani_chorus_listener_RootPillar3",
+        "COL_ulgani_chorus_listener_EdgeWall3",
+        "COL_ulgani_chorus_listener_RootPillar4",
+        "COL_ulgani_chorus_listener_EdgeWall4",
+        "COL_ulgani_chorus_listener_RootPillar5",
+        "COL_ulgani_chorus_listener_RootPillar7",
+        "COL_ulgani_chorus_listener_EdgeWall7",
+        "COL_ulgani_chorus_listener_UpperRib1_0",
+        "COL_ulgani_chorus_listener_UpperRib1_1",
+        "COL_ulgani_chorus_listener_UpperRib1_2",
+        "COL_ulgani_chorus_listener_UpperRib1_3",
+        "COL_ulgani_chorus_listener_UpperRib1_4",
+        "COL_ulgani_chorus_listener_UpperRib1_5",
+        "COL_ulgani_chorus_listener_UpperRib1_6",
+        "COL_ulgani_chorus_listener_UpperRib1_7",
+        "COL_ulgani_chorus_listener_UpperRib2_0",
+        "COL_ulgani_chorus_listener_UpperRib2_1",
+        "COL_ulgani_chorus_listener_UpperRib2_2",
+        "COL_ulgani_chorus_listener_UpperRib2_3",
+        "COL_ulgani_chorus_listener_UpperRib2_4",
+        "COL_ulgani_chorus_listener_UpperRib2_5",
+        "COL_ulgani_chorus_listener_UpperRib2_6",
+        "COL_ulgani_chorus_listener_UpperRib2_7",
+        "COL_ulgani_chorus_listener_Crown0",
+        "COL_ulgani_chorus_listener_Crown1",
+        "COL_ulgani_chorus_listener_Crown2"
+      ]
+    },
+    {
+      "id": "ulgani_shipyard",
+      "title": "Open Root Dock",
+      "role": "shipyard",
+      "class": "building",
+      "padDiameter": 36,
+      "bounds": [
+        [
+          -30.70831871032715,
+          -23.5,
+          -0.5711962580680847
+        ],
+        [
+          31.463136672973633,
+          23.5,
+          18.046035766601562
+        ]
+      ],
+      "height": 18.617232024669647,
+      "footprintRadius": 32.12425542903106,
+      "lodTriangles": [
+        21272,
+        6380,
+        2126,
+        744
+      ],
+      "lodNodes": [
+        "ulgani_shipyard_LOD0",
+        "ulgani_shipyard_LOD1",
+        "ulgani_shipyard_LOD2",
+        "ulgani_shipyard_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -23,
+            0.18
+          ],
+          "to": [
+            0,
+            -19,
+            0.18
+          ],
+          "width": 4,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_shipyard",
+          "position": [
+            -22.0,
+            5.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_shipyard",
+          "position": [
+            22.0,
+            5.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Interact_shipyard_ulgani_shipyard",
+          "position": [
+            0.0,
+            -19.0,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "shipyard",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "BAY_Pad_ulgani_shipyard",
+          "position": [
+            0.0,
+            0.0,
+            0.2199999988079071
+          ],
+          "properties": {
+            "pad_diameter": 36
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_shipyard_Threshold-1",
+        "COL_ulgani_shipyard_Threshold1",
+        "COL_ulgani_shipyard_Deck0",
+        "COL_ulgani_shipyard_Deck1",
+        "COL_ulgani_shipyard_Deck2",
+        "COL_ulgani_shipyard_Deck3",
+        "COL_ulgani_shipyard_Deck4",
+        "COL_ulgani_shipyard_Deck5",
+        "COL_ulgani_shipyard_Deck6",
+        "COL_ulgani_shipyard_Deck7",
+        "COL_ulgani_shipyard_Deck8",
+        "COL_ulgani_shipyard_Deck9",
+        "COL_ulgani_shipyard_Deck10",
+        "COL_ulgani_shipyard_Deck11",
+        "COL_ulgani_shipyard_YardRoot-1",
+        "COL_ulgani_shipyard_YardRoot1"
+      ]
+    },
+    {
+      "id": "ulgani_salvage",
+      "title": "Reclaiming Yard",
+      "role": "salvage",
+      "class": "building",
+      "padDiameter": 24,
+      "bounds": [
+        [
+          -23.836578369140625,
+          -23.5,
+          -0.6351017951965332
+        ],
+        [
+          24.54925537109375,
+          23.5,
+          13.046034812927246
+        ]
+      ],
+      "height": 13.68113660812378,
+      "footprintRadius": 26.670099228489523,
+      "lodTriangles": [
+        25212,
+        7563,
+        2521,
+        882
+      ],
+      "lodNodes": [
+        "ulgani_salvage_LOD0",
+        "ulgani_salvage_LOD1",
+        "ulgani_salvage_LOD2",
+        "ulgani_salvage_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -23,
+            0.18
+          ],
+          "to": [
+            0,
+            -19,
+            0.18
+          ],
+          "width": 4,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_salvage",
+          "position": [
+            -16.0,
+            5.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_salvage",
+          "position": [
+            16.0,
+            5.0,
+            4.0
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.6,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Interact_salvage_ulgani_salvage",
+          "position": [
+            0.0,
+            -19.0,
+            1.3799999952316284
+          ],
+          "properties": {
+            "service_role": "salvage",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "BAY_Pad_ulgani_salvage",
+          "position": [
+            0.0,
+            0.0,
+            0.2199999988079071
+          ],
+          "properties": {
+            "pad_diameter": 24
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_salvage_Threshold-1",
+        "COL_ulgani_salvage_Threshold1",
+        "COL_ulgani_salvage_Deck0",
+        "COL_ulgani_salvage_Deck1",
+        "COL_ulgani_salvage_Deck2",
+        "COL_ulgani_salvage_Deck3",
+        "COL_ulgani_salvage_Deck4",
+        "COL_ulgani_salvage_Deck5",
+        "COL_ulgani_salvage_Deck6",
+        "COL_ulgani_salvage_Deck7",
+        "COL_ulgani_salvage_Deck8",
+        "COL_ulgani_salvage_Deck9",
+        "COL_ulgani_salvage_Deck10",
+        "COL_ulgani_salvage_Deck11",
+        "COL_ulgani_salvage_YardRoot-1",
+        "COL_ulgani_salvage_YardRoot1",
+        "COL_ulgani_salvage_Cradle0",
+        "COL_ulgani_salvage_Cradle1",
+        "COL_ulgani_salvage_Cradle2",
+        "COL_ulgani_salvage_Cradle3",
+        "COL_ulgani_salvage_Cradle4"
+      ]
+    }
+  ]
+}

@@ -22,6 +22,9 @@ for (const node of doc.getRoot().listNodes()) {
     rows.push({
       lod: owner.getName(),
       node: node.getName(),
+      material: primitive.getMaterial().getName(),
+      uvComponentType: primitive.getAttribute('TEXCOORD_0').getComponentType(),
+      uvNormalized: primitive.getAttribute('TEXCOORD_0').getNormalized(),
       worldMatrix: node.getWorldMatrix(),
       positions: values(primitive.getAttribute('POSITION')),
       normals: values(primitive.getAttribute('NORMAL')),

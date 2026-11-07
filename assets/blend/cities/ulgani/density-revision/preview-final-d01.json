@@ -1,0 +1,3233 @@
+{
+  "renderer": "Cycles CPU",
+  "threads": 2,
+  "samples": {
+    "whole": 24,
+    "closeup": 64
+  },
+  "nativeAcceptance": false,
+  "sources": [
+    {
+      "path": "assets/blend/cities/ulgani_low.blend",
+      "sha256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_mid.blend",
+      "sha256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_tall.blend",
+      "sha256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_civic.blend",
+      "sha256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_kit.blend",
+      "sha256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_props.blend",
+      "sha256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_landmarks.blend",
+      "sha256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b"
+    },
+    {
+      "path": "assets/blend/cities/ulgani_anchor.blend",
+      "sha256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37"
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sha256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167"
+    },
+    {
+      "path": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "sha256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8"
+    }
+  ],
+  "views": [
+    {
+      "asset": "ulgani_low_0",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        0
+      ],
+      "orthographicWidthMetres": 18.584949340820312,
+      "target": [
+        -0.1551668643951416,
+        0.0,
+        3.510442018508911
+      ],
+      "camera": [
+        20.172121047973633,
+        -29.038982391357422,
+        17.303958892822266
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_0",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -7.0,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -11.0,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_0",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        2
+      ],
+      "orthographicWidthMetres": 18.584949340820312,
+      "target": [
+        -0.1551668643951416,
+        0.0,
+        3.510442018508911
+      ],
+      "camera": [
+        20.172121047973633,
+        -29.038982391357422,
+        17.303958892822266
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_1",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        3
+      ],
+      "orthographicWidthMetres": 24.061140136718752,
+      "target": [
+        0.19090938568115234,
+        -0.10244226455688477,
+        4.512587547302246
+      ],
+      "camera": [
+        26.507781982421875,
+        -37.697975158691406,
+        22.370464324951172
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_1",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -8.0,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -12.0,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_1",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        5
+      ],
+      "orthographicWidthMetres": 24.061140136718752,
+      "target": [
+        0.19090938568115234,
+        -0.10244226455688477,
+        4.512587547302246
+      ],
+      "camera": [
+        26.507781982421875,
+        -37.697975158691406,
+        22.370464324951172
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_2",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        6
+      ],
+      "orthographicWidthMetres": 23.02818054199219,
+      "target": [
+        1.0331099033355713,
+        0.0,
+        5.515385150909424
+      ],
+      "camera": [
+        26.220182418823242,
+        -35.98153305053711,
+        22.606613159179688
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_2",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -7.099999904632568,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -11.100000381469727,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_2",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        8
+      ],
+      "orthographicWidthMetres": 23.02818054199219,
+      "target": [
+        1.0331099033355713,
+        0.0,
+        5.515385150909424
+      ],
+      "camera": [
+        26.220182418823242,
+        -35.98153305053711,
+        22.606613159179688
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_3",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        9
+      ],
+      "orthographicWidthMetres": 24.638288574218752,
+      "target": [
+        0.7090129852294922,
+        -0.1552562713623047,
+        6.518182277679443
+      ],
+      "camera": [
+        27.657140731811523,
+        -38.65258026123047,
+        24.804412841796875
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_3",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -8.5,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -12.5,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_low_3",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        11
+      ],
+      "orthographicWidthMetres": 24.638288574218752,
+      "target": [
+        0.7090129852294922,
+        -0.1552562713623047,
+        6.518182277679443
+      ],
+      "camera": [
+        27.657140731811523,
+        -38.65258026123047,
+        24.804412841796875
+      ],
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_0",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        0
+      ],
+      "orthographicWidthMetres": 30.853553371429445,
+      "target": [
+        0.22164392471313477,
+        0.0,
+        12.019434928894043
+      ],
+      "camera": [
+        33.967716217041016,
+        -48.208675384521484,
+        34.918556213378906
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_0",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -7.65000057220459,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -11.65000057220459,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_0",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        2
+      ],
+      "orthographicWidthMetres": 30.853553371429445,
+      "target": [
+        0.22164392471313477,
+        0.0,
+        12.019434928894043
+      ],
+      "camera": [
+        33.967716217041016,
+        -48.208675384521484,
+        34.918556213378906
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_1",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        3
+      ],
+      "orthographicWidthMetres": 43.68403772354126,
+      "target": [
+        0.21000051498413086,
+        -0.13768672943115234,
+        17.031030654907227
+      ],
+      "camera": [
+        47.98941421508789,
+        -68.39399719238281,
+        49.45277404785156
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_1",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -8.75,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -12.75,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_1",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        5
+      ],
+      "orthographicWidthMetres": 43.68403772354126,
+      "target": [
+        0.21000051498413086,
+        -0.13768672943115234,
+        17.031030654907227
+      ],
+      "camera": [
+        47.98941421508789,
+        -68.39399719238281,
+        49.45277404785156
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_2",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        6
+      ],
+      "orthographicWidthMetres": 59.08677270889282,
+      "target": [
+        1.136420726776123,
+        0.0,
+        23.047903060913086
+      ],
+      "camera": [
+        65.76258087158203,
+        -92.32308197021484,
+        66.9013671875
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_2",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -7.760000228881836,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -11.760000228881836,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_2",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        8
+      ],
+      "orthographicWidthMetres": 59.08677270889282,
+      "target": [
+        1.136420726776123,
+        0.0,
+        23.047903060913086
+      ],
+      "camera": [
+        65.76258087158203,
+        -92.32308197021484,
+        66.9013671875
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_3",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        9
+      ],
+      "orthographicWidthMetres": 74.4900750732422,
+      "target": [
+        0.779914379119873,
+        -0.19578218460083008,
+        29.064558029174805
+      ],
+      "camera": [
+        82.25343322753906,
+        -116.5865249633789,
+        84.35015869140625
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_3",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -9.30000114440918,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -13.30000114440918,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_mid_3",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        11
+      ],
+      "orthographicWidthMetres": 74.4900750732422,
+      "target": [
+        0.779914379119873,
+        -0.19578218460083008,
+        29.064558029174805
+      ],
+      "camera": [
+        82.25343322753906,
+        -116.5865249633789,
+        84.35015869140625
+      ],
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        0
+      ],
+      "orthographicWidthMetres": 223.61896335601807,
+      "target": [
+        0.2820920944213867,
+        0.0,
+        87.16796112060547
+      ],
+      "camera": [
+        244.86532592773438,
+        -349.4046325683594,
+        253.13516235351562
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -9.274999618530273,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -13.274999618530273,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        2
+      ],
+      "orthographicWidthMetres": 223.61896335601807,
+      "target": [
+        0.2820920944213867,
+        0.0,
+        87.16796112060547
+      ],
+      "camera": [
+        244.86532592773438,
+        -349.4046325683594,
+        253.13516235351562
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        3
+      ],
+      "orthographicWidthMetres": 287.75703102111817,
+      "target": [
+        0.2672734260559082,
+        -0.22579717636108398,
+        112.22149658203125
+      ],
+      "camera": [
+        315.00152587890625,
+        -449.8461608886719,
+        325.7911682128906
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.676547050476074,
+        0.71098393201828,
+        11.139970779418945
+      ],
+      "camera": [
+        5.957101821899414,
+        -0.7597793936729431,
+        11.440801620483398
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        5
+      ],
+      "orthographicWidthMetres": 287.75703102111817,
+      "target": [
+        0.2672734260559082,
+        -0.22579717636108398,
+        112.22149658203125
+      ],
+      "camera": [
+        315.00152587890625,
+        -449.8461608886719,
+        325.7911682128906
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        6
+      ],
+      "orthographicWidthMetres": 354.5029168319702,
+      "target": [
+        1.179738998413086,
+        0.0,
+        138.29432678222656
+      ],
+      "camera": [
+        388.9173278808594,
+        -553.9108276367188,
+        401.4019775390625
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        7.938899517059326,
+        -4.276174545288086,
+        6.631006240844727
+      ],
+      "camera": [
+        11.742246627807617,
+        -5.512018203735352,
+        6.795894145965576
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        8
+      ],
+      "orthographicWidthMetres": 354.5029168319702,
+      "target": [
+        1.179738998413086,
+        0.0,
+        138.29432678222656
+      ],
+      "camera": [
+        388.9173278808594,
+        -553.9108276367188,
+        401.4019775390625
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        9
+      ],
+      "orthographicWidthMetres": 426.3839441680908,
+      "target": [
+        0.6631097793579102,
+        -0.29709625244140625,
+        166.37245178222656
+      ],
+      "camera": [
+        467.0205383300781,
+        -666.5220336914062,
+        482.82928466796875
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.043200492858887,
+        -5.191163063049316,
+        7.112654685974121
+      ],
+      "camera": [
+        12.84524154663086,
+        -6.426756858825684,
+        7.2292680740356445
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        11
+      ],
+      "orthographicWidthMetres": 426.3839441680908,
+      "target": [
+        0.6631097793579102,
+        -0.29709625244140625,
+        166.37245178222656
+      ],
+      "camera": [
+        467.0205383300781,
+        -666.5220336914062,
+        482.82928466796875
+      ],
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_plaza",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        0
+      ],
+      "orthographicWidthMetres": 77.01238281250001,
+      "target": [
+        0.365234375,
+        0.0,
+        2.0213332176208496
+      ],
+      "camera": [
+        84.59752655029297,
+        -120.33184814453125,
+        59.178958892822266
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_plaza",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -1.2000000476837158,
+        -27.5,
+        0.12400000542402267
+      ],
+      "camera": [
+        -1.2000000476837158,
+        -31.5,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_plaza",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        2
+      ],
+      "orthographicWidthMetres": 77.01238281250001,
+      "target": [
+        0.365234375,
+        0.0,
+        2.0213332176208496
+      ],
+      "camera": [
+        84.59752655029297,
+        -120.33184814453125,
+        59.178958892822266
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_market",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        3
+      ],
+      "orthographicWidthMetres": 39.824892578125,
+      "target": [
+        -0.3325004577636719,
+        0.0,
+        6.0179009437561035
+      ],
+      "camera": [
+        43.225975036621094,
+        -62.22639465332031,
+        35.575439453125
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_market",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -12.5,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -16.5,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_market",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        5
+      ],
+      "orthographicWidthMetres": 39.824892578125,
+      "target": [
+        -0.3325004577636719,
+        0.0,
+        6.0179009437561035
+      ],
+      "camera": [
+        43.225975036621094,
+        -62.22639465332031,
+        35.575439453125
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_city_master",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        6
+      ],
+      "orthographicWidthMetres": 35.48390380859375,
+      "target": [
+        0.27937936782836914,
+        -0.3608999252319336,
+        8.52377700805664
+      ],
+      "camera": [
+        39.089900970458984,
+        -55.804500579833984,
+        34.8594856262207
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_city_master",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.045703887939453,
+        3.693512439727783,
+        1.9522664546966553
+      ],
+      "camera": [
+        5.235966682434082,
+        2.4784271717071533,
+        2.10495924949646
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_city_master",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        8
+      ],
+      "orthographicWidthMetres": 35.48390380859375,
+      "target": [
+        0.27937936782836914,
+        -0.3608999252319336,
+        8.52377700805664
+      ],
+      "camera": [
+        39.089900970458984,
+        -55.804500579833984,
+        34.8594856262207
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_compact",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        9
+      ],
+      "orthographicWidthMetres": 37.42079345703125,
+      "target": [
+        1.6788034439086914,
+        0.0,
+        10.011262893676758
+      ],
+      "camera": [
+        42.60779571533203,
+        -58.46998977661133,
+        37.784507751464844
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_compact",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        10.562110900878906,
+        2.3868885040283203,
+        1.9839504957199097
+      ],
+      "camera": [
+        7.47874641418457,
+        0.1542658805847168,
+        3.462061882019043
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_compact",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        11
+      ],
+      "orthographicWidthMetres": 37.42079345703125,
+      "target": [
+        1.6788034439086914,
+        0.0,
+        10.011262893676758
+      ],
+      "camera": [
+        42.60779571533203,
+        -58.46998977661133,
+        37.784507751464844
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_chorus_listener",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        0
+      ],
+      "orthographicWidthMetres": 41.065130615234374,
+      "target": [
+        0.8665714263916016,
+        -0.47864580154418945,
+        7.520979404449463
+      ],
+      "camera": [
+        45.78155517578125,
+        -64.64291381835938,
+        37.99900817871094
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_chorus_listener",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6333333253860474,
+        -15.5,
+        0.12400000542402267
+      ],
+      "camera": [
+        -0.6333333253860474,
+        -19.5,
+        0.37400001287460327
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_chorus_listener",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        2
+      ],
+      "orthographicWidthMetres": 41.065130615234374,
+      "target": [
+        0.8665714263916016,
+        -0.47864580154418945,
+        7.520979404449463
+      ],
+      "camera": [
+        45.78155517578125,
+        -64.64291381835938,
+        37.99900817871094
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shipyard",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        3
+      ],
+      "orthographicWidthMetres": 79.579462890625,
+      "target": [
+        0.3774089813232422,
+        0.0,
+        8.737420082092285
+      ],
+      "camera": [
+        87.41744995117188,
+        -124.34291076660156,
+        67.80030059814453
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shipyard",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -22.087127685546875,
+        -13.180377960205078,
+        0.4303987920284271
+      ],
+      "camera": [
+        -23.44567108154297,
+        -15.992934226989746,
+        -1.8183785676956177
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shipyard",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        5
+      ],
+      "orthographicWidthMetres": 79.579462890625,
+      "target": [
+        0.3774089813232422,
+        0.0,
+        8.737420082092285
+      ],
+      "camera": [
+        87.41744995117188,
+        -124.34291076660156,
+        67.80030059814453
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_salvage",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        6
+      ],
+      "orthographicWidthMetres": 61.9338671875,
+      "target": [
+        0.3563385009765625,
+        0.0,
+        6.205466270446777
+      ],
+      "camera": [
+        68.09650421142578,
+        -96.77166748046875,
+        52.1720085144043
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_salvage",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -16.074077606201172,
+        -13.15335750579834,
+        0.4517006278038025
+      ],
+      "camera": [
+        -17.548194885253906,
+        -16.205181121826172,
+        -1.4227638244628906
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_salvage",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        8
+      ],
+      "orthographicWidthMetres": 61.9338671875,
+      "target": [
+        0.3563385009765625,
+        0.0,
+        6.205466270446777
+      ],
+      "camera": [
+        68.09650421142578,
+        -96.77166748046875,
+        52.1720085144043
+      ],
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        9
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        0.05180710554122925,
+        3.1042709350585938
+      ],
+      "camera": [
+        26.57020378112793,
+        -37.667781829833984,
+        21.021076202392578
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.14724349975586,
+        -0.030035782605409622,
+        1.9712355136871338
+      ],
+      "camera": [
+        5.312575817108154,
+        -1.0652341842651367,
+        2.6941914558410645
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        11
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        0.05180710554122925,
+        3.1042709350585938
+      ],
+      "camera": [
+        26.57020378112793,
+        -37.667781829833984,
+        21.021076202392578
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        0
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        2.0250000953674316,
+        3.09995174407959
+      ],
+      "camera": [
+        26.57020378112793,
+        -35.69458770751953,
+        21.01675796508789
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.14724349975586,
+        4.019964694976807,
+        1.9712355136871338
+      ],
+      "camera": [
+        5.312575340270996,
+        2.984767198562622,
+        2.6941914558410645
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        2
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        2.0250000953674316,
+        3.09995174407959
+      ],
+      "camera": [
+        26.57020378112793,
+        -35.69458770751953,
+        21.01675796508789
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        3
+      ],
+      "orthographicWidthMetres": 20.97386657714844,
+      "target": [
+        0.3563387393951416,
+        -0.14577722549438477,
+        4.296722888946533
+      ],
+      "camera": [
+        23.296504974365234,
+        -32.91744613647461,
+        19.863264083862305
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        7.564919471740723,
+        -0.772166907787323,
+        6.589658260345459
+      ],
+      "camera": [
+        8.80252456665039,
+        -3.5259833335876465,
+        9.463554382324219
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        5
+      ],
+      "orthographicWidthMetres": 20.97386657714844,
+      "target": [
+        0.3563387393951416,
+        -0.14577722549438477,
+        4.296722888946533
+      ],
+      "camera": [
+        23.296504974365234,
+        -32.91744613647461,
+        19.863264083862305
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        6
+      ],
+      "orthographicWidthMetres": 23.227734375,
+      "target": [
+        0.0,
+        0.0,
+        0.09675747156143188
+      ],
+      "camera": [
+        25.40533447265625,
+        -36.2933349609375,
+        17.336091995239258
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -2.7800002098083496,
+        -9.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -3.4583446979522705,
+        -12.920635223388672,
+        0.5804440975189209
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        8
+      ],
+      "orthographicWidthMetres": 23.227734375,
+      "target": [
+        0.0,
+        0.0,
+        0.09675747156143188
+      ],
+      "camera": [
+        25.40533447265625,
+        -36.2933349609375,
+        17.336091995239258
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        9
+      ],
+      "orthographicWidthMetres": 56.490498046875004,
+      "target": [
+        0.0,
+        0.0,
+        0.09673762321472168
+      ],
+      "camera": [
+        61.78647994995117,
+        -88.26640319824219,
+        42.023277282714844
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -3.2800002098083496,
+        -22.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -3.5621609687805176,
+        -25.98638153076172,
+        0.34072643518447876
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        11
+      ],
+      "orthographicWidthMetres": 56.490498046875004,
+      "target": [
+        0.0,
+        0.0,
+        0.09673762321472168
+      ],
+      "camera": [
+        61.78647994995117,
+        -88.26640319824219,
+        42.023277282714844
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        0
+      ],
+      "orthographicWidthMetres": 31.30436767578125,
+      "target": [
+        2.5032970905303955,
+        0.0,
+        0.09674715995788574
+      ],
+      "camera": [
+        36.74244689941406,
+        -48.9130744934082,
+        23.330455780029297
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        6,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -2.7800002098083496,
+        -12.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -5.243068695068359,
+        -15.142043113708496,
+        0.4167027473449707
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        2
+      ],
+      "orthographicWidthMetres": 31.30436767578125,
+      "target": [
+        2.5032970905303955,
+        0.0,
+        0.09674715995788574
+      ],
+      "camera": [
+        36.74244689941406,
+        -48.9130744934082,
+        23.330455780029297
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        3
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.9579648971557617,
+        9.165511131286621
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.46588134765625,
+        59.75677490234375
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        6,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        12.164999961853027,
+        -14.360651969909668,
+        -0.06136839836835861
+      ],
+      "camera": [
+        13.324570655822754,
+        -16.860069274902344,
+        -2.7110767364501953
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        5
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.9579648971557617,
+        9.165511131286621
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.46588134765625,
+        59.75677490234375
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        6
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.666409969329834,
+        9.166189193725586
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.17433166503906,
+        59.75745391845703
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        6,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        12.165987014770508,
+        -10.019128799438477,
+        -0.05209150165319443
+      ],
+      "camera": [
+        13.463640213012695,
+        -11.96490478515625,
+        -3.0470967292785645
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        8
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.666409969329834,
+        9.166189193725586
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.17433166503906,
+        59.75745391845703
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        9
+      ],
+      "orthographicWidthMetres": 56.92916748046875,
+      "target": [
+        -0.009560585021972656,
+        -1.068756103515625,
+        -0.33979532122612
+      ],
+      "camera": [
+        62.256717681884766,
+        -90.02058410644531,
+        41.912322998046875
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        6,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -21.262908935546875,
+        -0.2408466339111328,
+        0.12000000476837158
+      ],
+      "camera": [
+        -25.175031661987305,
+        -1.0746865272521973,
+        0.3700000047683716
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        6,
+        11
+      ],
+      "orthographicWidthMetres": 56.92916748046875,
+      "target": [
+        -0.009560585021972656,
+        -1.068756103515625,
+        -0.33979532122612
+      ],
+      "camera": [
+        62.256717681884766,
+        -90.02058410644531,
+        41.912322998046875
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        0
+      ],
+      "orthographicWidthMetres": 27.4359326171875,
+      "target": [
+        0.005802154541015625,
+        -0.35297083854675293,
+        -0.30209988355636597
+      ],
+      "camera": [
+        30.013853073120117,
+        -43.221614837646484,
+        20.06050682067871
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        7,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -8.88859748840332,
+        -6.879692077636719,
+        -0.18945381045341492
+      ],
+      "camera": [
+        -12.749748229980469,
+        -7.923853874206543,
+        0.09571358561515808
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        2
+      ],
+      "orthographicWidthMetres": 27.4359326171875,
+      "target": [
+        0.005802154541015625,
+        -0.35297083854675293,
+        -0.30209988355636597
+      ],
+      "camera": [
+        30.013853073120117,
+        -43.221614837646484,
+        20.06050682067871
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        3
+      ],
+      "orthographicWidthMetres": 5.492930774688721,
+      "target": [
+        0.45793643593788147,
+        -0.02378031611442566,
+        2.067234516143799
+      ],
+      "camera": [
+        6.465829372406006,
+        -8.606484413146973,
+        6.14401912689209
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        7,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        1.3768962621688843,
+        -0.25255662202835083,
+        3.5962023735046387
+      ],
+      "camera": [
+        3.5236258506774902,
+        -2.913106918334961,
+        5.922984600067139
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        5
+      ],
+      "orthographicWidthMetres": 5.492930774688721,
+      "target": [
+        0.45793643593788147,
+        -0.02378031611442566,
+        2.067234516143799
+      ],
+      "camera": [
+        6.465829372406006,
+        -8.606484413146973,
+        6.14401912689209
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        6
+      ],
+      "orthographicWidthMetres": 15.634951171875,
+      "target": [
+        0.0,
+        0.0,
+        0.09678542613983154
+      ],
+      "camera": [
+        17.100727081298828,
+        -24.429611206054688,
+        11.700850486755371
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        7,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        4.280000686645508,
+        -6.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        3.2865920066833496,
+        -9.827771186828613,
+        0.7710875868797302
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        8
+      ],
+      "orthographicWidthMetres": 15.634951171875,
+      "target": [
+        0.0,
+        0.0,
+        0.09678542613983154
+      ],
+      "camera": [
+        17.100727081298828,
+        -24.429611206054688,
+        11.700850486755371
+      ],
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_stall",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        9
+      ],
+      "orthographicWidthMetres": 5.6277008056640625,
+      "target": [
+        0.09662890434265137,
+        0.08795338869094849,
+        1.5363668203353882
+      ],
+      "camera": [
+        6.251926422119141,
+        -8.705328941345215,
+        5.713176250457764
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_stall",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        7,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -0.6286585927009583,
+        1.435523271560669,
+        2.4847469329833984
+      ],
+      "camera": [
+        -0.7757360339164734,
+        -0.2969503402709961,
+        -0.8676002025604248
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_stall",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        7,
+        11
+      ],
+      "orthographicWidthMetres": 5.6277008056640625,
+      "target": [
+        0.09662890434265137,
+        0.08795338869094849,
+        1.5363668203353882
+      ],
+      "camera": [
+        6.251926422119141,
+        -8.705328941345215,
+        5.713176250457764
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_terminal",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        0
+      ],
+      "orthographicWidthMetres": 2.1041029834747316,
+      "target": [
+        0.03780803084373474,
+        -0.001900002360343933,
+        0.7280930876731873
+      ],
+      "camera": [
+        2.339170455932617,
+        -3.2895607948303223,
+        2.289731979370117
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_terminal",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        8,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        0.240073561668396,
+        -0.0736299678683281,
+        0.50566166639328
+      ],
+      "camera": [
+        -1.9653350114822388,
+        -0.9504715800285339,
+        -2.4641711711883545
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_terminal",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        2
+      ],
+      "orthographicWidthMetres": 2.1041029834747316,
+      "target": [
+        0.03780803084373474,
+        -0.001900002360343933,
+        0.7280930876731873
+      ],
+      "camera": [
+        2.339170455932617,
+        -3.2895607948303223,
+        2.289731979370117
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bench",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        3
+      ],
+      "orthographicWidthMetres": 3.0853591918945313,
+      "target": [
+        0.0,
+        0.073405921459198,
+        0.4564710557460785
+      ],
+      "camera": [
+        3.3746116161346436,
+        -4.747467994689941,
+        2.7463860511779785
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bench",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        8,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -1.0853546857833862,
+        0.21251313388347626,
+        0.6075648069381714
+      ],
+      "camera": [
+        -4.159502029418945,
+        -1.3654824495315552,
+        2.8723978996276855
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_bench",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        5
+      ],
+      "orthographicWidthMetres": 3.0853591918945313,
+      "target": [
+        0.0,
+        0.073405921459198,
+        0.4564710557460785
+      ],
+      "camera": [
+        3.3746116161346436,
+        -4.747467994689941,
+        2.7463860511779785
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_planter",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        6
+      ],
+      "orthographicWidthMetres": 2.617287292480469,
+      "target": [
+        0.022081375122070312,
+        0.0034791529178619385,
+        0.7559295892715454
+      ],
+      "camera": [
+        2.884739398956299,
+        -4.086032390594482,
+        2.6984474658966064
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_planter",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        8,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        0.2261132448911667,
+        -0.6786028146743774,
+        0.20000001788139343
+      ],
+      "camera": [
+        0.9718912839889526,
+        -4.60846471786499,
+        0.45000001788139343
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_planter",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        8
+      ],
+      "orthographicWidthMetres": 2.617287292480469,
+      "target": [
+        0.022081375122070312,
+        0.0034791529178619385,
+        0.7559295892715454
+      ],
+      "camera": [
+        2.884739398956299,
+        -4.086032390594482,
+        2.6984474658966064
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wayfinding",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        9
+      ],
+      "orthographicWidthMetres": 3.5926949691772463,
+      "target": [
+        0.0,
+        -0.001900002360343933,
+        1.3466118574142456
+      ],
+      "camera": [
+        3.9295101165771484,
+        -5.615486145019531,
+        4.013065338134766
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wayfinding",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        8,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        0.045078765600919724,
+        -0.06396085023880005,
+        0.30633825063705444
+      ],
+      "camera": [
+        0.7095252275466919,
+        -2.032912015914917,
+        3.9741947650909424
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_wayfinding",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        8,
+        11
+      ],
+      "orthographicWidthMetres": 3.5926949691772463,
+      "target": [
+        0.0,
+        -0.001900002360343933,
+        1.3466118574142456
+      ],
+      "camera": [
+        3.9295101165771484,
+        -5.615486145019531,
+        4.013065338134766
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_board",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        0
+      ],
+      "orthographicWidthMetres": 3.5926949691772463,
+      "target": [
+        0.03594812750816345,
+        -0.001900002360343933,
+        1.3466118574142456
+      ],
+      "camera": [
+        3.9654581546783447,
+        -5.615486145019531,
+        4.013065338134766
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_board",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        9,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        0.045078765600919724,
+        -0.06396085023880005,
+        0.30633825063705444
+      ],
+      "camera": [
+        0.7095252275466919,
+        -2.032912015914917,
+        3.9741947650909424
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_board",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        2
+      ],
+      "orthographicWidthMetres": 3.5926949691772463,
+      "target": [
+        0.03594812750816345,
+        -0.001900002360343933,
+        1.3466118574142456
+      ],
+      "camera": [
+        3.9654581546783447,
+        -5.615486145019531,
+        4.013065338134766
+      ],
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        3
+      ],
+      "orthographicWidthMetres": 173.2291796875,
+      "target": [
+        3.0158843994140625,
+        -2.221538543701172,
+        31.432342529296875
+      ],
+      "camera": [
+        192.48529052734375,
+        -272.8921203613281,
+        160.00086975097656
+      ],
+      "source": "assets/blend/cities/ulgani_landmarks.blend",
+      "sourceSHA256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        9,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        23.322673797607422,
+        -32.46550369262695,
+        -0.10530006885528564
+      ],
+      "camera": [
+        24.31587791442871,
+        -34.371185302734375,
+        -3.2290115356445312
+      ],
+      "source": "assets/blend/cities/ulgani_landmarks.blend",
+      "sourceSHA256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        5
+      ],
+      "orthographicWidthMetres": 173.2291796875,
+      "target": [
+        3.0158843994140625,
+        -2.221538543701172,
+        31.432342529296875
+      ],
+      "camera": [
+        192.48529052734375,
+        -272.8921203613281,
+        160.00086975097656
+      ],
+      "source": "assets/blend/cities/ulgani_landmarks.blend",
+      "sourceSHA256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        6
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ],
+      "source": "assets/blend/cities/ulgani_anchor.blend",
+      "sourceSHA256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        9,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -4.953388690948486,
+        -0.9816667437553406,
+        1.846666693687439
+      ],
+      "camera": [
+        -8.851563453674316,
+        -1.857710361480713,
+        1.904876470565796
+      ],
+      "source": "assets/blend/cities/ulgani_anchor.blend",
+      "sourceSHA256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        8
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ],
+      "source": "assets/blend/cities/ulgani_anchor.blend",
+      "sourceSHA256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+      "decodedExport": false
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        9
+      ],
+      "orthographicWidthMetres": 223.61896484375,
+      "target": [
+        0.2820920944213867,
+        0.0,
+        87.16796112060547
+      ],
+      "camera": [
+        244.86532592773438,
+        -349.4046325683594,
+        253.13516235351562
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        9,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        1.4411619901657104,
+        6.536608695983887,
+        2.44836688041687
+      ],
+      "camera": [
+        0.7309823632240295,
+        4.539363861083984,
+        -0.693779468536377
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        9,
+        11
+      ],
+      "orthographicWidthMetres": 223.61896484375,
+      "target": [
+        0.2820920944213867,
+        0.0,
+        87.16796112060547
+      ],
+      "camera": [
+        244.86532592773438,
+        -349.4046325683594,
+        253.13516235351562
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        0
+      ],
+      "orthographicWidthMetres": 287.75703125,
+      "target": [
+        0.2672734260559082,
+        -0.22579717636108398,
+        112.22149658203125
+      ],
+      "camera": [
+        315.00152587890625,
+        -449.8461608886719,
+        325.7911682128906
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        10,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        11.276885986328125,
+        -1.493179202079773,
+        3.7442984580993652
+      ],
+      "camera": [
+        12.869392395019531,
+        -3.33046817779541,
+        7.170505523681641
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        2
+      ],
+      "orthographicWidthMetres": 287.75703125,
+      "target": [
+        0.2672734260559082,
+        -0.22579717636108398,
+        112.22149658203125
+      ],
+      "camera": [
+        315.00152587890625,
+        -449.8461608886719,
+        325.7911682128906
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        3
+      ],
+      "orthographicWidthMetres": 354.5029296875,
+      "target": [
+        1.179738998413086,
+        0.0,
+        138.29432678222656
+      ],
+      "camera": [
+        388.9173278808594,
+        -553.9108276367188,
+        401.4019775390625
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        10,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        11.054372787475586,
+        -2.355365037918091,
+        147.69859313964844
+      ],
+      "camera": [
+        13.270099639892578,
+        -5.66119384765625,
+        148.3511505126953
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        5
+      ],
+      "orthographicWidthMetres": 354.5029296875,
+      "target": [
+        1.179738998413086,
+        0.0,
+        138.29432678222656
+      ],
+      "camera": [
+        388.9173278808594,
+        -553.9108276367188,
+        401.4019775390625
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        6
+      ],
+      "orthographicWidthMetres": 426.38394531250003,
+      "target": [
+        0.6631097793579102,
+        -0.29709625244140625,
+        166.37245178222656
+      ],
+      "camera": [
+        467.0205383300781,
+        -666.5220336914062,
+        482.82928466796875
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        10,
+        7
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        12.189920425415039,
+        -2.2271347045898438,
+        177.1846160888672
+      ],
+      "camera": [
+        14.775825500488281,
+        -5.266740798950195,
+        177.70643615722656
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        8
+      ],
+      "orthographicWidthMetres": 426.38394531250003,
+      "target": [
+        0.6631097793579102,
+        -0.29709625244140625,
+        166.37245178222656
+      ],
+      "camera": [
+        467.0205383300781,
+        -666.5220336914062,
+        482.82928466796875
+      ],
+      "source": "packages/client/public/models/cities/ulgani_tall.glb",
+      "sourceSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        9
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ],
+      "source": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "sourceSHA256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        10,
+        10
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        0.6012654900550842,
+        -0.43643495440483093,
+        -0.870459258556366
+      ],
+      "camera": [
+        -3.2968196868896484,
+        -1.3259308338165283,
+        -0.5032880902290344
+      ],
+      "source": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "sourceSHA256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8",
+      "decodedExport": true
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        10,
+        11
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ],
+      "source": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "sourceSHA256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8",
+      "decodedExport": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "assets/renders/cities/ulgani-density/full-kit-final-d01.png",
+      "sha256": "ee16ef8c09550d4c853e6dcb61648725e66e9a63641974839bdd3634c135ab73",
+      "bytes": 23168197,
+      "dimensions": [
+        4608,
+        4224
+      ]
+    }
+  ],
+  "layout": "Each consecutive triplet is LOD0 whole, two-metre LOD0 material closeup, LOD2 whole; four assets per row. Final five triplets are decoded GLBs."
+}

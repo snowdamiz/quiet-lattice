@@ -1,0 +1,41 @@
+{
+  "owner": "Parent may transfer these into orchestration records; those records were not edited",
+  "decisions": [
+    {
+      "decision": "Measure the weaker physical surface direction on every rendered triangle at every LOD",
+      "reason": "Area density can hide a collapsed or stretched UV direction",
+      "evidence": "baseline-d01.json; density.py",
+      "boundary": "Actual image resolution and decoded world-space geometry; area <= 1e-14 square metres is disclosed separately, never counted as sampled visible area."
+    },
+    {
+      "decision": "Use shared periodic growth microtextures and local semantic material factors",
+      "reason": "Class-resolution maps must support 256/512 px per metre without repeating a large painted repair motif",
+      "evidence": "trim-*-*.json; material_routes.py",
+      "boundary": "Macro repair geometry and face assignments carry wear. No runtime shader workaround, map-size increase or threshold relaxation."
+    },
+    {
+      "decision": "Use modern RGBA MIX multiply nodes for constant tint",
+      "reason": "Blender 5.2 glTF export discarded legacy MixRGB factors despite passing stock validation",
+      "evidence": "material-props-d01.json FAIL; material-props-d02.json PASS",
+      "boundary": "Exact actual-export tint, emission, normal scale, direct ORM factors and UV routes are checked."
+    },
+    {
+      "decision": "Retain the original saved polygon and normal data",
+      "reason": "An intermediate triangulation preserved rendered geometry but changed some corner normals",
+      "evidence": "preservation-d01.json FAIL; preservation-low-d03.json PASS; polygons-*-d01.json",
+      "boundary": "Original LFS source objects were hash/size verified before reading; geometry was not regenerated or copied from another city."
+    },
+    {
+      "decision": "Add measured codec margin only to polygons matched to undersampled decoded triangles",
+      "reason": "Position quantization changed tiny triangle metrics enough to miss the target despite passing source density",
+      "evidence": "density-all-d03.json FAIL; codec-margin-*-d01.json",
+      "boundary": "No unused-face padding. UV changes affect the identified visible faces; final compressed density must pass independently."
+    },
+    {
+      "decision": "Reject unsupported source modifier/UV routes and incomplete export coverage",
+      "reason": "The focused implementation-tool review found possible false-PASS cases",
+      "evidence": "density.py; material_routes.py; density_controls.py",
+      "boundary": "Tool review is not the parent independent source-art review or native visual acceptance."
+    }
+  ]
+}

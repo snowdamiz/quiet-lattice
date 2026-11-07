@@ -1,0 +1,77 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ulgani/negatives/d02/negative-o3jyoluz/basis-not-required.glb",
+  "family": "cities",
+  "mode": "export",
+  "status": "FAIL",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:26:31Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "FAIL",
+      "scale": "PASS"
+    },
+    "fail": 1,
+    "warn": 0
+  },
+  "assets": [],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": []
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": []
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": []
+    },
+    {
+      "id": "materials",
+      "status": "FAIL",
+      "findings": [
+        {
+          "level": "fail",
+          "subject": "basis-not-required.glb",
+          "message": "KHR_texture_basisu is not in extensionsRequired (the textures have no PNG fallback)"
+        }
+      ],
+      "passed": [
+        {
+          "subject": "ulgani_low_0",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_1",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_2",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_3",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": []
+    }
+  ]
+}

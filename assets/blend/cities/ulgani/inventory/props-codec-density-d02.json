@@ -1,0 +1,353 @@
+{
+  "source": "assets/blend/cities/ulgani_props.blend",
+  "sha256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+  "assets": [
+    {
+      "id": "ulgani_stall",
+      "title": "Grown stall",
+      "role": "stall",
+      "class": "prop",
+      "propKind": "stall",
+      "bounds": [
+        [
+          -2.101691722869873,
+          -1.3515474796295166,
+          -0.03485694155097008
+        ],
+        [
+          2.294949531555176,
+          1.5274542570114136,
+          3.107590675354004
+        ]
+      ],
+      "height": 3.142447616904974,
+      "footprintRadius": 2.3130999064626834,
+      "lodTriangles": [
+        5428,
+        1628,
+        542,
+        189
+      ],
+      "lodNodes": [
+        "ulgani_stall_LOD0",
+        "ulgani_stall_LOD1",
+        "ulgani_stall_LOD2",
+        "ulgani_stall_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Interact_Apothecary_ulgani_stall",
+          "position": [
+            0,
+            -1.2,
+            1.2
+          ],
+          "properties": {
+            "service_role": "npc:apothecary",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_stall",
+          "position": [
+            0,
+            0.1,
+            2.55
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.35,
+            "distance": 5
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_stall_Leg-16",
+        "COL_ulgani_stall_Leg16",
+        "COL_ulgani_stall_Counter"
+      ]
+    },
+    {
+      "id": "ulgani_terminal",
+      "title": "Grown terminal",
+      "role": "terminal",
+      "class": "prop",
+      "propKind": "terminal",
+      "bounds": [
+        [
+          -0.7443922162055969,
+          -0.18140000104904175,
+          -0.09382215887308121
+        ],
+        [
+          0.8200082778930664,
+          0.17759999632835388,
+          1.5500082969665527
+        ]
+      ],
+      "height": 1.643830455839634,
+      "footprintRadius": 0.8260832743199535,
+      "lodTriangles": [
+        5236,
+        1569,
+        523,
+        182
+      ],
+      "lodNodes": [
+        "ulgani_terminal_LOD0",
+        "ulgani_terminal_LOD1",
+        "ulgani_terminal_LOD2",
+        "ulgani_terminal_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Interact_terminal_ulgani_terminal",
+          "position": [
+            0,
+            -1.1,
+            1.2
+          ],
+          "properties": {
+            "service_role": "trade",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_terminal",
+          "position": [
+            0,
+            -0.1,
+            1.26
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.25,
+            "distance": 4
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_terminal_Stand",
+        "COL_ulgani_terminal_Board"
+      ]
+    },
+    {
+      "id": "ulgani_bench",
+      "title": "Grown bench",
+      "role": "bench",
+      "class": "prop",
+      "seatHeight": 0.45,
+      "propKind": "bench",
+      "bounds": [
+        [
+          -1.2052184343338013,
+          -0.33320000767707825,
+          -0.11456222087144852
+        ],
+        [
+          1.2052184343338013,
+          0.48001185059547424,
+          1.027504324913025
+        ]
+      ],
+      "height": 1.1420665457844734,
+      "footprintRadius": 1.2454004815949467,
+      "lodTriangles": [
+        4416,
+        1323,
+        441,
+        154
+      ],
+      "lodNodes": [
+        "ulgani_bench_LOD0",
+        "ulgani_bench_LOD1",
+        "ulgani_bench_LOD2",
+        "ulgani_bench_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [],
+      "colliders": [
+        "COL_ulgani_bench_Seat",
+        "COL_ulgani_bench_Back"
+      ]
+    },
+    {
+      "id": "ulgani_planter",
+      "title": "Grown planter",
+      "role": "planter",
+      "class": "prop",
+      "propKind": "planter",
+      "bounds": [
+        [
+          -1.0002964735031128,
+          -0.8198622465133667,
+          0.0
+        ],
+        [
+          1.0444592237472534,
+          0.8268205523490906,
+          1.5118591785430908
+        ]
+      ],
+      "height": 1.5118591785430908,
+      "footprintRadius": 1.0444611842061773,
+      "lodTriangles": [
+        9960,
+        2987,
+        995,
+        348
+      ],
+      "lodNodes": [
+        "ulgani_planter_LOD0",
+        "ulgani_planter_LOD1",
+        "ulgani_planter_LOD2",
+        "ulgani_planter_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_planter",
+          "position": [
+            0,
+            0,
+            1.25
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.22,
+            "distance": 3
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_planter_Basin"
+      ]
+    },
+    {
+      "id": "ulgani_wayfinding",
+      "title": "Grown wayfinding",
+      "role": "wayfinding",
+      "class": "prop",
+      "propKind": "wayfinding",
+      "bounds": [
+        [
+          -1.399999976158142,
+          -0.18140000104904175,
+          -0.056784600019454956
+        ],
+        [
+          1.399999976158142,
+          0.17759999632835388,
+          2.7500083446502686
+        ]
+      ],
+      "height": 2.8067929446697235,
+      "footprintRadius": 1.4003213916812096,
+      "lodTriangles": [
+        6716,
+        2013,
+        670,
+        234
+      ],
+      "lodNodes": [
+        "ulgani_wayfinding_LOD0",
+        "ulgani_wayfinding_LOD1",
+        "ulgani_wayfinding_LOD2",
+        "ulgani_wayfinding_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_wayfinding",
+          "position": [
+            0,
+            -0.1,
+            2.3400000000000003
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.25,
+            "distance": 4
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_wayfinding_Stand",
+        "COL_ulgani_wayfinding_Board"
+      ]
+    },
+    {
+      "id": "ulgani_board",
+      "title": "Grown board",
+      "role": "board",
+      "class": "prop",
+      "propKind": "board",
+      "bounds": [
+        [
+          -0.7481120228767395,
+          -0.18140000104904175,
+          -0.056784600019454956
+        ],
+        [
+          0.8200082778930664,
+          0.17759999632835388,
+          2.7500083446502686
+        ]
+      ],
+      "height": 2.8067929446697235,
+      "footprintRadius": 0.8260832743199535,
+      "lodTriangles": [
+        5236,
+        1569,
+        522,
+        182
+      ],
+      "lodNodes": [
+        "ulgani_board_LOD0",
+        "ulgani_board_LOD1",
+        "ulgani_board_LOD2",
+        "ulgani_board_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [],
+      "markers": [
+        {
+          "name": "Interact_board_ulgani_board",
+          "position": [
+            0,
+            -1.1,
+            1.2
+          ],
+          "properties": {
+            "service_role": "board:belost",
+            "dispatch": "T01_T02_pending"
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_board",
+          "position": [
+            0,
+            -0.1,
+            2.3400000000000003
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.25,
+            "distance": 4
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_board_Stand",
+        "COL_ulgani_board_Board"
+      ]
+    }
+  ]
+}

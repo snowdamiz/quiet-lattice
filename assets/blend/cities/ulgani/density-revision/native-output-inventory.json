@@ -1,0 +1,1190 @@
+{
+  "task": "P1.E10.T07",
+  "status": "NOT_RUN_CPU_ONLY",
+  "grant": null,
+  "owner": "Parent orchestration after T01 renderer integration",
+  "imageDimensions": [
+    1920,
+    1080
+  ],
+  "lightingCases": [
+    "noon on lush world",
+    "night on exotic world",
+    "open space"
+  ],
+  "lods": [
+    0,
+    2
+  ],
+  "assets": [
+    {
+      "asset": "ulgani_low_0",
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "export": "packages/client/public/models/cities/ulgani_low.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_low_0/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_low_0/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "exportSHA256": "165b56af669ee5dea7c41a0ac0ad92348d9d44590e0d416bfbd80e9200f93e50"
+    },
+    {
+      "asset": "ulgani_low_1",
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "export": "packages/client/public/models/cities/ulgani_low.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_low_1/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_low_1/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "exportSHA256": "165b56af669ee5dea7c41a0ac0ad92348d9d44590e0d416bfbd80e9200f93e50"
+    },
+    {
+      "asset": "ulgani_low_2",
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "export": "packages/client/public/models/cities/ulgani_low.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_low_2/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_low_2/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "exportSHA256": "165b56af669ee5dea7c41a0ac0ad92348d9d44590e0d416bfbd80e9200f93e50"
+    },
+    {
+      "asset": "ulgani_low_3",
+      "source": "assets/blend/cities/ulgani_low.blend",
+      "export": "packages/client/public/models/cities/ulgani_low.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_low_3/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_low_3/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+      "exportSHA256": "165b56af669ee5dea7c41a0ac0ad92348d9d44590e0d416bfbd80e9200f93e50"
+    },
+    {
+      "asset": "ulgani_mid_0",
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "export": "packages/client/public/models/cities/ulgani_mid.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_mid_0/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "exportSHA256": "d63331a9551adf640dee1eaf50ba2060e57acac0ae13de4ace9f5f8ca8b2f894"
+    },
+    {
+      "asset": "ulgani_mid_1",
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "export": "packages/client/public/models/cities/ulgani_mid.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_mid_1/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "exportSHA256": "d63331a9551adf640dee1eaf50ba2060e57acac0ae13de4ace9f5f8ca8b2f894"
+    },
+    {
+      "asset": "ulgani_mid_2",
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "export": "packages/client/public/models/cities/ulgani_mid.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_mid_2/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "exportSHA256": "d63331a9551adf640dee1eaf50ba2060e57acac0ae13de4ace9f5f8ca8b2f894"
+    },
+    {
+      "asset": "ulgani_mid_3",
+      "source": "assets/blend/cities/ulgani_mid.blend",
+      "export": "packages/client/public/models/cities/ulgani_mid.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_mid_3/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "187423630552ec9b06210ba6b7600022f144f6cacc7da80a59a97935a3582954",
+      "exportSHA256": "d63331a9551adf640dee1eaf50ba2060e57acac0ae13de4ace9f5f8ca8b2f894"
+    },
+    {
+      "asset": "ulgani_tall_0",
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "export": "packages/client/public/models/cities/ulgani_tall.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_tall_0/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "exportSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167"
+    },
+    {
+      "asset": "ulgani_tall_1",
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "export": "packages/client/public/models/cities/ulgani_tall.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_tall_1/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "exportSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167"
+    },
+    {
+      "asset": "ulgani_tall_2",
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "export": "packages/client/public/models/cities/ulgani_tall.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_tall_2/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "exportSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167"
+    },
+    {
+      "asset": "ulgani_tall_3",
+      "source": "assets/blend/cities/ulgani_tall.blend",
+      "export": "packages/client/public/models/cities/ulgani_tall.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_tall_3/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "928a7dd1922050aceafadce863bf93e04a22bb8c483c8a631c45de538176b553",
+      "exportSHA256": "f71ac27e651e907bf6757e26c06e65b64a21bb98889357fd79b4315d0014c167"
+    },
+    {
+      "asset": "ulgani_plaza",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_plaza/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_plaza/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_market",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_market/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_market/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_market/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_city_master",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_city_master/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_city_master/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_compact",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_compact/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_compact/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_compact/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_chorus_listener",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_chorus_listener/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_shipyard",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_shipyard/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_salvage",
+      "source": "assets/blend/cities/ulgani_civic.blend",
+      "export": "packages/client/public/models/cities/ulgani_civic.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_salvage/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_salvage/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "5aa69c0ad3e749593e22ca41f991b25bdb25cf24ca59ffba02b4e8187ed294de",
+      "exportSHA256": "f962112baed9e9590682e099b6f78d89f6b8f610c60b3fd09122d98b9f3a7cd1"
+    },
+    {
+      "asset": "ulgani_wall",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_wall/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_wall/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_wall_corner/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_gate",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_gate/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_gate/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_gate/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_short/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_long/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_bridge_turn/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_cap_shelter/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_cap_half/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_ring_shelf/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_ring_joint/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_lamp",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_lamp/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_lamp/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "source": "assets/blend/cities/ulgani_kit.blend",
+      "export": "packages/client/public/models/cities/ulgani_kit.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_shore_walk/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "c57392d053b13177c80327e479d0637e6afdcb2dc7d5f9f2679b3e42848f626b",
+      "exportSHA256": "e62913d2b377f554167e52a329e20a8f9de68eab02a2a41eecf82c2b9c6fd4ca"
+    },
+    {
+      "asset": "ulgani_stall",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_stall/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_stall/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_stall/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_terminal",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_terminal/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_terminal/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_bench",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_bench/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_bench/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_bench/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_planter",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_planter/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_planter/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_planter/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_wayfinding",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_wayfinding/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_board",
+      "source": "assets/blend/cities/ulgani_props.blend",
+      "export": "packages/client/public/models/cities/ulgani_props.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_board/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_board/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_board/capture_provenance.json"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100
+        ]
+      },
+      "sourceSHA256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "exportSHA256": "113fc5fadf0ae14a577b1b1dde20d3d4cb0f539b84f7dc04dcac58a8f2450499"
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "source": "assets/blend/cities/ulgani_landmarks.blend",
+      "export": "packages/client/public/models/cities/ulgani_landmarks.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/capture_provenance.json",
+        "assets/renders/cities/ulgani-native/ulgani_great_cap_landmark/far_200m_lod2.png"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100,
+          200
+        ]
+      },
+      "sourceSHA256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+      "exportSHA256": "7fec7c4aa40f6d1ded00b871e2026c9fff0cd425ae103267095ef07267df2ee9"
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "source": "assets/blend/cities/ulgani_anchor.blend",
+      "export": "packages/client/public/models/cities/ulgani_anchor.glb",
+      "outputs": [
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/lush_noon_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/lush_noon_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/exotic_night_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/exotic_night_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/open_space_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/open_space_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/wireframe_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/overlay_lod0.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/far_100m_lod2.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/turntable_8angles.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/material_closeup.png",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/performance.json",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/capture_provenance.json",
+        "assets/renders/cities/ulgani-native/ulgani_root_island_landmark/far_200m_lod2.png"
+      ],
+      "farView": {
+        "lod": 2,
+        "lighting": "noon on lush world",
+        "distancesMetres": [
+          100,
+          200
+        ]
+      },
+      "sourceSHA256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+      "exportSHA256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8"
+    }
+  ],
+  "storageProposal": {
+    "batchAssets": 4,
+    "nativeImagesPerBatch": "44 ordinary; at most 47 with both hero far views and the family sheet",
+    "nativeFullInventoryImages": 432,
+    "estimatedNativePNGBytesAt2MiB": 905969664,
+    "currentCPUImages": 64,
+    "currentCPUBytes": 83003460,
+    "currentRevisionLimitImages": 64,
+    "currentRevisionLimitBytes": 536870912,
+    "requiredParentDecision": "Authorize a separate native storage budget/location before capture. The retained CPU evidence plus a native batch exceeds this revision image limit; no archival, deletion or limit expansion is implied. Prefer compact reviewed batches with content-addressed artifact storage; no raw sequences."
+  },
+  "familyOutputs": [
+    "assets/renders/cities/ulgani-native/ulgani_family_siblings.png"
+  ],
+  "performanceMethod": "Median asset-shown minus asset-hidden cost of adjacent paired frames; retain frame samples, draw calls, triangles, texture bytes, renderer/device/build and viewport in each performance.json.",
+  "captureProvenance": "Exact source/export SHA256, app head/tree, renderer configuration, camera, lighting case, LOD, timestamp and capture tool identity for every native output; parent supplies approved grant separately.",
+  "outputCounts": {
+    "assetFiles": 509,
+    "familyFiles": 1,
+    "images": 432,
+    "json": 78
+  },
+  "candidateManifestSHA256": "688848a806477851ebc4d5c67dc012a8c47aba7cdd48d582408d7dc007642703",
+  "storageProposalForCorrection": {
+    "currentCPUImages": 64,
+    "currentCPUBytes": 83003460,
+    "newRevisionLimitImages": 16,
+    "newRevisionLimitBytes": 134217728,
+    "combinedLimitImages": 64,
+    "combinedLimitBytes": 536870912,
+    "nativeCaptureAuthorized": false,
+    "cleanupAuthorized": false,
+    "proposal": "Parent must make a separate approved storage decision before native batches; preserve all historical and correction evidence. Existing exact native output names remain the plan, not created files."
+  }
+}

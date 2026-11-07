@@ -1,0 +1,26 @@
+{
+  "reviewTask": "ulgani-density-code-review-v1",
+  "scope": "Implementation-tool review only, not independent source-art acceptance",
+  "responses": [
+    {
+      "finding": "Material fidelity gaps",
+      "response": "Checks exact tint/emission/normal factors, direct roughness/metallic ORM factors, AO strength, ORM channel selection, all texture-info UV routes, shared image count and REPEAT samplers. Five actual-export material mutations are adverse controls."
+    },
+    {
+      "finding": "Evaluated positions mixed with unevaluated topology",
+      "response": "Source density rejects modifiers and shape keys before reading the saved mesh; current saved objects pass this guard."
+    },
+    {
+      "finding": "Local-unit metric repair",
+      "response": "Initial converter rejects non-unit world scale; compact-chart and codec-margin corrections measure world coordinates. Final source measurement independently uses world metres."
+    },
+    {
+      "finding": "Missing export coverage could pass",
+      "response": "Source/export asset-LOD sets must match the complete four-LOD expected set; empty results cannot pass. Final manifest additionally requires 39 assets and 312 source/export density rows."
+    },
+    {
+      "finding": "All-degenerate geometry crashed the report",
+      "response": "Explicit FAIL with zero-area count and undefined density replaces an empty minimum; an adverse control exercises this case."
+    }
+  ]
+}

@@ -28,7 +28,13 @@ def inventory(group):
 
 
 def run(label, script, args, seconds=1200, stale=None):
-    command = [sys.executable, str(HERE / "run.py"), "--seconds", str(seconds)]
+    pins = META / "density-revision/launchers-and-base.json"
+    python = (
+        json.loads(pins.read_text())["python"]["path"]
+        if pins.exists()
+        else sys.executable
+    )
+    command = [python, str(HERE / "run.py"), "--seconds", str(seconds)]
     if stale:
         command += ["--stale", stale]
     command += [

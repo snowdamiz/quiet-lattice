@@ -1,0 +1,352 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "packages/client/public/models/cities/ulgani_low.glb",
+  "family": "cities",
+  "mode": "export",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T07:45:52Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani_low_0",
+      "variants": [
+        {
+          "id": "ulgani_low_0",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 19136,
+            "1": 5740,
+            "2": 1912,
+            "3": 668
+          },
+          "implicitLods": false,
+          "dims": [
+            14.519,
+            14.0,
+            7.021
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_low_1",
+      "variants": [
+        {
+          "id": "ulgani_low_1",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21696,
+            "1": 6507,
+            "2": 2168,
+            "3": 758
+          },
+          "implicitLods": false,
+          "dims": [
+            18.798,
+            16.205,
+            9.026
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_low_2",
+      "variants": [
+        {
+          "id": "ulgani_low_2",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21640,
+            "1": 6491,
+            "2": 2164,
+            "3": 757
+          },
+          "implicitLods": false,
+          "dims": [
+            17.991,
+            14.2,
+            11.03
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_low_3",
+      "variants": [
+        {
+          "id": "ulgani_low_3",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 26348,
+            "1": 7904,
+            "2": 2634,
+            "3": 921
+          },
+          "implicitLods": false,
+          "dims": [
+            19.249,
+            17.31,
+            13.035
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ],
+          "gpuTextureMB": 21.3
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_low.glb",
+          "message": "4 variant(s) in 4 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_low_0",
+          "message": "LOD0 19,136 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_low_1",
+          "message": "LOD0 21,696 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_low_2",
+          "message": "LOD0 21,640 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_low_3",
+          "message": "LOD0 26,348 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "geometry",
+          "message": "meshopt-compressed: 2.2 MB of streams"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_low_0",
+          "message": "19,136 > 5,740 > 1,912 > 668 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_low_1",
+          "message": "21,696 > 6,507 > 2,168 > 758 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_low_2",
+          "message": "21,640 > 6,491 > 2,164 > 757 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_low_3",
+          "message": "26,348 > 7,904 > 2,634 > 921 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "UlganiMetric_2048_CapFlesh",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Chitin",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_ChitinAged",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_ChitinJoint",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Gill",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Membrane",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_MembraneRepair",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Root",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Spore",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "UlganiMetric_2048_Walk",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_WalkWorn",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "textures",
+          "message": "4 KTX2 map(s) (1 UASTC, 3 ETC1S) with full mip chains, 2.5 MB"
+        },
+        {
+          "subject": "ulgani_low_0",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_1",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_2",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        },
+        {
+          "subject": "ulgani_low_3",
+          "message": "textures take 21 MB of GPU memory once transcoded (8 bits a texel compressed, 32 uncompressed, mips included), within the building budget of 128 MB"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "source",
+          "message": "assets/blend/cities/ulgani_low.blend holds the 1 m grid and 1.85 m biped (validated with the source)"
+        },
+        {
+          "subject": "ulgani_low_0",
+          "message": "longest side 14.52 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_low_1",
+          "message": "longest side 18.80 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_low_2",
+          "message": "longest side 17.99 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_low_3",
+          "message": "longest side 19.25 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

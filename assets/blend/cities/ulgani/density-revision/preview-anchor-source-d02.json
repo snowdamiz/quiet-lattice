@@ -1,0 +1,79 @@
+{
+  "source": "assets/blend/cities/ulgani_anchor.blend",
+  "sourceSHA256": "13a0d86527759415d6bfe59bec623b462877cfc4692b63ab53a4f6bd73142aaf",
+  "output": "assets/renders/cities/ulgani-density/anchor-source-d02.png",
+  "outputSHA256": "3d4c5a5bc4c3c364b3a06c13cf82a86a389e6460aa49dde8e033956c9ca2626c",
+  "bytes": 564949,
+  "renderer": "Cycles CPU",
+  "threads": 2,
+  "samples": {
+    "whole": 24,
+    "closeup": 64
+  },
+  "nativeAcceptance": false,
+  "views": [
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        0
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ]
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -4.953388690948486,
+        -0.9816667437553406,
+        1.846666693687439
+      ],
+      "camera": [
+        -8.851563453674316,
+        -1.857710361480713,
+        1.904876470565796
+      ]
+    },
+    {
+      "asset": "ulgani_root_island_landmark",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        2
+      ],
+      "orthographicWidthMetres": 199.78896484375,
+      "target": [
+        0.012725830078125,
+        -0.06127166748046875,
+        22.0730037689209
+      ],
+      "camera": [
+        218.5319061279297,
+        -312.2315368652344,
+        170.35386657714844
+      ]
+    }
+  ]
+}

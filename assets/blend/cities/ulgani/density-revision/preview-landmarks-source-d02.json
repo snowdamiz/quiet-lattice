@@ -1,0 +1,79 @@
+{
+  "source": "assets/blend/cities/ulgani_landmarks.blend",
+  "sourceSHA256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+  "output": "assets/renders/cities/ulgani-density/landmarks-source-d02.png",
+  "outputSHA256": "27f15193a4daffb69a570d5eb1cdd07af6c4c7d81f7414102b80d78da5f18f60",
+  "bytes": 543656,
+  "renderer": "Cycles CPU",
+  "threads": 2,
+  "samples": {
+    "whole": 24,
+    "closeup": 64
+  },
+  "nativeAcceptance": false,
+  "views": [
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        0
+      ],
+      "orthographicWidthMetres": 173.2291796875,
+      "target": [
+        3.0158843994140625,
+        -2.221538543701172,
+        31.432342529296875
+      ],
+      "camera": [
+        192.48529052734375,
+        -272.8921203613281,
+        160.00086975097656
+      ]
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        23.322673797607422,
+        -32.46550369262695,
+        -0.10530006885528564
+      ],
+      "camera": [
+        24.31587791442871,
+        -34.371185302734375,
+        -3.2290115356445312
+      ]
+    },
+    {
+      "asset": "ulgani_great_cap_landmark",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        2
+      ],
+      "orthographicWidthMetres": 173.2291796875,
+      "target": [
+        3.0158843994140625,
+        -2.221538543701172,
+        31.432342529296875
+      ],
+      "camera": [
+        192.48529052734375,
+        -272.8921203613281,
+        160.00086975097656
+      ]
+    }
+  ]
+}

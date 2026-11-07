@@ -1,0 +1,56 @@
+00:00.737  blend            | Read blend: "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/assets/blend/cities/ulgani_landmarks.blend"
+
+export assets/blend/cities/ulgani_landmarks.blend -> packages/client/public/models/cities/ulgani_landmarks.glb
+PASS  assets/blend/cities/ulgani_landmarks.blend
+INFO Draco is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_draco_bridge.dylib
+INFO MeshOptimizer is available, use library at /Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2/libbf_intern_meshopt_bridge.dylib
+02:55:16 | INFO: Starting glTF 2.0 export
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column0Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column1Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column2Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column3Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column4Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_Column5Mesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: COL_ulgani_great_cap_landmark_HighCapMesh
+02:55:16 | INFO: Primitives created: 1
+02:55:16 | INFO: Extracting primitive: ulgani_great_cap_landmark_Surface0Mesh
+02:55:16 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:55:16 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:55:16 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:55:16 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+02:55:16 | INFO: Primitives created: 4
+02:55:16 | INFO: Extracting primitive: ulgani_great_cap_landmark_Surface0Mesh.001
+02:55:16 | INFO: Primitives created: 4
+02:55:16 | INFO: Extracting primitive: ulgani_great_cap_landmark_Surface0Mesh.002
+02:55:16 | INFO: Primitives created: 4
+02:55:16 | INFO: Extracting primitive: ulgani_great_cap_landmark_Surface0Mesh.003
+02:55:16 | INFO: Primitives created: 4
+02:55:16 | INFO: Finished glTF 2.0 export in 0.1522529125213623 s
+
+  32.3 MB with PNG textures; encoding KTX2 (1 at a time)
+  compressed 4 texture(s) to KTX2 (1 UASTC, 3 ETC1S): 32.3 -> 13.8 MB of buffers
+  meshopt (high, quantized): geometry 4.5 -> 1.6 MB; file 13.8 -> 11.0 MB
+02:56:29 | INFO: Data are loaded, start creating Blender stuff
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column0Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column1Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column2Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column3Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column4Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_Column5Mesh
+02:56:29 | INFO: Blender create Mesh node COL_ulgani_great_cap_landmark_HighCapMesh
+02:56:29 | INFO: Blender create Mesh node ulgani_great_cap_landmark_Surface0Mesh
+02:56:30 | INFO: Blender create Mesh node ulgani_great_cap_landmark_Surface0Mesh
+02:56:30 | INFO: Blender create Mesh node ulgani_great_cap_landmark_Surface0Mesh
+02:56:30 | INFO: Blender create Mesh node ulgani_great_cap_landmark_Surface0Mesh
+02:56:30 | INFO: glTF import finished in 0.16s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+PASS  packages/client/public/models/cities/ulgani_landmarks.glb
+  wrote packages/client/public/models/cities/ulgani_landmarks.glb (10,953,000 bytes)
+
+export cities: 1 of 1 source(s) exported

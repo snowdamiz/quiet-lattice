@@ -1,0 +1,317 @@
+{
+  "status": "PASS",
+  "originalsUnchanged": true,
+  "originalHashes": {
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/assets/blend/cities/ulgani_low.blend": "d19021db8285c2726c8979f40f963fb4c3b133b9c6ec618eec3d03863a34cb6f",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/client/public/models/cities/ulgani_low.glb": "165b56af669ee5dea7c41a0ac0ad92348d9d44590e0d416bfbd80e9200f93e50"
+  },
+  "controls": [
+    {
+      "control": "missing-collision",
+      "expected": "COL_",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "ulgani_low_0",
+          "message": "no COL_* mesh (the walker collides with every city piece)",
+          "check": "naming"
+        }
+      ]
+    },
+    {
+      "control": "missing-lod3",
+      "expected": "missing LOD3",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "ulgani_low_0",
+          "message": "3 of 4 LODs: missing LOD3 (hand-make all of them, or only LOD0 and let the export generate the rest)",
+          "check": "lods"
+        }
+      ]
+    },
+    {
+      "control": "missing-uv",
+      "expected": "no UV map",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "ulgani_low_0_Surface0",
+          "message": "mesh has no UV map, which its material's texture maps (and the baked AO) need",
+          "check": "materials"
+        }
+      ]
+    },
+    {
+      "control": "wrong-reference-scale",
+      "expected": "1.85",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "REF_Biped",
+          "message": "biped is 0.925 m tall (feet at z 0.000, top at z 0.925); it must be 1.85 m standing on the grid plane (z 0.000)",
+          "check": "scale"
+        }
+      ]
+    },
+    {
+      "control": "missing-light-property",
+      "expected": "intensity",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "Light_Spore0_ulgani_low_0",
+          "message": "missing custom properties intensity (point lights; the game reads the extras)",
+          "check": "naming"
+        }
+      ]
+    },
+    {
+      "control": "uniform-normal-map",
+      "expected": "normal map",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Basalt",
+          "message": "normal map UlganiMetric_2048_Normal is uniform over the image (std 0.0016 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_CapFlesh",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Chitin",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_ChitinAged",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0007 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_ChitinJoint",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0008 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Gill",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0001 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Membrane",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0005 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_MembraneRepair",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Root",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Spore",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Walk",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0002 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        },
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_WalkWorn",
+          "message": "normal map UlganiMetric_2048_Normal is uniform under the surface's UVs (std 0.0000 < 0.0039): paint or bake real detail",
+          "check": "materials"
+        }
+      ]
+    },
+    {
+      "control": "wrong-budget-class",
+      "expected": "budget",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "ulgani_low_0",
+          "message": "LOD0 has 19,136 triangles, over the prop budget 2,000-10,000 (DESIGN 19.2)",
+          "check": "triangles"
+        },
+        {
+          "level": "fail",
+          "subject": "ulgani_low_0",
+          "message": "longest side 14.52 m is outside 0.05-6 m for class prop in cities; check the scale against the 1 m grid",
+          "check": "scale"
+        }
+      ]
+    },
+    {
+      "control": "meshopt-not-required",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "meshopt-not-required.glb",
+          "message": "EXT_meshopt_compression and KHR_mesh_quantization must be in extensionsRequired (the geometry has no uncompressed fallback)",
+          "check": "triangles"
+        }
+      ]
+    },
+    {
+      "control": "basis-not-required",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "basis-not-required.glb",
+          "message": "KHR_texture_basisu is not in extensionsRequired (the textures have no PNG fallback)",
+          "check": "materials"
+        }
+      ]
+    },
+    {
+      "control": "short-mips",
+      "detected": true,
+      "failures": [
+        {
+          "level": "fail",
+          "subject": "UlganiMetric_2048_Normal",
+          "message": "normal map has 1 mip level(s) of the 12 a 2048x2048 map needs",
+          "check": "materials"
+        }
+      ]
+    },
+    {
+      "control": "paired-UV-swap",
+      "detected": true,
+      "result": {
+        "spatiallyUnmatchedCorners": 0,
+        "uv": {
+          "max": 0.2817800560721074,
+          "p99": 0.2817800560721074,
+          "mean": 0.27625400356361
+        },
+        "normalVector": {
+          "max": 1.999840689287986,
+          "p99": 1.9998351164542782,
+          "mean": 0.20416700195411375
+        },
+        "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+      }
+    },
+    {
+      "control": "paired-normal-swap",
+      "detected": true,
+      "result": {
+        "spatiallyUnmatchedCorners": 0,
+        "uv": {
+          "max": 0.05893536736691196,
+          "p99": 0.017456829551248516,
+          "mean": 0.0004413755263454537
+        },
+        "normalVector": {
+          "max": 1.4142135355835903,
+          "p99": 1.4142101414911838,
+          "mean": 1.2098121134451107
+        },
+        "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+      }
+    },
+    {
+      "control": "blocked-pedestrian-route",
+      "detected": true,
+      "result": {
+        "blocked": 3,
+        "unsupported": 0,
+        "examples": [
+          [
+            1.35,
+            0.0,
+            0.18
+          ],
+          [
+            0.0,
+            0.0,
+            0.18
+          ],
+          [
+            -1.35,
+            0.0,
+            0.18
+          ]
+        ],
+        "allowedStepMetres": 0.18,
+        "connectorInsetMetres": 0.01,
+        "supportProbeRadiusMetres": 0.005,
+        "seamSupportedSamples": 0
+      }
+    },
+    {
+      "control": "missing-walkway-floor",
+      "detected": true,
+      "result": {
+        "blocked": 0,
+        "unsupported": 33,
+        "examples": [
+          [
+            1.35,
+            -3.99,
+            0.18
+          ],
+          [
+            0.0,
+            -3.99,
+            0.18
+          ],
+          [
+            -1.35,
+            -3.99,
+            0.18
+          ],
+          [
+            1.35,
+            -3.2,
+            0.18
+          ],
+          [
+            0.0,
+            -3.2,
+            0.18
+          ]
+        ],
+        "allowedStepMetres": 0.18,
+        "connectorInsetMetres": 0.01,
+        "supportProbeRadiusMetres": 0.005,
+        "seamSupportedSamples": 0
+      }
+    },
+    {
+      "control": "export-rejects-and-removes-stale",
+      "detected": true
+    }
+  ]
+}

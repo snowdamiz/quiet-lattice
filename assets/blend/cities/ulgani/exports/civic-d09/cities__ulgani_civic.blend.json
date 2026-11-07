@@ -1,0 +1,498 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ulgani_civic.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:36:21Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani_plaza",
+      "variants": [
+        {
+          "id": "ulgani_plaza",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 54040,
+            "1": 16211,
+            "2": 5404,
+            "3": 1891
+          },
+          "implicitLods": false,
+          "dims": [
+            60.166,
+            55.0,
+            7.209
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_market",
+      "variants": [
+        {
+          "id": "ulgani_market",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 19136,
+            "1": 5739,
+            "2": 1911,
+            "3": 669
+          },
+          "implicitLods": false,
+          "dims": [
+            31.113,
+            25.0,
+            12.036
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_city_master",
+      "variants": [
+        {
+          "id": "ulgani_city_master",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21696,
+            "1": 6508,
+            "2": 2168,
+            "3": 758
+          },
+          "implicitLods": false,
+          "dims": [
+            27.509,
+            27.722,
+            17.048
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_compact",
+      "variants": [
+        {
+          "id": "ulgani_compact",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 30486,
+            "1": 9145,
+            "2": 3048,
+            "3": 1066
+          },
+          "implicitLods": false,
+          "dims": [
+            29.235,
+            23.0,
+            20.089
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_chorus_listener",
+      "variants": [
+        {
+          "id": "ulgani_chorus_listener",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 26348,
+            "1": 7903,
+            "2": 2633,
+            "3": 921
+          },
+          "implicitLods": false,
+          "dims": [
+            23.526,
+            32.082,
+            15.042
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_shipyard",
+      "variants": [
+        {
+          "id": "ulgani_shipyard",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 21272,
+            "1": 6380,
+            "2": 2126,
+            "3": 744
+          },
+          "implicitLods": false,
+          "dims": [
+            62.171,
+            47.0,
+            18.617
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    },
+    {
+      "asset": "ulgani_salvage",
+      "variants": [
+        {
+          "id": "ulgani_salvage",
+          "class": "building",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 25212,
+            "1": 7563,
+            "2": 2521,
+            "3": 882
+          },
+          "implicitLods": false,
+          "dims": [
+            48.386,
+            47.0,
+            13.681
+          ],
+          "materials": [
+            "UlganiMetric_2048_Chitin",
+            "UlganiMetric_2048_Membrane",
+            "UlganiMetric_2048_CapFlesh",
+            "UlganiMetric_2048_Gill",
+            "UlganiMetric_2048_Root",
+            "UlganiMetric_2048_Walk",
+            "UlganiMetric_2048_Basalt",
+            "UlganiMetric_2048_Spore",
+            "UlganiMetric_2048_ChitinAged",
+            "UlganiMetric_2048_ChitinJoint",
+            "UlganiMetric_2048_MembraneRepair",
+            "UlganiMetric_2048_WalkWorn"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_civic.blend",
+          "message": "7 variant(s) in 7 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_plaza",
+          "message": "LOD0 54,040 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_market",
+          "message": "LOD0 19,136 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_city_master",
+          "message": "LOD0 21,696 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_compact",
+          "message": "LOD0 30,486 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_chorus_listener",
+          "message": "LOD0 26,348 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_shipyard",
+          "message": "LOD0 21,272 triangles within the building budget 8,000-60,000 (families.json)"
+        },
+        {
+          "subject": "ulgani_salvage",
+          "message": "LOD0 25,212 triangles within the building budget 8,000-60,000 (families.json)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_plaza",
+          "message": "54,040 > 16,211 > 5,404 > 1,891 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_market",
+          "message": "19,136 > 5,739 > 1,911 > 669 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_city_master",
+          "message": "21,696 > 6,508 > 2,168 > 758 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_compact",
+          "message": "30,486 > 9,145 > 3,048 > 1,066 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_chorus_listener",
+          "message": "26,348 > 7,903 > 2,633 > 921 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_shipyard",
+          "message": "21,272 > 6,380 > 2,126 > 744 triangles; LOD3 3.5% of LOD0"
+        },
+        {
+          "subject": "ulgani_salvage",
+          "message": "25,212 > 7,563 > 2,521 > 882 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "UlganiMetric_2048_Basalt",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_CapFlesh",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Chitin",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_ChitinAged",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_ChitinJoint",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Gill",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Membrane",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_MembraneRepair",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Root",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_Spore",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "UlganiMetric_2048_Walk",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_2048_WalkWorn",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ulgani_plaza",
+          "message": "longest side 60.17 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_market",
+          "message": "longest side 31.11 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_city_master",
+          "message": "longest side 27.72 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_compact",
+          "message": "longest side 29.23 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_chorus_listener",
+          "message": "longest side 32.08 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_shipyard",
+          "message": "longest side 62.17 m within 1-400 m"
+        },
+        {
+          "subject": "ulgani_salvage",
+          "message": "longest side 48.39 m within 1-400 m"
+        }
+      ]
+    }
+  ]
+}

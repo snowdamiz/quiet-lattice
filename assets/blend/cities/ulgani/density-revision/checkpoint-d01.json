@@ -1,0 +1,51 @@
+{
+  "status": "IN_PROGRESS_NOT_ACCEPTED",
+  "base": "a8a4e142828de25fff9235e49d25e17b50d1f047",
+  "sourceState": "Original saved geometry/normals retained; metric UV charts bounded; second local codec margin applied",
+  "sources": [
+    {
+      "path": "assets/blend/cities/ulgani_anchor.blend",
+      "sha256": "13a0d86527759415d6bfe59bec623b462877cfc4692b63ab53a4f6bd73142aaf",
+      "bytes": 31161849
+    },
+    {
+      "path": "assets/blend/cities/ulgani_civic.blend",
+      "sha256": "d86081101d11ebe00cb004ebc398336544d80202b870bb18490285c7fed9c3d2",
+      "bytes": 16274909
+    },
+    {
+      "path": "assets/blend/cities/ulgani_kit.blend",
+      "sha256": "642cbc49e4df4714170cf97c999d98a33a3e6b1784a0867036fbadf3ce070a3b",
+      "bytes": 12993978
+    },
+    {
+      "path": "assets/blend/cities/ulgani_landmarks.blend",
+      "sha256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+      "bytes": 30052191
+    },
+    {
+      "path": "assets/blend/cities/ulgani_low.blend",
+      "sha256": "4a7e38f68b665efe946382ea7bfc033962a2e8c2610c09f312152c772cc6084f",
+      "bytes": 12513842
+    },
+    {
+      "path": "assets/blend/cities/ulgani_mid.blend",
+      "sha256": "a5962d85f3864819a9f117df6358d3ea639d66d3de4906d6af85f4fec519faf7",
+      "bytes": 14471621
+    },
+    {
+      "path": "assets/blend/cities/ulgani_props.blend",
+      "sha256": "091f13f6539ac5bc91fca4226cdcf3db36296fb946378f293fec4180dac5a638",
+      "bytes": 4309571
+    },
+    {
+      "path": "assets/blend/cities/ulgani_tall.blend",
+      "sha256": "1634745adabb5fb3476b50dd65fe1cff3e0601706d5c9ed34a36a1b6a02ce30b",
+      "bytes": 18686107
+    }
+  ],
+  "activeStage": "export d07, eight groups, final anchor job",
+  "next": "density-all-d08; verify_density_revision.py --attempt d08; finish_density_revision.py; inspect all 15 new images; summarize_density.py; final scoped checks, ownership/LFS check, artifact commit and C.2 report companion commit",
+  "historicalEvidence": "All original reports/48 images and all new failed attempts retained; no author.py regeneration; no GPU/browser/DB/main/push/PR/merge; no screenshot cleanup",
+  "previewBudget": "One new props d01 sheet exists. Plan eight current source d02, three decoded export d02 and three map d01 sheets: 15 total new, 63 combined."
+}

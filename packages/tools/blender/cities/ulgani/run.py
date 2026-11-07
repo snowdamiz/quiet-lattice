@@ -108,6 +108,18 @@ def main():
             path.read_bytes()
         ).hexdigest()
     env = dict(os.environ, **LIMITS)
+    pins = META / "density-revision/launchers-and-base.json"
+    pinned = None
+    if pins.exists():
+        pinned = json.loads(pins.read_text())
+        env["ART_NODE"] = pinned["node"]["path"]
+        env["PATH"] = os.pathsep.join(
+            [
+                str(Path(pinned["python"]["path"]).parent),
+                str(Path(env["ART_NODE"]).parent),
+                env["PATH"],
+            ]
+        )
     # macOS Unix sockets have short path limits; tsx places its IPC socket under TMPDIR.
     scratch = Path(tempfile.mkdtemp(prefix="ulgani-", dir="/tmp"))
     receipt["scratchDirectory"] = str(scratch)
@@ -122,6 +134,25 @@ def main():
     reason = None
     lock = open(META / ".lane.lock", "a")  # noqa: SIM115 - release only after owned group cleanup
     try:
+        if pinned:
+            for name in ("python", "node", "blender", "tsx", "ktx"):
+                path = Path(pinned[name]["path"])
+                if (
+                    hashlib.sha256(path.read_bytes()).hexdigest()
+                    != pinned[name]["sha256"]
+                ):
+                    raise RuntimeError("pinned launcher changed: " + name)
+            receipt["pinnedLaunchers"] = {
+                name: pinned[name]
+                for name in ("python", "node", "blender", "tsx", "ktx")
+            }
+            if (
+                Path(shutil.which("python3", path=env["PATH"])).resolve()
+                != Path(pinned["python"]["path"]).resolve()
+            ):
+                raise RuntimeError(
+                    "codec wrapper interpreter differs from pinned Python"
+                )
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         start = time.monotonic()
         while True:

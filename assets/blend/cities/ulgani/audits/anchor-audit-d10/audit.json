@@ -1,0 +1,1802 @@
+{
+  "source": "assets/blend/cities/ulgani_anchor.blend",
+  "sourceSHA256": "f2248ffc0e2c562cc7a9b5ae41778954e53a5f885c75817f0bd3e381e0edce37",
+  "assets": [
+    {
+      "source": {
+        "id": "ulgani_root_island_landmark",
+        "class": "hero",
+        "lods": [
+          {
+            "triangles": 108800,
+            "vertices": 60125,
+            "surfaceVertices": 60125,
+            "unusedVertices": 0,
+            "corners": 216000,
+            "bounds": [
+              [
+                -78.02983856201172,
+                -68.00676727294922,
+                -4.033991813659668
+              ],
+              [
+                78.05529022216797,
+                67.88422393798828,
+                48.18000030517578
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251533508300781,
+              8.021842002868652
+            ],
+            "normalLengthMin": 0.9999999143278874,
+            "geometryHash": "b5997150ab788180e8c05d6dd007e065783974f03f0ebc5c8e1b7b13cbe22961"
+          },
+          {
+            "triangles": 32640,
+            "vertices": 19345,
+            "surfaceVertices": 19345,
+            "unusedVertices": 0,
+            "corners": 97920,
+            "bounds": [
+              [
+                -78.02952575683594,
+                -68.00416564941406,
+                -4.031578540802002
+              ],
+              [
+                78.05529022216797,
+                67.88422393798828,
+                48.18000030517578
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251533508300781,
+              8.021842002868652
+            ],
+            "normalLengthMin": 0.9999999148902962,
+            "geometryHash": "595ca467050b8d9b9b9c8197bbca6bd581171ef942171ad4b5c222e18d40d68b"
+          },
+          {
+            "triangles": 10880,
+            "vertices": 7089,
+            "surfaceVertices": 7088,
+            "unusedVertices": 1,
+            "corners": 32640,
+            "bounds": [
+              [
+                -78.02952575683594,
+                -68.01737976074219,
+                -4.01677131652832
+              ],
+              [
+                78.05579376220703,
+                67.88422393798828,
+                48.180782318115234
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251540184020996,
+              8.021845817565918
+            ],
+            "normalLengthMin": 0.9999999142348507,
+            "geometryHash": "a31f6b5cb8addfefb8887690bd5bb399689fae92abc61eb3e27e908a90856ce1"
+          },
+          {
+            "triangles": 3808,
+            "vertices": 3053,
+            "surfaceVertices": 2918,
+            "unusedVertices": 135,
+            "corners": 11424,
+            "bounds": [
+              [
+                -78.0269546508789,
+                -67.92012786865234,
+                -4.086429119110107
+              ],
+              [
+                78.05386352539062,
+                67.88231658935547,
+                48.17897033691406
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251540184020996,
+              8.021845817565918
+            ],
+            "normalLengthMin": 0.9999999144947224,
+            "geometryHash": "61276cac9cb3a3f7c2fd1e68af0cd76fd2a3c161bc7143290800562972517cd7"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_Anchor_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -5.0,
+              1.3799999952316284
+            ],
+            "nearestVisualSurface": 0.9848101735115051,
+            "properties": {
+              "service_role": "recall_anchor",
+              "dispatch": "T01_T02_T08_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -4.0,
+              1.7999999523162842
+            ],
+            "nearestVisualSurface": 1.6763806343078613e-08,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.65,
+              "distance": 10
+            }
+          }
+        ],
+        "collision": {
+          "objects": 40,
+          "triangles": 2560,
+          "maxObjectTriangles": 116,
+          "nearestSurfaceMax": 1.3542838096618652,
+          "nearestSurfaceP95": 0.7612935692071915
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -66,
+                0.18
+              ],
+              "to": [
+                0,
+                -5,
+                0.18
+              ],
+              "width": 4,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "decoded": {
+        "id": "ulgani_root_island_landmark",
+        "class": "hero",
+        "lods": [
+          {
+            "triangles": 108800,
+            "vertices": 86213,
+            "surfaceVertices": 86213,
+            "unusedVertices": 0,
+            "corners": 326400,
+            "bounds": [
+              [
+                -78.02983856201172,
+                -68.00524801035226,
+                -4.033279480353713
+              ],
+              [
+                78.05529022216797,
+                67.88270467539132,
+                48.17928701819551
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251533508300781,
+              8.021842002868652
+            ],
+            "normalLengthMin": 0.9999998867299926,
+            "geometryHash": "e99ca68f06bb5676e4981b79c37176aa34a3e0d8f16b94b0626b7172d1ec2e53"
+          },
+          {
+            "triangles": 32640,
+            "vertices": 93172,
+            "surfaceVertices": 93172,
+            "unusedVertices": 0,
+            "corners": 97920,
+            "bounds": [
+              [
+                -78.02952194213867,
+                -68.00380771317032,
+                -4.032018533840983
+              ],
+              [
+                78.0552864074707,
+                67.88386600174454,
+                48.18044077505192
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251533508300781,
+              8.021842002868652
+            ],
+            "normalLengthMin": 0.9999998927249377,
+            "geometryHash": "7595d95b044309db547eabe58ca986f47d243e673ef56182022fcaad48044f5e"
+          },
+          {
+            "triangles": 10880,
+            "vertices": 30896,
+            "surfaceVertices": 30896,
+            "unusedVertices": 0,
+            "corners": 32640,
+            "bounds": [
+              [
+                -78.0295295715332,
+                -68.02016729469324,
+                -4.014782861722779
+              ],
+              [
+                78.0557975769043,
+                67.88701147193933,
+                48.17879195596106
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251540184020996,
+              8.021845817565918
+            ],
+            "normalLengthMin": 0.9999998906004988,
+            "geometryHash": "47322fa4697ab2df11571eee506a814104995c425eaeaa093aac1d5236474968"
+          },
+          {
+            "triangles": 3808,
+            "vertices": 10412,
+            "surfaceVertices": 10412,
+            "unusedVertices": 0,
+            "corners": 11424,
+            "bounds": [
+              [
+                -78.02695083618164,
+                -67.92289193229954,
+                -4.087869874656462
+              ],
+              [
+                78.05385971069336,
+                67.88508065300266,
+                48.18041061562326
+              ]
+            ],
+            "uvMin": [
+              2.0,
+              0.0
+            ],
+            "uvMax": [
+              11.251540184020996,
+              8.021845817565918
+            ],
+            "normalLengthMin": 0.9999998940908934,
+            "geometryHash": "c029febaba001da8cab32adc52efed0dd231d2132447ee1a5e2b3bc54446a40b"
+          }
+        ],
+        "markers": [
+          {
+            "name": "Interact_Anchor_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -5.0,
+              1.3799999952316284
+            ],
+            "nearestVisualSurface": 0.9829790592193604,
+            "properties": {
+              "service_role": "recall_anchor",
+              "dispatch": "T01_T02_T08_pending"
+            }
+          },
+          {
+            "name": "Light_Spore1_ulgani_root_island_landmark",
+            "position": [
+              0.0,
+              -4.0,
+              1.7999999523162842
+            ],
+            "nearestVisualSurface": 0.00018789015302900225,
+            "properties": {
+              "color": "#C7F06A",
+              "intensity": 0.65,
+              "distance": 10
+            }
+          }
+        ],
+        "collision": {
+          "objects": 40,
+          "triangles": 2560,
+          "maxObjectTriangles": 116,
+          "nearestSurfaceMax": 1.3554526567459106,
+          "nearestSurfaceP95": 0.7572149634361267
+        },
+        "walkRoutes": [
+          {
+            "route": {
+              "from": [
+                0,
+                -66,
+                0.18
+              ],
+              "to": [
+                0,
+                -5,
+                0.18
+              ],
+              "width": 4,
+              "height": 3.2
+            },
+            "visual": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            },
+            "collision": {
+              "blocked": 0,
+              "unsupported": 0,
+              "examples": [],
+              "allowedStepMetres": 0.18,
+              "connectorInsetMetres": 0.01,
+              "supportProbeRadiusMetres": 0.005,
+              "seamSupportedSamples": 0
+            }
+          }
+        ]
+      },
+      "preservation": [
+        {
+          "lod": 0,
+          "position": {
+            "max": 0.01004328578710556,
+            "p99": 0.008144416883587852,
+            "mean": 0.004811633080083754
+          },
+          "sourceToExportPosition": {
+            "max": 0.01004328578710556,
+            "p99": 0.00803871087729931,
+            "mean": 0.004794625752014951
+          },
+          "positionTolerance": 0.03256984552282641,
+          "uv": {
+            "max": 0.00033692959393680975,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.6395790438026926e-07
+          },
+          "normalVector": {
+            "max": 0.020797310684195828,
+            "p99": 0.014682308763647,
+            "mean": 0.005948963489559529
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.00033692959393680975,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.6395790438026926e-07
+            },
+            "normalVector": {
+              "max": 0.020797310684195828,
+              "p99": 0.014682308763647,
+              "mean": 0.005948963489559529
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 108800,
+          "exportTriangles": 108800,
+          "sourceVertices": 60125,
+          "exportVertices": 86213,
+          "blenderImportedVertices": 86213,
+          "blenderImportedTriangles": 108800,
+          "exportReader": "glTF-Transform NodeIO + MeshoptDecoder, normalized accessors and world transform; glTF Y-up converted to Blender Z-up",
+          "sourceSurfaceVertices": 60125,
+          "exportSurfaceVertices": 86213,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 1,
+          "position": {
+            "max": 0.00968584418296814,
+            "p99": 0.00800776295363903,
+            "mean": 0.004735239881205168
+          },
+          "sourceToExportPosition": {
+            "max": 0.00968584418296814,
+            "p99": 0.007999389320611958,
+            "mean": 0.004731767427110011
+          },
+          "positionTolerance": 0.032569467766883776,
+          "uv": {
+            "max": 0.0006202506877256058,
+            "p99": 2.9802322387695312e-08,
+            "mean": 8.041175109071308e-07
+          },
+          "normalVector": {
+            "max": 0.0198829760443038,
+            "p99": 0.01516849666423598,
+            "mean": 0.006221614258687756
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.0006202506877256058,
+              "p99": 2.9802322387695312e-08,
+              "mean": 8.041175109071308e-07
+            },
+            "normalVector": {
+              "max": 0.0198829760443038,
+              "p99": 0.01516849666423598,
+              "mean": 0.006221614258687756
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 32640,
+          "exportTriangles": 32640,
+          "sourceVertices": 19345,
+          "exportVertices": 93172,
+          "blenderImportedVertices": 93172,
+          "blenderImportedTriangles": 32640,
+          "exportReader": "glTF-Transform NodeIO + MeshoptDecoder, normalized accessors and world transform; glTF Y-up converted to Blender Z-up",
+          "sourceSurfaceVertices": 19345,
+          "exportSurfaceVertices": 93172,
+          "unusedSourceVertices": 0
+        },
+        {
+          "lod": 2,
+          "position": {
+            "max": 0.009710093028843403,
+            "p99": 0.00806680228561163,
+            "mean": 0.004700643604354014
+          },
+          "sourceToExportPosition": {
+            "max": 0.009710093028843403,
+            "p99": 0.008043510736897588,
+            "mean": 0.004708446250031713
+          },
+          "positionTolerance": 0.03257028434720268,
+          "uv": {
+            "max": 0.0003523085508525636,
+            "p99": 2.9802322387695312e-08,
+            "mean": 3.537016349074628e-07
+          },
+          "normalVector": {
+            "max": 0.018986746257354636,
+            "p99": 0.014549716348426615,
+            "mean": 0.00614537016198623
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.0003523085508525636,
+              "p99": 2.9802322387695312e-08,
+              "mean": 3.537016349074628e-07
+            },
+            "normalVector": {
+              "max": 0.018986746257354636,
+              "p99": 0.014549716348426615,
+              "mean": 0.00614537016198623
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 10880,
+          "exportTriangles": 10880,
+          "sourceVertices": 7089,
+          "exportVertices": 30896,
+          "blenderImportedVertices": 30896,
+          "blenderImportedTriangles": 10880,
+          "exportReader": "glTF-Transform NodeIO + MeshoptDecoder, normalized accessors and world transform; glTF Y-up converted to Blender Z-up",
+          "sourceSurfaceVertices": 7088,
+          "exportSurfaceVertices": 30896,
+          "unusedSourceVertices": 1
+        },
+        {
+          "lod": 3,
+          "position": {
+            "max": 0.008869117125868797,
+            "p99": 0.007726986426860094,
+            "mean": 0.004756478887182317
+          },
+          "sourceToExportPosition": {
+            "max": 0.008869117125868797,
+            "p99": 0.0077495290385559195,
+            "mean": 0.004714387574283104
+          },
+          "positionTolerance": 0.03256268369913515,
+          "uv": {
+            "max": 0.00034570706815552794,
+            "p99": 2.9802322387695312e-08,
+            "mean": 1.3456479839195107e-07
+          },
+          "normalVector": {
+            "max": 0.019130374691063042,
+            "p99": 0.014490711657386263,
+            "mean": 0.006157820433900368
+          },
+          "pairedAttributes": {
+            "spatiallyUnmatchedCorners": 0,
+            "uv": {
+              "max": 0.00034570706815552794,
+              "p99": 2.9802322387695312e-08,
+              "mean": 1.3456479839195107e-07
+            },
+            "normalVector": {
+              "max": 0.019130374691063042,
+              "p99": 0.014490711657386263,
+              "mean": 0.006157820433900368
+            },
+            "method": "each exported corner matched to one source corner at the same quantized position; UV and normal checked together"
+          },
+          "sourceTriangles": 3808,
+          "exportTriangles": 3808,
+          "sourceVertices": 3053,
+          "exportVertices": 10412,
+          "blenderImportedVertices": 10412,
+          "blenderImportedTriangles": 3808,
+          "exportReader": "glTF-Transform NodeIO + MeshoptDecoder, normalized accessors and world transform; glTF Y-up converted to Blender Z-up",
+          "sourceSurfaceVertices": 2918,
+          "exportSurfaceVertices": 10412,
+          "unusedSourceVertices": 135
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "packedImages": [
+    {
+      "name": "UlganiMetric_4096_BaseColor",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "d66b3f11af79c7f997a850d1eed0bdcbd831075064e25e6a96f0c192093eb2b4",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "UlganiMetric_4096_Emissive",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "c7198dad05d02e850b0c01d6cb988830494dddc69d00e016db5a7ab19359606b",
+      "colorspace": "sRGB"
+    },
+    {
+      "name": "UlganiMetric_4096_Normal",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "b9ed1d502cb0c030496b5bbe10e38fd66eb80ccae9914146b7074ca7e5a187f9",
+      "colorspace": "Non-Color"
+    },
+    {
+      "name": "UlganiMetric_4096_ORM",
+      "size": [
+        4096,
+        4096
+      ],
+      "packed": true,
+      "packedSHA256": "d72fdc617240f286b7f02272640b765359a19ff25aca72132e956f51fd1b1740",
+      "colorspace": "Non-Color"
+    }
+  ],
+  "sourceMaterials": [
+    {
+      "name": "UlganiMetric_4096_Basalt",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_CapFlesh",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Chitin",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_ChitinAged",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_ChitinJoint",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Gill",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Membrane",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_MembraneRepair",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Root",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Spore",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Emissive",
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Walk",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_WalkWorn",
+      "channels": {
+        "baseColor": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_BaseColor",
+          "component": null
+        },
+        "roughness": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 1
+        },
+        "metallic": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 2
+        },
+        "normal": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_Normal",
+          "component": null
+        },
+        "occlusion": {
+          "kind": "image",
+          "image": "UlganiMetric_4096_ORM",
+          "component": 0
+        },
+        "emissive": {
+          "kind": "constant",
+          "image": null,
+          "component": null
+        }
+      }
+    }
+  ],
+  "export": "packages/client/public/models/cities/ulgani_anchor.glb",
+  "exportSHA256": "7cdf23f63429e7c2545d082665f747cc50d3fd3c329fe344a98d6787b93ad5d8",
+  "exportBytes": 12220848,
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_mesh_quantization",
+    "KHR_texture_basisu"
+  ],
+  "materialRoutes": [
+    {
+      "name": "UlganiMetric_4096_CapFlesh",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6938717365264893,
+          0.3049873113632202,
+          0.024157632142305374,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.3199999928474426
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Gill",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5711248517036438,
+          0.40724021196365356,
+          0.17144110798835754,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.3199999928474426
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Root",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.10461648553609848,
+          0.061246052384376526,
+          0.03688944876194,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.6499999761581421
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Walk",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6239603757858276,
+          0.5520114302635193,
+          0.3915724754333496,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.3199999928474426
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Basalt",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.023153366521000862,
+          0.02518685907125473,
+          0.02955683507025242,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.6499999761581421
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    },
+    {
+      "name": "UlganiMetric_4096_Spore",
+      "extras": {
+        "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+        "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+      },
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5711248517036438,
+          0.8713670969009399,
+          0.1441284716129303,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      },
+      "emissiveFactor": [
+        0.3712311399906909,
+        0.5663885922106005,
+        0.09368350311211415
+      ],
+      "emissiveTexture": {
+        "index": 3
+      },
+      "normalTexture": {
+        "index": 1,
+        "scale": 0.3199999928474426
+      },
+      "occlusionTexture": {
+        "index": 2
+      },
+      "extensions": {
+        "KHR_materials_specular": {
+          "specularFactor": 0.5600000023841858
+        }
+      }
+    }
+  ],
+  "textures": [
+    [
+      {
+        "index": 0,
+        "name": "UlganiMetric_4096_Normal",
+        "slots": [
+          "normal"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 4096,
+          "height": 4096,
+          "levels": 13,
+          "fullChain": true,
+          "supercompression": "Zstandard",
+          "codec": "UASTC",
+          "srgb": false
+        },
+        "bytes": 4817372
+      },
+      {
+        "index": 1,
+        "name": "UlganiMetric_4096_ORM",
+        "slots": [
+          "metallicRoughness",
+          "occlusion"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 4096,
+          "height": 4096,
+          "levels": 13,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": false
+        },
+        "bytes": 1286867
+      },
+      {
+        "index": 2,
+        "name": "UlganiMetric_4096_BaseColor",
+        "slots": [
+          "baseColor"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 4096,
+          "height": 4096,
+          "levels": 13,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": true
+        },
+        "bytes": 1159194
+      },
+      {
+        "index": 3,
+        "name": "UlganiMetric_4096_Emissive",
+        "slots": [
+          "emissive"
+        ],
+        "mime": "image/ktx2",
+        "basisu": true,
+        "ktx": {
+          "vkFormat": 0,
+          "width": 4096,
+          "height": 4096,
+          "levels": 13,
+          "fullChain": true,
+          "supercompression": "BasisLZ",
+          "codec": "ETC1S",
+          "srgb": true
+        },
+        "bytes": 2043549
+      }
+    ],
+    [
+      "EXT_meshopt_compression",
+      "KHR_mesh_quantization",
+      "KHR_texture_basisu"
+    ]
+  ],
+  "paintedMapPreservation": [
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "baseColor",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.004760395735502243,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8627451658248901,
+      "sourceMax": 0.9411765336990356,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "roughness",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.011446712538599968,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.039215683937072754,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7529412508010864,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "metallic",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.0006951488321647048,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "normal",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.0018473891541361809,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.4235294461250305,
+      "sourceMax": 1.0,
+      "decodedMin": 0.41960787773132324,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "occlusion",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.008490744978189468,
+      "p99AbsoluteError": 0.03486327826976776,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8392157554626465,
+      "decodedMax": 0.9921569228172302
+    },
+    {
+      "material": "UlganiMetric_4096_Basalt",
+      "channel": "emissive",
+      "surfaceSamples": 3712,
+      "meanAbsoluteError": 0.0,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.0,
+      "sourceMin": 1.0,
+      "sourceMax": 1.0,
+      "decodedMin": 1.0,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "baseColor",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0046601309441030025,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8666667342185974,
+      "sourceMax": 0.9450981020927429,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "roughness",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.011082353070378304,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7568628191947937,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "metallic",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0006509805098176003,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "normal",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0017722200136631727,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.0313725471496582,
+      "sourceMin": 0.4235294461250305,
+      "sourceMax": 1.0,
+      "decodedMin": 0.41960787773132324,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "occlusion",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.008449672721326351,
+      "p99AbsoluteError": 0.0313725471496582,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8549020290374756,
+      "decodedMax": 0.9921569228172302
+    },
+    {
+      "material": "UlganiMetric_4096_CapFlesh",
+      "channel": "emissive",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.0,
+      "sourceMin": 1.0,
+      "sourceMax": 1.0,
+      "decodedMin": 1.0,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "baseColor",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.004977450706064701,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8666667342185974,
+      "sourceMax": 0.9450981020927429,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "roughness",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.010695752687752247,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7568628191947937,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "metallic",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0006549020763486624,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "normal",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0017603463493287563,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.0313725471496582,
+      "sourceMin": 0.4235294461250305,
+      "sourceMax": 1.0,
+      "decodedMin": 0.41960787773132324,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "occlusion",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.008043790236115456,
+      "p99AbsoluteError": 0.0313725471496582,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8549020290374756,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Gill",
+      "channel": "emissive",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.0,
+      "sourceMin": 1.0,
+      "sourceMax": 1.0,
+      "decodedMin": 1.0,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "baseColor",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.00487058749422431,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8627451658248901,
+      "sourceMax": 0.9450981020927429,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "roughness",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.011249346658587456,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.047058820724487305,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7568628191947937,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "metallic",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0007320262375287712,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "normal",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0018633963773027062,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.4235294461250305,
+      "sourceMax": 1.0,
+      "decodedMin": 0.41960787773132324,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "occlusion",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.008787907660007477,
+      "p99AbsoluteError": 0.0313725471496582,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8392157554626465,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Root",
+      "channel": "emissive",
+      "surfaceSamples": 12000,
+      "meanAbsoluteError": 0.0,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.0,
+      "sourceMin": 1.0,
+      "sourceMax": 1.0,
+      "decodedMin": 1.0,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "baseColor",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.004703055135905743,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8627451658248901,
+      "sourceMax": 0.9450981020927429,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "roughness",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.011433896608650684,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.039215683937072754,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7529412508010864,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "metallic",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.0006344021530821919,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "normal",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.0017473956104367971,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.019607841968536377,
+      "sourceMin": 0.4235294461250305,
+      "sourceMax": 1.0,
+      "decodedMin": 0.4235294461250305,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "occlusion",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.008471781387925148,
+      "p99AbsoluteError": 0.0313725471496582,
+      "maxAbsoluteError": 0.039215683937072754,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8549020290374756,
+      "decodedMax": 0.9921569228172302
+    },
+    {
+      "material": "UlganiMetric_4096_Spore",
+      "channel": "emissive",
+      "surfaceSamples": 7492,
+      "meanAbsoluteError": 0.005307623650878668,
+      "p99AbsoluteError": 0.0156862735748291,
+      "maxAbsoluteError": 0.023529410362243652,
+      "sourceMin": 0.6000000238418579,
+      "sourceMax": 0.8980392813682556,
+      "decodedMin": 0.6039215922355652,
+      "decodedMax": 0.9019608497619629
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "baseColor",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.00488393846899271,
+      "p99AbsoluteError": 0.019607841968536377,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.8627451658248901,
+      "sourceMax": 0.9450981020927429,
+      "decodedMin": 0.8627451658248901,
+      "decodedMax": 0.9450981020927429
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "roughness",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.010938100516796112,
+      "p99AbsoluteError": 0.03529411554336548,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.5058823823928833,
+      "sourceMax": 0.7529412508010864,
+      "decodedMin": 0.5098039507865906,
+      "decodedMax": 0.7686275243759155
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "metallic",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.0006259612855501473,
+      "p99AbsoluteError": 0.007843137718737125,
+      "maxAbsoluteError": 0.007843137718737125,
+      "sourceMin": 0.0,
+      "sourceMax": 0.0,
+      "decodedMin": 0.0,
+      "decodedMax": 0.007843137718737125
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "normal",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.001790775335393846,
+      "p99AbsoluteError": 0.011764705181121826,
+      "maxAbsoluteError": 0.03529411554336548,
+      "sourceMin": 0.4274510145187378,
+      "sourceMax": 1.0,
+      "decodedMin": 0.41960787773132324,
+      "decodedMax": 1.0
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "occlusion",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.008752643130719662,
+      "p99AbsoluteError": 0.0313725471496582,
+      "maxAbsoluteError": 0.04313725233078003,
+      "sourceMin": 0.8509804606437683,
+      "sourceMax": 0.960784375667572,
+      "decodedMin": 0.8549020290374756,
+      "decodedMax": 0.9921569228172302
+    },
+    {
+      "material": "UlganiMetric_4096_Walk",
+      "channel": "emissive",
+      "surfaceSamples": 6528,
+      "meanAbsoluteError": 0.0,
+      "p99AbsoluteError": 0.0,
+      "maxAbsoluteError": 0.0,
+      "sourceMin": 1.0,
+      "sourceMax": 1.0,
+      "decodedMin": 1.0,
+      "decodedMax": 1.0
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,772 @@
+{
+  "source": "assets/blend/cities/ulgani_kit.blend",
+  "sourceSHA256": "642cbc49e4df4714170cf97c999d98a33a3e6b1784a0867036fbadf3ce070a3b",
+  "output": "assets/renders/cities/ulgani-density/kit-source-d02.png",
+  "outputSHA256": "610c0ddee5645022af81bdc1509aa41ccd968d429cbcc8a85bb8cdf6cad8a83f",
+  "bytes": 5979614,
+  "renderer": "Cycles CPU",
+  "threads": 2,
+  "samples": {
+    "whole": 24,
+    "closeup": 64
+  },
+  "nativeAcceptance": false,
+  "views": [
+    {
+      "asset": "ulgani_wall",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        0
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        0.05180710554122925,
+        3.1042709350585938
+      ],
+      "camera": [
+        26.57020378112793,
+        -37.667781829833984,
+        21.021076202392578
+      ]
+    },
+    {
+      "asset": "ulgani_wall",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.14724349975586,
+        -0.030035782605409622,
+        1.9712355136871338
+      ],
+      "camera": [
+        5.312575817108154,
+        -1.0652341842651367,
+        2.6941914558410645
+      ]
+    },
+    {
+      "asset": "ulgani_wall",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        2
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        0.05180710554122925,
+        3.1042709350585938
+      ],
+      "camera": [
+        26.57020378112793,
+        -37.667781829833984,
+        21.021076202392578
+      ]
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        3
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        2.0250000953674316,
+        3.09995174407959
+      ],
+      "camera": [
+        26.57020378112793,
+        -35.69458770751953,
+        21.01675796508789
+      ]
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        0,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        9.14724349975586,
+        4.019964694976807,
+        1.9712355136871338
+      ],
+      "camera": [
+        5.312575340270996,
+        2.984767198562622,
+        2.6941914558410645
+      ]
+    },
+    {
+      "asset": "ulgani_wall_corner",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        0,
+        5
+      ],
+      "orthographicWidthMetres": 24.140537109375,
+      "target": [
+        0.16649246215820312,
+        2.0250000953674316,
+        3.09995174407959
+      ],
+      "camera": [
+        26.57020378112793,
+        -35.69458770751953,
+        21.01675796508789
+      ]
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        0
+      ],
+      "orthographicWidthMetres": 20.97386657714844,
+      "target": [
+        0.3563387393951416,
+        -0.14577722549438477,
+        4.296722888946533
+      ],
+      "camera": [
+        23.296504974365234,
+        -32.91744613647461,
+        19.863264083862305
+      ]
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        7.564919471740723,
+        -0.772166907787323,
+        6.589658260345459
+      ],
+      "camera": [
+        8.80252456665039,
+        -3.5259833335876465,
+        9.463554382324219
+      ]
+    },
+    {
+      "asset": "ulgani_gate",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        2
+      ],
+      "orthographicWidthMetres": 20.97386657714844,
+      "target": [
+        0.3563387393951416,
+        -0.14577722549438477,
+        4.296722888946533
+      ],
+      "camera": [
+        23.296504974365234,
+        -32.91744613647461,
+        19.863264083862305
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        3
+      ],
+      "orthographicWidthMetres": 23.227734375,
+      "target": [
+        0.0,
+        0.0,
+        0.09675747156143188
+      ],
+      "camera": [
+        25.40533447265625,
+        -36.2933349609375,
+        17.336091995239258
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        1,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -2.7800002098083496,
+        -9.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -3.4583446979522705,
+        -12.920635223388672,
+        0.5804440975189209
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_short",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        1,
+        5
+      ],
+      "orthographicWidthMetres": 23.227734375,
+      "target": [
+        0.0,
+        0.0,
+        0.09675747156143188
+      ],
+      "camera": [
+        25.40533447265625,
+        -36.2933349609375,
+        17.336091995239258
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        0
+      ],
+      "orthographicWidthMetres": 56.490498046875004,
+      "target": [
+        0.0,
+        0.0,
+        0.09673762321472168
+      ],
+      "camera": [
+        61.78647994995117,
+        -88.26640319824219,
+        42.023277282714844
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -3.2800002098083496,
+        -22.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -3.5621609687805176,
+        -25.98638153076172,
+        0.34072643518447876
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_long",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        2
+      ],
+      "orthographicWidthMetres": 56.490498046875004,
+      "target": [
+        0.0,
+        0.0,
+        0.09673762321472168
+      ],
+      "camera": [
+        61.78647994995117,
+        -88.26640319824219,
+        42.023277282714844
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        3
+      ],
+      "orthographicWidthMetres": 31.30436767578125,
+      "target": [
+        2.5032970905303955,
+        0.0,
+        0.09674715995788574
+      ],
+      "camera": [
+        36.74244689941406,
+        -48.9130744934082,
+        23.330455780029297
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        2,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -2.7800002098083496,
+        -12.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        -5.243068695068359,
+        -15.142043113708496,
+        0.4167027473449707
+      ]
+    },
+    {
+      "asset": "ulgani_bridge_turn",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        2,
+        5
+      ],
+      "orthographicWidthMetres": 31.30436767578125,
+      "target": [
+        2.5032970905303955,
+        0.0,
+        0.09674715995788574
+      ],
+      "camera": [
+        36.74244689941406,
+        -48.9130744934082,
+        23.330455780029297
+      ]
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        0
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.9579648971557617,
+        9.165511131286621
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.46588134765625,
+        59.75677490234375
+      ]
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        12.164999961853027,
+        -14.360651969909668,
+        -0.06136839836835861
+      ],
+      "camera": [
+        13.324570655822754,
+        -16.860069274902344,
+        -2.7110767364501953
+      ]
+    },
+    {
+      "asset": "ulgani_cap_shelter",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        2
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.9579648971557617,
+        9.165511131286621
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.46588134765625,
+        59.75677490234375
+      ]
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        3
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.666409969329834,
+        9.166189193725586
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.17433166503906,
+        59.75745391845703
+      ]
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        3,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        12.165987014770508,
+        -10.019128799438477,
+        -0.05209150165319443
+      ],
+      "camera": [
+        13.463640213012695,
+        -11.96490478515625,
+        -3.0470967292785645
+      ]
+    },
+    {
+      "asset": "ulgani_cap_half",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        3,
+        5
+      ],
+      "orthographicWidthMetres": 68.165068359375,
+      "target": [
+        1.158102035522461,
+        -0.666409969329834,
+        9.166189193725586
+      ],
+      "camera": [
+        75.7136459350586,
+        -107.17433166503906,
+        59.75745391845703
+      ]
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        0
+      ],
+      "orthographicWidthMetres": 56.92916748046875,
+      "target": [
+        -0.009560585021972656,
+        -1.068756103515625,
+        -0.33979532122612
+      ],
+      "camera": [
+        62.256717681884766,
+        -90.02058410644531,
+        41.912322998046875
+      ]
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -21.262908935546875,
+        -0.2408466339111328,
+        0.12000000476837158
+      ],
+      "camera": [
+        -25.175031661987305,
+        -1.0746865272521973,
+        0.3700000047683716
+      ]
+    },
+    {
+      "asset": "ulgani_ring_shelf",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        2
+      ],
+      "orthographicWidthMetres": 56.92916748046875,
+      "target": [
+        -0.009560585021972656,
+        -1.068756103515625,
+        -0.33979532122612
+      ],
+      "camera": [
+        62.256717681884766,
+        -90.02058410644531,
+        41.912322998046875
+      ]
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        3
+      ],
+      "orthographicWidthMetres": 27.4359326171875,
+      "target": [
+        0.005802154541015625,
+        -0.35297083854675293,
+        -0.30209988355636597
+      ],
+      "camera": [
+        30.013853073120117,
+        -43.221614837646484,
+        20.06050682067871
+      ]
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        4,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        -8.88859748840332,
+        -6.879692077636719,
+        -0.18945381045341492
+      ],
+      "camera": [
+        -12.749748229980469,
+        -7.923853874206543,
+        0.09571358561515808
+      ]
+    },
+    {
+      "asset": "ulgani_ring_joint",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        4,
+        5
+      ],
+      "orthographicWidthMetres": 27.4359326171875,
+      "target": [
+        0.005802154541015625,
+        -0.35297083854675293,
+        -0.30209988355636597
+      ],
+      "camera": [
+        30.013853073120117,
+        -43.221614837646484,
+        20.06050682067871
+      ]
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        0
+      ],
+      "orthographicWidthMetres": 5.492930774688721,
+      "target": [
+        0.45793643593788147,
+        -0.02378031611442566,
+        2.067234516143799
+      ],
+      "camera": [
+        6.465829372406006,
+        -8.606484413146973,
+        6.14401912689209
+      ]
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        1
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        1.3768962621688843,
+        -0.25255662202835083,
+        3.5962023735046387
+      ],
+      "camera": [
+        3.5236258506774902,
+        -2.913106918334961,
+        5.922984600067139
+      ]
+    },
+    {
+      "asset": "ulgani_lamp",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        2
+      ],
+      "orthographicWidthMetres": 5.492930774688721,
+      "target": [
+        0.45793643593788147,
+        -0.02378031611442566,
+        2.067234516143799
+      ],
+      "camera": [
+        6.465829372406006,
+        -8.606484413146973,
+        6.14401912689209
+      ]
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "whole",
+      "lod": 0,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        3
+      ],
+      "orthographicWidthMetres": 15.634951171875,
+      "target": [
+        0.0,
+        0.0,
+        0.09678542613983154
+      ],
+      "camera": [
+        17.100727081298828,
+        -24.429611206054688,
+        11.700850486755371
+      ]
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "2m material closeup",
+      "lod": 0,
+      "samples": 64,
+      "tileFromTop": [
+        5,
+        4
+      ],
+      "orthographicWidthMetres": 2.0,
+      "target": [
+        4.280000686645508,
+        -6.0,
+        -0.07999999821186066
+      ],
+      "camera": [
+        3.2865920066833496,
+        -9.827771186828613,
+        0.7710875868797302
+      ]
+    },
+    {
+      "asset": "ulgani_shore_walk",
+      "kind": "whole",
+      "lod": 2,
+      "samples": 24,
+      "tileFromTop": [
+        5,
+        5
+      ],
+      "orthographicWidthMetres": 15.634951171875,
+      "target": [
+        0.0,
+        0.0,
+        0.09678542613983154
+      ],
+      "camera": [
+        17.100727081298828,
+        -24.429611206054688,
+        11.700850486755371
+      ]
+    }
+  ]
+}

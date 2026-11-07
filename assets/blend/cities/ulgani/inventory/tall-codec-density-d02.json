@@ -1,0 +1,777 @@
+{
+  "source": "assets/blend/cities/ulgani_tall.blend",
+  "sha256": "1634745adabb5fb3476b50dd65fe1cff3e0601706d5c9ed34a36a1b6a02ce30b",
+  "assets": [
+    {
+      "id": "ulgani_tall_0",
+      "title": "Gathered Veil",
+      "role": "tall",
+      "class": "building",
+      "bounds": [
+        [
+          -10.380877494812012,
+          -9.274999618530273,
+          -0.18319585919380188
+        ],
+        [
+          10.945061683654785,
+          9.274999618530273,
+          174.5191192626953
+        ]
+      ],
+      "height": 174.70231512188911,
+      "footprintRadius": 10.945061666754846,
+      "lodTriangles": [
+        50502,
+        15149,
+        5049,
+        1767
+      ],
+      "lodNodes": [
+        "ulgani_tall_0_LOD0",
+        "ulgani_tall_0_LOD1",
+        "ulgani_tall_0_LOD2",
+        "ulgani_tall_0_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -6.932250000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            6.932250000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -8.775,
+            0.18
+          ],
+          "to": [
+            0,
+            8.775,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_tall_0",
+          "position": [
+            -5.39,
+            -4.826250000000001,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_tall_0",
+          "position": [
+            5.39,
+            4.826250000000001,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_tall_0_Threshold-1",
+        "COL_ulgani_tall_0_Threshold1",
+        "COL_ulgani_tall_0_Deck0",
+        "COL_ulgani_tall_0_Deck1",
+        "COL_ulgani_tall_0_Deck2",
+        "COL_ulgani_tall_0_Deck3",
+        "COL_ulgani_tall_0_Deck4",
+        "COL_ulgani_tall_0_Deck5",
+        "COL_ulgani_tall_0_Deck6",
+        "COL_ulgani_tall_0_Deck7",
+        "COL_ulgani_tall_0_Deck8",
+        "COL_ulgani_tall_0_Deck9",
+        "COL_ulgani_tall_0_Deck10",
+        "COL_ulgani_tall_0_Deck11",
+        "COL_ulgani_tall_0_RootPillar0",
+        "COL_ulgani_tall_0_EdgeWall0",
+        "COL_ulgani_tall_0_RootPillar1",
+        "COL_ulgani_tall_0_EdgeWall1",
+        "COL_ulgani_tall_0_RootPillar2",
+        "COL_ulgani_tall_0_RootPillar3",
+        "COL_ulgani_tall_0_RootPillar4",
+        "COL_ulgani_tall_0_EdgeWall4",
+        "COL_ulgani_tall_0_RootPillar5",
+        "COL_ulgani_tall_0_EdgeWall5",
+        "COL_ulgani_tall_0_RootPillar6",
+        "COL_ulgani_tall_0_EdgeWall6",
+        "COL_ulgani_tall_0_RootPillar7",
+        "COL_ulgani_tall_0_RootPillar8",
+        "COL_ulgani_tall_0_RootPillar9",
+        "COL_ulgani_tall_0_EdgeWall9",
+        "COL_ulgani_tall_0_UpperRib1_0",
+        "COL_ulgani_tall_0_UpperRib1_1",
+        "COL_ulgani_tall_0_UpperRib1_2",
+        "COL_ulgani_tall_0_UpperRib1_3",
+        "COL_ulgani_tall_0_UpperRib1_4",
+        "COL_ulgani_tall_0_UpperRib1_5",
+        "COL_ulgani_tall_0_UpperRib1_6",
+        "COL_ulgani_tall_0_UpperRib1_7",
+        "COL_ulgani_tall_0_UpperRib1_8",
+        "COL_ulgani_tall_0_UpperRib1_9",
+        "COL_ulgani_tall_0_UpperRib2_0",
+        "COL_ulgani_tall_0_UpperRib2_1",
+        "COL_ulgani_tall_0_UpperRib2_2",
+        "COL_ulgani_tall_0_UpperRib2_3",
+        "COL_ulgani_tall_0_UpperRib2_4",
+        "COL_ulgani_tall_0_UpperRib2_5",
+        "COL_ulgani_tall_0_UpperRib2_6",
+        "COL_ulgani_tall_0_UpperRib2_7",
+        "COL_ulgani_tall_0_UpperRib2_8",
+        "COL_ulgani_tall_0_UpperRib2_9",
+        "COL_ulgani_tall_0_UpperRib3_0",
+        "COL_ulgani_tall_0_UpperRib3_1",
+        "COL_ulgani_tall_0_UpperRib3_2",
+        "COL_ulgani_tall_0_UpperRib3_3",
+        "COL_ulgani_tall_0_UpperRib3_4",
+        "COL_ulgani_tall_0_UpperRib3_5",
+        "COL_ulgani_tall_0_UpperRib3_6",
+        "COL_ulgani_tall_0_UpperRib3_7",
+        "COL_ulgani_tall_0_UpperRib3_8",
+        "COL_ulgani_tall_0_UpperRib3_9",
+        "COL_ulgani_tall_0_UpperRib4_0",
+        "COL_ulgani_tall_0_UpperRib4_1",
+        "COL_ulgani_tall_0_UpperRib4_2",
+        "COL_ulgani_tall_0_UpperRib4_3",
+        "COL_ulgani_tall_0_UpperRib4_4",
+        "COL_ulgani_tall_0_UpperRib4_5",
+        "COL_ulgani_tall_0_UpperRib4_6",
+        "COL_ulgani_tall_0_UpperRib4_7",
+        "COL_ulgani_tall_0_UpperRib4_8",
+        "COL_ulgani_tall_0_UpperRib4_9",
+        "COL_ulgani_tall_0_UpperRib5_0",
+        "COL_ulgani_tall_0_UpperRib5_1",
+        "COL_ulgani_tall_0_UpperRib5_2",
+        "COL_ulgani_tall_0_UpperRib5_3",
+        "COL_ulgani_tall_0_UpperRib5_4",
+        "COL_ulgani_tall_0_UpperRib5_5",
+        "COL_ulgani_tall_0_UpperRib5_6",
+        "COL_ulgani_tall_0_UpperRib5_7",
+        "COL_ulgani_tall_0_UpperRib5_8",
+        "COL_ulgani_tall_0_UpperRib5_9",
+        "COL_ulgani_tall_0_UpperRib6_0",
+        "COL_ulgani_tall_0_UpperRib6_1",
+        "COL_ulgani_tall_0_UpperRib6_2",
+        "COL_ulgani_tall_0_UpperRib6_3",
+        "COL_ulgani_tall_0_UpperRib6_4",
+        "COL_ulgani_tall_0_UpperRib6_5",
+        "COL_ulgani_tall_0_UpperRib6_6",
+        "COL_ulgani_tall_0_UpperRib6_7",
+        "COL_ulgani_tall_0_UpperRib6_8",
+        "COL_ulgani_tall_0_UpperRib6_9",
+        "COL_ulgani_tall_0_Crown0"
+      ]
+    },
+    {
+      "id": "ulgani_tall_1",
+      "title": "Saddle Court",
+      "role": "tall",
+      "class": "building",
+      "bounds": [
+        [
+          -12.891162872314453,
+          -11.076594352722168,
+          -0.18359357118606567
+        ],
+        [
+          13.42570972442627,
+          10.625,
+          224.6265869140625
+        ]
+      ],
+      "height": 224.81018048524857,
+      "footprintRadius": 13.630698333339977,
+      "lodTriangles": [
+        55937,
+        16781,
+        5593,
+        1957
+      ],
+      "lodNodes": [
+        "ulgani_tall_1_LOD0",
+        "ulgani_tall_1_LOD1",
+        "ulgani_tall_1_LOD2",
+        "ulgani_tall_1_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -7.99875,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            7.99875,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -10.125,
+            0.18
+          ],
+          "to": [
+            0,
+            10.125,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_tall_1",
+          "position": [
+            -6.314,
+            -5.5687500000000005,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_tall_1",
+          "position": [
+            6.314,
+            5.5687500000000005,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_tall_1_Threshold-1",
+        "COL_ulgani_tall_1_Threshold1",
+        "COL_ulgani_tall_1_Deck0",
+        "COL_ulgani_tall_1_Deck1",
+        "COL_ulgani_tall_1_Deck2",
+        "COL_ulgani_tall_1_Deck3",
+        "COL_ulgani_tall_1_Deck4",
+        "COL_ulgani_tall_1_Deck5",
+        "COL_ulgani_tall_1_Deck6",
+        "COL_ulgani_tall_1_Deck7",
+        "COL_ulgani_tall_1_Deck8",
+        "COL_ulgani_tall_1_Deck9",
+        "COL_ulgani_tall_1_Deck10",
+        "COL_ulgani_tall_1_Deck11",
+        "COL_ulgani_tall_1_RootPillar0",
+        "COL_ulgani_tall_1_EdgeWall0",
+        "COL_ulgani_tall_1_RootPillar1",
+        "COL_ulgani_tall_1_EdgeWall1",
+        "COL_ulgani_tall_1_RootPillar2",
+        "COL_ulgani_tall_1_RootPillar3",
+        "COL_ulgani_tall_1_RootPillar4",
+        "COL_ulgani_tall_1_EdgeWall4",
+        "COL_ulgani_tall_1_RootPillar5",
+        "COL_ulgani_tall_1_EdgeWall5",
+        "COL_ulgani_tall_1_RootPillar6",
+        "COL_ulgani_tall_1_EdgeWall6",
+        "COL_ulgani_tall_1_RootPillar7",
+        "COL_ulgani_tall_1_RootPillar8",
+        "COL_ulgani_tall_1_RootPillar9",
+        "COL_ulgani_tall_1_EdgeWall9",
+        "COL_ulgani_tall_1_UpperRib1_0",
+        "COL_ulgani_tall_1_UpperRib1_1",
+        "COL_ulgani_tall_1_UpperRib1_2",
+        "COL_ulgani_tall_1_UpperRib1_3",
+        "COL_ulgani_tall_1_UpperRib1_4",
+        "COL_ulgani_tall_1_UpperRib1_5",
+        "COL_ulgani_tall_1_UpperRib1_6",
+        "COL_ulgani_tall_1_UpperRib1_7",
+        "COL_ulgani_tall_1_UpperRib1_8",
+        "COL_ulgani_tall_1_UpperRib1_9",
+        "COL_ulgani_tall_1_UpperRib2_0",
+        "COL_ulgani_tall_1_UpperRib2_1",
+        "COL_ulgani_tall_1_UpperRib2_2",
+        "COL_ulgani_tall_1_UpperRib2_3",
+        "COL_ulgani_tall_1_UpperRib2_4",
+        "COL_ulgani_tall_1_UpperRib2_5",
+        "COL_ulgani_tall_1_UpperRib2_6",
+        "COL_ulgani_tall_1_UpperRib2_7",
+        "COL_ulgani_tall_1_UpperRib2_8",
+        "COL_ulgani_tall_1_UpperRib2_9",
+        "COL_ulgani_tall_1_UpperRib3_0",
+        "COL_ulgani_tall_1_UpperRib3_1",
+        "COL_ulgani_tall_1_UpperRib3_2",
+        "COL_ulgani_tall_1_UpperRib3_3",
+        "COL_ulgani_tall_1_UpperRib3_4",
+        "COL_ulgani_tall_1_UpperRib3_5",
+        "COL_ulgani_tall_1_UpperRib3_6",
+        "COL_ulgani_tall_1_UpperRib3_7",
+        "COL_ulgani_tall_1_UpperRib3_8",
+        "COL_ulgani_tall_1_UpperRib3_9",
+        "COL_ulgani_tall_1_UpperRib4_0",
+        "COL_ulgani_tall_1_UpperRib4_1",
+        "COL_ulgani_tall_1_UpperRib4_2",
+        "COL_ulgani_tall_1_UpperRib4_3",
+        "COL_ulgani_tall_1_UpperRib4_4",
+        "COL_ulgani_tall_1_UpperRib4_5",
+        "COL_ulgani_tall_1_UpperRib4_6",
+        "COL_ulgani_tall_1_UpperRib4_7",
+        "COL_ulgani_tall_1_UpperRib4_8",
+        "COL_ulgani_tall_1_UpperRib4_9",
+        "COL_ulgani_tall_1_UpperRib5_0",
+        "COL_ulgani_tall_1_UpperRib5_1",
+        "COL_ulgani_tall_1_UpperRib5_2",
+        "COL_ulgani_tall_1_UpperRib5_3",
+        "COL_ulgani_tall_1_UpperRib5_4",
+        "COL_ulgani_tall_1_UpperRib5_5",
+        "COL_ulgani_tall_1_UpperRib5_6",
+        "COL_ulgani_tall_1_UpperRib5_7",
+        "COL_ulgani_tall_1_UpperRib5_8",
+        "COL_ulgani_tall_1_UpperRib5_9",
+        "COL_ulgani_tall_1_UpperRib6_0",
+        "COL_ulgani_tall_1_UpperRib6_1",
+        "COL_ulgani_tall_1_UpperRib6_2",
+        "COL_ulgani_tall_1_UpperRib6_3",
+        "COL_ulgani_tall_1_UpperRib6_4",
+        "COL_ulgani_tall_1_UpperRib6_5",
+        "COL_ulgani_tall_1_UpperRib6_6",
+        "COL_ulgani_tall_1_UpperRib6_7",
+        "COL_ulgani_tall_1_UpperRib6_8",
+        "COL_ulgani_tall_1_UpperRib6_9",
+        "COL_ulgani_tall_1_Crown0",
+        "COL_ulgani_tall_1_Crown1"
+      ]
+    },
+    {
+      "id": "ulgani_tall_2",
+      "title": "Patched Fan",
+      "role": "tall",
+      "class": "building",
+      "bounds": [
+        [
+          -11.680411338806152,
+          -9.40999984741211,
+          -0.18337008357048035
+        ],
+        [
+          14.039889335632324,
+          9.40999984741211,
+          276.77203369140625
+        ]
+      ],
+      "height": 276.95540377497673,
+      "footprintRadius": 14.050464450627961,
+      "lodTriangles": [
+        53859,
+        16156,
+        5384,
+        1885
+      ],
+      "lodNodes": [
+        "ulgani_tall_2_LOD0",
+        "ulgani_tall_2_LOD1",
+        "ulgani_tall_2_LOD2",
+        "ulgani_tall_2_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -7.038900000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            7.038900000000001,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -8.91,
+            0.18
+          ],
+          "to": [
+            0,
+            8.91,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_tall_2",
+          "position": [
+            -6.16,
+            -4.9005,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_tall_2",
+          "position": [
+            6.16,
+            4.9005,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_tall_2_Threshold-1",
+        "COL_ulgani_tall_2_Threshold1",
+        "COL_ulgani_tall_2_Deck0",
+        "COL_ulgani_tall_2_Deck1",
+        "COL_ulgani_tall_2_Deck2",
+        "COL_ulgani_tall_2_Deck3",
+        "COL_ulgani_tall_2_Deck4",
+        "COL_ulgani_tall_2_Deck5",
+        "COL_ulgani_tall_2_Deck6",
+        "COL_ulgani_tall_2_Deck7",
+        "COL_ulgani_tall_2_Deck8",
+        "COL_ulgani_tall_2_Deck9",
+        "COL_ulgani_tall_2_Deck10",
+        "COL_ulgani_tall_2_Deck11",
+        "COL_ulgani_tall_2_RootPillar0",
+        "COL_ulgani_tall_2_EdgeWall0",
+        "COL_ulgani_tall_2_RootPillar1",
+        "COL_ulgani_tall_2_EdgeWall1",
+        "COL_ulgani_tall_2_RootPillar2",
+        "COL_ulgani_tall_2_RootPillar3",
+        "COL_ulgani_tall_2_EdgeWall3",
+        "COL_ulgani_tall_2_RootPillar4",
+        "COL_ulgani_tall_2_EdgeWall4",
+        "COL_ulgani_tall_2_RootPillar5",
+        "COL_ulgani_tall_2_EdgeWall5",
+        "COL_ulgani_tall_2_RootPillar6",
+        "COL_ulgani_tall_2_EdgeWall6",
+        "COL_ulgani_tall_2_RootPillar7",
+        "COL_ulgani_tall_2_RootPillar8",
+        "COL_ulgani_tall_2_EdgeWall8",
+        "COL_ulgani_tall_2_RootPillar9",
+        "COL_ulgani_tall_2_EdgeWall9",
+        "COL_ulgani_tall_2_UpperRib1_0",
+        "COL_ulgani_tall_2_UpperRib1_1",
+        "COL_ulgani_tall_2_UpperRib1_2",
+        "COL_ulgani_tall_2_UpperRib1_3",
+        "COL_ulgani_tall_2_UpperRib1_4",
+        "COL_ulgani_tall_2_UpperRib1_5",
+        "COL_ulgani_tall_2_UpperRib1_6",
+        "COL_ulgani_tall_2_UpperRib1_7",
+        "COL_ulgani_tall_2_UpperRib1_8",
+        "COL_ulgani_tall_2_UpperRib1_9",
+        "COL_ulgani_tall_2_UpperRib2_0",
+        "COL_ulgani_tall_2_UpperRib2_1",
+        "COL_ulgani_tall_2_UpperRib2_2",
+        "COL_ulgani_tall_2_UpperRib2_3",
+        "COL_ulgani_tall_2_UpperRib2_4",
+        "COL_ulgani_tall_2_UpperRib2_5",
+        "COL_ulgani_tall_2_UpperRib2_6",
+        "COL_ulgani_tall_2_UpperRib2_7",
+        "COL_ulgani_tall_2_UpperRib2_8",
+        "COL_ulgani_tall_2_UpperRib2_9",
+        "COL_ulgani_tall_2_UpperRib3_0",
+        "COL_ulgani_tall_2_UpperRib3_1",
+        "COL_ulgani_tall_2_UpperRib3_2",
+        "COL_ulgani_tall_2_UpperRib3_3",
+        "COL_ulgani_tall_2_UpperRib3_4",
+        "COL_ulgani_tall_2_UpperRib3_5",
+        "COL_ulgani_tall_2_UpperRib3_6",
+        "COL_ulgani_tall_2_UpperRib3_7",
+        "COL_ulgani_tall_2_UpperRib3_8",
+        "COL_ulgani_tall_2_UpperRib3_9",
+        "COL_ulgani_tall_2_UpperRib4_0",
+        "COL_ulgani_tall_2_UpperRib4_1",
+        "COL_ulgani_tall_2_UpperRib4_2",
+        "COL_ulgani_tall_2_UpperRib4_3",
+        "COL_ulgani_tall_2_UpperRib4_4",
+        "COL_ulgani_tall_2_UpperRib4_5",
+        "COL_ulgani_tall_2_UpperRib4_6",
+        "COL_ulgani_tall_2_UpperRib4_7",
+        "COL_ulgani_tall_2_UpperRib4_8",
+        "COL_ulgani_tall_2_UpperRib4_9",
+        "COL_ulgani_tall_2_UpperRib5_0",
+        "COL_ulgani_tall_2_UpperRib5_1",
+        "COL_ulgani_tall_2_UpperRib5_2",
+        "COL_ulgani_tall_2_UpperRib5_3",
+        "COL_ulgani_tall_2_UpperRib5_4",
+        "COL_ulgani_tall_2_UpperRib5_5",
+        "COL_ulgani_tall_2_UpperRib5_6",
+        "COL_ulgani_tall_2_UpperRib5_7",
+        "COL_ulgani_tall_2_UpperRib5_8",
+        "COL_ulgani_tall_2_UpperRib5_9",
+        "COL_ulgani_tall_2_UpperRib6_0",
+        "COL_ulgani_tall_2_UpperRib6_1",
+        "COL_ulgani_tall_2_UpperRib6_2",
+        "COL_ulgani_tall_2_UpperRib6_3",
+        "COL_ulgani_tall_2_UpperRib6_4",
+        "COL_ulgani_tall_2_UpperRib6_5",
+        "COL_ulgani_tall_2_UpperRib6_6",
+        "COL_ulgani_tall_2_UpperRib6_7",
+        "COL_ulgani_tall_2_UpperRib6_8",
+        "COL_ulgani_tall_2_UpperRib6_9",
+        "COL_ulgani_tall_2_Crown0",
+        "COL_ulgani_tall_2_Crown1"
+      ]
+    },
+    {
+      "id": "ulgani_tall_3",
+      "title": "Threefold Crown",
+      "role": "tall",
+      "class": "building",
+      "bounds": [
+        [
+          -13.140462875366211,
+          -11.894192695617676,
+          -0.18377596139907837
+        ],
+        [
+          14.466682434082031,
+          11.300000190734863,
+          332.9286804199219
+        ]
+      ],
+      "height": 333.11245638132095,
+      "footprintRadius": 14.479364655954287,
+      "lodTriangles": [
+        59800,
+        17940,
+        5979,
+        2093
+      ],
+      "lodNodes": [
+        "ulgani_tall_3_LOD0",
+        "ulgani_tall_3_LOD1",
+        "ulgani_tall_3_LOD2",
+        "ulgani_tall_3_LOD3"
+      ],
+      "openings": [
+        {
+          "center": [
+            0,
+            -8.532000000000002,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        },
+        {
+          "center": [
+            0,
+            8.532000000000002,
+            0.18
+          ],
+          "width": 3.4,
+          "height": 3.4,
+          "axis": "Y"
+        }
+      ],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -10.8,
+            0.18
+          ],
+          "to": [
+            0,
+            10.8,
+            0.18
+          ],
+          "width": 3,
+          "height": 3.2
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_tall_3",
+          "position": [
+            -6.930000000000001,
+            -5.940000000000001,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_tall_3",
+          "position": [
+            6.930000000000001,
+            5.940000000000001,
+            3.3
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.55,
+            "distance": 9
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_tall_3_Threshold-1",
+        "COL_ulgani_tall_3_Threshold1",
+        "COL_ulgani_tall_3_Deck0",
+        "COL_ulgani_tall_3_Deck1",
+        "COL_ulgani_tall_3_Deck2",
+        "COL_ulgani_tall_3_Deck3",
+        "COL_ulgani_tall_3_Deck4",
+        "COL_ulgani_tall_3_Deck5",
+        "COL_ulgani_tall_3_Deck6",
+        "COL_ulgani_tall_3_Deck7",
+        "COL_ulgani_tall_3_Deck8",
+        "COL_ulgani_tall_3_Deck9",
+        "COL_ulgani_tall_3_Deck10",
+        "COL_ulgani_tall_3_Deck11",
+        "COL_ulgani_tall_3_RootPillar0",
+        "COL_ulgani_tall_3_EdgeWall0",
+        "COL_ulgani_tall_3_RootPillar1",
+        "COL_ulgani_tall_3_RootPillar2",
+        "COL_ulgani_tall_3_RootPillar3",
+        "COL_ulgani_tall_3_EdgeWall3",
+        "COL_ulgani_tall_3_RootPillar4",
+        "COL_ulgani_tall_3_EdgeWall4",
+        "COL_ulgani_tall_3_RootPillar5",
+        "COL_ulgani_tall_3_EdgeWall5",
+        "COL_ulgani_tall_3_RootPillar6",
+        "COL_ulgani_tall_3_EdgeWall6",
+        "COL_ulgani_tall_3_RootPillar7",
+        "COL_ulgani_tall_3_RootPillar8",
+        "COL_ulgani_tall_3_EdgeWall8",
+        "COL_ulgani_tall_3_RootPillar9",
+        "COL_ulgani_tall_3_EdgeWall9",
+        "COL_ulgani_tall_3_UpperRib1_0",
+        "COL_ulgani_tall_3_UpperRib1_1",
+        "COL_ulgani_tall_3_UpperRib1_2",
+        "COL_ulgani_tall_3_UpperRib1_3",
+        "COL_ulgani_tall_3_UpperRib1_4",
+        "COL_ulgani_tall_3_UpperRib1_5",
+        "COL_ulgani_tall_3_UpperRib1_6",
+        "COL_ulgani_tall_3_UpperRib1_7",
+        "COL_ulgani_tall_3_UpperRib1_8",
+        "COL_ulgani_tall_3_UpperRib1_9",
+        "COL_ulgani_tall_3_UpperRib2_0",
+        "COL_ulgani_tall_3_UpperRib2_1",
+        "COL_ulgani_tall_3_UpperRib2_2",
+        "COL_ulgani_tall_3_UpperRib2_3",
+        "COL_ulgani_tall_3_UpperRib2_4",
+        "COL_ulgani_tall_3_UpperRib2_5",
+        "COL_ulgani_tall_3_UpperRib2_6",
+        "COL_ulgani_tall_3_UpperRib2_7",
+        "COL_ulgani_tall_3_UpperRib2_8",
+        "COL_ulgani_tall_3_UpperRib2_9",
+        "COL_ulgani_tall_3_UpperRib3_0",
+        "COL_ulgani_tall_3_UpperRib3_1",
+        "COL_ulgani_tall_3_UpperRib3_2",
+        "COL_ulgani_tall_3_UpperRib3_3",
+        "COL_ulgani_tall_3_UpperRib3_4",
+        "COL_ulgani_tall_3_UpperRib3_5",
+        "COL_ulgani_tall_3_UpperRib3_6",
+        "COL_ulgani_tall_3_UpperRib3_7",
+        "COL_ulgani_tall_3_UpperRib3_8",
+        "COL_ulgani_tall_3_UpperRib3_9",
+        "COL_ulgani_tall_3_UpperRib4_0",
+        "COL_ulgani_tall_3_UpperRib4_1",
+        "COL_ulgani_tall_3_UpperRib4_2",
+        "COL_ulgani_tall_3_UpperRib4_3",
+        "COL_ulgani_tall_3_UpperRib4_4",
+        "COL_ulgani_tall_3_UpperRib4_5",
+        "COL_ulgani_tall_3_UpperRib4_6",
+        "COL_ulgani_tall_3_UpperRib4_7",
+        "COL_ulgani_tall_3_UpperRib4_8",
+        "COL_ulgani_tall_3_UpperRib4_9",
+        "COL_ulgani_tall_3_UpperRib5_0",
+        "COL_ulgani_tall_3_UpperRib5_1",
+        "COL_ulgani_tall_3_UpperRib5_2",
+        "COL_ulgani_tall_3_UpperRib5_3",
+        "COL_ulgani_tall_3_UpperRib5_4",
+        "COL_ulgani_tall_3_UpperRib5_5",
+        "COL_ulgani_tall_3_UpperRib5_6",
+        "COL_ulgani_tall_3_UpperRib5_7",
+        "COL_ulgani_tall_3_UpperRib5_8",
+        "COL_ulgani_tall_3_UpperRib5_9",
+        "COL_ulgani_tall_3_UpperRib6_0",
+        "COL_ulgani_tall_3_UpperRib6_1",
+        "COL_ulgani_tall_3_UpperRib6_2",
+        "COL_ulgani_tall_3_UpperRib6_3",
+        "COL_ulgani_tall_3_UpperRib6_4",
+        "COL_ulgani_tall_3_UpperRib6_5",
+        "COL_ulgani_tall_3_UpperRib6_6",
+        "COL_ulgani_tall_3_UpperRib6_7",
+        "COL_ulgani_tall_3_UpperRib6_8",
+        "COL_ulgani_tall_3_UpperRib6_9",
+        "COL_ulgani_tall_3_Crown0",
+        "COL_ulgani_tall_3_Crown1",
+        "COL_ulgani_tall_3_Crown2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "command": [
+    "/Applications/Blender.app/Contents/MacOS/Blender",
+    "-b",
+    "--factory-startup",
+    "-t",
+    "2",
+    "--python-exit-code",
+    "1",
+    "-P",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py",
+    "--"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "limits": {
+    "label": "preservation-density-d01",
+    "seconds": 600,
+    "rss_mib": 7000,
+    "log_mib": 24,
+    "capacity_seconds": 300,
+    "stale": [],
+    "command": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "-P",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py",
+      "--"
+    ]
+  },
+  "environment": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "MKL_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2",
+    "NUMEXPR_NUM_THREADS": "2",
+    "BLIS_NUM_THREADS": "2",
+    "TBB_NUM_THREADS": "2",
+    "UV_THREADPOOL_SIZE": "2",
+    "ART_KTX_JOBS": "1",
+    "OIDN_NUM_THREADS": "2",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "started": 1794037137.138376,
+  "preflight": {
+    "time": 1794037137.142331,
+    "load": [
+      9.775390625,
+      8.857421875,
+      9.13134765625
+    ],
+    "memoryFreePercent": 82,
+    "diskFreeBytes": 37068025856
+  },
+  "samples": [
+    {
+      "time": 1794037137.2905269,
+      "load": [
+        9.775390625,
+        8.857421875,
+        9.13134765625
+      ],
+      "memoryFreePercent": 82,
+      "diskFreeBytes": 37067657216
+    }
+  ],
+  "toolSHA256": {
+    "packages/tools/blender/cities/ulgani/audit.py": "ef1d6c8f074ac02c4dcc3c17287f19ba242d1d0565ebebc2226fdbc1f363b564",
+    "packages/tools/blender/cities/ulgani/author.py": "2a9923f41236254e03041d159c80a891e92b91cba25c66e35d50968728c7a178",
+    "packages/tools/blender/cities/ulgani/context_sheets.py": "b2b219bf0391a14113367bd44cf8683038b9483c03a30d26f15eb2ba265f3b1b",
+    "packages/tools/blender/cities/ulgani/decode_meshopt.mjs": "990f021a64b9b97c4f74c3b9c5ef0d018a296c9a95275efc1a9112884e36a54c",
+    "packages/tools/blender/cities/ulgani/density.py": "197eb36f1ae885961ee7982f9ca32955e6ff5a6138312127151c59b6493d0a9f",
+    "packages/tools/blender/cities/ulgani/density_batch.py": "d6f00e6eedcc345b0ca8760a8954a4eabd83e570b3e914ba8e072baaebc01edc",
+    "packages/tools/blender/cities/ulgani/density_controls.py": "6083cfa9887cdb30aa32fdab1f1322e6221e3d20a9e1ca194e1f459f0a3508b2",
+    "packages/tools/blender/cities/ulgani/density_preview.py": "d07562a7576b07043b9263b9b91f8d2d01d43e6dc8ec6c8c92aa1106d97419b3",
+    "packages/tools/blender/cities/ulgani/diagnose_codec.py": "72cf4a408716a34f8e5db550f480bdbc4541cf0d826cdf698cc7ec8a83d69a62",
+    "packages/tools/blender/cities/ulgani/finish_cpu.py": "3fa9c0277fb6b0d445f6acbf91b48c9706c6225fd79977df1de4ded00646325c",
+    "packages/tools/blender/cities/ulgani/ktx_cpu.py": "5a6ec707df6fb939eee423ae92acc7ccebaec86b57dd48e413959e9a964151e1",
+    "packages/tools/blender/cities/ulgani/material_routes.py": "475f1650cfde3fbd3381ea59644d7f0c498ece7425a3cde244a8c7e0ab496194",
+    "packages/tools/blender/cities/ulgani/metric_map_sheets.py": "886b0984c35c84581d68e3d0ee26b28c5eef785c5daebcd0fe48febfa832ebec",
+    "packages/tools/blender/cities/ulgani/negative_controls.py": "d761f28c99411a647309b985f2762a11f3ad231f44b93ae73fcce53cd3f62f53",
+    "packages/tools/blender/cities/ulgani/patch_saved_bench.py": "18303a844939015ae2d308d661ad0baf3a0fb0d59d4f254501ae3c6ef9e03ee1",
+    "packages/tools/blender/cities/ulgani/patch_saved_budget.py": "eaee19b3a519276ba3a21e6c6579e419eb339232c0d6768016742bc8e5f5acb2",
+    "packages/tools/blender/cities/ulgani/patch_saved_clearance.py": "75bacb60a69a406e9e10e2304e509e09f659f711a73090ff33406bdd39f05755",
+    "packages/tools/blender/cities/ulgani/patch_saved_tints.py": "90b097553ecf0961e634d576a0266e2270e34835a67d3bda644626dfff572bd0",
+    "packages/tools/blender/cities/ulgani/pipeline.py": "220f7d3fa97a284917d42de2433ca81767319c2164b1c760c92fe564d75647e0",
+    "packages/tools/blender/cities/ulgani/preservation.py": "bb8d235b28c2fb4ef6f3cbe6e9a4df93ae3be8edca602bbf3bd939ed4d601327",
+    "packages/tools/blender/cities/ulgani/preview.py": "441d6e264d8235fc43a64e0012536a45d832805d7a4f313ef436541dbef3e47a",
+    "packages/tools/blender/cities/ulgani/revise_trims.py": "ff3f626b4d550625a0c986e9aa7ce93954aabcc8e4663245dc4d6cd9f8e5cbf5",
+    "packages/tools/blender/cities/ulgani/run.py": "70721e04f1598616cd19a7cf5188a4c64fd40b440547d22b5adef8588f4c3d58",
+    "packages/tools/blender/cities/ulgani/source_contracts.py": "61fc5b4e46012df984eb93dd2c774dd2def48cdd0b58af392268125fb8b9b14a",
+    "packages/tools/blender/cities/ulgani/summarize.py": "ff07833e591723d44e7346e93ffbfd0c360638c0fa9e13cad07f6001cc063499",
+    "packages/tools/blender/cities/ulgani/test_tools.py": "be627b04f269795b7bea447d9bbab519b644a2bbb35fc847b4965472e55bb2a6",
+    "packages/tools/blender/cities/ulgani/verify_density_revision.py": "a0069a10c35685c9e061fc796c73a17ce26c4bd92fbdddfa456c69cd8e428a80",
+    "packages/tools/blender/families.json": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d",
+    "packages/tools/blender/export_cities.py": "b14f2ee68f0ab1910864ce6c41619b27d09ebeb2469808f037ccf96ee87c2f56",
+    "packages/tools/blender/validate.py": "d3d4cdebce146d42552e5d37c4014229139d677c6c42a8987eb9bf4caac45704"
+  },
+  "scratchDirectory": "/tmp/ulgani-hewgrgkc",
+  "pinnedLaunchers": {
+    "python": {
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a",
+      "bytes": 34640
+    },
+    "node": {
+      "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "sha256": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b",
+      "bytes": 147346352
+    },
+    "blender": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "sha256": "de1e04556f03716d25682dd01cc776d94e512f7ff8673049a486c3e8b7f9b619",
+      "bytes": 182930560
+    },
+    "tsx": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/cli.mjs",
+      "sha256": "8690135061bc49d187143493b82d26a09b7fb71d6dd817d2242cc9dc52506de9",
+      "bytes": 124418
+    },
+    "ktx": {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "sha256": "abd30109cbf84859b2f34951f7967e801111abadaac588468d98ed075100ad37",
+      "bytes": 2041776
+    }
+  },
+  "launchToolSHA256": {
+    "packages/tools/blender/cities/ulgani/audit.py": "ef1d6c8f074ac02c4dcc3c17287f19ba242d1d0565ebebc2226fdbc1f363b564",
+    "packages/tools/blender/cities/ulgani/author.py": "2a9923f41236254e03041d159c80a891e92b91cba25c66e35d50968728c7a178",
+    "packages/tools/blender/cities/ulgani/context_sheets.py": "b2b219bf0391a14113367bd44cf8683038b9483c03a30d26f15eb2ba265f3b1b",
+    "packages/tools/blender/cities/ulgani/decode_meshopt.mjs": "990f021a64b9b97c4f74c3b9c5ef0d018a296c9a95275efc1a9112884e36a54c",
+    "packages/tools/blender/cities/ulgani/density.py": "197eb36f1ae885961ee7982f9ca32955e6ff5a6138312127151c59b6493d0a9f",
+    "packages/tools/blender/cities/ulgani/density_batch.py": "d6f00e6eedcc345b0ca8760a8954a4eabd83e570b3e914ba8e072baaebc01edc",
+    "packages/tools/blender/cities/ulgani/density_controls.py": "6083cfa9887cdb30aa32fdab1f1322e6221e3d20a9e1ca194e1f459f0a3508b2",
+    "packages/tools/blender/cities/ulgani/density_preview.py": "d07562a7576b07043b9263b9b91f8d2d01d43e6dc8ec6c8c92aa1106d97419b3",
+    "packages/tools/blender/cities/ulgani/diagnose_codec.py": "72cf4a408716a34f8e5db550f480bdbc4541cf0d826cdf698cc7ec8a83d69a62",
+    "packages/tools/blender/cities/ulgani/finish_cpu.py": "3fa9c0277fb6b0d445f6acbf91b48c9706c6225fd79977df1de4ded00646325c",
+    "packages/tools/blender/cities/ulgani/ktx_cpu.py": "5a6ec707df6fb939eee423ae92acc7ccebaec86b57dd48e413959e9a964151e1",
+    "packages/tools/blender/cities/ulgani/material_routes.py": "475f1650cfde3fbd3381ea59644d7f0c498ece7425a3cde244a8c7e0ab496194",
+    "packages/tools/blender/cities/ulgani/metric_map_sheets.py": "886b0984c35c84581d68e3d0ee26b28c5eef785c5daebcd0fe48febfa832ebec",
+    "packages/tools/blender/cities/ulgani/negative_controls.py": "d761f28c99411a647309b985f2762a11f3ad231f44b93ae73fcce53cd3f62f53",
+    "packages/tools/blender/cities/ulgani/patch_saved_bench.py": "18303a844939015ae2d308d661ad0baf3a0fb0d59d4f254501ae3c6ef9e03ee1",
+    "packages/tools/blender/cities/ulgani/patch_saved_budget.py": "eaee19b3a519276ba3a21e6c6579e419eb339232c0d6768016742bc8e5f5acb2",
+    "packages/tools/blender/cities/ulgani/patch_saved_clearance.py": "75bacb60a69a406e9e10e2304e509e09f659f711a73090ff33406bdd39f05755",
+    "packages/tools/blender/cities/ulgani/patch_saved_tints.py": "90b097553ecf0961e634d576a0266e2270e34835a67d3bda644626dfff572bd0",
+    "packages/tools/blender/cities/ulgani/pipeline.py": "220f7d3fa97a284917d42de2433ca81767319c2164b1c760c92fe564d75647e0",
+    "packages/tools/blender/cities/ulgani/preservation.py": "bb8d235b28c2fb4ef6f3cbe6e9a4df93ae3be8edca602bbf3bd939ed4d601327",
+    "packages/tools/blender/cities/ulgani/preview.py": "441d6e264d8235fc43a64e0012536a45d832805d7a4f313ef436541dbef3e47a",
+    "packages/tools/blender/cities/ulgani/revise_trims.py": "ff3f626b4d550625a0c986e9aa7ce93954aabcc8e4663245dc4d6cd9f8e5cbf5",
+    "packages/tools/blender/cities/ulgani/run.py": "70721e04f1598616cd19a7cf5188a4c64fd40b440547d22b5adef8588f4c3d58",
+    "packages/tools/blender/cities/ulgani/source_contracts.py": "61fc5b4e46012df984eb93dd2c774dd2def48cdd0b58af392268125fb8b9b14a",
+    "packages/tools/blender/cities/ulgani/summarize.py": "ff07833e591723d44e7346e93ffbfd0c360638c0fa9e13cad07f6001cc063499",
+    "packages/tools/blender/cities/ulgani/test_tools.py": "be627b04f269795b7bea447d9bbab519b644a2bbb35fc847b4965472e55bb2a6",
+    "packages/tools/blender/cities/ulgani/verify_density_revision.py": "a0069a10c35685c9e061fc796c73a17ce26c4bd92fbdddfa456c69cd8e428a80"
+  },
+  "pid": 84923,
+  "pgid": 84923,
+  "peakGroupRSSKiB": 368,
+  "wallSeconds": 1.0378256660187617,
+  "remainingGroup": [],
+  "scratchRemovedBytes": 0,
+  "removedStale": [],
+  "exit": 1,
+  "error": null,
+  "ended": 1794037138.36245,
+  "postflight": {
+    "time": 1794037138.3653371,
+    "load": [
+      9.775390625,
+      8.857421875,
+      9.13134765625
+    ],
+    "memoryFreePercent": 82,
+    "diskFreeBytes": 37066518528
+  },
+  "failureTail": [
+    "00:00.499  blend            | Read blend: \"/tmp/ulgani-hewgrgkc/ulgani-old-source-x8qrfpgq/ulgani_low.blend\"",
+    "Traceback (most recent call last):",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py\", line 151, in <module>",
+    "    sys.exit(main())",
+    "             ~~~~^^",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py\", line 93, in main",
+    "    before = snapshot(oldpath)",
+    "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py\", line 52, in snapshot",
+    "    row[\"normals\"] = np.stack([r[1] for r in table])",
+    "                     ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^",
+    "  File \"/Applications/Blender.app/Contents/Resources/5.2/python/lib/python3.13/site-packages/numpy/_core/shape_base.py\", line 456, in stack",
+    "    raise ValueError('need at least one array to stack')",
+    "ValueError: need at least one array to stack",
+    "",
+    "Error: script failed, file: '/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/packages/tools/blender/cities/ulgani/preservation.py', exiting.",
+    "Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)",
+    "",
+    "Blender quit"
+  ]
+}

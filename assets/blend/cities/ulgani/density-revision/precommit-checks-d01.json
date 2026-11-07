@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "base": "a8a4e142828de25fff9235e49d25e17b50d1f047",
+  "branch": "task/P1-E10-T07-ulgani-belost",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d",
+  "ownershipFilesBeforeReceipt": 588,
+  "newStrictJSONCount": 463,
+  "historicalImagesUnchanged": 48,
+  "exactSourceExportHashes": "PASS",
+  "locks": [
+    {
+      "path": "assets/blend/cities/ulgani/.lane.lock",
+      "state": "unlocked"
+    },
+    {
+      "path": "assets/blend/cities/ulgani/.codec.lock",
+      "state": "unlocked"
+    }
+  ],
+  "finalResources": {
+    "time": 1794041462.774833,
+    "load": [
+      12.18798828125,
+      10.29541015625,
+      9.32568359375
+    ],
+    "memoryFreePercent": 80,
+    "diskFreeBytes": 30151290880
+  },
+  "cleanup": "All 151 attempt groups empty and private scratch absent, verified by summarize_density.py",
+  "summarizeCommand": [
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "packages/tools/blender/cities/ulgani/summarize_density.py"
+  ],
+  "summarizeExit": 0,
+  "manifestSHA256": "688848a806477851ebc4d5c67dc012a8c47aba7cdd48d582408d7dc007642703"
+}

@@ -1,0 +1,174 @@
+{
+  "tool": "packages/tools/blender/validate.py",
+  "file": "assets/blend/cities/ulgani_anchor.blend",
+  "family": "cities",
+  "mode": "source",
+  "status": "PASS",
+  "error": null,
+  "blender": "5.2.3 LTS",
+  "generatedAt": "2026-11-07T08:13:34Z",
+  "summary": {
+    "checks": {
+      "naming": "PASS",
+      "triangles": "PASS",
+      "lods": "PASS",
+      "materials": "PASS",
+      "scale": "PASS"
+    },
+    "fail": 0,
+    "warn": 0
+  },
+  "assets": [
+    {
+      "asset": "ulgani_root_island_landmark",
+      "variants": [
+        {
+          "id": "ulgani_root_island_landmark",
+          "class": "hero",
+          "classFrom": "asset_class property",
+          "lods": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lodTris": {
+            "0": 108800,
+            "1": 32640,
+            "2": 10880,
+            "3": 3808
+          },
+          "implicitLods": false,
+          "dims": [
+            156.085,
+            135.891,
+            52.214
+          ],
+          "materials": [
+            "UlganiMetric_4096_Chitin",
+            "UlganiMetric_4096_Membrane",
+            "UlganiMetric_4096_CapFlesh",
+            "UlganiMetric_4096_Gill",
+            "UlganiMetric_4096_Root",
+            "UlganiMetric_4096_Walk",
+            "UlganiMetric_4096_Basalt",
+            "UlganiMetric_4096_Spore",
+            "UlganiMetric_4096_ChitinAged",
+            "UlganiMetric_4096_ChitinJoint",
+            "UlganiMetric_4096_MembraneRepair",
+            "UlganiMetric_4096_WalkWorn"
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "naming",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_anchor.blend",
+          "message": "1 variant(s) in 1 asset(s) follow the cities rules"
+        }
+      ]
+    },
+    {
+      "id": "triangles",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_root_island_landmark",
+          "message": "LOD0 108,800 triangles within the hero budget 60,000-150,000 (DESIGN 19.2)"
+        }
+      ]
+    },
+    {
+      "id": "lods",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "ulgani_root_island_landmark",
+          "message": "108,800 > 32,640 > 10,880 > 3,808 triangles; LOD3 3.5% of LOD0"
+        }
+      ]
+    },
+    {
+      "id": "materials",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "UlganiMetric_4096_Basalt",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_CapFlesh",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_Chitin",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_ChitinAged",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_ChitinJoint",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_Gill",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_Membrane",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_MembraneRepair",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_Root",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_Spore",
+          "message": "pbr: base colour, roughness, metallic, normal, AO, emissive"
+        },
+        {
+          "subject": "UlganiMetric_4096_Walk",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        },
+        {
+          "subject": "UlganiMetric_4096_WalkWorn",
+          "message": "pbr: base colour, roughness, metallic, normal, AO"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "status": "PASS",
+      "findings": [],
+      "passed": [
+        {
+          "subject": "REF_Grid",
+          "message": "grid spacing 1.000 m"
+        },
+        {
+          "subject": "REF_Biped",
+          "message": "biped 1.850 m tall, feet on the grid plane"
+        },
+        {
+          "subject": "ulgani_root_island_landmark",
+          "message": "longest side 156.09 m within 0.5-400 m"
+        }
+      ]
+    }
+  ]
+}

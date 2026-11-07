@@ -1,0 +1,146 @@
+{
+  "source": "assets/blend/cities/ulgani_landmarks.blend",
+  "sha256": "32a632aa09eb11b2615b0dd71d4be1936601f8a62e933fdb1434421ba6e0206b",
+  "assets": [
+    {
+      "id": "ulgani_great_cap_landmark",
+      "title": "Belost Great Shelter",
+      "role": "great_cap",
+      "class": "hero",
+      "canopyClearance": 49,
+      "placement": "separate canopy coverage, not residential footprint scaling",
+      "bounds": [
+        [
+          -64.65176391601562,
+          -55.77273178100586,
+          -1.455338954925537
+        ],
+        [
+          70.68353271484375,
+          51.329654693603516,
+          64.32002258300781
+        ]
+      ],
+      "height": 65.77536153793335,
+      "footprintRadius": 70.74339937983729,
+      "lodTriangles": [
+        74272,
+        22281,
+        7426,
+        2598
+      ],
+      "lodNodes": [
+        "ulgani_great_cap_landmark_LOD0",
+        "ulgani_great_cap_landmark_LOD1",
+        "ulgani_great_cap_landmark_LOD2",
+        "ulgani_great_cap_landmark_LOD3"
+      ],
+      "openings": [],
+      "walkRoutes": [
+        {
+          "from": [
+            0,
+            -52,
+            0
+          ],
+          "to": [
+            0,
+            52,
+            0
+          ],
+          "width": 16,
+          "height": 8
+        }
+      ],
+      "markers": [
+        {
+          "name": "Light_Spore0_ulgani_great_cap_landmark",
+          "position": [
+            47.519999999999996,
+            0.0,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore1_ulgani_great_cap_landmark",
+          "position": [
+            23.76,
+            32.423991117689376,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore2_ulgani_great_cap_landmark",
+          "position": [
+            -23.75999999999999,
+            32.42399111768938,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore3_ulgani_great_cap_landmark",
+          "position": [
+            -47.519999999999996,
+            4.5850776160076905e-15,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore4_ulgani_great_cap_landmark",
+          "position": [
+            -23.76000000000002,
+            -32.42399111768937,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        },
+        {
+          "name": "Light_Spore5_ulgani_great_cap_landmark",
+          "position": [
+            23.76,
+            -32.423991117689376,
+            4
+          ],
+          "properties": {
+            "color": "#C7F06A",
+            "intensity": 0.7,
+            "distance": 12
+          }
+        }
+      ],
+      "colliders": [
+        "COL_ulgani_great_cap_landmark_Column0",
+        "COL_ulgani_great_cap_landmark_Column1",
+        "COL_ulgani_great_cap_landmark_Column2",
+        "COL_ulgani_great_cap_landmark_Column3",
+        "COL_ulgani_great_cap_landmark_Column4",
+        "COL_ulgani_great_cap_landmark_Column5",
+        "COL_ulgani_great_cap_landmark_HighCap"
+      ]
+    }
+  ]
+}

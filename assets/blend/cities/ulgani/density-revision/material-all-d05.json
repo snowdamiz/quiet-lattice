@@ -1,0 +1,4989 @@
+{
+  "status": "PASS",
+  "failures": [],
+  "groups": [
+    {
+      "group": "low",
+      "sourceSHA256": "c45ec32e112df72932a13dd0fa2ac9cc76a49665cd9f8431b657a171c6503f8a",
+      "exportSHA256": "68feeb859c65a86f2e8cb227809a6b65bd90d78b1ffd5ef1fd3b5966cd9d2af5",
+      "materials": [
+        {
+          "material": "UlganiMetric_2048_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "mid",
+      "sourceSHA256": "52488646847c7b4710238df2a3e44c3cacdb3327edd9772c05ef550f2cc6e8e5",
+      "exportSHA256": "ffb6c0356dfcbce76ecbdbe2b9896e15716477516829126d6e563705691987a3",
+      "materials": [
+        {
+          "material": "UlganiMetric_2048_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "tall",
+      "sourceSHA256": "6dc3252193aadd205c74131e1191c047de74802664e9585ad88c4c3e7b48c1d8",
+      "exportSHA256": "d66641d2eaaf845ce4161631dc0da863dd095637e18378fc0f444858cafd1027",
+      "materials": [
+        {
+          "material": "UlganiMetric_2048_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "civic",
+      "sourceSHA256": "ffa9da4eb63553cc30643ffb8e6ec0c00dd34d8db383ac50da1ca90f27195034",
+      "exportSHA256": "d0f05c5aac6469bb076be38b6fe5631fb9408aad78e719ef5987a4d3c28ab483",
+      "materials": [
+        {
+          "material": "UlganiMetric_2048_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "kit",
+      "sourceSHA256": "22fe45b4739400741c273baa811cf8f252039f78d78984e42b05469e9fda789f",
+      "exportSHA256": "e95785e6b357910266ac1d55ec45f787c732632dd62b60a8050767ecdd5baa5e",
+      "materials": [
+        {
+          "material": "UlganiMetric_2048_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_2048_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_2048_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "props",
+      "sourceSHA256": "4eb987e04711777041fba738d07144196674c0ff8242386f438a06ffc55cc7a4",
+      "exportSHA256": "2a12478e24254fe8ab70646a20eabdf8dc664858e9bb52b25d83efcb254cf3dd",
+      "materials": [
+        {
+          "material": "UlganiMetric_1024_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Chitin",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Chitin",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_ChitinAged",
+          "sourceBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "exportBaseFactor": [
+            0.366252601146698,
+            0.31398871541023254,
+            0.1946178376674652
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_ChitinAged",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.366252601146698,
+                0.31398871541023254,
+                0.1946178376674652,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_ChitinJoint",
+          "sourceBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "exportBaseFactor": [
+            0.3762621283531189,
+            0.17144110798835754,
+            0.028426039963960648
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_ChitinJoint",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3762621283531189,
+                0.17144110798835754,
+                0.028426039963960648,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Membrane",
+          "sourceBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "exportBaseFactor": [
+            0.8879231214523315,
+            0.8227857351303101,
+            0.6514056324958801
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Membrane",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.8879231214523315,
+                0.8227857351303101,
+                0.6514056324958801,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_MembraneRepair",
+          "sourceBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "exportBaseFactor": [
+            0.9559733271598816,
+            0.8962693810462952,
+            0.7304607629776001
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_MembraneRepair",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.9559733271598816,
+                0.8962693810462952,
+                0.7304607629776001,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_1024_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_1024_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "landmarks",
+      "sourceSHA256": "be4dd8e735df481cf2725d4ab4bd9f63ca04996831b75dbd92235d7ab0933d1a",
+      "exportSHA256": "aa5fe4ce38d04ae557ac29f80dedaa03e095e04980a2cd7be5405b27fd20ae39",
+      "materials": [
+        {
+          "material": "UlganiMetric_4096_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    },
+    {
+      "group": "anchor",
+      "sourceSHA256": "f7d16a44f318ddbe84b93ded3738369f0f889f43706e88cbf2f911de37ad78dc",
+      "exportSHA256": "20e2c1998e6e0e1bf64adc40ffedabf830b8f3919b5b36de1182edd735a3338f",
+      "materials": [
+        {
+          "material": "UlganiMetric_4096_Basalt",
+          "sourceBaseFactor": [
+            0.023153366521000862,
+            0.02518685907125473,
+            0.02955683507025242
+          ],
+          "exportBaseFactor": [
+            0.023153366521000862,
+            0.02518685907125473,
+            0.02955683507025242
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Basalt",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.023153366521000862,
+                0.02518685907125473,
+                0.02955683507025242,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_CapFlesh",
+          "sourceBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "exportBaseFactor": [
+            0.6938717365264893,
+            0.3049873113632202,
+            0.024157632142305374
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_CapFlesh",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6938717365264893,
+                0.3049873113632202,
+                0.024157632142305374,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Gill",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.40724021196365356,
+            0.17144110798835754
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Gill",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.40724021196365356,
+                0.17144110798835754,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Root",
+          "sourceBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "exportBaseFactor": [
+            0.10461648553609848,
+            0.061246052384376526,
+            0.03688944876194
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.6499999761581421,
+          "exportNormalScale": 0.6499999761581421,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Root",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.10461648553609848,
+                0.061246052384376526,
+                0.03688944876194,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.6499999761581421
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Spore",
+          "sourceBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "exportBaseFactor": [
+            0.5711248517036438,
+            0.8713670969009399,
+            0.1441284716129303
+          ],
+          "sourceEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "exportEmission": [
+            0.3712311399906909,
+            0.5663885922106005,
+            0.09368350311211415
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Spore",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.5711248517036438,
+                0.8713670969009399,
+                0.1441284716129303,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "emissiveFactor": [
+              0.3712311399906909,
+              0.5663885922106005,
+              0.09368350311211415
+            ],
+            "emissiveTexture": {
+              "index": 3
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_Walk",
+          "sourceBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "exportBaseFactor": [
+            0.6239603757858276,
+            0.5520114302635193,
+            0.3915724754333496
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_Walk",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.6239603757858276,
+                0.5520114302635193,
+                0.3915724754333496,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        },
+        {
+          "material": "UlganiMetric_4096_WalkWorn",
+          "sourceBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "exportBaseFactor": [
+            0.3967552185058594,
+            0.3277781009674072,
+            0.19120168685913086
+          ],
+          "sourceEmission": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exportEmission": [
+            0,
+            0,
+            0
+          ],
+          "sourceNormalScale": 0.3199999928474426,
+          "exportNormalScale": 0.3199999928474426,
+          "exportMaterial": {
+            "name": "UlganiMetric_4096_WalkWorn",
+            "extras": {
+              "library_sources": "LIB_Chitin,LIB_Membrane,LIB_CapFlesh,LIB_Basalt",
+              "trim_strategy": "shared periodic growth microtexture; semantic macro wear in saved face material assignments"
+            },
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+              "baseColorFactor": [
+                0.3967552185058594,
+                0.3277781009674072,
+                0.19120168685913086,
+                1
+              ],
+              "baseColorTexture": {
+                "index": 0
+              },
+              "metallicRoughnessTexture": {
+                "index": 2
+              }
+            },
+            "normalTexture": {
+              "index": 1,
+              "scale": 0.3199999928474426
+            },
+            "occlusionTexture": {
+              "index": 2
+            },
+            "extensions": {
+              "KHR_materials_specular": {
+                "specularFactor": 0.5600000023841858
+              }
+            }
+          }
+        }
+      ],
+      "textureRoutes": [
+        {
+          "image": 2,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 0,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 1,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        },
+        {
+          "image": 3,
+          "sampler": {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+          }
+        }
+      ],
+      "imageCount": 4,
+      "textureCount": 4
+    }
+  ]
+}
