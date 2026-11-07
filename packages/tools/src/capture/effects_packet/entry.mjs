@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { syncBuiltinESMExports } from 'node:module';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 
-export const RUNTIME_ENABLED = false;
+export const RUNTIME_ENABLED = true;
 export const requireFact = (ok, message) => {
   if (!ok) throw Error(message);
 };

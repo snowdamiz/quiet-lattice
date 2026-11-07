@@ -1,4 +1,47 @@
-# P1.E07.T14 disabled effects capture pilot
+# P1.E07.T14 enabled source checkpoint
+
+The two runtime flags and the freshly rebound readiness are now enabled. This
+checkpoint awaits an independent activation review tied to its final clean
+HEAD/tree, followed by the parent's one-use grant and serialized native slot
+after T15's full smoke releases the GPU. No grant or consumption is created by
+this preparation. All prospective pilot paths remain absent. The parent already
+has the required runtime authority; another human permission request is not a
+prerequisite. Actual capture and independent visual grading remain pending.
+
+The immutable R3 SOURCE/CPU PASS applies only to the previous disabled source:
+`587989af34fab480703f282084d20e2a27bbee48`, tree
+`4d87ff72f0a72dbbcbbfde0fcc4ba3ede41d89c5`. Its report is
+`/private/tmp/p1-e07-t14-r3-independent-mrcerv14/REPORT.md`, SHA256
+`d2384e36c860e19089b5ab93e3068f09c5a23f422a1604689220648b8fe151a8`.
+It is not an independent review receipt for this enabled checkpoint. Its 131
+passing cases remain the evidence for unchanged logic, controls and assets.
+
+Activation changes only the two literal flags, this provenance, and readiness
+bindings/provenance. `freeze.make_ready()` supplies the existing CPU byte freeze
+and current self-process Python executable observation; its generated defaults
+are explicitly overridden to `runtimeEnabled: true`, phase
+`ENABLED_PENDING_INDEPENDENT_ACTIVATION_REVIEW_AND_PARENT_ONE_USE_GRANT`, and
+current prerequisite text. The R3 report and seal are additionally byte-bound.
+The exact field diff and final pin are retained in the preparation Appendix C.2.
+`freeze.py` and `check_ready.py` remain unchanged: the latter's
+`PASS_SOURCE_ONLY_DISABLED` result does not describe this enabled checkpoint.
+An enabled binding audit uses the existing `bindings.verify` CPU primitive.
+
+Only `effects/gravitic` / `gravitic_pull` is proposed, with the unchanged
+5,402,312,704-byte admission, 184,565,760-byte output cap and existing deadlines.
+The parent must still observe actual OS exit zero and verify exact terminal and
+consumption hashes. A successful-looking file alone never accepts the pilot.
+The wire purpose string retains `SINGLE_DISABLED_PILOT` for compatibility with
+the reviewed contract; it does not describe the current flag state.
+
+## Retained disabled-checkpoint documentation
+
+The following text records the previous disabled checkpoint. Its statements
+about false flags, pending R3 review and fauna's queue priority are historical;
+the activation state and parent scheduling above supersede them. The embedded
+shared-capture provenance status is likewise retained unchanged as history.
+
+### P1.E07.T14 disabled effects capture pilot
 
 This is a source-only candidate for parent review. `caller.py`, `entry.mjs`, and
 `readiness.json` are disabled. The actual CLIs exit 78 before reading readiness,
