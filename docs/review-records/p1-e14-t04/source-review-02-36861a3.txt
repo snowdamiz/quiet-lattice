@@ -1,0 +1,292 @@
+VERDICT: REVISE — SOURCE/CPU R2 ONLY
+TASK: P1.E14.T04 (art) Flora rebuild: trees — tree runner corrections
+STATUS: DONE (independent review completed; one P2 correction remains)
+
+SUMMARY
+The four original failure reproductions are fixed on the pinned revision. Fresh
+baseline RED reproduces all five original cases; the corrected runner passes the
+supplied 28/28 controls and the unchanged real consumers pass 29/29. Ten additional
+adverse controls hold. One new P2 blocks source acceptance: after denied cleanup,
+the surviving producer can publish into the canonical GLB name after the runner
+has completed failed-output quarantine and written its failure receipt. The lane
+guard blocks new runners but does not fence the existing producer's publication.
+This was reproduced with a real Python child and then confirmed through the exact
+unchanged export_saved.py final-rename path with CPU dependency fixtures. No
+Blender, codec, GPU, browser, server, DB, install, hydration, or capture was run.
+
+PIN AND CONTRACT
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-9dcc2975
+Branch: task/P1-E14-T04-trees
+HEAD: 36861a31e752164469e847a916e0ea21a2e54686
+Tree: edf62091d81857d5bf3171523b23028b64490573
+Review base: 570e7f2f9cb700075697438f8cc0757b8ffa7400
+Baseline tree: 327bd0238461b76069369023a57a0b9cfc4712c6
+Baseline runner SHA-256: 359b3adb860d7fe523070cf512305ed793965f779bffd4dce26f9212f6e609cc
+Reviewed runner SHA-256: 6f8e0088d3b5db9d5e46c0cddd30257d1b41ad94b8acb26b693148352ec7aa1c
+Unchanged exporter SHA-256: 491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5
+
+Read docs/IMPLEMENTATION_PLAN.md sections 0.3, 0.4, 0.9.5, task T04 and its
+19-name clarification, Appendix C.2 and C.4; read the original review, worker
+revision report, and external handoff. The review covers the runner correction
+diff and its callers, not art quality or T07 adoption. The five mandatory categories
+in 0.9.5 do not specifically enumerate this lifecycle defect. REVISE follows the
+explicit review brief's complete-quarantine and failure-artifact requirements.
+
+Original report: /tmp/t04-r570e7f2-review/REPORT.txt
+Original report SHA-256: 489780b9f59e16d1785fb688f62ab253661202ce8ae2e8084cc62c01108375dc
+Worker report: assets/blend/flora/trees/revision1_20261107/REPORT.md
+Worker report SHA-256: f34bbe3da0945cd00e3e72a83f8fba9959a135d631222b217b4257469e30dbf1
+Handoff: /tmp/t04-r1-36861a31e-HANDOFF.json
+
+FILES CHANGED
+None in the reviewed checkout or any prior evidence. No git operation changed a
+ref, index, worktree, commit, PR, or remote. Fresh scripts, logs, manifests and this
+report exist only under /tmp/t04-r2-36861a31e-review-51qmzel0/.
+The reviewed revision's source changes are run.py and test_runner.py; its other
+changes are additions under revision1_20261107/. No orchestration document changed.
+
+PRIOR FINDINGS — ALL ORIGINAL REPRODUCTIONS VERIFIED
+
+F-A / P2 — FIXED for both original cases.
+The exact baseline runner still leaves the current GLB and candidate with no
+receipt for an unreadable source; the directory case removes the candidate but
+leaves the GLB with no receipt. The exact corrected runner retires both names
+before source reads, launches no producer, records the source errors without a
+fabricated source_before digest, and returns/records exit 1. See red/results.json
+and green/results.json cases unreadable-source and directory-source.
+
+F-B / P2 — FIXED for the original symlink archive case.
+Baseline previous-historical.glb remains a mutable symlink. Changing its backing
+file changes its hash. Corrected history is a regular file, nlink 1, of the original
+ARCHIVED-BYTES, with unchanged hash after backing mutation. Supplied hardlink,
+relative-link, owned-chain and broken-link controls also pass. Unreadable raw
+quarantine is explicitly recorded without a digest, not represented as a detached
+verified payload.
+
+F-C / P2 — FIXED for the original child-0/source-mutation case.
+Baseline process exit is 1 while receipt exit is 0 and PUBLISHED-GLB remains
+canonical. Corrected receipt and process exit are 1, child_exit remains 0,
+source_mutation is true, export_sha256 is null, and published bytes are retained
+as failed-historical.glb with no current GLB. The original review script's predicate
+expected receipt exit 1 despite its report specifying 0. The unchanged supplied
+adapter retains that predicate result and checks the actual reported defect. Both
+the original script and its report remain untouched and byte-identical to the
+committed reviewer copies.
+
+F-D / P2 — FIXED for the original escaped-PermissionError/no-receipt defect.
+Baseline SIGINT plus injected os.killpg EPERM still escapes and produces no
+receipt. Corrected process/receipt exit is 130, reason interrupted; denied TERM
+and KILL and wait timeout remain recorded; child_exit is null, child_reaped false,
+remaining_owned_children is nonempty, and .lane.blocked.json prevents reuse.
+No fake child exit or successful cleanup is claimed. This fixes the original
+exception/receipt defect. The adjacent late-publication gap below remains.
+
+NEW FINDING
+
+F-E / P2 — A producer surviving cleanup can recreate the current GLB after the
+failure receipt; the persistent lane guard does not fence publication.
+
+Primary locations: packages/tools/blender/flora_trees/run.py:273-275, 301-319,
+350-352. Publishing caller: packages/tools/blender/flora_trees/export_saved.py:33.
+
+Reachability and failure sequence:
+1. The export child is launched in its own session and may write the canonical
+   output. Its current production path performs candidate.rename(dst) after the
+   final validator and source-hash assertion, without checking supervisor state.
+2. SIGINT reaches the runner. TERM and KILL return EPERM. stop() observes the child
+   alive, returns terminal=false, and the runner writes .lane.blocked.json.
+3. The runner sweeps failed outputs, observes the canonical name absent, writes a
+   truthful FAIL/130 receipt with export_sha256=null, and returns.
+4. The surviving child resumes and executes the final rename. The GLB reappears
+   under packages/client/public/models/flora/tree_round_t04.glb. It is not part of
+   the failed quarantine and no receipt binds its newly published bytes.
+5. A new runner returns 75 at the lane guard before inspecting or retiring this
+   newly current GLB. The guard and failure receipt remain unchanged.
+
+Actual reproduction A:
+adverse.py, case late-publication-after-denied-cleanup. The runner bytes are exact.
+Only BLENDER selects a harmless Python producer, and os.killpg is fault-injected
+at the syscall boundary. A file barrier releases the producer only after the
+runner has returned 130. Before release the GLB is absent; afterward it contains
+LATE-PUBLISHED-GLB. The receipt hash is identical before/after and the retry is 75.
+This is not a sleep-timed assertion or a mock runner/cleanup helper.
+
+Actual reproduction B (publishing caller confirmation):
+exporter_boundary.py copies the exact run.py AND export_saved.py. CPU fixtures
+stand in for stock Blender generation/validation and JS mask promotion; these
+fixture bytes are not a valid art payload and make no validation claim. The real
+exporter main(), source hash assertions, Path.rename publication, hash recording,
+and raw-file unlink execute unchanged. A validation fixture waits on a file
+barrier, with the earlier canonical raw output already moved into the attempt.
+
+Observed: runner exit 130; child PID 16665 alive in cleanup facts; receipt records
+terminal=false, child_exit=null, child_reaped=false and failed GLB entry absent.
+After the supervisor returns, release allows export_saved.py:33 to execute.
+Current file becomes LATE-EXACT-EXPORTER-GLB, SHA-256
+401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776.
+The producer log contains T04_FINAL at the canonical path. Its group is then
+observed absent. Failure receipt SHA-256 remains
+0c8395e375917c84332b790fca24b6e939976be0b1923608a4c9a60623a6ef8d.
+The lane guard stays present; the retry exits 75 and leaves the GLB present.
+
+Impact and limits: failed/cancelled work can become a current public-path artifact
+after quarantine has completed. The receipt is honest about cleanup uncertainty;
+there is no new PASS receipt or candidate.json, and manifest.latest() will still
+reject the failing latest export receipt. This is an incomplete failure-output
+boundary, not proof of silent candidate acceptance or a defect in the delivered
+eight GLBs. EPERM is deterministic injection; its original host cause and real
+Blender continuation were not diagnosed or exercised.
+
+Concrete correction: make the producer write only attempt-private staging paths,
+including stock export's intermediate output. Give the supervisor sole ownership
+of canonical promotion, after actual child/group termination and final source
+checks succeed. Failed or unresolved cleanup must leave all later producer writes
+inside its attempt. Merely adding a child-side guard check before rename leaves
+a check/rename race. Retain this barrier test: release a producer after the failed
+supervisor returns, and require that the canonical GLB stays absent. No correction
+was made during this review.
+
+VERIFY
+Exact executable vectors, working directory, explicit cache environment, exits,
+wall times and log paths are in commands.json and each *-command.json. Each
+command ran through run_command.py with a 180-second outer cap; individual runner
+processes have a 25-second harness cap and bounded child/cleanup controls. The
+following command arguments are relative to the pinned worktree unless absolute.
+
+1. python3 -B <scratch>/snapshot.py before — exit 0.
+   Clean exact HEAD/tree/branch; 2,635 protected entries, 199,706,709 nominal bytes.
+2. python3 -B packages/tools/blender/flora_trees/test_runner.py
+   --runner assets/blend/flora/trees/revision1_20261107/baseline-run.py
+   --reviewer /tmp/t04-r570e7f2-review/lifecycle.py
+   --evidence <scratch>/red --expect red — exit 0: 5/5 expected RED reproduced.
+3. python3 -B packages/tools/blender/flora_trees/test_runner.py
+   --reviewer /tmp/t04-r570e7f2-review/lifecycle.py
+   --evidence <scratch>/green --expect green — exit 0: 28/28 PASS.
+4. python3 -B <scratch>/adverse.py — exit 1: 10 controls PASS, F-E reproduced.
+5. python3 -B <scratch>/exporter_boundary.py — exit 1: F-E confirmed through the
+   exact exporter. Exit 1 deliberately preserves the red safety assertion.
+6. python3 -B assets/blend/flora/trees/revision1_20261107/verify_unchanged.py
+   --out <scratch>/verification.json — exit 0; original protections, shared515,
+   payload pairs and 46 previews exact; 11 Python sources compile() without pyc.
+7. /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node
+   node_modules/vitest/vitest.mjs run
+   packages/client/src/gameplay/floraTreesT04.test.js
+   packages/client/src/gameplay/modelLibrary.test.js
+   --config <scratch>/vitest.config.mjs --configLoader native --maxWorkers=1
+   --no-file-parallelism --reporter=json --outputFile=<scratch>/consumers.json
+   — exit 0; 29/29 PASS, zero failed. Node v22.23.3; Vitest 5.0.5 verified.
+8. python3 -B <scratch>/reuse_proof.py — exit 0; independently rehashes the
+   original review's 642-row list and all 16 census payloads and checks 76 mesh
+   results, all 16 stock PASS reports, shared515 bytes, and preview census.
+9. python3 -B <scratch>/terminal_check.py — exit 0; 31 recorded child groups,
+   no observed members, no active members. No peer process was signalled.
+10. python3 -B <scratch>/snapshot.py after — exit 0; all 2,635 entries match
+    before in bytes/hash, mode and mtime (or unchanged explicit read-error facts).
+11. git diff --check 570e7f2f9cb700075697438f8cc0757b8ffa7400..HEAD — exit 0.
+
+<scratch> = /tmp/t04-r2-36861a31e-review-51qmzel0
+
+Additional adverse controls that held:
+- Candidate rename denial is reported and does not prevent the later GLB rename.
+  The unremovable candidate is honestly recorded as not invalidated.
+- Candidate archive fsync failure retains raw quarantine/error evidence while
+  still preserving the later GLB; no producer launch occurs.
+- Failed-output fsync failure keeps primary exit 7 and records retained raw bytes.
+- Source becomes a directory after production: failure receipt, no current GLB.
+- Source retargets to identical bytes at a different path: binding failure.
+- Child exit 7 plus source mutation: actual exit 7 remains primary; mutation kept.
+- Child dies by SIGTERM: child_exit -15, actual runner/receipt 143, group terminal.
+- Process-group observation error: uncertainty is null, errors retained, direct
+  child reaped, persistent guard retained; no false terminal or current output.
+- Read-only audit action with unreadable source retires current outputs on failure.
+- Receipt pending-file unlink fails after atomic link: current PASS receipt and
+  output are retired, fallback FAIL is written, actual exit is nonzero.
+
+Failure tails (full logs and actual receipts retained):
+adverse.log:
+candidate-rename-denied True
+candidate-detach-fsync-fails True
+failed-output-detach-fsync-fails True
+source-directory-after True
+source-retarget-same-bytes True
+exit7-mutation True
+child-signal-exit True
+group-observation-fails True
+read-action-source-failure True
+receipt-postlink-unlink-fails True
+late-publication-after-denied-cleanup False
+{"status":"REVISE","cases":11,"failed":["late-publication-after-denied-cleanup"]}
+
+exporter-boundary.log:
+"defect_reproduced": true, "exporter_exact": true
+before: current_absent true, blocked true
+after: current_exists true, bytes LATE-EXACT-EXPORTER-GLB, blocked true,
+       active_group [], receipt SHA-256 unchanged
+producer_log: child-ready; T04_FINAL <canonical path> 401155db...78d776
+
+One initial read-only reviewer inventory probe exited 1 with
+KeyError: slice(None, 2, None): it treated protected-after.json (a dict) as a list.
+It ran before scratch creation, wrote nothing, and was replaced by type-aware
+inspection. A read-only ls probe for ancestor AGENTS.md files exited 1 because
+none of the explicit paths existed. Neither is a runner failure or a hidden PASS.
+
+PRESERVATION AND REUSED EVIDENCE
+Before and after git status --porcelain=v1 are empty; HEAD/tree/branch unchanged.
+before.json SHA-256: 08de45b0c7e3eda4b5b8b0f9e360f7289581590ddc717f829b35f841f2d7de57
+after.json SHA-256: ffa45140d3ee95803457d2c3e8798cbcb05f886fd9e28967ee8897c54077bb55
+The snapshot hashes differ because before.json also records host facts; their
+2,635 file rows are exactly equal, independently asserted by snapshot.py.
+The set includes original protected payloads/package entries/codec, all revision
+evidence, the original /tmp review evidence, and /tmp/t04-r1-* evidence (excluding
+scratch .git internals). Old unreadable entries were not chmodded: their precise
+mode, size, mtime and read-error class/errno are retained instead of invented hashes.
+
+The original 642-row protected census has exactly one authorized difference from
+R1: run.py. All 641 other bytes match. This R2 changed none of the 642 entries.
+Eight blends, eight GLBs, 46 previews / 54,805,448 bytes, current candidate,
+historical reports/receipts, consumer source and protected dependency entries are
+unchanged. All three shared files match 515ba1f00810a50b499970b5468ef7bf0af84c32.
+Old task report SHA-256 remains
+5851c713428219d06d5fcc88f6c887a2883e34b4382e6079ca714efbcaaa660e.
+
+R1 source census and stock results are reused only by exact payload/report proof:
+76 position/mask mesh-cloud checks across 19 variants and four LODs, 16 stock PASS
+validations, and historical preview-surface equivalence remain their original
+observations. census-result.json SHA-256:
+cf1de7295699534e32ad0753a89c556011dfc9eea6081af9f182418ed2e17630.
+No new Blender source census or stock validation is claimed. The 29 consumer
+checks are fresh and read the unchanged production GLBs through the real loader.
+
+DECISIONS
+Source census re-execution prohibited → reuse exact hashes and original results →
+preserves the existing payload/evidence without Blender or GPU work.
+Original EPERM mechanism unresolved → inject at os.killpg only → exercise real
+runner cleanup and real child liveness without pretending to diagnose host EPERM.
+Late producer needs deterministic ordering → a file barrier after supervisor
+exit → demonstrates post-receipt publication without a timing race in the test.
+Need to establish caller reachability → unchanged exporter with CPU dependencies
+→ final rename is real; art generation/validation is explicitly not tested.
+Original F-D versus new gap → mark the original defect fixed and report F-E
+separately → do not misdescribe truthful uncertainty as a false exit receipt.
+
+OUT OF SCOPE FOUND / LIMITS
+No art-model or visual-grade findings. Native capture, blind grading, whole-task
+acceptance, T07 adoption, CI, main integration and merge authorization remain
+outside this source-only review. No push, PR, merge, comment, install, node_modules
+mutation, orchestration edit or screenshot cleanup. Scratch fake dependency files
+are local fixtures, not changes to the linked repository node_modules. One Vitest
+worker, one serial Python test harness; never more than two test workers. Existing
+host Blender processes were merely present in the runner's ps resource snapshot;
+none was launched, controlled, or terminated by this review.
+
+ARTIFACTS
+REPORT.txt — this immutable review.
+commands.json and *-command.json — exact test/verification argv, exits and logs.
+red/, green/ — fresh baseline/corrected actual runner evidence.
+adverse.py, adverse-results.json, adverse/ — additional controls and first F-E RED.
+exporter_boundary.py, exporter-boundary-results.json, exporter-boundary/ — exact
+caller publication confirmation; independent second F-E RED.
+before.json, after.json, provenance.json, reuse-proof.json, verification.json —
+pins, full protection rows, unchanged payload proof and retained inventory.
+terminal-process-check.json — final owned-process observation.
+SHA256SUMS.json — sealed report/scripts/results inventory; generated after report.
