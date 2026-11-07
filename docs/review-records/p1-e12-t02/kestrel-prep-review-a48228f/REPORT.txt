@@ -1,0 +1,48 @@
+Kestrel density preparation review
+P1.E12.T02 preparation only. Independent, nonvisual, SOURCE/CPU.
+
+VERDICT: PASS
+Scope: the handoff claims "15 analytic fixtures, assets unchanged, compressed-export checker not run."
+This PASS does not accept the hull. Export density remains REVISE. Heavy source correction remains HELD.
+No visual, runtime, native, GPU, Blender, capture, or new export qualification.
+
+Pins
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+Branch: task/P1-E12-T02-kestrel-r3
+HEAD: a48228f39a6adaf58b07d9606f1aa1dd70112d1f
+Tree: 6bbb61073deb18e1bb0fbf1cecff2b178cde10ae
+Subject: P1.E12.T02: record Kestrel density preparation C2 handoff
+Parent content: 6222dc2ab11ad04b9bc074c502e2442a78b12425
+Content tree: ba26c04b9818f3a67c0ee85d9aa2b5b00b3e759d
+Reviewed base: f80a78c02ffe0ba158691fedc9a57ced2d56a885
+Base tree: 8fecccea75d2d682890bb3d0fbd91f8fc7689ae4
+Porcelain after this review: empty. Ignored .lane.lock is present and empty (0 bytes), matching the seal exclusion. It was not modified.
+
+Handoff read: packages/tools/blender/hulls/kestrel/density-prep/HANDOFF-C2.txt
+sha256 881963468fa3b3e7f0ca3b4f961fbb77d9437d8dfed675f314b494a8748a96a6 (16179 bytes).
+The audit path docs/review-records/p1-e12-t02/kestrel-density-prep-a48228f/HANDOFF-C2.txt is not in this commit. On parent 8026dc553 it is a byte-identical retention from 1ab1139fe, and that directory has no verdict. This file is the verdict.
+
+Claims checked
+1. Fifteen analytic fixtures. fixtures.cjs defines 15 test() cases. Committed runs/fixtures-final/child.log lists the same 15, all PASS, and its receipt mode is fixtures, exit 0. Reviewer re-executed a /tmp copy with node --single-threaded --max-old-space-size=96. Result: PASS, 15/15, modules were only fixtures.cjs and density_math.cjs, no node_modules. Output: fixtures-rerun.json in this directory. The cases are synthetic triangles. They do not decode kestrel.glb or measure the saved blend.
+2. Assets unchanged. git diff --name-only f80a78c02..a48228f39 is 49 additions, all under packages/tools/blender/hulls/kestrel/density-prep/. Nothing outside that directory changed.
+   Blend assets/blend/hulls/kestrel.blend: 78976965 bytes, sha256 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65.
+   Export packages/client/public/models/hulls/kestrel.glb: 20931568 bytes, sha256 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb.
+   Both match pins.json. Opened neither in Blender.
+   Packet assets/renders/hulls/kestrel-round3-current/packet-seal.json matches 5bbd23ae990b0c585bdf77cd1a8290c6f3031bf3c0cbcc0c21dd5141b360e090. All 213 packetFiles and 23 toolFiles match that seal. The 39 PNG paths match provenance.json, hashes match, encoded 67408889 bytes, header-derived RGBA 250374400 bytes. No PNG pixels were decoded. Ten copied independent records match provenance. No candidate/ files exist.
+3. Compressed-export checker not run. runs/ has 11 receipts and no mode measure. There is no runs/**/density.json. syntax-final is node --check on measure_export.cjs, exit 0. measure_export.cjs throws HOLD before any mesh-codec import unless argv is --parent-released-export-decode. No committed command passes that flag. Reviewer node --check also exited 0 and did not execute the file. Reviewer did not run run.py measure, Blender, export, or capture.
+
+Seal of the preparation payload: preparation-seal.json sha256 b9aeae294c2d29a481527b28fbb9ce73c3a0e4ae559ed823693b0d41aa2fde9d. Its 47 listed files were rehashed: 0 mismatches, 1658364 payload bytes. HANDOFF-C2.txt and the seal itself are excluded, as declared. heavyExecution HELD, savedSourceDensity NOT MEASURED, newActualExportMeasurement NOT RUN, visualGrade NOT RUN.
+
+Retained density, not remeasured
+Copied evidence/independent/REPORT.txt, sealed sha256 c41e8fe3cb6cbe7a7eeb99152439bf8b6a08130abcac43af2e02e195aec71c90, still says C.2 VERDICT: REVISE. Hull area-equivalent densities recorded there are 113.252590 base, 113.254070 damaged, and 113.515282 husked px/m. This review did not decode the GLB again and does not replace that REVISE. Parent plan line 338 on 8026dc553 already states the same limit. Saved-blend density remains NOT MEASURED.
+
+Notes that do not change the verdict
+Early receipts fingerprint measure_export.cjs as 8fc1296d8614ef3b25a7f805014264d1d19cd0f20f42943204c4e30eada171a6. The sealed file and the final receipts use be926550d416c2974dbd5e8241e857c15d169c9fed54fcdc3b97b267f779cca1. That is retained draft history. The sealed bytes match the final fingerprint.
+Copied contract-evidence.txt keeps its original trailing whitespace. Its hash matches provenance. No historical receipt was rewritten as PASS.
+Lark was not reviewed. Read-only pin of t3-7d211d96 at check time: 6445c7ec07aa2a08b722aeca22d56132154ea32c, porcelain empty. This lane did not open that checkout or start Blender.
+
+Not done
+No mutation, push, PR, merge, or Trunk comment. No heavy correction. No new density number.
+
+Next concrete step
+Leave the heavy source correction held. Do not run Blender, the exporter, or run.py measure on this checkout while the Blender reviewer is on Lark 6445c7ec. A later parent release is required before any saved-blend edit or compressed-export measurement. Until a new measurement exists, about 113 px/m stays REVISE.
