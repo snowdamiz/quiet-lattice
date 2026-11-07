@@ -1,0 +1,196 @@
+[
+  {
+    "label": "eslint",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/eslint/bin/eslint.js",
+      "packages/tools/playwright.config.ts",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.762,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "focused-cpu",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/node_modules/vitest/vitest.mjs",
+      "run",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--passWithNoTests=false",
+      "--no-cache",
+      "--fsModuleCachePath",
+      "/private/tmp/symbiotic-setup-fix-ycyeap91/vitest-cache",
+      "--configLoader=runner",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile",
+      "/private/tmp/symbiotic-setup-fix-ycyeap91/focused-cpu.json",
+      "packages/tools/src/gates/removed.test.ts",
+      "packages/tools/src/smoke/harness-imports.test.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/client/src/Game.test.js",
+      "packages/client/src/gameplay/Fauna.test.js",
+      "packages/client/src/net/abilities.test.js",
+      "packages/client/src/remote/RemoteEntities.test.js",
+      "packages/client/src/ui/HUD.test.js",
+      "packages/client/src/universe/Universe.test.js",
+      "packages/server/src/abilities/eligibility.test.ts",
+      "packages/server/src/abilities/retirement.test.ts",
+      "packages/server/src/abilities/symbiotic.test.ts",
+      "packages/server/src/abilities/thermal.test.ts",
+      "packages/server/src/events/service.test.ts",
+      "packages/server/src/meters/suit.test.ts",
+      "packages/server/src/zones/regen.test.ts",
+      "packages/server/src/zones/wake.test.ts",
+      "packages/server/src/admin/place.test.ts"
+    ],
+    "exit": 0,
+    "seconds": 14.351,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "format",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/prettier/bin/prettier.cjs",
+      "--check",
+      "packages/tools/playwright.config.ts",
+      "packages/tools/src/smoke/online.ts",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic-private.ts",
+      "packages/tools/src/smoke/symbiotic.config.ts"
+    ],
+    "exit": 0,
+    "seconds": 0.308,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "inventory",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "packages/tools/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "packages/tools/src/smoke/symbiotic.config.ts",
+      "--list"
+    ],
+    "exit": 0,
+    "seconds": 1.081,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "node-version",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--version"
+    ],
+    "exit": 0,
+    "seconds": 0.021,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "setup-green",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "-t",
+      "live arena setup",
+      "--configLoader=runner",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--no-cache",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/private/tmp/symbiotic-setup-fix-ycyeap91/setup-green.json"
+    ],
+    "exit": 0,
+    "seconds": 0.859,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "setup-red",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "-t",
+      "live arena setup",
+      "--configLoader=runner",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--no-cache",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/private/tmp/symbiotic-setup-fix-ycyeap91/setup-red.json"
+    ],
+    "exit": 1,
+    "seconds": 1.432,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "tools-typecheck",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/tools"
+    ],
+    "exit": 2,
+    "seconds": 3.585,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "tools-typecheck-final",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/tools"
+    ],
+    "exit": 0,
+    "seconds": 3.362,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  },
+  {
+    "label": "whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.021,
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "networkBoundary": "/private/tmp/symbiotic-setup-fix-ycyeap91/boundary.mjs"
+  }
+]

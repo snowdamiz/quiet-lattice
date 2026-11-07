@@ -1,0 +1,90 @@
+{
+  "packet": "/private/tmp/space-symbiotic-live-next-5lftum9v",
+  "sourceHead": "d3985b2e3c52e3f9b28771b0b4dea143be20d9b1",
+  "sourceTree": "4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63",
+  "status": "FAILED during setup before companion work",
+  "exit": 1,
+  "wallSeconds": 26.391,
+  "timedOut": false,
+  "retryPerformed": false,
+  "cleanupCompleted": true,
+  "gpuReleased": true,
+  "cleanupReceipt": {
+    "databaseAbsent": true,
+    "redis8Empty": true,
+    "deletedKeys": [
+      "qa:owner:20261107_074400_42380301",
+      "astra:shard:main:world"
+    ],
+    "noOwnedProcesses": true,
+    "noPrivateApplicationClients": true,
+    "profilesAndTempAbsent": true,
+    "containers": [
+      {
+        "id": "66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb",
+        "name": "space-t16-pg-20261106",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53055"
+            }
+          ]
+        }
+      },
+      {
+        "id": "d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4",
+        "name": "space-t16-redis-20261106",
+        "health": "healthy",
+        "ports": {
+          "6379/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "53058"
+            }
+          ]
+        }
+      }
+    ],
+    "gpuReleased": true,
+    "archiveScreenshotsUntouched": true
+  },
+  "stats": {
+    "startTime": "2026-11-07T07:44:15.127Z",
+    "duration": 25752.998,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "rootErrors": [
+    {
+      "message": "Testing stopped early after 1 maximum allowed failures."
+    }
+  ],
+  "pngCount": 0,
+  "tests": [
+    {
+      "status": "failed",
+      "duration": 22150,
+      "retry": 0,
+      "errors": [
+        {
+          "location": {
+            "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts",
+            "column": 42,
+            "line": 104
+          },
+          "message": "Error: {\"ok\":false,\"error\":\"invalid\",\"message\":\"Dev Bondffbf was disconnected but not moved: pose: board_range: on foot with no ship of its own here\"}\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[32m-   \"ok\": true,\u001b[39m\n\u001b[31m+   \"ok\": false,\u001b[39m\n\u001b[2m  }\u001b[22m\n\n  102 | async function place(character: string, arena: ReturnType<typeof selectArena>, pose: string, frame = String(arena.body)) {\n  103 |   const result = await online.admin({ cmd: 'teleport', character, system: arena.system, frame, pose, mode: 'foot' });\n> 104 |   expect(result, JSON.stringify(result)).toMatchObject({ ok: true });\n      |                                          ^\n  105 | }\n  106 |\n  107 | async function spawn(arena: ReturnType<typeof selectArena>, species: number, at: Vec3) {\n    at place (/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts:104:42)\n    at /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-online.spec.ts:274:7"
+        }
+      ],
+      "attachmentNames": [
+        "symbiotic-evidence",
+        "server-output",
+        "error-context",
+        "error-context"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+from pathlib import Path
+import os,subprocess,json,time,sys,signal
+root=Path(Path('/tmp/symbiotic-setup-evidence-root-2a0b7521').read_text())
+repo=Path('/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521')
+node='/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node'
+label=sys.argv[1]
+if label=='original-red': args=[node,str(repo/'node_modules/vitest/vitest.mjs'),'run','--config',str(root/'controls.config.mjs'),'--configLoader=runner','--maxWorkers=2','--no-file-parallelism','--passWithNoTests=false','--no-cache','--reporter=default','--reporter=json','--outputFile',str(root/(label+'.json'))]
+else: args=json.loads(sys.argv[2])
+env={k:os.environ[k] for k in ['HOME','USER','LANG','LC_ALL'] if k in os.environ}
+env.update(PATH=str(Path(node).parent)+':/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin',NODE_OPTIONS='--import '+str(root/'boundary.mjs'),TMPDIR=str(root/'tmp'),NODE_COMPILE_CACHE=str(root/'cache'),CI='1',NO_COLOR='1',COREPACK_ENABLE_NETWORK='0')
+(root/(label+'-command.json')).write_text(json.dumps(args,indent=2)+'\n')
+t=time.monotonic()
+with (root/(label+'.log')).open('w') as log:
+ p=subprocess.Popen(args,cwd=repo,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+ try: code=p.wait(timeout=120)
+ except subprocess.TimeoutExpired:
+  os.killpg(p.pid,signal.SIGKILL);p.wait(timeout=10);code=124
+result={'exit':code,'seconds':round(time.monotonic()-t,3),'node':node,'cwd':str(repo),'networkBoundary':str(root/'boundary.mjs')}
+(root/(label+'-result.json')).write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps(result));print((root/(label+'.log')).read_text()[-2500:])

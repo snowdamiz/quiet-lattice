@@ -1,0 +1,67 @@
+TASK: P1.E07.T07 + P1.E08.T09 — companion QA setup correction after the d3985b2 live attempt
+STATUS: DONE (source correction and CPU/static checks). FRESH SOURCE REVIEW AND RUNTIME EXECUTION PENDING.
+
+OUTCOME / SCOPE
+Corrected the fixture's invalid cross-system foot placement, and its later ground setup, for BOTH clients through existing admin teleport and normal client disembark input. The character travels aboard its owned ship, first docked at the target Waystation, then landed on the chosen world's dry ground at shared gear clearance. The fixture uses real KeyF input and waits for authoritative foot snapshots before any companion work. No production code or authority was changed, no parked pose/companion/health/outcome was injected, and errors still fail the test.
+Only packages/tools/src/smoke/symbiotic-online.spec.ts and symbiotic-private.test.ts changed. The new report directory is the only subsequent addition. No original task/main worktree, orchestration document or old evidence was edited.
+
+EXACT PROVENANCE
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Git branch: t3/P1-E07-T07-T09-live-qa
+Base HEAD: d3985b2e3c52e3f9b28771b0b4dea143be20d9b1
+Base tree: 4b6db1cab2ba0016c8dcff0b20cdfb07638e8f63
+Corrected SOURCE HEAD: c7e713dd28dc611eca3c6848ba143e198add058d
+Corrected SOURCE tree: 3aa653b912c9e1ccd4a812fee2492321d91c1ea0
+This evidence follows in a report-only commit. The final handoff supplies its full HEAD/tree; a report cannot contain its own commit hash.
+Acid freshly confirms attached=true at this path. Its cached branch metadata retains lowercase t3/p1-e07-t07-t09-live-qa; Git remains on the existing intended capitalization. No binding or branch change was made. Conflict resolutions: NONE.
+
+OBSERVED LIVE FAILURE (PRESERVED, NOT RERUN)
+Parent packet: /private/tmp/space-symbiotic-live-next-5lftum9v
+Base source independent R2: /private/tmp/symbiotic-r2-d3985b2-y4j6rdho/review.txt — SOURCE/CPU PASS on d3985b2 only, read in full and retained.
+Actual live child exit 1, wall 26.391 s, timedOut=false, one failed test, retry0, skipped0, PNG0. The failure at old spec line104 place(), called at274, was:
+{"ok":false,"error":"invalid","message":"Dev Bondffbf was disconnected but not moved: pose: board_range: on foot with no ship of its own here"}
+The Playwright attachment contains unlocked/bought/equipped skills and selected arena system31 / seed1262081916 / body7 / frame1262081916:7, but no companion outcome. The reporter's additional root error is the configured stop after one maximum failure; it is retained in prior-live-failure.json. No gameplay success, pixels or runtime no-skip PASS is inferred from that failed attempt.
+The packet's cleanup receipts record cleanupCompleted=true, gpuReleased=true, databaseAbsent=true, redis8Empty=true, noOwnedProcesses=true, noPrivateApplicationClients=true, profilesAndTempAbsent=true and unchanged archive screenshots. These are the parent's retained observations, not fresh service inspections performed here. All 699 existing files across the failed packet and R2 review root were hashed before work and rechecked unchanged. No ticket, claim or runtime was reused.
+
+ROOT CAUSE / REAL CONTRACT
+1. The fixture's old place() unconditionally sent mode:'foot', even when its caller asked for pose:'docked', frame:'station'. resolvePlacement honors the explicit mode override, so the result was a walker pose with no parked ship.
+2. AdminService.teleport resolves that request. Across systems, moveAcross uses CharacterPersistence.edit to save the destination POSE, leaves the old zone and closes the old socket for a legitimate reconnect. The edit runs poseComponent.check -> persistence.poseProblem -> MovementAuthority.poseProblem. A foot pose requires an owned parked ship in the same frame. The new POSE contains no parked ship, so board_range is correct; moveAcross reports that it disconnected without moving. This is a fixture error, not a reason to bypass production validation.
+3. Within a zone, admin moveInZone re-seats movement authority by remove/add and sends a correction. A direct foot teleport does not establish a parked ship there. A landed/docked mover, however, records its own resting ship in MovementAuthority.add. An accepted normal transition to foot retains that ship; poseComponent.save reads parkedOf when saving the walker.
+4. The normal client path is Game.handleInteractions(KeyF) -> Game.exitShip -> predicted input -> movement authority. Game.placeFromServer turns a landed correction into game.mode='ship' with ship.mode='landed'; the wire mode at a Waystation is docked, and on the world it is landed. The dev #foot scenario runs its initial disembark once, not on every reconnect.
+Read/traced files: server admin/place.ts and service.ts, persistence/components.ts and edit path, sim/movement/authority.ts/world.ts/testing.ts, client main.js, Game.js, entities/Ship.js and net/pose.js. Product files remain unchanged.
+
+FIXTURE CHANGE
+- place() sends docked for the docked preset and landed for the ground coordinates. Both client calls still use the normal authenticated admin channel and require ok:true, preserving the complete rejection in the assertion message.
+- Both cross-system arrivals require the target server/client system, joined net, ship mode, landed ship at the station and an authoritative docked entity.
+- Existing broad dry-patch search and tangent offsets remain. Owner/observer ship positions add SHIP_GEAR_HEIGHT from shared ship rules; companion spawn stays at its existing ground position. No gameplay policy or measured behavior was simplified.
+- Both ground arrivals require an authoritative landed entity in the target frame and the corresponding client ship there. The fixture presses F until the normal client becomes foot, releases F in finally, then requires the server's foot snapshot, matching frame, grounded player and completed camera transition. It records and checks the same landed/foot player ID, kind, frame and positive foot HP in bounded arrivals evidence.
+- The COMPLETE source suffix from the first fauna-ready wait through Bond eligibility/cast, actual instance/pick proof, follow, real health-loss combat, meaningful retirement, screenshots, error checks and finally teardown is byte-identical to d3985b2. assertion-preservation.json records both hashes. R1 online cleanup code and all private routing/config/hang controls are unchanged.
+
+REGRESSION RED / GREEN
+Six new cases in the existing symbiotic-private.test.ts execute the ACTUAL place() source declaration extracted with the TypeScript parser and transpiled without changing its body. The transport collects its emitted command; AdminCommand.parse and resolvePlacement process that command, then real persistence/movement authority judges it. No test-authored replacement of the acceptance predicate is used.
+- Exact negative control: system31 station/docked forced to foot reproduces 'board_range: on foot with no ship of its own here' through persistence.poseProblem.
+- Owner and observer cross-system commands must each produce a restorable docked ship pose.
+- Owner and observer ground commands must each be legal, create an owned parked ship, accept a foot input at the established CPU movement harness's Game.exitShip-equivalent feet, retain that parked ship and pass restoration validation. Ground is planned synchronously through the existing planHere CPU source; no planner/server process is launched.
+- A refused admin reply must still reject place() with board_range visible.
+Before implementation, the four positive owner/observer setup cases FAILED with board_range and the two negative controls passed. After correction, all six PASS. The 38 older cases were filtered out only in these targeted RED/GREEN runs; they were all executed and passed in the final unfiltered suite. The CPU test does not execute HTTP, a DB persistence transaction, the native client or actual KeyF handling; those remain live gates. It exercises the exact rejected placement/pose boundary and the real ship-ownership/movement acceptance contract cheaply.
+
+VALIDATION
+Pinned Node v22.23.3, direct installed CLI invocation, no Corepack/package install. Network/service denial is installed before imports. Commands use maxWorkers=2 and no file parallelism, with 120s outer child bounds and observed exits; no bound was reached. Temporary output/cache files stay under /private/tmp/symbiotic-setup-fix-ycyeap91.
+- Final focused CPU: PASS 389/389 across18 files, 0 failures/pending/todo. All prior378 names are retained (348 original +30 R1); add6 new setup regressions plus5 previously existing admin placement cases newly included in this run. Do not add separate targeted runs again. No full unit suite rerun.
+- Tools typecheck: PASS. Initial typecheck correctly rejected the unannotated evolving arrivals array; explicit EntityState evidence typing fixed it. Both outputs retained. Imports also typecheck the referenced authority source; no product edit was needed.
+- Scoped six-file ESLint and Prettier: PASS. git diff --check: PASS.
+- Dedicated Playwright --list only: 1 required test /1 file, no hooks or launch. Dedicated config/no-skip behavior and hang-aware fixture import remain unchanged; 22 existing import/inventory CPU checks passed. Actual runtime skip count on corrected source is not established.
+- Node version observed v22.23.3. Full argv and actual child result codes are in commands.json; readable outputs and JSON are in evidence/. The runner reports child exits in JSON (its wrapper does not propagate failures), so status is based on recorded child results, not wrapper success.
+
+PRESERVATION / PATCH PARITY
+Fresh stable patch comparisons: all five original reviewed/integrated patch IDs still equal. All55 reviewed product-file blobs and20 protected objects match the integration and reviewed R1 source. Current T10/T16, persistence/skills/Exo-suit, Engine, render/material/model pipeline, assets/public/Blender, package manifests/lockfile and orchestration docs remain unchanged. No asset tree was hydrated.
+All125 files in old preparation and R1 evidence directories remain byte-identical to d3985b2. The prior failed live packet and independent R2 review are unchanged by hashes. manifest.json contains all comparisons, source file SHA256/blob IDs and input/old evidence hashes. No old record was rewritten to describe the new source as already reviewed or live-passing.
+
+NEXT QA / OWNERSHIP
+Fresh independent source review is required. Parent schedules the next one-shot Metal test with a NEW admission ticket, fresh private53055 SQL namespace and exclusively claimed Redis8 at53058. Do not reuse consumed ticket/claim20261107_074400_42380301. The exact future command and fresh claim/guard/provenance requirements are in future-qa.txt; no command there has been executed here.
+Existing bounds remain: workers1/retries0/repeat1/maxfailures1, test300s/setup120s/global420s, outer450s plus20s owned drain, both contexts guarded by15s close grace, Vite close10s/server TERM10s+KILL5s, SQL30s/migration60s, health60s with1s fetch, admin10s/clock5s and screenshots15s. The new F-down wait is10s with guaranteed key-up attempt; subsequent snapshot/camera readiness uses the existing30s bound. These are configured limits, not real runtime teardown proof from this correction.
+Parent must retain identity/route/claim receipts and verify exact descendants/listeners/profile/SQL/Redis sessions gone before removing only the fresh owned namespace/keys. No FLUSH, Redis7, shared-service reset or screenshot cleanup. Preserve all partial/failure outputs and the test's maximum8 actual PNG attachments when they eventually exist; no raw frame sequence.
+No browser/GPU/server/DB/native live retry was launched in this source correction. No push, PR or merge. No concrete unsupported companion behavior was established: the observed failure was setup before that behavior. A future failure must be reported at its actual boundary, not hidden or bypassed. Runtime outcome remains pending.
+
+ARTIFACTS
+Appendix-C.2.txt; manifest.json; verification-summary.json; test-inventory.json; assertion-preservation.json; commands.json; prior-live-failure.json; future-qa.txt; evidence/ outputs and JSON, exact raw stdout map gzip, runner/boundary and prior independent R2 review; SHA256SUMS. Readable outputs trim only terminal trailing whitespace; raw-stdout.json.gz retains the original output text.

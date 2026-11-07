@@ -1,0 +1,24 @@
+{
+  "baselineCount": 378,
+  "retained": 378,
+  "total": 389,
+  "addedSetupTests": [
+    "live arena setup respects owned ship authority does not hide a refused admin placement",
+    "live arena setup respects owned ship authority lands observer with an owned ship that remains restorable after disembarking",
+    "live arena setup respects owned ship authority lands owner with an owned ship that remains restorable after disembarking",
+    "live arena setup respects owned ship authority moves observer across systems in a restorable ship pose",
+    "live arena setup respects owned ship authority moves owner across systems in a restorable ship pose",
+    "live arena setup respects owned ship authority reproduces the live cross-system foot rejection at the real persistence pose check"
+  ],
+  "existingAdminPlaceAddedCoverage": [
+    "teleport placements docks at the Waystation",
+    "teleport placements puts a ship in orbit above a body or out from the Waystation",
+    "teleport placements refuses frames the system does not have",
+    "teleport placements stands a character on the drawn ground of a rocky body, on foot",
+    "teleport placements takes a position in the frame as metres, in a ship unless a mode is given"
+  ],
+  "files": 18,
+  "failed": 0,
+  "pending": 0,
+  "todo": 0
+}

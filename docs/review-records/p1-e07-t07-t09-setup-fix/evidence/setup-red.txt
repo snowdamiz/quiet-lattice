@@ -1,0 +1,108 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-private.test.ts (44 tests | 4 failed | 38 skipped) 100ms
+   ↓ Symbiotic smoke private routes (no connections) (8)
+     ↓ keeps the exact preclaimed namespace and Redis8
+     ↓ refuses missing, default or differently owned routes: {}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:55432/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521?host=elsewhere","REDIS_URL":"redis://127.0.0.1:53058/8"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:53058/7"}
+     ↓ refuses missing, default or differently owned routes: {"SYMBIOTIC_QA_CLAIM":"20261107_2a0b7521","DATABASE_URL":"postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_20261107_2a0b7521","REDIS_URL":"redis://127.0.0.1:56379/8"}
+   ↓ R1 online lifecycle (8)
+     ↓ passes borrowed routes to migration and never creates/drops them
+     ↓ preserves the primary setup failure when server termination fails
+     ↓ closes the created handle after listen fails and preserves listen error identity
+     ↓ retains listen failure plus both owned stop errors
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=false)
+     ↓ attempts all owned cleanup after Vite close fails (synchronous=true)
+     ↓ cleans only its own scratch database after migration fails
+     ↓ retains both bounded close failures and attempts KILL after TERM timeout
+   ↓ R1 live lifecycle predicates (22)
+     ↓ accepts only the fresh identified live observer/enemy control
+     ↓ rejects corpse plus missing observer
+     ↓ rejects missing observer
+     ↓ rejects dead observer
+     ↓ rejects different observer identity
+     ↓ rejects different observer frame
+     ↓ rejects different observer kind
+     ↓ rejects dead enemy
+     ↓ rejects enemy corpse mode
+     ↓ rejects different enemy species
+     ↓ rejects different enemy frame
+     ↓ rejects different enemy kind
+     ↓ rejects stale snapshot
+     ↓ rejects disconnected observer
+     ↓ rejects owner retained
+     ↓ rejects companion snapshot retained
+     ↓ rejects companion remote retained
+     ↓ rejects companion instance retained
+     ↓ accepts a living target with actual source-attributed health loss
+     ↓ rejects health loss with no companion hit
+     ↓ rejects attack phase without health loss
+     ↓ rejects a corpse after a credited killing hit
+   ❯ live arena setup respects owned ship authority (6)
+     ✓ reproduces the live cross-system foot rejection at the real persistence pose check 12ms
+     × moves owner across systems in a restorable ship pose 39ms
+     × moves observer across systems in a restorable ship pose 12ms
+     × lands owner with an owned ship that remains restorable after disembarking 26ms
+     × lands observer with an owned ship that remains restorable after disembarking 6ms
+     ✓ does not hide a refused admin placement 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > live arena setup respects owned ship authority > moves owner across systems in a restorable ship pose
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > live arena setup respects owned ship authority > moves observer across systems in a restorable ship pose
+AssertionError: expected 'board_range: on foot with no ship of …' to be null
+
+- Expected:
+null
+
++ Received:
+"board_range: on foot with no ship of its own here"
+
+ ❯ src/smoke/symbiotic-private.test.ts:419:39
+    417|   it.each(['owner', 'observer'])('moves %s across systems in a restora…
+    418|     const at = await placement(character, 31, 7, 'docked', 'station');
+    419|     expect(savedPoseProblem(at, 1e6)).toBeNull();
+       |                                       ^
+    420|     expect(at).toMatchObject({ system: 31, mode: 'docked' });
+    421|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > live arena setup respects owned ship authority > lands owner with an owned ship that remains restorable after disembarking
+ FAIL  |@astra/tools| src/smoke/symbiotic-private.test.ts > live arena setup respects owned ship authority > lands observer with an owned ship that remains restorable after disembarking
+AssertionError: expected { rule: 'board_range', …(4) } to be null
+
+- Expected:
+null
+
++ Received:
+{
+  "allowed": 0,
+  "detail": "on foot with no ship of its own here",
+  "measured": Infinity,
+  "rule": "board_range",
+  "unit": "m",
+}
+
+ ❯ src/smoke/symbiotic-private.test.ts:428:66
+    426|     const movement = new MovementAuthority({ zone: 'setup-cpu', system…
+    427|     const profile = { ship: LARK, characterId: character, accountId: c…
+    428|     expect(movement.poseProblem(at.pose, at.mode, profile, 1e6)).toBeN…
+       |                                                                  ^
+    429|     movement.add(1, at.pose, at.mode, profile, 1e6);
+    430|     expect(movement.parkedOf(1)).toEqual(at.pose);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed | 38 skipped (44)
+   Start at  02:56:47
+   Duration  1.10s (transform 56%, import 34%, tests 10%)
+
+JSON report written to /private/tmp/symbiotic-setup-fix-ycyeap91/setup-red.json
