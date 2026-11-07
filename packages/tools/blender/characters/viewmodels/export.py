@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from artlib import bake, core, export, lods, rules
 from evidence import PEOPLES, begin_attempt, fail_attempt, fingerprint, paths, publish_receipt, sha
 from viewmodel_checks import validate_loaded
+from export_checks import validate_export
 
 ROOT = Path(__file__).resolve().parents[5]
 
@@ -35,6 +36,12 @@ def validate_pair(root, people, report_dir):
         raise ValueError(f'{people}: source validation failed')
     validate_loaded(people, report_dir / f'{people}-rig.json')
     model = core.validate_path(rules.load(), files['export'], family='characters', source=files['source'])
+    if model.status == 'PASS':
+        try:
+            validate_export(files['export'], people, model.assets)
+            model['naming'].ok(f'fp_{people}', 'requested viewmodel scene, variant, materials, skin joints and markers match')
+        except ValueError as error:
+            model['naming'].fail(f'fp_{people}', f'viewmodel export contract: {error}')
     core.write_and_print(model, core.report_path('characters', files['export'], report_dir))
     if model.status != 'PASS':
         raise ValueError(f'{people}: export validation failed')

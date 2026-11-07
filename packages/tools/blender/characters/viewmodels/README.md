@@ -63,6 +63,15 @@ on source and compressed export. It rejects all bake and LOD-generation attempts
 It never imports authoring scripts, saves a source, or rebuilds geometry. Nested
 sources are passed explicitly so the three accepted body exports are not touched.
 
+`export_checks.py` also checks the actual saved GLB against the requested people.
+The generic character report's asset/variant and the active scene's people, root,
+LOD0 and mesh variants must agree. Used materials must be the required Skin/Bio/
+people-specific tool set with complete 2k PBR maps. Every mesh must use the expected
+35-joint skin, with reachable hand/digit chains and Muzzle/Grip markers attached to
+the right hand. Both validate-only and post-export validation run this check before
+the final export report or receipt can PASS. A valid other-people GLB is a failure even
+if the generic character gates pass.
+
 Use an existing local KTX 4.4.2 binary. One Blender process at a time; two threads,
 one codec job, a finite deadline and process-group cleanup are enforced by the runner:
 
@@ -108,6 +117,7 @@ pnpm exec eslint packages/client/src/entities/Multitool.js packages/client/src/e
 pnpm exec prettier --ignore-path /dev/null --check packages/client/src/entities/Multitool.viewmodels.test.js packages/client/src/entities/Multitool.materials.test.js packages/client/test/characters/viewmodelConsumer.mjs packages/tools/blender/characters/viewmodels/README.md
 python3 packages/tools/blender/characters/viewmodels/test_pipeline.py
 python3 packages/tools/blender/characters/viewmodels/test_inventory.py
+python3 packages/tools/blender/characters/viewmodels/test_export_contract.py
 python3 -m compileall -q packages/tools/blender/characters/viewmodels
 ```
 
@@ -128,6 +138,17 @@ run `test_saved_failures.py` through `run_cpu.py` with the usual Blender flags a
 `-- /absolute/new/scratch-directory` outside the repository. It saves a changed
 source only in that scratch directory, never over a production source. The
 revision's commands, failure tails and evidence archives are in `REVISION-R1.md`.
+
+`test_saved_pairs.py` runs all nine actual source/export pairs through the real
+Blender validator, receipt and inventory paths in fresh scratch. It tests both
+validate-only and post-export paths; the latter injects delivery of an existing
+GLB at `export_one` so no geometry or textures are regenerated. Use the bounded
+runner with a 600-second deadline and `-- /absolute/new/scratch-directory`.
+Each mode must accept three matching pairs and reject six cross-pairs, preserving
+history and removing only failed destinations. The production consumer fixture's
+`pair:<requested>:<exported>` cases independently decode all nine pairs with the
+unchanged runtime loader. `REVISION-R2.md` records the pinned red reproduction,
+fresh matching receipts and the comparison between validator and consumer results.
 
 ## Authoring history and inspection
 

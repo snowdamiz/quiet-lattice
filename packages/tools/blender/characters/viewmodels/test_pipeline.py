@@ -187,7 +187,9 @@ class ArtifactTests(unittest.TestCase):
         artlib.export = types.SimpleNamespace(parse=lambda args: None, export_one=reject)
         checks = types.ModuleType('viewmodel_checks')
         checks.validate_loaded = reject if boundary == 'validation' else lambda *args: None
-        with patch.dict(sys.modules, {'bpy': bpy, 'artlib': artlib, 'viewmodel_checks': checks}):
+        export_checks = types.ModuleType('export_checks')
+        export_checks.validate_export = lambda *args: None
+        with patch.dict(sys.modules, {'bpy': bpy, 'artlib': artlib, 'viewmodel_checks': checks, 'export_checks': export_checks}):
             spec = importlib.util.spec_from_file_location('t03_export_fixture', HERE / 'export.py')
             wrapper = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(wrapper)

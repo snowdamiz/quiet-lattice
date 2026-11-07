@@ -16,6 +16,7 @@ for (const scenario of [
   'positive',
   'stale',
   'stale-partial',
+  ...['thalune', 'ixari', 'ulgani'].flatMap((requested) => ['thalune', 'ixari', 'ulgani'].map((exported) => `pair:${requested}:${exported}`)),
 ]) {
   it(`real viewmodel texture consumer: ${scenario}`, () => {
     const output = execFileSync(

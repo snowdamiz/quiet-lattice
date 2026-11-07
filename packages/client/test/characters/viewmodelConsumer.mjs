@@ -14,6 +14,7 @@ import { initTextureLoaders } from '../../src/core/Engine.js';
 import { collectResources } from '../../src/core/dispose.js';
 
 const scenario = process.argv[2];
+const pair = scenario.startsWith('pair:') ? scenario.split(':').slice(1) : null;
 const workers = [];
 globalThis.self = globalThis;
 globalThis.ProgressEvent = class {
@@ -94,7 +95,8 @@ globalThis.fetch = async (request, ...args) => {
       failures++;
       return new globalThis.Response('injected unavailable texture input', { status: 503 });
     }
-    let bytes = readFileSync(new URL('../../public' + path, import.meta.url));
+    const assetPath = pair && path.endsWith(`fp_${pair[0]}.glb`) ? path.replace(`fp_${pair[0]}.glb`, `fp_${pair[1]}.glb`) : path;
+    let bytes = readFileSync(new URL('../../public' + assetPath, import.meta.url));
     if (path.endsWith('fp_thalune.glb')) {
       if (scenario.startsWith('stale')) await gate;
       const fields = scenario.startsWith('partial:') ? scenario.split(':').slice(1) : scenario === 'stale-partial' ? ['Tool', 'normalTexture'] : null;
@@ -141,7 +143,7 @@ GLTFLoader.prototype.load = function (url, accept, ...rest) {
 };
 const toasts = [];
 const tool = Object.create(Multitool.prototype);
-tool.game = { build: { people: 'thalune' }, engine: { viewScene: new THREE.Scene() }, hud: { toast: (...args) => toasts.push(args) } };
+tool.game = { build: { people: pair?.[0] ?? 'thalune' }, engine: { viewScene: new THREE.Scene() }, hud: { toast: (...args) => toasts.push(args) } };
 async function until(check) {
   const deadline = Date.now() + 20000;
   while (!check() && Date.now() < deadline) await delay(5);
@@ -162,7 +164,24 @@ function active(entry) {
 
 try {
   tool.buildViewModel();
-  if (scenario.startsWith('stale')) {
+  if (pair) {
+    await until(() => !!tool.viewModel || !!tool.viewModelError);
+    assert.equal(completions.length, 1);
+    const entry = completions[0];
+    const textures = [...entry.resources].filter((r) => r.isTexture);
+    assert(textures.length > 0 && textures.every((t) => t.isCompressedTexture && t.mipmaps.length === 12));
+    if (pair[0] === pair[1]) {
+      assert(tool.viewModel && !tool.viewModelError);
+      assert.equal(toasts.length, 0);
+      active(entry);
+    } else {
+      assert.equal(tool.viewModel, null);
+      assert.equal(tool.view.children.length, 0);
+      assert.equal(tool.viewModelError?.cause.message, 'Viewmodel has an unexpected material');
+      assert.equal(toasts.length, 1);
+      retired(entry);
+    }
+  } else if (scenario.startsWith('stale')) {
     tool.game.build.people = 'ixari';
     tool.syncViewModel();
     await until(() => !!tool.viewModel);
@@ -226,6 +245,7 @@ try {
       workers: workers.length,
       completions: completions.length,
       loaderDisposals,
+      ...(pair ? { requestedPeople: pair[0], exportedPeople: pair[1], attached: !!tool.viewModel, error: tool.viewModelError?.cause.message ?? null } : {}),
       retiredResourceCounts: completions.filter((e) => e.gltf.scene !== tool.viewModel).map((e) => e.counts.size),
     }),
   );
