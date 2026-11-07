@@ -197,7 +197,8 @@ class ReadBudget:
         self.read += size
 
 
-def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda _chunk: None, before_open=lambda: None, owners=None):
+@contextmanager
+def content_descriptor(path, cap, *, expected_stamp=None, budget=None, before_open=lambda: None, owners=None):
     path = Path(path)
     budget = budget or ReadBudget(cap)
     facts = {'path': str(path), 'bytes_read': 0, 'complete': False}
@@ -217,22 +218,11 @@ def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda 
             if not stat.S_ISREG(opened.st_mode) or stamp(opened) != admitted:
                 raise Refused('Metadata descriptor differs')
             parent.verify()
-            h = hashlib.sha256()
-            remaining = before.st_size
-            while remaining:
-                chunk = os.read(fd, min(65536, remaining, budget.remaining))
-                if not chunk:
-                    raise Refused('Bound file ended before admitted length')
-                budget.charge(len(chunk))
-                remaining -= len(chunk)
-                facts['bytes_read'] += len(chunk)
-                h.update(chunk)
-                consume(chunk)
+            yield fd, before.st_size, facts
             parent.verify()
             if stamp(os.fstat(fd)) != admitted or stamp(os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)) != admitted:
                 raise Refused('Bound file changed after admitted read')
-            facts.update(complete=True, sha256=h.hexdigest())
-            return facts
+            facts['complete'] = True
     except BaseException as error:
         primary = error
         prior = getattr(error, 'facts', None)
@@ -244,6 +234,24 @@ def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda 
     finally:
         if fd is not None:
             close_owned(fd, primary)
+
+
+
+def read_content(path, cap, *, expected_stamp=None, budget=None, consume=lambda _chunk: None, before_open=lambda: None, owners=None):
+    budget = budget or ReadBudget(cap)
+    with content_descriptor(path, cap, expected_stamp=expected_stamp, budget=budget, before_open=before_open, owners=owners) as (fd, remaining, facts):
+        h = hashlib.sha256()
+        while remaining:
+            chunk = os.read(fd, min(65536, remaining, budget.remaining))
+            if not chunk:
+                raise Refused('Bound file ended before admitted length')
+            budget.charge(len(chunk))
+            remaining -= len(chunk)
+            facts['bytes_read'] += len(chunk)
+            h.update(chunk)
+            consume(chunk)
+        facts['sha256'] = h.hexdigest()
+    return facts
 
 
 def read_bytes(path, cap=METADATA_CAP, expected_stamp=None, *, before_open=lambda: None):

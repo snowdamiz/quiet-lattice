@@ -15,6 +15,7 @@ import tempfile
 sys.dont_write_bytecode = True
 from metadata import Evidence, Refused, atomic, digest, encode, failure, file_hash, ledger, snapshot, raw_facts, Directory, mkdir, copy_tree, io_deadline
 from freeze import BOUNDS, LIMITS, PURPOSE, capacity, verify_freeze
+from retained_reads import retained_reads
 
 
 def admit(ready_path, ready_hash, grant_path, grant_hash, *, verify=verify_freeze, now=time.time):
@@ -120,6 +121,10 @@ def producer_commands():
     def wrap(name, operation):
         def observed(*args, **kwargs):
             argv = args[0] if args else kwargs.get('args')
+            bootstrap = isinstance(argv, (list, tuple)) and list(argv[:2]) == ['/bin/launchctl', 'bootstrap']
+            if bootstrap:
+                # Crossing this producer is an attempted dispatch. An exception cannot prove nonregistration.
+                state['bootstrap'] = {'attempted': True, 'completion': 'unknown', 'returncode': None, 'registeredMayExist': True}
             try:
                 value = operation(*args, **kwargs)
             except BaseException as error:
@@ -129,8 +134,9 @@ def producer_commands():
                 raise
             # Detached before control returns to immutable helper write/assertion code.
             record = {'operation': name, 'argv': raw_facts(argv), 'returned': raw_facts(value)}
-            if isinstance(argv, (list, tuple)) and list(argv[:2]) == ['/bin/launchctl', 'bootstrap']:
-                state['bootstrap'] = {'returncode': getattr(value, 'returncode', None), 'registeredMayExist': getattr(value, 'returncode', None) == 0}
+            if bootstrap:
+                code = getattr(value, 'returncode', None)
+                state['bootstrap'].update(completion='returned', returncode=code, registeredMayExist=code == 0 or type(code) is not int)
             keep(record)
             return value
         return observed
@@ -152,11 +158,12 @@ def producer_commands():
 
 
 def run_owned(ready, grant_snapshot, admission_facts, helpers, *, job_factory=None):
-    with producer_commands() as producers:
-        return _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, job_factory=job_factory)
+    read_facts = []
+    with producer_commands() as producers, retained_reads(helpers, read_facts, LIMITS) as close_reads:
+        return _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, read_facts, close_reads, job_factory=job_factory)
 
 
-def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, *, job_factory=None):
+def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, read_facts, close_reads, *, job_factory=None):
     boundary, proof, stages = helpers
     binding, out = ready['binding'], Path(ready['binding']['output'])
     fallback = Path(binding['fallback'])
@@ -169,6 +176,7 @@ def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, *, jo
               'admission': admission_facts, 'historical': {'cloud03': 'FAILED', 'accepted': False}}
     terminal_at = time.monotonic() + BOUNDS['terminalMs'] / 1000
     result['terminalDeadlineMonotonic'] = terminal_at
+    result['retainedReadFacts'] = read_facts  # Owned journal survives even a pre-drain snapshot timeout.
     command_facts, command_exceptions = producers
     first_observer = None
     first_observer_facts = None
@@ -187,7 +195,14 @@ def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, *, jo
         log = job.scratch / 'capture_stdout.txt'
         if log.exists() and log.lstat().st_size > LIMITS['logBytes']:
             raise Refused('Native log cap exceeded')
-        observer.observe()
+        read_failure = None
+        try:
+            observer.observe()
+        except BaseException as error:
+            read_failure = error
+            raise
+        finally:
+            close_reads(read_failure)
         request = out / 'capture/kernel-request.json'
         release = out / 'capture/kernel-release.json'
         if request.exists() and not release.exists():
@@ -272,13 +287,20 @@ def _run_owned(ready, grant_snapshot, admission_facts, helpers, producers, *, jo
             result['secondary'].append(failure(error))
     finally:
         # Preserve returned raw/unknown controller facts before drain changes any state.
-        result['beforeDrain'] = copy.deepcopy({'allocated': allocated, 'job': getattr(job, 'state', None),
-            'observer': observer.receipt() if observer else None,
-            'scratch': str(getattr(job, 'scratch', 'UNKNOWN')), 'privateTmp': str(private_tmp) if private_tmp else None})
+        result['beforeDrain'] = {'complete': False}
         try:
-            retain('before-physical-drain.json', result['beforeDrain'])
-        except BaseException:
-            pass  # Persistence failure does not prevent the independent owned-process drain.
+            with io_deadline(max(.001, min(2, terminal_at - time.monotonic() - 32))):
+                for key, value in [('allocated', allocated), ('job', getattr(job, 'state', None)),
+                                   ('scratch', str(getattr(job, 'scratch', 'UNKNOWN'))),
+                                   ('privateTmp', str(private_tmp) if private_tmp else None)]:
+                    result['beforeDrain'][key] = copy.deepcopy(value)
+                result['beforeDrain']['observer'] = copy.deepcopy(observer.receipt() if observer else None)
+                result['beforeDrain']['retainedReads'] = copy.deepcopy(read_facts)
+                result['beforeDrain']['complete'] = True
+                retain('before-physical-drain.json', result['beforeDrain'])
+        except BaseException as error:
+            result['secondary'].append(failure(error))
+            # The detached partial facts remain; independent mandatory drain always follows.
         try:
             drain_seconds = max(.001, min(BOUNDS['drainMs'] / 1000, terminal_at - time.monotonic() - 32))
             with boundary.deadline(drain_seconds):
