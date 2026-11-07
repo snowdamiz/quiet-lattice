@@ -1,46 +1,86 @@
-"""Validate and export SAVED viewmodels, never author geometry or bake materials.
+"""Validate saved viewmodels and export, or validate the exact existing GLBs.
 
-Blender -b --factory-startup -t 2 --python-exit-code 1 -P .../export.py -- [people]
-KTX must point at an already installed local KTX binary. ART_KTX_JOBS=1.
+Blender -b --factory-startup -t 2 --python-exit-code 1 -P .../export.py --
+    [--validate-only] [thalune ixari ulgani]
+No authoring, bake, LOD generation, source save, or codec fetch is permitted.
 """
 from pathlib import Path
-import hashlib
+import argparse
 import os
 import sys
+import traceback
 
 import bpy
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from artlib import bake, export, lods, rules
+from artlib import bake, core, export, lods, rules
+from evidence import PEOPLES, begin_attempt, fail_attempt, fingerprint, paths, publish_receipt, sha
 from viewmodel_checks import validate_loaded
 
 ROOT = Path(__file__).resolve().parents[5]
 
+
 def forbidden(*args, **kwargs):
     raise RuntimeError('Viewmodel export requires saved ready geometry and packed maps; author/bake separately')
 
+
+def validate_pair(root, people, report_dir):
+    files = paths(root, people)
+    before = {key: fingerprint(path, root) for key, path in files.items()}
+    source = core.validate_path(rules.load(), files['source'], family='characters')
+    core.write_and_print(source, core.report_path('characters', files['source'], report_dir))
+    if source.status != 'PASS':
+        raise ValueError(f'{people}: source validation failed')
+    validate_loaded(people, report_dir / f'{people}-rig.json')
+    model = core.validate_path(rules.load(), files['export'], family='characters', source=files['source'])
+    core.write_and_print(model, core.report_path('characters', files['export'], report_dir))
+    if model.status != 'PASS':
+        raise ValueError(f'{people}: export validation failed')
+    return before
+
+
 def main():
-    names = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else ['thalune', 'ixari', 'ulgani']
-    assert names and all(n in ('thalune', 'ixari', 'ulgani') for n in names)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--validate-only', action='store_true')
+    parser.add_argument('people', nargs='*')
+    args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else [])
+    names = args.people or list(PEOPLES)
+    if any(name not in PEOPLES for name in names):
+        parser.error('people must be thalune, ixari or ulgani')
     os.environ['ART_KTX_JOBS'] = '1'
     bake.ensure_cycles = forbidden
     bake.bake_material = forbidden
     lods.generate = forbidden
-    report_dir = ROOT / 'assets/renders/characters/viewmodels/validation'
-    args = export.parse(['--report-dir', str(report_dir)])
+    failed = False
+    operation = 'validate-existing' if args.validate_only else 'export'
     for name in names:
-        source = ROOT / f'assets/blend/characters/viewmodels/fp_{name}.blend'
-        destination = ROOT / f'packages/client/public/models/characters/viewmodels/fp_{name}.glb'
-        before = hashlib.sha256(source.read_bytes()).hexdigest()
-        bpy.ops.wm.open_mainfile(filepath=str(source))
-        bpy.context.scene.render.threads_mode = 'FIXED'
-        bpy.context.scene.render.threads = 2
-        validate_loaded(name, report_dir / f'{name}-rig.json')
-        assert export.export_one(rules.load(), 'characters', source, destination, args)
-        assert hashlib.sha256(source.read_bytes()).hexdigest() == before
-    return 0
+        files = paths(ROOT, name)
+        report_dir, history = begin_attempt(ROOT, name, operation)
+        source_opened = False
+        try:
+            before_source = sha(files['source'])
+            core.load(files['source'])
+            source_opened = True
+            bpy.context.scene.render.threads_mode = 'FIXED'
+            bpy.context.scene.render.threads = 2
+            validate_loaded(name, report_dir / f'{name}-rig.json')
+            if not args.validate_only:
+                options = export.parse(['--report-dir', str(report_dir)])
+                if not export.export_one(rules.load(), 'characters', files['source'], files['export'], options):
+                    raise ValueError(f'{name}: saved-source export failed')
+            # Check the exact current destination bytes, including after export's move.
+            validated = validate_pair(ROOT, name, report_dir)
+            if validated['source']['sha256'] != before_source:
+                raise ValueError(f'{name}: source changed during the attempt')
+            publish_receipt(ROOT, name, report_dir, validated, operation)
+        except Exception as error:
+            failed = True
+            fail_attempt(ROOT, name, report_dir, history, error, source_opened)
+            traceback.print_exc()
+    return 1 if failed else 0
+
 
 if __name__ == '__main__':
     sys.exit(main())

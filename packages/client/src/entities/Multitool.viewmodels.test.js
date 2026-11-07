@@ -27,6 +27,18 @@ function model() {
   muzzle.name = 'Muzzle';
   muzzle.position.set(0.2, -0.16, -0.93);
   const material = new THREE.MeshStandardMaterial({ name: 'VM_thalune_Tool', emissive: '#ffe7c2', emissiveIntensity: 0.35 });
+  const maps = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'];
+  const texture = new THREE.CompressedTexture(
+    Array.from({ length: 12 }, (_, level) => ({ width: 2048 >> level, height: 2048 >> level, data: new Uint8Array(1) })),
+    2048,
+    2048,
+  );
+  for (const key of maps) material[key] = texture;
+  for (const name of ['Skin', 'Bio']) {
+    const skin = new THREE.MeshStandardMaterial({ name });
+    for (const key of maps) skin[key] = texture;
+    scene.add(new THREE.Mesh(new THREE.BoxGeometry(), skin));
+  }
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
   scene.add(right, left, mesh);
   right.add(muzzle);
@@ -179,12 +191,19 @@ describe('actual compressed viewmodel consumers', () => {
       right.rotateX(0.12);
       scene.updateMatrixWorld(true);
       expect(before.distanceTo(muzzle.getWorldPosition(new THREE.Vector3()))).toBeGreaterThan(0.01);
+      // This geometry-only decode deliberately omits textures; the production loader
+      // must reject it. Full material decoding/retirement is covered by the CPU consumer fixture.
       const t = tool(people);
-      requests[0].accept(gltf);
       const disposals = [...new Set(skins.map((m) => m.skeleton))].map((skeleton) => vi.spyOn(skeleton, 'dispose'));
-      t.game.build.people = people === 'thalune' ? 'ixari' : 'thalune';
-      t.syncViewModel();
-      for (const dispose of disposals) expect(dispose).toHaveBeenCalledOnce();
+      const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+      try {
+        requests[0].accept(gltf);
+        expect(t.viewModel).toBeNull();
+        expect(t.viewModelError).toBeTruthy();
+        for (const dispose of disposals) expect(dispose).toHaveBeenCalledOnce();
+      } finally {
+        error.mockRestore();
+      }
     });
   }
 });

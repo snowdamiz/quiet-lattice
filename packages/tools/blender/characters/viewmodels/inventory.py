@@ -4,12 +4,15 @@ import datetime
 import hashlib
 import json
 import subprocess
+import uuid
+from evidence import retire_inventory, verify_receipt
 
 ROOT=Path(__file__).resolve().parents[5]
 BASE='45c172a102f1944ff00be0b6e5006eef13fd793b'
 OUT=ROOT/'assets/renders/characters/viewmodels'
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def git(*args):return subprocess.check_output(['git',*args],cwd=ROOT,text=True).strip()
+retire_inventory(OUT, OUT / "validation/history" / ("inventory-" + uuid.uuid4().hex))
 accepted={}
 assets={}
 for person in ('thalune','ixari','ulgani'):
@@ -19,12 +22,13 @@ for person in ('thalune','ixari','ulgani'):
         actual=sha(ROOT/name);assert actual==expected,(name,actual,expected)
         accepted[name]={'sha256':actual,'bytes':(ROOT/name).stat().st_size}
     paths={'source':ROOT/f'assets/blend/characters/viewmodels/fp_{person}.blend','export':ROOT/f'packages/client/public/models/characters/viewmodels/fp_{person}.glb'}
+    receipt=verify_receipt(ROOT, person)
     rig=json.loads((OUT/f'validation/{person}-rig.json').read_text())
     assert rig['status']=='PASS' and rig['source_sha256']==sha(paths['source'])
     for ext in ('blend','glb'):
         report=json.loads((OUT/f'validation/characters__fp_{person}.{ext}.json').read_text())
         assert report['status']=='PASS' and report['summary']['fail']==0
-    assets[person]={'files':{key:{'path':str(path.relative_to(ROOT)),'sha256':sha(path),'bytes':path.stat().st_size} for key,path in paths.items()},'triangles':rig['triangles'],'bones':rig['bones'],'packed_2k_images':rig['packed_2k_images'],'axes_profile':rig['axes_profile']}
+    assets[person]={'files':receipt['files'], 'validation_receipt':{'path':str((OUT/f'validation/{person}-receipt.json').relative_to(ROOT)), 'sha256':sha(OUT/f'validation/{person}-receipt.json')},'triangles':rig['triangles'],'bones':rig['bones'],'packed_2k_images':rig['packed_2k_images'],'axes_profile':rig['axes_profile']}
 changed=git('diff',BASE,'--name-only','--','assets/renders/characters').splitlines()
 assert all(name.startswith('assets/renders/characters/viewmodels/') for name in changed),changed
 previews=sorted((OUT/'cpu').glob('*.png'))

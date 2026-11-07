@@ -26,6 +26,28 @@ const VIEWMODELS = Object.freeze({
   ulgani: '/models/characters/viewmodels/fp_ulgani.glb',
 });
 
+function validateViewModelMaterials(scene, people) {
+  const required = new Set(['Skin', `VM_${people}_Tool`, ...(people === 'ulgani' ? [] : ['Bio'])]);
+  const materials = new Set();
+  scene.traverse((object) => {
+    if (object.isMesh) for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
+  });
+  const found = new Set();
+  for (const material of materials) {
+    if (!material?.isMeshStandardMaterial || !required.has(material.name)) throw new Error('Viewmodel has an unexpected material');
+    const slots = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', ...(material.name === 'Skin' ? [] : ['emissiveMap'])];
+    for (const slot of slots) {
+      const texture = material[slot];
+      if (!texture?.isTexture || texture.image?.width !== 2048 || texture.image?.height !== 2048 || texture.mipmaps?.length !== 12 ||
+          texture.mipmaps.some((mip, level) => mip.width !== (2048 >> level) || mip.height !== (2048 >> level) || !mip.data?.byteLength)) {
+        throw new Error(`Viewmodel material ${material.name} is missing complete ${slot}`);
+      }
+    }
+    found.add(material.name);
+  }
+  if (found.size !== required.size) throw new Error('Viewmodel is missing required materials');
+}
+
 function disposeViewModel(root) {
   if (!root) return;
   const skeletons = new Set();
@@ -162,6 +184,14 @@ export class Multitool {
         if (!muzzle || !scene.getObjectByName('vm_hand_R') || !scene.getObjectByName('vm_hand_L')) {
           disposeViewModel(scene);
           fail(new Error('Viewmodel is missing its hand rig or muzzle'));
+          return;
+        }
+        // GLTFLoader can resolve successfully after an individual texture fails.
+        try {
+          validateViewModelMaterials(scene, people);
+        } catch (error) {
+          disposeViewModel(scene);
+          fail(error);
           return;
         }
         const glow = new Set();

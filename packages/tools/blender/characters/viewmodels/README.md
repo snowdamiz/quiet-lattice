@@ -27,6 +27,12 @@ are unchanged. The beam and its light follow the actual `Muzzle` node after view
 The world beam also compensates for the view pass's different field of view, keeping
 the projected muzzle aligned at both 16:9 and 21:9.
 Authored material maps and each people's emissive colour remain intact.
+Before attachment, every required Skin/Bio/tool material must have its complete
+2k PBR maps and twelve decoded mip levels. A GLTFLoader success callback with a
+failed individual texture is rejected through the existing error/toast path;
+its geometry, maps, materials and skeletons are disposed. The engine-owned KTX2
+loader remains available to other loads. Obsolete completions are retired before
+validation and cannot change the active model's error state.
 
 The source is in metres, camera at the origin, Blender +Y forward (+Y up and -Z
 forward after glTF conversion). The view group has no scale or initial offset.
@@ -72,18 +78,56 @@ invalid assets, or missing local codecs fail; no fetch or placeholder is perform
 The `characters__fp_*.blend.json`, `characters__fp_*.glb.json`, and `*-rig.json`
 reports live in `assets/renders/characters/viewmodels/validation/`.
 
+Use `-- --validate-only` to validate the exact existing source/export pairs without
+regenerating exports. Successful validation writes a `*-receipt.json` binding
+both file SHA256 values, lengths and paths to the hashes of all three reports.
+`inventory.py` requires that receipt and rejects changed source/export bytes,
+changed reports or a missing/failed receipt. It does not infer validation from an
+old PASS plus a newly computed export hash.
+
+Every attempt retires prior reports, receipts and inventory into a unique
+`validation/history/` directory and writes a RUNNING receipt. An export attempt
+also preserves the previous export there. After a successfully opened source
+fails validation or export, only that people's exact destination is removed;
+the failure receipt records why and where history lives. A different destination
+produced during the failed attempt is archived separately as `failed-fp_*.glb`.
+If the source could not be opened, its prior export stays on disk but has no current
+PASS receipt or inventory. Other peoples' files and accepted bodies are untouched.
+
+The runner keeps its lock through SIGINT, SIGTERM, deadline and natural-exit
+cleanup, including remaining descendants. TERM and KILL each have a two-second
+grace; the direct child is reaped before success. The child inherits the lock too.
+If cleanup cannot be confirmed, `blender.unclean` prevents another invocation.
+Inspect that marker and the recorded owned group before removing it manually;
+the next runner never kills a PID from an old marker.
+
 ```sh
 pnpm exec vitest run packages/client/src/entities packages/client/src/exosuit.test.js packages/client/src/Game.test.js --maxWorkers=2 --no-file-parallelism
 pnpm typecheck
-pnpm exec eslint packages/client/src/entities/Multitool.js packages/client/src/entities/Multitool.viewmodels.test.js
-pnpm exec prettier --ignore-path /dev/null --check packages/client/src/entities/Multitool.viewmodels.test.js
+pnpm exec eslint packages/client/src/entities/Multitool.js packages/client/src/entities/Multitool.viewmodels.test.js packages/client/src/entities/Multitool.materials.test.js packages/client/test/characters/viewmodelConsumer.mjs
+pnpm exec prettier --ignore-path /dev/null --check packages/client/src/entities/Multitool.viewmodels.test.js packages/client/src/entities/Multitool.materials.test.js packages/client/test/characters/viewmodelConsumer.mjs packages/tools/blender/characters/viewmodels/README.md
+python3 packages/tools/blender/characters/viewmodels/test_pipeline.py
+python3 packages/tools/blender/characters/viewmodels/test_inventory.py
 python3 -m compileall -q packages/tools/blender/characters/viewmodels
 ```
 
 `loadActualRig` decodes the actual GLBs through Three's GLTFLoader and MeshoptDecoder.
 Only material/texture loading is omitted in RAM, with geometry, skins, nodes,
 compression metadata and binary bytes asserted unchanged. Separate checks inspect
-KTX2 and material metadata. These are CPU consumer checks, not GPU rendering proof.
+KTX2 and material metadata. `viewmodelConsumer.mjs` additionally uses the production
+Engine loader, actual Meshopt geometry and shipped Basis JS/WASM in one CPU Worker.
+It covers individual texture failures, Basis HTTP 503, positive decoding of all
+three assets, stale loads and resource ownership. Geometry-only stripped fixtures
+cannot pass the production material boundary. These are CPU consumer checks, not
+GPU rendering proof.
+
+`test_pipeline.py` uses harmless process stand-ins and isolated file fixtures.
+`test_inventory.py` runs the actual inventory entry point over read-only real
+inputs and scratch substitutions. For a real saved-source/codec failure check,
+run `test_saved_failures.py` through `run_cpu.py` with the usual Blender flags and
+`-- /absolute/new/scratch-directory` outside the repository. It saves a changed
+source only in that scratch directory, never over a production source. The
+revision's commands, failure tails and evidence archives are in `REVISION-R1.md`.
 
 ## Authoring history and inspection
 
