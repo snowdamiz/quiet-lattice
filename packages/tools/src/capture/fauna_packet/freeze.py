@@ -150,7 +150,7 @@ console.log(JSON.stringify({nodeVersion:process.version,playwright:t,core:c,tsxA
     workspace_links = [str(ROOT / 'packages' / name) for name in ('client', 'server', 'shared', 'tools')]
     caches = [str(ROOT / 'packages/client/node_modules/.vite'), str(ROOT / 'packages/client/node_modules/.vite-temp')]
     cache_owner_receipt = caller.cache_owners({'root': str(ROOT), 'uid': os.getuid(), 'generatedCaches': caches})
-    initial_cache_bytes = sum(caller.observed_bytes(p) for p in caches)
+    initial_cache_bytes = caller.cache_size_admission({'generatedCaches': caches}, snapshot_cap)['bytes']
     caller.require(initial_cache_bytes <= snapshot_cap, 'Pre-run cache snapshot exceeds cap')
     units = {}
     screens = [('fauna-hit-turn-' + light + '-' + aspect, light, aspect, 'correction')

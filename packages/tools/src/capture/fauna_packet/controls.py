@@ -313,39 +313,27 @@ runpy.run_path(sys.argv[0], run_name='__main__')
 class CacheSnapshotControls(unittest.TestCase):
     def test_regular_source_growth_after_inventory_never_exceeds_admitted_copy_bytes(self):
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
-            base = Path(temp)
-            cache, evidence = base / 'cache', base / 'evidence'
-            cache.mkdir(); evidence.mkdir()
-            source = cache / 'mutable-cache.bin'
-            source.write_bytes(b'a' * 1024)
-            original_inventory = caller.inventory
-            grown = False
-            def inventory_then_grow(root):
+            base = Path(temp).resolve();cache, evidence = base / 'cache', base / 'evidence'
+            cache.mkdir(); evidence.mkdir(); source = cache / 'mutable-cache.bin';source.write_bytes(b'a' * 1024)
+            original = caller.hash_plan; grown = False
+            def hashed(plan, *args):
                 nonlocal grown
-                before = original_inventory(root)
-                if Path(root) == cache and not grown:
-                    source.write_bytes(b'a' * 16384)
-                    grown = True
-                return before
-            with patch.object(caller, 'inventory', side_effect=inventory_then_grow):
-                with self.assertRaisesRegex(caller.Refused, 'Generated cache changed during snapshot'):
-                    caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
+                rows = original(plan, *args)
+                if plan['root'] == cache and not grown: source.write_bytes(b'a' * 16384);grown = True
+                return rows
+            with patch.object(caller, 'hash_plan', side_effect=hashed):
+                with self.assertRaises(caller.Refused): caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
             copied = evidence / 'cache-before-0/mutable-cache.bin'
-            self.assertLessEqual(copied.stat().st_size, 4096)
-            self.assertEqual(copied.read_bytes(), b'a' * 1024)
+            self.assertEqual(copied.read_bytes(), b'')  # Changed size is refused before reading/copying.
             self.assertEqual(source.read_bytes(), b'a' * 16384)
             self.assertFalse((evidence / 'cache-before.json').exists())
 
     def test_multiple_caches_and_files_copy_at_the_exact_aggregate_boundary(self):
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
-            base = Path(temp)
-            caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
-            for directory in [*caches, evidence]:
-                directory.mkdir()
-            (caches[0] / 'a').write_bytes(b'a' * 7)
-            (caches[0] / 'b').write_bytes(b'b' * 5)
-            (caches[1] / 'c').write_bytes(b'c' * 4)
-            (caches[1] / 'empty').write_bytes(b'')
+            base = Path(temp).resolve();caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
+            for directory in [*caches, evidence]: directory.mkdir()
+            (caches[0] / 'a').write_bytes(b'a' * 7);(caches[0] / 'b').write_bytes(b'b' * 5)
+            (caches[1] / 'c').write_bytes(b'c' * 4);(caches[1] / 'empty').write_bytes(b'')
             original = [caller.inventory(root) for root in caches]
             rows = caller.snapshot_caches({'generatedCaches': list(map(str, caches)), 'budget': {'cacheSnapshotCapBytes': 16}}, evidence)
             self.assertEqual([row['files'] for row in rows], original)
@@ -355,60 +343,125 @@ class CacheSnapshotControls(unittest.TestCase):
             self.assertEqual(sum(row['bytes'] for files in copied for row in files), 16)
             self.assertEqual(json.loads((evidence / 'cache-before.json').read_text()), rows)
 
-    def test_overremaining_file_refuses_before_writing_and_retains_prior_copies(self):
+    def test_overremaining_file_refuses_before_any_payload_read_or_copy(self):
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
-            base = Path(temp)
-            caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
-            for directory in [*caches, evidence]:
-                directory.mkdir()
-            (caches[0] / 'a').write_bytes(b'a' * 7)
-            (caches[0] / 'b').write_bytes(b'b' * 5)
-            (caches[1] / 'overremaining').write_bytes(b'c' * 4)
+            base = Path(temp).resolve();caches, evidence = [base / 'cache0', base / 'cache1'], base / 'evidence'
+            for directory in [*caches, evidence]: directory.mkdir()
+            (caches[0] / 'a').write_bytes(b'a' * 7);(caches[0] / 'b').write_bytes(b'b' * 5);(caches[1] / 'overremaining').write_bytes(b'c' * 4)
             original = [caller.inventory(root) for root in caches]
-            with self.assertRaisesRegex(caller.Refused, 'exceeds controlled cap'):
-                caller.snapshot_caches({'generatedCaches': list(map(str, caches)), 'budget': {'cacheSnapshotCapBytes': 15}}, evidence)
-            self.assertEqual(caller.inventory(evidence / 'cache-before-0'), original[0])
-            self.assertFalse((evidence / 'cache-before-1/overremaining').exists())
+            with patch.object(os, 'fdopen', side_effect=AssertionError('PAYLOAD_READ_BEFORE_AGGREGATE_ADMISSION')):
+                with self.assertRaisesRegex(caller.Refused, 'exceeds controlled cap') as caught:
+                    caller.snapshot_caches({'generatedCaches': list(map(str, caches)), 'budget': {'cacheSnapshotCapBytes': 15}}, evidence)
+            self.assertEqual(caught.exception.cacheObservation['bytes'], 16)
+            self.assertEqual(list(evidence.iterdir()), [])
             self.assertEqual([caller.inventory(root) for root in caches], original)
-            self.assertFalse((evidence / 'cache-before.json').exists())
 
     def test_shrink_and_same_size_mutation_retain_failed_copy_without_success_receipt(self):
         for changed in (b'a' * 1024, b'b' * 4096):
             with self.subTest(changedBytes=len(changed)), tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
-                base = Path(temp)
-                cache, evidence = base / 'cache', base / 'evidence'
-                cache.mkdir(); evidence.mkdir()
-                source = cache / 'mutable-cache.bin'
-                source.write_bytes(b'a' * 4096)
-                original_inventory = caller.inventory
-                changed_once = False
-                def inventory_then_change(root):
+                base = Path(temp).resolve();cache, evidence = base / 'cache', base / 'evidence'
+                cache.mkdir(); evidence.mkdir();source = cache / 'mutable-cache.bin';source.write_bytes(b'a' * 4096)
+                original = caller.hash_plan; changed_once = False
+                def hashed(plan, *args):
                     nonlocal changed_once
-                    before = original_inventory(root)
-                    if Path(root) == cache and not changed_once:
-                        source.write_bytes(changed)
-                        changed_once = True
-                    return before
-                with patch.object(caller, 'inventory', side_effect=inventory_then_change):
-                    with self.assertRaisesRegex(caller.Refused, 'Generated cache changed during snapshot'):
-                        caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
-                self.assertEqual((evidence / 'cache-before-0/mutable-cache.bin').read_bytes(), changed)
+                    rows = original(plan, *args)
+                    if plan['root'] == cache and not changed_once: source.write_bytes(changed);changed_once = True
+                    return rows
+                with patch.object(caller, 'hash_plan', side_effect=hashed):
+                    with self.assertRaises(caller.Refused):caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
+                self.assertEqual((evidence / 'cache-before-0/mutable-cache.bin').read_bytes(), b'' if len(changed) < 4096 else changed)
                 self.assertEqual(source.read_bytes(), changed)
                 self.assertFalse((evidence / 'cache-before.json').exists())
 
     def test_snapshot_deadline_interrupts_inventory_and_restores_alarm(self):
         with tempfile.TemporaryDirectory(prefix='fauna-cpu-') as temp:
-            base = Path(temp)
-            cache, evidence = base / 'cache', base / 'evidence'
-            cache.mkdir(); evidence.mkdir()
-            (cache / 'source').write_bytes(b'preserve')
+            base = Path(temp).resolve();cache, evidence = base / 'cache', base / 'evidence'
+            cache.mkdir(); evidence.mkdir();(cache / 'source').write_bytes(b'preserve')
             previous = caller.signal.getsignal(caller.signal.SIGALRM)
-            with patch.object(caller, 'CACHE_SNAPSHOT_SECONDS', 0.01), patch.object(caller, 'inventory', side_effect=lambda root: time.sleep(1)):
+            with patch.object(caller, 'CACHE_SNAPSHOT_SECONDS', 0.01), patch.object(caller, 'tree_plan', side_effect=lambda *a, **kw: time.sleep(1)):
                 with self.assertRaisesRegex(caller.Refused, 'snapshot deadline expired'):
                     caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 4096}}, evidence)
             self.assertEqual(caller.signal.getsignal(caller.signal.SIGALRM), previous)
             self.assertEqual((cache / 'source').read_bytes(), b'preserve')
             self.assertFalse((evidence / 'cache-before.json').exists())
+
+    def test_cache_entry_cap_refuses_empty_file_flood_before_content_reads(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-entry-cap-') as temp:
+            base = Path(temp).resolve();cache = base / 'cache';cache.mkdir();evidence = base / 'evidence';evidence.mkdir()
+            for i in range(caller.CACHE_ENTRY_CAP + 1): (cache / str(i)).touch()
+            with patch.object(os, 'fdopen', side_effect=AssertionError('NO_CONTENT_BEFORE_ENTRY_ADMISSION')):
+                with self.assertRaisesRegex(caller.Refused, 'entry/evidence cap') as caught:
+                    caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 64 * 1024**2}}, evidence)
+            self.assertEqual(len(caught.exception.cacheObservation['entries']), caller.CACHE_ENTRY_CAP)
+            self.assertEqual(list(evidence.iterdir()), [])
+
+    def test_cache_copy_read_cancel_and_close_errors_keep_partial_ownership(self):
+        for fault in ('read', 'cancel', 'deadline', 'write-after-bytes'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-cache-failure-') as temp:
+                base = Path(temp).resolve();cache = base / 'cache';cache.mkdir();evidence = base / 'evidence';evidence.mkdir()
+                source = cache / 'source';source.write_bytes(b'A' * (1024 * 1024 + 7))
+                original_read, original_fdopen, original_open = caller.bounded_read, os.fdopen, Path.open
+                active = False; reads = []
+                primary = KeyboardInterrupt('PRIMARY_CACHE_CANCEL') if fault == 'cancel' else OSError('PRIMARY_CACHE_READ')
+                primary.futureCache = {'partial': b'UNKNOWN\x00\xff'}
+                class Input:
+                    def __init__(self, stream): self.stream = stream
+                    def read(self, n):
+                        if reads:
+                            if fault == 'deadline': time.sleep(1)
+                            if fault in ('read', 'cancel'): raise primary
+                        data = self.stream.read(n);reads.append(len(data));return data
+                    def close(self):
+                        self.stream.close()
+                        error = OSError('SOURCE_CLOSE_AFTER_REAL_CLOSE');error.rawClose = b'INPUT';raise error
+                class Output:
+                    def __init__(self, stream): self.stream = stream
+                    def write(self, data):
+                        value = self.stream.write(data)
+                        if fault == 'write-after-bytes': raise primary
+                        return value
+                    def close(self):
+                        self.stream.close()
+                        error = OSError('DESTINATION_CLOSE_AFTER_REAL_CLOSE');error.rawClose = b'OUTPUT';raise error
+                def fdopen(*a, **kw):
+                    stream = original_fdopen(*a, **kw)
+                    return Input(stream) if active else stream
+                def open_path(path, *a, **kw):
+                    stream = original_open(path, *a, **kw)
+                    return Output(stream) if a and a[0] == 'xb' and path.name == 'source' else stream
+                def read(path, *a, **kw):
+                    nonlocal active
+                    active = kw.get('sink') is not None
+                    try: return original_read(path, *a, **kw)
+                    finally: active = False
+                with patch.object(caller, 'bounded_read', side_effect=read), patch.object(os, 'fdopen', fdopen), patch.object(Path, 'open', open_path), patch.object(caller, 'CACHE_SNAPSHOT_SECONDS', 0.05 if fault == 'deadline' else 30):
+                    with self.assertRaises(BaseException) as caught:
+                        caller.snapshot_caches({'generatedCaches': [str(cache)], 'budget': {'cacheSnapshotCapBytes': 2 * 1024**2}}, evidence)
+                error = caught.exception
+                if fault == 'deadline': self.assertIsInstance(error, caller.CacheDeadlineExpired)
+                else: self.assertIs(error, primary)
+                facts = caller.failure(error)['attributes']
+                self.assertIn('metadata_close_failures', facts);self.assertIn('cache_copy_close', facts)
+                self.assertEqual(facts['cacheObservation']['copies'][0]['complete'], False)
+                copied = evidence / 'cache-before-0/source'
+                self.assertEqual(copied.stat().st_size, 1024 * 1024)
+                self.assertTrue(source.exists());self.assertFalse((evidence / 'cache-before.json').exists())
+                self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+
+    def test_cache_after_uses_growth_allowance_and_real_deadline(self):
+        with tempfile.TemporaryDirectory(prefix='fauna-after-') as temp:
+            base = Path(temp).resolve();cache = base / 'cache';cache.mkdir();(cache / 'source').write_bytes(b'A' * 17)
+            ready = {'generatedCaches': [str(cache)], 'initialCacheBytes': 1, 'budget': {'cacheSnapshotCapBytes': 8, 'nativeReservesAndObservedThresholds': {'generatedCacheGrowth': 16}}}
+            observation = {'entries': [], 'bytes': 0, 'complete': False}
+            rows = caller.cache_after(ready, observation)
+            self.assertTrue(observation['complete']);self.assertEqual(rows[0]['files'][0]['bytes'], 17)
+            with (cache / 'source').open('ab') as stream: stream.write(b'X')
+            with patch.object(os, 'fdopen', side_effect=AssertionError('NO_READ_BEFORE_AFTER_AGGREGATE_ADMISSION')):
+                with self.assertRaises(caller.Refused): caller.cache_after(ready, {'entries': [], 'bytes': 0})
+            (cache / 'source').write_bytes(b'A')
+            with patch.object(caller, 'CACHE_SNAPSHOT_SECONDS', 0.02), patch.object(caller, 'bounded_read', side_effect=lambda *a, **kw: time.sleep(1)):
+                with self.assertRaises(caller.CacheDeadlineExpired): caller.cache_after(ready, {'entries': [], 'bytes': 0})
+            self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
 
 
 def synthetic_turn():
@@ -995,7 +1048,8 @@ class BoundaryControls(unittest.TestCase):
                     original_open, original_close, original_fdopen = os.open, os.close, os.fdopen
                     descriptors, closed, flags_seen, swaps = [], [], [], []
                     def opened(p, flags, *a, **kw):
-                        if Path(p) == path:
+                        target = str(p) == path.name and 'dir_fd' in kw and os.fstat(kw['dir_fd']).st_ino == path.parent.stat().st_ino
+                        if target:
                             self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
                             flags_seen.append(flags)
                             if fault == 'oversized':
@@ -1008,7 +1062,7 @@ class BoundaryControls(unittest.TestCase):
                                 else: path.write_bytes(saved.read_bytes())
                             swaps.append(fault)
                         fd = original_open(p, flags, *a, **kw)
-                        if Path(p) == path: descriptors.append(fd)
+                        if target: descriptors.append(fd)
                         return fd
                     def closed_fd(fd):
                         if fd in descriptors: closed.append(fd)
@@ -1026,6 +1080,35 @@ class BoundaryControls(unittest.TestCase):
                     for field in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[field]).exists())
                     self.assertEqual(case.calls.count('inert-start'), 1)
 
+    def test_metadata_keeps_supplied_ancestor_identity_without_resolving_symlinks(self):
+        with caller.controlled_path('/', directory=True) as (fd, info, _):
+            self.assertTrue(stat.S_ISDIR(info.st_mode)); self.assertTrue(stat.S_ISDIR(os.fstat(fd).st_mode))
+        with self.assertRaises(OSError): os.fstat(fd)
+        for fault in ('static-alias', 'before-parent-open', 'before-leaf-open', 'same-file-new-parent'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-metadata-parent-') as temp:
+                base = Path(temp).resolve();parent = base / 'parent';parent.mkdir();path = parent / 'value.json';path.write_text('{}')
+                real_open, real_fdopen = os.open, os.fdopen;events = [];opened = []
+                def replace():
+                    saved = base / 'saved';parent.rename(saved)
+                    if fault == 'same-file-new-parent':
+                        parent.mkdir();os.link(saved / path.name, path)
+                    else: parent.symlink_to(saved, target_is_directory=True)
+                    events.append(fault)
+                if fault == 'static-alias': replace()
+                def open_at(name, flags, *a, **kw):
+                    if str(name) == ('parent' if fault == 'before-parent-open' else path.name) and not events: replace()
+                    fd = real_open(name, flags, *a, **kw)
+                    if str(name) == path.name: opened.append(fd)
+                    return fd
+                def fdopen(fd, *a, **kw):
+                    self.assertNotIn(fd, opened, 'Unsafe metadata route reached content read')
+                    return real_fdopen(fd, *a, **kw)
+                with patch.object(os, 'open', open_at), patch.object(os, 'fdopen', fdopen):
+                    with self.assertRaises((caller.Refused, OSError)): caller.read_json(path)
+                self.assertEqual(events, [fault])
+                for fd in opened:
+                    with self.assertRaises(OSError): os.fstat(fd)
+
     def test_metadata_descriptor_owner_preserves_primary_and_all_close_failures(self):
         for fault in ('success', 'empty', 'wrong-hash', 'fstat', 'fdopen', 'read', 'cancel', 'stream-close', 'descriptor-close', 'both-close', 'read-both-close', 'cancel-both-close'):
             with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-descriptor-') as tempdir:
@@ -1035,9 +1118,11 @@ class BoundaryControls(unittest.TestCase):
                 primary = KeyboardInterrupt('PRIMARY_CANCEL') if fault.startswith('cancel') else OSError('PRIMARY_' + fault)
                 primary.futureFact = {'bytes': b'RAW\x00\xff', 'unknown': [7]}
                 def opened(*a, **kw):
-                    fd = original_open(*a, **kw); descriptors.append(fd); return fd
+                    fd = original_open(*a, **kw)
+                    if str(a[0]) == path.name: descriptors.append(fd)
+                    return fd
                 def fstat(fd):
-                    if fault == 'fstat': raise primary
+                    if fault == 'fstat' and fd in descriptors: raise primary
                     return original_fstat(fd)
                 class Stream:
                     def __init__(self, stream): self.stream = stream; streams.append(stream)
@@ -1052,7 +1137,9 @@ class BoundaryControls(unittest.TestCase):
                     if fault == 'fdopen': raise primary
                     return Stream(original_fdopen(*a, **kw))
                 def close(fd):
-                    original_close(fd); closes.append('descriptor')
+                    original_close(fd)
+                    if fd not in descriptors: return
+                    closes.append('descriptor')
                     if fault == 'descriptor-close' or fault.endswith('both-close'):
                         error = OSError('FD_CLOSE_AFTER_REAL_CLOSE'); error.unknownDescriptor = b'RAW_FD'; raise error
                 error = None
@@ -1099,6 +1186,36 @@ class BoundaryControls(unittest.TestCase):
                 self.assertEqual(len(reads), 1); self.assertEqual(reads[0][0], maximum + 1)
                 self.assertLessEqual(reads[0][1], maximum + 1)
                 if fault == 'growth-sentinel': self.assertEqual(reads[0][1], maximum + 1)
+
+    def test_actual_artifact_admission_rejects_leaf_and_ancestor_races(self):
+        for fault in ('fifo', 'symlink', 'regular', 'parent-symlink', 'parent-regular', 'parent-before-open'):
+            with self.subTest(fault=fault), self.boundary(clean=True, real_git=True) as case:
+                target = Path(case.spec['output']) / '_frames/000.jpg'
+                original_open, original_fdopen = os.open, os.fdopen
+                parent_inode = target.parent.stat().st_ino; events = []; opened = []
+                def open_at(name, flags, *a, **kw):
+                    selected = str(name) == ('_frames' if fault == 'parent-before-open' else target.name)
+                    if selected and not events:
+                        self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+                        source = target.parent if fault.startswith('parent') else target
+                        saved = case.base / 'preserved-raced-entry'; source.rename(saved)
+                        if fault == 'fifo': os.mkfifo(source, 0o600)
+                        elif fault in ('symlink', 'parent-symlink', 'parent-before-open'): source.symlink_to(saved, target_is_directory=fault.startswith('parent'))
+                        elif fault == 'regular': source.write_bytes(saved.read_bytes())
+                        else: shutil.copytree(saved, source)
+                        events.append(fault)
+                    fd = original_open(name, flags, *a, **kw)
+                    if selected: opened.append(fd)
+                    return fd
+                def fdopen(fd, *a, **kw):
+                    self.assertNotIn(fd, opened, 'Unsafe artifact reached a payload read')
+                    return original_fdopen(fd, *a, **kw)
+                with patch.object(os, 'open', open_at), patch.object(os, 'fdopen', fdopen):
+                    with self.assertRaises((caller.Refused, OSError)): self.next_consumption(case)
+                self.assertEqual(events, [fault]); self.assertEqual(case.calls.count('inert-start'), 1)
+                for key in ('consumption', 'evidence', 'output'): self.assertFalse(Path(case.next_spec[key]).exists())
+                for fd in opened:
+                    with self.assertRaises(OSError): os.fstat(fd)
 
     def test_real_git_successor_admission_allows_only_exact_predecessor_artifacts(self):
         for mutation in ('none', 'unrelated', 'quoted-untracked', 'tracked-edit', 'staged-edit', 'modified-artifact',

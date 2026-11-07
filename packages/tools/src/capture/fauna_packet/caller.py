@@ -8,6 +8,7 @@ sys.dont_write_bytecode = True
 import argparse
 import base64
 import copy
+from contextlib import contextmanager
 import datetime
 import hashlib
 import importlib
@@ -30,6 +31,8 @@ if str(HERE) in sys.path:
 READY = HERE / 'readiness.json'
 _receipt_bytes = 0
 CACHE_SNAPSHOT_SECONDS = 30
+CACHE_ENTRY_CAP = 256
+CACHE_ENTRY_METADATA_CAP = 1024
 
 
 class Refused(RuntimeError):
@@ -59,34 +62,60 @@ def sha(path):
     return h.hexdigest()
 
 
-def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
-    p = Path(path)
+def same_entry(a, b, directory=False):
+    return (a.st_dev, a.st_ino, stat.S_IFMT(a.st_mode)) == (b.st_dev, b.st_ino, stat.S_IFMT(b.st_mode)) and (directory or a.st_size == b.st_size)
+
+
+@contextmanager
+def controlled_path(path, maximum=None, expected=None, directory=False):
+    """Keep the supplied pathname and pin every no-follow ancestor through the read."""
+    p = Path(path).absolute()
+    require('..' not in p.parts, 'Unsafe controlled path: ' + str(p))
+    expected = expected or {}
+    descriptors, routes = [], []
+    stream = primary = None
     try:
-        before = p.lstat()
-    except OSError as error:
-        raise Refused('Unsafe/missing JSON: ' + str(p)) from error
-    require(stat.S_ISREG(before.st_mode) and before.st_size <= maximum, 'Unsafe/oversized JSON: ' + str(p))
-    fd = os.open(p, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
-    stream = None
-    primary = None
-    try:
-        opened = os.fstat(fd)
-        require(stat.S_ISREG(opened.st_mode) and opened.st_size <= maximum
-                and (opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), 'JSON changed before read: ' + str(p))
-        stream = os.fdopen(fd, 'rb', buffering=0, closefd=False)
-        data = stream.read(maximum + 1)
-        require(len(data) <= maximum, 'JSON grew beyond cap: ' + str(p))
-        require(len(data) == opened.st_size, 'JSON size changed during read: ' + str(p))
-        digest = hashlib.sha256(data).hexdigest()
-        require(expected_sha256 is None or digest == expected_sha256, 'JSON reference drifted: ' + str(p))
-        return json.loads(data), digest
+        parent = os.open(p.anchor, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_DIRECTORY)
+        descriptors.append(parent)
+        fd = parent
+        opened = os.fstat(parent)
+        current = Path(p.anchor)
+        for i, name in enumerate(p.parts[1:]):
+            current = current / name
+            is_directory = i < len(p.parts) - 2 or directory
+            before = os.stat(name, dir_fd=parent, follow_symlinks=False)
+            require(stat.S_ISDIR(before.st_mode) if is_directory else stat.S_ISREG(before.st_mode), 'Unsafe controlled entry: ' + str(current))
+            if str(current) in expected:
+                require(same_entry(before, expected[str(current)], is_directory), 'Controlled entry changed before open: ' + str(current))
+            if not is_directory:
+                require(before.st_size <= maximum, 'Unsafe/oversized controlled file: ' + str(p))
+            flags = os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | (os.O_DIRECTORY if is_directory else 0)
+            fd = os.open(name, flags, dir_fd=parent)
+            descriptors.append(fd)
+            opened = os.fstat(fd)
+            require(same_entry(before, opened, is_directory), 'Controlled entry changed during open: ' + str(current))
+            require(stat.S_ISDIR(opened.st_mode) if is_directory else stat.S_ISREG(opened.st_mode) and opened.st_size <= maximum, 'Unsafe opened entry: ' + str(current))
+            routes.append((parent, name, opened, is_directory, str(current)))
+            parent = fd
+        def validate_route(ancestors_only=False):
+            for parent_fd, name, observed, is_directory, label in routes:
+                if ancestors_only and not is_directory:
+                    continue
+                require(same_entry(os.stat(name, dir_fd=parent_fd, follow_symlinks=False), observed, is_directory), 'Controlled pathname changed: ' + label)
+        validate_route()
+        if not directory:
+            stream = os.fdopen(fd, 'rb', buffering=0, closefd=False)
+        yield (fd if directory else stream), opened, {label: info for _, _, info, _, label in routes}
+        # Leaf bytes already form the authenticated snapshot; keep the ancestor route pinned.
+        validate_route(ancestors_only=True)
     except BaseException as error:
         primary = error
         raise
     finally:
         pending = primary
-        # The stream borrows the descriptor; even failed wrapping/validation has one owner.
-        for operation, close in ([('stream.close', stream.close)] if stream is not None else []) + [('os.close', lambda: os.close(fd))]:
+        closes = ([('stream.close', stream.close, descriptors[-1])] if stream is not None else [])
+        closes += [('os.close', lambda fd=fd: os.close(fd), fd) for fd in reversed(descriptors)]
+        for operation, close, fd in closes:
             try:
                 close()
             except BaseException as error:
@@ -96,6 +125,44 @@ def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
                 pending.metadata_close_failures = getattr(pending, 'metadata_close_failures', []) + [fact]
         if primary is None and pending is not None:
             raise pending
+
+
+def bounded_read(path, maximum, expected=None, keep=False, sink=None, finish=None):
+    """One descriptor snapshot supplies all bytes, the digest and optional bounded copy."""
+    observation = {'path': str(path), 'maximum': maximum, 'readBytes': 0, 'copiedBytes': 0}
+    try:
+        with controlled_path(path, maximum, expected) as (stream, opened, _):
+            observation.update(dev=opened.st_dev, inode=opened.st_ino, bytes=opened.st_size)
+            digest, pieces = hashlib.sha256(), []
+            while True:
+                count = maximum + 1 if keep else min(1024 * 1024, opened.st_size - observation['readBytes'] + 1)
+                data = stream.read(count)
+                observation['readBytes'] += len(data)
+                require(observation['readBytes'] <= opened.st_size, 'Controlled file grew during read: ' + str(path))
+                if not data:
+                    break
+                digest.update(data)
+                if keep:
+                    pieces.append(data)
+                if sink is not None:
+                    written = sink.write(data)
+                    observation['copiedBytes'] += written
+                    require(written == len(data), 'Generated cache snapshot write incomplete; copied bytes retained')
+                if keep:
+                    break
+            require(observation['readBytes'] == opened.st_size, 'Controlled file truncated during read: ' + str(path))
+            value = (b''.join(pieces) if keep else None), digest.hexdigest()
+            return finish(*value) if finish is not None else value
+    except BaseException as error:
+        error.controlled_read = observation
+        raise
+
+
+def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
+    def parsed(data, digest):
+        require(expected_sha256 is None or digest == expected_sha256, 'JSON reference drifted: ' + str(path))
+        return json.loads(data), digest
+    return bounded_read(path, maximum, keep=True, finish=parsed)
 
 
 def read_json(path, maximum=2 * 1024 * 1024, expected_sha256=None):
@@ -210,15 +277,54 @@ def observed_release(result, evidence, name, function, job, *args, **kwargs):
                     raise
 
 
-def inventory(root):
-    root = Path(root)
-    rows = []
-    for p in sorted(root.rglob('*')):
-        s = p.lstat()
-        require(not p.is_symlink() and (stat.S_ISREG(s.st_mode) or stat.S_ISDIR(s.st_mode)), 'Unsafe tree entry: ' + str(p))
-        if p.is_file():
-            rows.append({'path': str(p.relative_to(root)), 'bytes': s.st_size, 'sha256': sha(p)})
+def tree_plan(root, maximum, entry_cap=CACHE_ENTRY_CAP, metadata_cap=CACHE_ENTRY_METADATA_CAP, observation=None):
+    """Admit every entry and aggregate size before any payload read."""
+    root = Path(root).absolute()
+    observation = observation if observation is not None else {'entries': [], 'bytes': 0}
+    files, directories, pins = [], set(), {}
+    with controlled_path(root.parent, directory=True) as (parent, _, route):
+        pins.update(route)
+        try:
+            info = os.stat(root.name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            return {'root': root, 'files': [], 'directories': set(), 'pins': pins}
+        require(stat.S_ISDIR(info.st_mode), 'Unsafe tree root: ' + str(root))
+        pins[str(root)] = info
+    pending = [root]
+    while pending:
+        directory = pending.pop()
+        with controlled_path(directory, expected=pins, directory=True) as (fd, _, route):
+            pins.update(route)
+            with os.scandir(fd) as entries:
+                for entry in entries:
+                    path = directory / entry.name
+                    info = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                    is_directory = stat.S_ISDIR(info.st_mode)
+                    require(is_directory or stat.S_ISREG(info.st_mode), 'Unsafe tree entry: ' + str(path))
+                    name = str(path.relative_to(root))
+                    fact = {'path': name, 'source': str(path), 'bytes': info.st_size if not is_directory else 0, 'type': 'directory' if is_directory else 'file', 'dev': info.st_dev, 'inode': info.st_ino}
+                    require(len(observation['entries']) < entry_cap and len(json.dumps(fact).encode()) <= metadata_cap, 'Controlled tree entry/evidence cap exceeded')
+                    observation['entries'].append(fact)
+                    if is_directory:
+                        directories.add(name); pending.append(path)
+                    else:
+                        observation['bytes'] += info.st_size
+                        require(observation['bytes'] <= maximum, 'Generated cache/artifact inventory exceeds controlled cap')
+                        files.append({'path': name, 'bytes': info.st_size})
+                    pins[str(path)] = info
+    return {'root': root, 'files': sorted(files, key=lambda row: row['path']), 'directories': directories, 'pins': pins}
+
+
+def hash_plan(plan, rows=None):
+    rows = rows if rows is not None else []
+    for row in plan['files']:
+        _, digest = bounded_read(plan['root'] / row['path'], row['bytes'], plan['pins'])
+        rows.append({**row, 'sha256': digest})
     return rows
+
+
+def inventory(root):
+    return hash_plan(tree_plan(root, 320 * 1024 * 1024, entry_cap=1024))
 
 
 def legacy_binding(root, git, commit):
@@ -318,7 +424,7 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
     require(grant.get('unit') == unit and unit in ready['units'], 'Grant must admit exactly one declared screen')
     require(grant.get('nativeReservesAccepted') is True, 'Native reserves are not hard bounds and need explicit admission')
     review = grant.get('callerReview', {})
-    require(review.get('verdict') == 'PASS' and Path(review.get('path', '')).is_file() and sha(review['path']) == review.get('sha256'), 'Independent caller review missing/drifted')
+    require(review.get('verdict') == 'PASS' and bounded_read(review.get('path', ''), 2 * 1024 * 1024)[1] == review.get('sha256'), 'Independent caller review missing/drifted')
     require(grant.get('previousUnitsAccepted') == ready['unitOrder'][:ready['unitOrder'].index(unit)], 'Units must be admitted sequentially; no retry or continuation after failure')
     completions = grant.get('previousUnitReceipts', {})
     require(set(completions) == set(grant['previousUnitsAccepted']), 'Parent-observed caller completion receipts required for every predecessor')
@@ -354,8 +460,7 @@ def grant_gate(ready, unit, grant, readiness_sha, current_head, env_authorizatio
 def verified_output_paths(ready, spec, manifest):
     """Recheck the inspector's complete manifest before allowing its exact Git paths."""
     root, output = Path(ready['root']), Path(spec['output'])
-    require(output.is_absolute() and output.resolve() == output and output.is_dir()
-            and output.is_relative_to(root) and output != root, 'Unsafe predecessor output root')
+    require(output.is_absolute() and output.is_relative_to(root) and output != root, 'Unsafe predecessor output root')
     require(isinstance(manifest, list) and len(manifest) == spec['budget']['fileCount'], 'Incomplete output manifest')
     expected, directories = {}, set()
     for row in manifest:
@@ -366,21 +471,13 @@ def verified_output_paths(ready, spec, manifest):
         require(type(row['bytes']) is int and 0 < row['bytes'] <= (16384 if name == 'readout.txt' else 16 * 1024 * 1024), 'Manifest file cap exceeded')
         expected[name] = row
         directories.update(str(p) for p in Path(name).parents if str(p) != '.')
-    files, found_directories = set(), set()
-    for path in output.rglob('*'):
-        name, info = str(path.relative_to(output)), path.lstat()
-        if stat.S_ISDIR(info.st_mode):
-            require(name in directories, 'Unexpected output directory: ' + name)
-            found_directories.add(name)
-        else:
-            require(stat.S_ISREG(info.st_mode) and name in expected, 'Unsafe/extra output artifact: ' + name)
-            require(info.st_size == expected[name]['bytes'], 'Output artifact size changed: ' + name)
-            files.add(name)
-    require(files == set(expected) and found_directories == directories, 'Missing output artifact/directory')
-    for name, row in expected.items():
-        with (output / name).open('rb') as stream:
-            data = stream.read(row['bytes'] + 1)
-        require(len(data) == row['bytes'] and hashlib.sha256(data).hexdigest() == row['sha256'], 'Output artifact hash changed: ' + name)
+    plan = tree_plan(output, sum(row['bytes'] for row in expected.values()), entry_cap=len(expected) + len(directories))
+    require({row['path'] for row in plan['files']} == set(expected) and plan['directories'] == directories, 'Missing/extra output artifact/directory')
+    for row in plan['files']:
+        name = row['path']
+        require(row['bytes'] == expected[name]['bytes'], 'Output artifact size changed: ' + name)
+        _, digest = bounded_read(output / name, row['bytes'], plan['pins'])
+        require(digest == expected[name]['sha256'], 'Output artifact hash changed: ' + name)
     return {os.fsencode(str((output / name).relative_to(root))) for name in expected}
 
 
@@ -404,7 +501,7 @@ def consume(ready, unit, grant_path):
     head = subprocess.check_output([ready['git'], 'rev-parse', 'HEAD'], cwd=ready['root'], text=True, timeout=5).strip()
     admission = grant_gate(ready, unit, grant, readiness_sha, head, os.environ.get('FAUNA_CAPTURE_GRANT'))
     spec = admission.spec
-    require(str(Path(grant_path).resolve()) == spec['grant'] and grant['authorizationId'] == spec['authorizationId'], 'Grant attempt identity changed')
+    require(str(Path(grant_path).absolute()) == spec['grant'] and grant['authorizationId'] == spec['authorizationId'], 'Grant attempt identity changed')
     verify_worktree(ready, admission.predecessor_outputs)
     verify_bindings(ready, unit)
     for key in ('output', 'evidence', 'consumption'):
@@ -419,48 +516,109 @@ def consume(ready, unit, grant_path):
     return spec, record
 
 
-def snapshot_caches(ready, evidence):
-    maximum = ready['budget']['cacheSnapshotCapBytes']
-    consumed = 0
-    rows = []
-    previous = signal.getsignal(signal.SIGALRM)
-    timer = signal.getitimer(signal.ITIMER_REAL)
+class CacheDeadlineExpired(Refused):
+    pass
+
+
+@contextmanager
+def cache_deadline():
+    previous, timer = signal.getsignal(signal.SIGALRM), signal.getitimer(signal.ITIMER_REAL)
     started = time.monotonic()
     def expired(*_):
-        raise Refused('Generated cache snapshot deadline expired; copied bytes retained')
+        raise CacheDeadlineExpired('Generated cache snapshot deadline expired; copied bytes retained')
     signal.signal(signal.SIGALRM, expired)
-    signal.setitimer(signal.ITIMER_REAL, CACHE_SNAPSHOT_SECONDS)
+    signal.setitimer(signal.ITIMER_REAL, min(CACHE_SNAPSHOT_SECONDS, timer[0]) if timer[0] else CACHE_SNAPSHOT_SECONDS)
     try:
-        for i, root in enumerate(ready['generatedCaches']):
-            source = Path(root)
-            before = inventory(source)
-            destination = evidence / ('cache-before-' + str(i))
-            destination.mkdir(mode=0o700)
-            for row in before:
-                require(row['bytes'] <= maximum - consumed, 'Pre-existing generated cache snapshot exceeds controlled cap')
-                target = destination / row['path']
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with (source / row['path']).open('rb') as src, target.open('xb') as dst:
-                    copied = 0
-                    while copied < row['bytes']:
-                        remaining = min(row['bytes'] - copied, maximum - consumed, 1024 * 1024)
-                        require(remaining > 0, 'Generated cache snapshot exhausted controlled cap')
-                        chunk = src.read(remaining)
-                        require(0 < len(chunk) <= remaining, 'Generated cache changed during snapshot')
-                        written = dst.write(chunk)
-                        copied += written
-                        consumed += written
-                        require(written == len(chunk), 'Generated cache snapshot write incomplete; copied bytes retained')
-                    require(src.read(1) == b'', 'Generated cache changed during snapshot')
-            require(inventory(source) == before == inventory(destination), 'Generated cache changed during snapshot')
-            rows.append({'source': root, 'snapshot': str(destination), 'files': before})
-        persist(evidence / 'cache-before.json', rows)
-        return rows
+        yield
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, previous)
         if timer[0]:
             signal.setitimer(signal.ITIMER_REAL, max(0.000001, timer[0] - (time.monotonic() - started)), timer[1])
+
+
+def cache_plans(ready, maximum, observation):
+    plans = []
+    for root in ready['generatedCaches']:
+        plans.append(tree_plan(root, maximum, observation=observation))
+    return plans
+
+
+def cache_size_admission(ready, maximum):
+    observation = {'entries': [], 'bytes': 0}
+    with cache_deadline():
+        cache_plans(ready, maximum, observation)
+    return observation
+
+
+def snapshot_caches(ready, evidence):
+    observation = {'entries': [], 'bytes': 0, 'copies': [], 'complete': False}
+    try:
+        with cache_deadline():
+            plans = cache_plans(ready, ready['budget']['cacheSnapshotCapBytes'], observation)
+            rows = []
+            observation['snapshots'] = rows
+            for i, plan in enumerate(plans):
+                destination = evidence / ('cache-before-' + str(i))
+                before = []
+                rows.append({'source': str(plan['root']), 'snapshot': str(destination), 'files': before})
+                hash_plan(plan, before)
+                destination.mkdir(mode=0o700)
+                copied_rows = []
+                for row in before:
+                    target = destination / row['path']
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    copy_fact = {'source': str(plan['root'] / row['path']), 'destination': str(target), 'admittedBytes': row['bytes'], 'complete': False}
+                    require(len(json.dumps(copy_fact).encode()) <= CACHE_ENTRY_METADATA_CAP, 'Cache copy evidence cap exceeded')
+                    observation['copies'].append(copy_fact)
+                    # Output is exclusive; the source is read through the same guarded descriptor.
+                    primary = None
+                    dst = target.open('xb', buffering=0)
+                    try:
+                        _, digest = bounded_read(plan['root'] / row['path'], row['bytes'], plan['pins'], sink=dst)
+                        require(digest == row['sha256'], 'Generated cache changed during snapshot')
+                    except BaseException as error:
+                        primary = error
+                        raise
+                    finally:
+                        try:
+                            dst.close()
+                        except BaseException as error:
+                            fact = {'path': str(target), **failure(error)}
+                            if primary is None:
+                                error.cache_copy_close = fact
+                                raise
+                            primary.cache_copy_close = fact
+                    copy_fact['complete'] = True
+                    copied_rows.append({**row, 'sha256': digest})
+                copied = hash_plan(tree_plan(destination, ready['budget']['cacheSnapshotCapBytes']))
+                require(copied == before == copied_rows, 'Generated cache changed during snapshot')
+            persist(evidence / 'cache-before.json', rows)
+            observation['complete'] = True
+            return rows
+    except BaseException as error:
+        error.cacheObservation = observation
+        raise
+
+
+def cache_after(ready, observation):
+    if not ready['generatedCaches']:
+        observation['complete'] = True
+        return []
+    with cache_deadline():
+        maximum = ready['initialCacheBytes'] + ready['budget']['nativeReservesAndObservedThresholds']['generatedCacheGrowth']
+        plans = cache_plans(ready, maximum, observation)
+        rows = []
+        for plan in plans:
+            files = []
+            row = {'source': str(plan['root']), 'files': files}
+            rows.append(row)
+            observation['inventories'] = rows
+            for item in plan['files']:
+                _, digest = bounded_read(plan['root'] / item['path'], item['bytes'], plan['pins'])
+                files.append({**item, 'sha256': digest})
+        observation['complete'] = True
+        return rows
 
 
 def observed_bytes(root):
@@ -486,7 +644,7 @@ def observed_thresholds(ready, job, private):
     values = {'nativeProfileWorkingAndArchivePeak': profile_bytes,
               'privateTmpWorkingAndArchivePeak': observed_bytes(private) - profile_bytes,
               'helperLogWorkingAndArchivePeak': observed_bytes(job.scratch) + observed_bytes(job.out),
-              'generatedCacheGrowth': sum(observed_bytes(p) for p in ready['generatedCaches'])}
+              'generatedCacheGrowth': cache_size_admission(ready, ready['initialCacheBytes'] + reserves['generatedCacheGrowth'])['bytes']}
     # Before copying, source thresholds leave the matching copy/archive reserve free.
     limits = {**reserves, 'nativeProfileWorkingAndArchivePeak': reserves['nativeProfileWorkingAndArchivePeak'] // 2,
               'privateTmpWorkingAndArchivePeak': reserves['privateTmpWorkingAndArchivePeak'] // 2,
@@ -518,8 +676,10 @@ def run_unit(ready, spec, record):
             if not isinstance(error, Exception):
                 raise
     job = private = admission = None
+    caches_snapshotted = interrupted = False
     try:
         snapshot_caches(ready, evidence)
+        caches_snapshotted = True
         sys.path.insert(0, ready['stationDirectory'])
         core = importlib.import_module('round4_job_boundary')
         temp = importlib.import_module('run_round4_browser_proof')
@@ -550,6 +710,7 @@ def run_unit(ready, spec, record):
             require(outcome == 'completed' and job.state['exits'].get('capture') == 0, 'Capture returned failure')
             observer.require_browser()
     except BaseException as error:
+        interrupted = not isinstance(error, Exception) or isinstance(error, CacheDeadlineExpired)
         result['primaryFailure'] = failure(error)
         allocation = getattr(error, 'private_tmp_allocation', None)
         if allocation is not None:
@@ -586,13 +747,22 @@ def run_unit(ready, spec, record):
                     result['raw']['terminalAudit'] = True
                     receipt('terminal-audit.json', terminal)
             except BaseException as error:
+                interrupted = interrupted or not isinstance(error, Exception) or isinstance(error, CacheDeadlineExpired)
                 result['cleanupFailures'].append(failure(error))
         elif private is not None:
             result['cleanupFailures'].append({'type': 'RetainedAllocation', 'message': 'No durable job; private TMP retained'})
-        try:
-            persist(evidence / 'cache-after.json', [{'source': p, 'files': inventory(p)} for p in ready['generatedCaches']])
-        except BaseException as error:
-            result['persistenceFailures'].append(failure(error))
+        observation = {'entries': [], 'bytes': 0, 'complete': False}
+        result['raw']['cacheAfter'] = observation
+        if not caches_snapshotted or interrupted:
+            observation['skipped'] = 'interrupted' if interrupted else 'snapshot failed; source and partial copies retained'
+        else:
+            try:
+                with cache_deadline():
+                    rows = cache_after(ready, observation)
+                    persist(evidence / 'cache-after.json', rows)
+            except BaseException as error:
+                observation['failure'] = failure(error)
+                result['persistenceFailures'].append(failure(error))
     try:
         receipt('raw-before-acceptance.json', result)
         if result['primaryFailure'] or result['cleanupFailures'] or result['persistenceFailures']:
