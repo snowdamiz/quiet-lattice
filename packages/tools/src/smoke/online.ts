@@ -61,6 +61,8 @@ function adminSql(statement: string, url = ADMIN_URL): void {
     cwd: SERVER_DIR,
     env: { ...process.env, ADMIN_URL: url, STATEMENT: statement },
     encoding: 'utf8',
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   if (r.status !== 0) throw new Error(`${statement} failed (is \`pnpm db:up\` running?): ${r.stderr || r.stdout}`);
 }
@@ -71,12 +73,26 @@ function databaseUrl(name: string): string {
   return u.toString();
 }
 
+async function within<T>(promise: Promise<T>, ms: number, operation: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${operation} timed out`)), ms);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function healthy(url: string, server: ChildProcess, output: () => string, timeoutMs = 60_000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     if (server.exitCode !== null) throw new Error(`the server exited (${server.exitCode}):\n${output()}`);
     try {
-      if ((await fetch(`${url}/health`)).ok) return;
+      if ((await fetch(`${url}/health`, { signal: AbortSignal.timeout(1000) })).ok) return;
     } catch {
       /* not listening yet */
     }
@@ -86,11 +102,12 @@ async function healthy(url: string, server: ChildProcess, output: () => string, 
 }
 
 /** `stepped`: the server's clock is the spec's to step (packages/server/test/steppedServer.ts), for specs that judge timing. */
-export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Online> {
+export async function startOnline(opts: { stepped?: boolean; claimedDatabaseUrl?: string; redisUrl?: string } = {}): Promise<Online> {
   const name = `astra_smoke_${Date.now().toString(36)}_${randomBytes(3).toString('hex')}`;
   if (!SCRATCH.test(name)) throw new Error(`not a scratch database name: ${name}`);
-  adminSql(`CREATE DATABASE "${name}"`);
-  const dbUrl = databaseUrl(name);
+  // An externally claimed database stays with its caller, including cleanup. Ordinary smoke still owns its scratch DB.
+  if (!opts.claimedDatabaseUrl) adminSql(`CREATE DATABASE "${name}"`);
+  const dbUrl = opts.claimedDatabaseUrl ?? databaseUrl(name);
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
   let out = '';
@@ -100,7 +117,7 @@ export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Onl
   const env = {
     ...process.env,
     DATABASE_URL: dbUrl,
-    REDIS_URL,
+    REDIS_URL: opts.redisUrl ?? REDIS_URL,
     HOST: '127.0.0.1',
     LOG_LEVEL: 'warn',
     NODE_ENV: 'development',
@@ -124,21 +141,31 @@ export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Onl
   };
   const stopServer = async () => {
     const s = server;
-    if (!s || s.exitCode !== null) return;
+    if (!s || s.exitCode !== null || s.signalCode !== null) return;
     const exited = new Promise((r) => s.once('exit', r));
     s.kill('SIGTERM');
-    await Promise.race([exited, new Promise((r) => setTimeout(r, 10_000))]);
-    if (s.exitCode === null) s.kill('SIGKILL');
+    try {
+      await within(exited, 10_000, 'server SIGTERM');
+    } catch {
+      s.kill('SIGKILL');
+      await within(exited, 5000, 'server SIGKILL');
+    }
   };
   const stop = async () => {
-    await vite?.close();
-    await stopServer();
+    const closed = await Promise.allSettled([within(vite?.close() ?? Promise.resolve(), 10_000, 'Vite close'), stopServer()]);
+    for (const result of closed) if (result.status === 'rejected') throw result.reason;
     // (only ever the scratch database this run made)
-    if (SCRATCH.test(name)) adminSql(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+    if (!opts.claimedDatabaseUrl && SCRATCH.test(name)) adminSql(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
   };
 
   try {
-    const migrated = spawnSync(process.execPath, ['--import', 'tsx', 'src/db/migrate.ts'], { cwd: SERVER_DIR, env, encoding: 'utf8' });
+    const migrated = spawnSync(process.execPath, ['--import', 'tsx', 'src/db/migrate.ts'], {
+      cwd: SERVER_DIR,
+      env,
+      encoding: 'utf8',
+      timeout: 60_000,
+      killSignal: 'SIGKILL',
+    });
     if (migrated.status !== 0) throw new Error(`db:migrate failed: ${migrated.stderr || migrated.stdout}`);
 
     port = await freePort();
@@ -173,11 +200,12 @@ export async function startOnline(opts: { stepped?: boolean } = {}): Promise<Onl
         method: 'POST',
         headers: { 'content-type': 'application/json', authorization: `Bearer ${adminSecret}`, 'x-astra-operator': 'smoke' },
         body: JSON.stringify({ command }),
+        signal: AbortSignal.timeout(10_000),
       });
       return (await res.json()) as { ok: boolean; result?: unknown; error?: string; message?: string };
     };
     const control = async (path: string) => {
-      const r = await fetch(`http://127.0.0.1:${clockPort}${path}`);
+      const r = await fetch(`http://127.0.0.1:${clockPort}${path}`, { signal: AbortSignal.timeout(5000) });
       if (!r.ok) throw new Error(`the server's clock control answered ${r.status}`);
     };
     const clock = opts.stepped

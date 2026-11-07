@@ -9,6 +9,8 @@ const PORT = Number(process.env.SMOKE_PORT) || 5190;
 export default defineConfig({
   testDir: 'src',
   testMatch: ['smoke/**/*.spec.ts', 'e2e/**/*.spec.ts'],
+  // This focused QA owns a separately claimed private DB/Redis8 route; run its dedicated config.
+  testIgnore: ['**/symbiotic-online.spec.ts'],
   timeout: 180_000,
   workers: 1,
   reporter: [['list']],
