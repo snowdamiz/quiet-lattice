@@ -1,0 +1,294 @@
+{
+  "runner_sha256": "359b3adb860d7fe523070cf512305ed793965f779bffd4dce26f9212f6e609cc",
+  "reviewer_sha256": "57e6f7cf8f8bdf91b4ca598e60b74db7f777d1bb9a934d7f2b0bc479837dae0b",
+  "expected": "red",
+  "cases": [
+    {
+      "name": "unreadable-source",
+      "defect_reproduced": true,
+      "before": {
+        "src": "1008aa686c30cb77f284546ce92be061b490ab7152266b7604e43b54b4002698",
+        "dst": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+        "cand": "5d2e94fab7b6635d77114bc4b0e25cbe2815a9e08d2adf86528550f09c2568e1"
+      },
+      "after": {
+        "source_exists": true,
+        "export_exists": true,
+        "export_sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+        "candidate_exists": true,
+        "candidate_sha256": "5d2e94fab7b6635d77114bc4b0e25cbe2815a9e08d2adf86528550f09c2568e1",
+        "receipts": [],
+        "run_dirs": [
+          "20261107T030700_export_round_b6fa2f25"
+        ]
+      },
+      "run": {
+        "exit": 1,
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "/tmp/t04-r1-red-20261107/scratch/unreadable-source/boot.py",
+          "export",
+          "round",
+          "--deadline",
+          "30"
+        ],
+        "elapsed_s": 0.127,
+        "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/packages/tools/blender/flora_trees/run.py\", line 70, in main\n    'output':str(export.relative_to(ROOT)),'source_before':sha(source),\n                                                           ~~~^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/packages/tools/blender/flora_trees/run.py\", line 23, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None\n                          ~~~~~~~~~~~~~~~^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes\n    with self.open(mode='rb', buffering=0) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 13] Permission denied: '/private/tmp/t04-r1-red-20261107/scratch/unreadable-source/assets/blend/flora/tree_round_t04.blend'\n",
+        "survivors": [],
+        "pid": 45839
+      },
+      "expectation_met": true
+    },
+    {
+      "name": "directory-source",
+      "defect_reproduced": true,
+      "before": {
+        "dst": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+        "cand": "cc272982687daa127c5a8010b804b69603fcbc32a40f3ea63649eeb36ad474fa"
+      },
+      "after": {
+        "export_exists": true,
+        "export_sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+        "candidate_exists": false,
+        "receipts": [],
+        "run_dirs": [
+          "20261107T030700_export_round_aed41519"
+        ]
+      },
+      "run": {
+        "exit": 1,
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "/tmp/t04-r1-red-20261107/scratch/directory-source/boot.py",
+          "export",
+          "round",
+          "--deadline",
+          "30"
+        ],
+        "elapsed_s": 0.127,
+        "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/directory-source/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/directory-source/packages/tools/blender/flora_trees/run.py\", line 103, in main\n    shutil.copyfile(source,run/'previous-source.blend')\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/shutil.py\", line 313, in copyfile\n    with open(src, 'rb') as fsrc:\n         ~~~~^^^^^^^^^^^\nIsADirectoryError: [Errno 21] Is a directory: '/private/tmp/t04-r1-red-20261107/scratch/directory-source/assets/blend/flora/tree_round_t04.blend'\n",
+        "survivors": [],
+        "pid": 45847
+      },
+      "expectation_met": true
+    },
+    {
+      "name": "symlink-archive",
+      "defect_reproduced": true,
+      "archive_is_symlink": true,
+      "archive_target": "/tmp/t04-r1-red-20261107/scratch/symlink-backing.glb",
+      "sha_before": "d77f96afbdab50e24ed37533da65c9b4de00b84314d38fb957c075cd88aab878",
+      "sha_after": "55f60f55870826cb832c50090ae41fba35e96ac6015c51cb051312c11f851772",
+      "canonical_export_exists": false,
+      "candidate_exists": false,
+      "exit": 1,
+      "survivors": [],
+      "receipts": [
+        "assets/blend/flora/trees/evidence/20261107T030700_seal_round_38cd5ece/receipt.json"
+      ],
+      "expectation_met": true
+    },
+    {
+      "name": "source-mutation-published",
+      "defect_reproduced": false,
+      "export_bytes": "PUBLISHED-GLB",
+      "source_bytes": "MUTATED-SOURCE",
+      "receipt": {
+        "action": "export",
+        "kind": "round",
+        "cwd": "/private/tmp/t04-r1-red-20261107/scratch/source-mutation",
+        "head": "5a84f90ca50f71d559452d28e42c067ee1b86345",
+        "resources": {
+          "load": [
+            6.341796875,
+            8.55322265625,
+            9.50634765625
+          ],
+          "free_disk": 37645541376,
+          "memory": "System-wide memory free percentage: 80%",
+          "processes": [
+            "68793 197.1 7177136 /Applications/Blender.app/Contents/MacOS/Blender",
+            "45850 120.3 330592 /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+            "75123 105.1 1057456 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+            "45756 100.1 2479376 /Applications/Blender.app/Contents/MacOS/Blender",
+            "41649  98.5 434048 /Applications/Blender.app/Contents/MacOS/Blender",
+            "45869  60.8 172080 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "43117  17.8 1113440 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "14892   7.3 351312 /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+            "  411   5.1  45232 /System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow",
+            "14855   3.6 683104 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "  540   3.2  36544 /usr/sbin/coreaudiod",
+            "43106   2.8 231088 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "75104   2.8 598064 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+            "43564   2.1 162864 /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+            "45829   2.1  25152 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          ]
+        },
+        "source": "assets/blend/flora/tree_round_t04.blend",
+        "output": "packages/client/public/models/flora/tree_round_t04.glb",
+        "source_before": "a50cb312f529ffc8b25200af4dda9a0da314e48d8ca28452a1e1903e86fbb2c0",
+        "deadline_s": 40,
+        "rss_limit_mib": 6144,
+        "log_limit_mib": 32,
+        "command": [
+          "/tmp/t04-r1-red-20261107/scratch/source-mutation/producer",
+          "-b",
+          "--factory-startup",
+          "-t",
+          "2",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "/private/tmp/t04-r1-red-20261107/scratch/source-mutation/packages/tools/blender/flora_trees/export_saved.py",
+          "--",
+          "round",
+          "/private/tmp/t04-r1-red-20261107/scratch/source-mutation/assets/blend/flora/trees/evidence/20261107T030701_export_round_b2b03ea1"
+        ],
+        "tool_hashes": {
+          "packages/tools/blender/flora_trees/run.py": "359b3adb860d7fe523070cf512305ed793965f779bffd4dce26f9212f6e609cc",
+          "packages/tools/blender/flora_trees/export_saved.py": "3b8f95be367a10c6f2f141ad7161e33a2e090a61248fe063e83eaa5a9ee1e9a2"
+        },
+        "environment": {
+          "OMP_NUM_THREADS": "2",
+          "OPENBLAS_NUM_THREADS": "2",
+          "MKL_NUM_THREADS": "2",
+          "NUMEXPR_NUM_THREADS": "2",
+          "VECLIB_MAXIMUM_THREADS": "2",
+          "ART_KTX_JOBS": "1",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "CUDA_VISIBLE_DEVICES": "",
+          "KTX": "/private/tmp/t04-r1-red-20261107/scratch/source-mutation/packages/tools/blender/flora_trees/ktx_one.py",
+          "T04_KTX_REAL": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+          "T04_CODEC_LOCK": "/private/tmp/t04-r1-red-20261107/scratch/source-mutation/assets/blend/flora/trees/evidence/.codec.lock"
+        },
+        "codec_threads": 1,
+        "pid": 45884,
+        "reason": "exit",
+        "exit": 0,
+        "elapsed_s": 0.291,
+        "peak_group_rss_kib": 32,
+        "remaining_owned_children": [],
+        "source_after": "be0bd1b1407a4884404fdabe5ec45b8c6e28f136aedb49fcd699076cdb7747e2",
+        "export_sha256": "a357f4a2ad0a82c63ae4628806439a6c3c484cff9a18fe896299a21c49b426bc",
+        "source_mutation": true,
+        "source_unchanged": false
+      },
+      "survivors": [],
+      "log_tail": "{\"receipt\": \"assets/blend/flora/trees/evidence/20261107T030701_export_round_b2b03ea1/receipt.json\", \"exit\": 1, \"reason\": \"exit\", \"peak_rss_mib\": 0.0}\n",
+      "expectation_met": false
+    },
+    {
+      "name": "signal-permission",
+      "defect_reproduced": true,
+      "receipt": null,
+      "canonical_export_exists": false,
+      "candidate_exists": false,
+      "run": {
+        "exit": 1,
+        "command": [
+          "/opt/homebrew/opt/python@3.14/bin/python3.14",
+          "-B",
+          "/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py",
+          "export",
+          "round",
+          "--deadline",
+          "20"
+        ],
+        "elapsed_s": 0.492,
+        "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 119, in main\n    if child.poll() is None: stop(child.pid)\n                             ~~~~^^^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 34, in stop\n    try: os.killpg(pid,sig)\n         ~~~~~~~~~^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 8, in deny\n    def deny(*args): raise PermissionError(1,'controlled killpg denial')\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] controlled killpg denial\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 122, in main\n    survivors=stop(child.pid)\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 34, in stop\n    try: os.killpg(pid,sig)\n         ~~~~~~~~~^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 8, in deny\n    def deny(*args): raise PermissionError(1,'controlled killpg denial')\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] controlled killpg denial\n",
+        "survivors": [
+          "45907 45907 Ss"
+        ],
+        "pid": 45901
+      },
+      "expectation_met": true
+    }
+  ],
+  "commands": [
+    {
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t04-r1-red-20261107/scratch/unreadable-source/boot.py",
+        "export",
+        "round",
+        "--deadline",
+        "30"
+      ],
+      "elapsed_s": 0.127,
+      "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/packages/tools/blender/flora_trees/run.py\", line 70, in main\n    'output':str(export.relative_to(ROOT)),'source_before':sha(source),\n                                                           ~~~^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/unreadable-source/packages/tools/blender/flora_trees/run.py\", line 23, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None\n                          ~~~~~~~~~~~~~~~^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 777, in read_bytes\n    with self.open(mode='rb', buffering=0) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 13] Permission denied: '/private/tmp/t04-r1-red-20261107/scratch/unreadable-source/assets/blend/flora/tree_round_t04.blend'\n",
+      "survivors": [],
+      "pid": 45839
+    },
+    {
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t04-r1-red-20261107/scratch/directory-source/boot.py",
+        "export",
+        "round",
+        "--deadline",
+        "30"
+      ],
+      "elapsed_s": 0.127,
+      "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/directory-source/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/directory-source/packages/tools/blender/flora_trees/run.py\", line 103, in main\n    shutil.copyfile(source,run/'previous-source.blend')\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/shutil.py\", line 313, in copyfile\n    with open(src, 'rb') as fsrc:\n         ~~~~^^^^^^^^^^^\nIsADirectoryError: [Errno 21] Is a directory: '/private/tmp/t04-r1-red-20261107/scratch/directory-source/assets/blend/flora/tree_round_t04.blend'\n",
+      "survivors": [],
+      "pid": 45847
+    },
+    {
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t04-r1-red-20261107/scratch/symlink-archive/boot.py",
+        "seal",
+        "round",
+        "--deadline",
+        "45"
+      ],
+      "elapsed_s": 0.484,
+      "log": "{\"receipt\": \"assets/blend/flora/trees/evidence/20261107T030700_seal_round_38cd5ece/receipt.json\", \"exit\": 1, \"reason\": \"exit\", \"peak_rss_mib\": 0.0}\n",
+      "survivors": [],
+      "pid": 45857
+    },
+    {
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t04-r1-red-20261107/scratch/source-mutation/boot.py",
+        "export",
+        "round",
+        "--deadline",
+        "40"
+      ],
+      "elapsed_s": 0.488,
+      "log": "{\"receipt\": \"assets/blend/flora/trees/evidence/20261107T030701_export_round_b2b03ea1/receipt.json\", \"exit\": 1, \"reason\": \"exit\", \"peak_rss_mib\": 0.0}\n",
+      "survivors": [],
+      "pid": 45879
+    },
+    {
+      "exit": 1,
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py",
+        "export",
+        "round",
+        "--deadline",
+        "20"
+      ],
+      "elapsed_s": 0.492,
+      "log": "Traceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 119, in main\n    if child.poll() is None: stop(child.pid)\n                             ~~~~^^^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 34, in stop\n    try: os.killpg(pid,sig)\n         ~~~~~~~~~^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 8, in deny\n    def deny(*args): raise PermissionError(1,'controlled killpg denial')\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] controlled killpg denial\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 14, in <module>\n    sys.exit(m.main())\n             ~~~~~~^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 122, in main\n    survivors=stop(child.pid)\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/packages/tools/blender/flora_trees/run.py\", line 34, in stop\n    try: os.killpg(pid,sig)\n         ~~~~~~~~~^^^^^^^^^\n  File \"/tmp/t04-r1-red-20261107/scratch/signal-permission/boot.py\", line 8, in deny\n    def deny(*args): raise PermissionError(1,'controlled killpg denial')\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] controlled killpg denial\n",
+      "survivors": [
+        "45907 45907 Ss"
+      ],
+      "pid": 45901
+    }
+  ],
+  "status": "FAIL"
+}

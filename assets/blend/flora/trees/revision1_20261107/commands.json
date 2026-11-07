@@ -1,0 +1,161 @@
+[
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--runner",
+      "assets/blend/flora/trees/revision1_20261107/baseline-run.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-red-20261107",
+      "--expect",
+      "red"
+    ],
+    "exit": 1,
+    "summary": "Harness F-C predicate mismatch; actual receipt exit0 and published GLB present.",
+    "evidence_package": "red-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--runner",
+      "assets/blend/flora/trees/revision1_20261107/baseline-run.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-red2-20261107",
+      "--expect",
+      "red"
+    ],
+    "exit": 0,
+    "summary": "Selected baseline RED: five cases reproduce F-A twice and F-B/C/D.",
+    "evidence_package": "red2-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-green1-20261107",
+      "--expect",
+      "green"
+    ],
+    "exit": 1,
+    "summary": "Harness TypeError from duplicate name keyword; partial raw evidence retained.",
+    "evidence_package": "green1-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-green2-20261107",
+      "--expect",
+      "green"
+    ],
+    "exit": 1,
+    "summary": "Harness attempted to read deliberate receipt directory; partial evidence retained.",
+    "evidence_package": "green2-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-green3-20261107",
+      "--expect",
+      "green"
+    ],
+    "exit": 1,
+    "summary": "Harness reused its own stdout log path while testing runner reuse; exclusive open rejected it.",
+    "evidence_package": "green3-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-green4-20261107",
+      "--expect",
+      "green"
+    ],
+    "exit": 0,
+    "summary": "Historical 27/27 PASS before atomic receipt-write refinement.",
+    "evidence_package": "green4-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r1-green5-20261107",
+      "--expect",
+      "green"
+    ],
+    "exit": 0,
+    "summary": "Selected final GREEN 28/28 PASS.",
+    "evidence_package": "green5-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/client/src/gameplay/floraTreesT04.test.js",
+      "packages/client/src/gameplay/modelLibrary.test.js",
+      "--config",
+      "/tmp/t04-r1-focused-20261107/vitest.config.mjs",
+      "--configLoader",
+      "native",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--reporter=json",
+      "--outputFile=/tmp/t04-r1-focused-20261107/tests.json"
+    ],
+    "exit": 0,
+    "elapsed_s": 4.082812124979682,
+    "node_version": "v22.23.3",
+    "vitest_version": "5.0.5",
+    "summary": "29 real-consumer tests PASS, private Vite/module/Node caches",
+    "evidence_package": "focused-evidence.tar.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "assets/blend/flora/trees/revision1_20261107/verify_unchanged.py",
+      "--out",
+      "assets/blend/flora/trees/revision1_20261107/verification.json"
+    ],
+    "exit": 0,
+    "summary": "Final corrected recursive preview census; initial nonrecursive glob exited1 (AssertionError), no output written."
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "summary": "Working diff whitespace check"
+  }
+]

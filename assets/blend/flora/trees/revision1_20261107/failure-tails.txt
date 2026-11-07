@@ -1,0 +1,34 @@
+Actual baseline RED failures (full traces/receipts in red2-evidence.tar.gz):
+F-A unreadable: PermissionError: [Errno 13] Permission denied: scratch/unreadable-source/assets/blend/flora/tree_round_t04.blend; no receipt, GLB/candidate remain.
+F-A directory: IsADirectoryError: [Errno 21] Is a directory: scratch/directory-source/assets/blend/flora/tree_round_t04.blend; no receipt, GLB remains.
+F-B: archived path remains a symlink; changing backing bytes changes its hash (recorded before/after in red2-results.json).
+F-C: process exit1; receipt exit0/source_mutation=true; PUBLISHED-GLB remains current.
+F-D: PermissionError: [Errno 1] controlled killpg denial, stop called from monitor and finally; no receipt. Harness later kills only its recorded child group.
+
+Historical harness failures, not hidden or treated as product PASS:
+red, exit1: {"status":"FAIL","cases":[["unreadable-source",true],["directory-source",true],["symlink-archive",true],["source-mutation-published",false],["signal-permission",true]]}
+The immutable reviewer script incorrectly predicates F-C on receipt exit1; its report specifies exit0. The adapter corrects only that predicate and records the original predicate result.
+
+green1, exit1:
+  cases.extend(harness.controls())
+  record('denied-but-exited', ..., **terminal)
+TypeError: Harness.controls.<locals>.record() got multiple values for argument 'name'
+
+green2, exit1:
+  result=self.run(root,['export','round','--deadline','2'])
+  r=json.loads(p.read_text())
+IsADirectoryError: [Errno 21] Is a directory: '/tmp/t04-r1-green2-20261107/scratch/receipt-write-failure/assets/blend/flora/trees/evidence/20261107T031157_export_round_8cd71dcf/receipt.json'
+
+green3, exit1:
+  second=self.run(root,['export','round','--deadline','2'],env={'FIXED_ATTEMPT':'1'})
+  with log.open('xb') as stream:
+FileExistsError: [Errno 17] File exists: '/tmp/t04-r1-green3-20261107/reused-attempt.log'
+
+Initial verify_unchanged.py, exit1:
+  assert len(images) == 46
+AssertionError
+The initial glob saw only root-level images; corrected to rglob. No verification.json existed from this failed check.
+
+Optional formatter availability probe, exit1:
+/opt/homebrew/opt/python@3.14/bin/python3.14: No module named ruff
+No installation attempted. No Ruff PASS claimed.
