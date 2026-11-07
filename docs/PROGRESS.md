@@ -1078,3 +1078,9 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Lark `bafae4c869`:** independent SOURCE/CPU PASS for private shrink-512 density/export. Blend min_median 618.762 (exact author match); decoded GLB min_median 632.878; geometry vs prior canonical LOD0 unchanged; stock validate PASS 5/5 both. One-atlas true-512 (`force_fit_scale=1.0`); single UVMap/TEXCOORD_0; no shared exporter edits.
 - Seal retained under `docs/review-records/p1-e12-t02/lark-shrink512-review-bafae4c/` (index `20261107-lark-shrink512-review-pass-bafae4c.json`). SEAL SHA256 `1a5ee431b31e01f3f39a0ea6430adf82ea83999d9297b1c215870ba0e86d9606`.
 - **Parent:** canonical promote of sealed private blend/glb onto `assets/blend/hulls/lark.blend` and `packages/client/public/models/hulls/lark.glb` is AUTHORIZED. Visual/GPU remain unassigned until promote commits. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Lark canonical promote verified; visual/GPU capture authorized
+
+- **Lark `928ec63c59`:** sealed private shrink-512 candidate byte-promoted to canonical. Parent-verified SHA256 match: blend `68a32771…e825e1` (35,650,695 B), glb `e377daea…159e7` (13,792,612 B). Tree `8e72764bf`. No re-export. SOURCE/CPU PASS retained at `bafae4c869`.
+- **Parent:** visual/GPU **capture packet** AUTHORIZED on promoted HEAD only (CPU turntables/material sheets → serial native `#review:hulls/lark` for base/damaged/husked + cockpit/boarding/hardpoint stills + indexed hashes). Independent blind visual grade HELD until packet. Force-fit/multi-atlas remain rejected. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+- Evidence: `docs/review-records/p1-e12-t02/lark-canonical-promote-928ec63c/` (index `20261107-lark-canonical-promote-928ec63c.json`).
