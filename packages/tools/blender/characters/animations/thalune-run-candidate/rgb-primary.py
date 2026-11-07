@@ -79,9 +79,12 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
         '-filter_complex_threads','1','-g','60','-bf','0','-sc_threshold','0','-video_track_timescale','60000','-movflags','+faststart',str(out)]
     save(config['command'],{'argv':argv,'rawCombinedStdoutStderr':str(raw),'fileLimitBytes':VIDEO_LIMIT,'singleInFlight':True})
     child=None;seen=set()
-    terminal=dict(returncodeKnown=False,observations=[],observationFailures=[])
+    terminal=dict(returncodeKnown=False,framesWrittenToEncoder=0,framesAcknowledged=0,
+        acknowledgmentBasis='Complete local ACK writes and flush; peer processing unobserved',
+        ackDelivery=None,observations=[],observationFailures=[])
     def observe(operation,call):
-        observation=dict(operation=operation,framesAcknowledged=len(seen))
+        observation=dict(operation=operation,framesWrittenToEncoder=terminal['framesWrittenToEncoder'],
+            framesAcknowledged=terminal['framesAcknowledged'])
         terminal['observations'].append(observation)
         try:code=call()
         except BaseException as error:
@@ -106,7 +109,17 @@ def encode(config,source=sys.stdin.buffer,ack=sys.stdout):
                 png=read_exact(source,png_count);rgb,row=pixels(png)
                 assert observe('before-frame-write',lambda:child.poll()) is None,'Encoder exited before frame write'
                 child.stdin.write(rgb);child.stdin.flush() # blocking write is the only queue; no next frame before ACK
-                seen.add(header['workId']);print(json.dumps({'schema':SCHEMA,**header,**row}),file=ack,flush=True)
+                seen.add(header['workId']);terminal['framesWrittenToEncoder']=len(seen)
+                delivery=dict(**header,status='unconfirmed',phase='serialize')
+                terminal['ackDelivery']=delivery
+                text=json.dumps({'schema':SCHEMA,**header,**row})
+                delivery['phase']='body-write';delivery['bodyWriteReturned']=ack.write(text)
+                assert type(delivery['bodyWriteReturned']) is int and delivery['bodyWriteReturned']==len(text),'Incomplete ACK body write'
+                delivery['phase']='newline-write';delivery['newlineWriteReturned']=ack.write('\n')
+                assert type(delivery['newlineWriteReturned']) is int and delivery['newlineWriteReturned']==1,'Incomplete ACK newline write'
+                delivery['phase']='flush';ack.flush()
+                terminal['framesAcknowledged']+=1
+                delivery.update(status='completed',phase='complete')
             assert not source.read(1),'Unexpected extra source frame'
             child.stdin.close();code=observe('final-wait',lambda:child.wait());assert code==0,f'Encoder exit {code}'
             assert 0<out.stat().st_size<=VIDEO_LIMIT

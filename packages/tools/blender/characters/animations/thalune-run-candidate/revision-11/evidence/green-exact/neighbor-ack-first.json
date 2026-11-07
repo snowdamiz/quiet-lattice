@@ -1,0 +1,103 @@
+{
+  "name": "ack-first",
+  "status": "PASS",
+  "actualAcknowledged": 0,
+  "framesAcceptedByWrite": 1,
+  "calls": [
+    "Popen",
+    "poll",
+    "write",
+    "flush",
+    "error",
+    "poll"
+  ],
+  "ackWriteCalls": 1,
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 1,
+    "encoderTerminal": {
+      "returncodeKnown": true,
+      "framesWrittenToEncoder": 1,
+      "framesAcknowledged": 0,
+      "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+      "ackDelivery": {
+        "workId": "native-189/diagnostic/0000",
+        "mediaFrameOrdinal": 0,
+        "status": "unconfirmed",
+        "phase": "body-write"
+      },
+      "observations": [
+        {
+          "operation": "before-frame-write",
+          "framesWrittenToEncoder": 0,
+          "framesAcknowledged": 0,
+          "returncode": null
+        },
+        {
+          "operation": "failure-poll",
+          "framesWrittenToEncoder": 1,
+          "framesAcknowledged": 0,
+          "returncode": -25
+        }
+      ],
+      "observationFailures": [],
+      "returncode": -25,
+      "exitStatus": null,
+      "signalNumber": 25,
+      "signalName": "SIGXFSZ"
+    },
+    "primaryFailure": {
+      "type": "OSError",
+      "message": "INDEPENDENT_ack-first",
+      "details": {
+        "unknown": {
+          "raw": "b'\\x00\\xff'",
+          "keep": [
+            false,
+            11
+          ]
+        },
+        "encoderTerminal": {
+          "returncodeKnown": true,
+          "framesWrittenToEncoder": 1,
+          "framesAcknowledged": 0,
+          "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+          "ackDelivery": {
+            "workId": "native-189/diagnostic/0000",
+            "mediaFrameOrdinal": 0,
+            "status": "unconfirmed",
+            "phase": "body-write"
+          },
+          "observations": [
+            {
+              "operation": "before-frame-write",
+              "framesWrittenToEncoder": 0,
+              "framesAcknowledged": 0,
+              "returncode": null
+            },
+            {
+              "operation": "failure-poll",
+              "framesWrittenToEncoder": 1,
+              "framesAcknowledged": 0,
+              "returncode": -25
+            }
+          ],
+          "observationFailures": [],
+          "returncode": -25,
+          "exitStatus": null,
+          "signalNumber": 25,
+          "signalName": "SIGXFSZ"
+        },
+        "args": [
+          "INDEPENDENT_ack-first"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual encode and DiagnosticStream; inert Popen/codec/pixel/rlimit ports. No native process."
+}

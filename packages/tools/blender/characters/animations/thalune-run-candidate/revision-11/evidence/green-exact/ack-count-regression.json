@@ -1,0 +1,108 @@
+{
+  "sourceSha256": "b829e7fc8ddff9d12b367040b6b0df9603279d027588db075530800946bc7d96",
+  "actualAcknowledged": 0,
+  "reportedAcknowledged": 0,
+  "pending": {
+    "workId": "native-189/diagnostic/0000",
+    "mediaFrameOrdinal": 0,
+    "sourcePngSha256": "2d200f143ce50ae3829f701c2423b2df3f969d601fb81f1690c87408916f83bc",
+    "rgbSha256": "966ddadb9aa413fcd18ae16af1fc0311d023efd67413fa762519979c4546e663",
+    "rgbaSha256": "705b2c62fe7ea86c0cef21d70efddb88d061e229b67f3301f5d1872c0f6991a3"
+  },
+  "calls": [
+    [
+      "poll"
+    ],
+    [
+      "rgb-write",
+      6220800
+    ],
+    [
+      "rgb-flush"
+    ],
+    [
+      "poll"
+    ]
+  ],
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 1,
+    "encoderTerminal": {
+      "returncodeKnown": true,
+      "framesWrittenToEncoder": 1,
+      "framesAcknowledged": 0,
+      "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+      "ackDelivery": {
+        "workId": "native-189/diagnostic/0000",
+        "mediaFrameOrdinal": 0,
+        "status": "unconfirmed",
+        "phase": "body-write"
+      },
+      "observations": [
+        {
+          "operation": "before-frame-write",
+          "framesWrittenToEncoder": 0,
+          "framesAcknowledged": 0,
+          "returncode": null
+        },
+        {
+          "operation": "failure-poll",
+          "framesWrittenToEncoder": 1,
+          "framesAcknowledged": 0,
+          "returncode": -25
+        }
+      ],
+      "observationFailures": [],
+      "returncode": -25,
+      "exitStatus": null,
+      "signalNumber": 25,
+      "signalName": "SIGXFSZ"
+    },
+    "primaryFailure": {
+      "type": "BrokenPipeError",
+      "message": "ACK destination closed before first ACK write",
+      "details": {
+        "encoderTerminal": {
+          "returncodeKnown": true,
+          "framesWrittenToEncoder": 1,
+          "framesAcknowledged": 0,
+          "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+          "ackDelivery": {
+            "workId": "native-189/diagnostic/0000",
+            "mediaFrameOrdinal": 0,
+            "status": "unconfirmed",
+            "phase": "body-write"
+          },
+          "observations": [
+            {
+              "operation": "before-frame-write",
+              "framesWrittenToEncoder": 0,
+              "framesAcknowledged": 0,
+              "returncode": null
+            },
+            {
+              "operation": "failure-poll",
+              "framesWrittenToEncoder": 1,
+              "framesAcknowledged": 0,
+              "returncode": -25
+            }
+          ],
+          "observationFailures": [],
+          "returncode": -25,
+          "exitStatus": null,
+          "signalNumber": 25,
+          "signalName": "SIGXFSZ"
+        },
+        "args": [
+          "ACK destination closed before first ACK write"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual default full-size localized DiagnosticStream and actual pixels(); only Popen and setrlimit ports are inert."
+}

@@ -1,0 +1,81 @@
+{
+  "name": "ack-newline",
+  "status": "DEFECT_REPRODUCED",
+  "actualAcknowledged": 0,
+  "framesAcceptedByWrite": 1,
+  "calls": [
+    "Popen",
+    "poll",
+    "write",
+    "flush",
+    "error",
+    "poll"
+  ],
+  "ackWriteCalls": 2,
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 1,
+    "encoderTerminal": {
+      "returncodeKnown": true,
+      "observations": [
+        {
+          "operation": "before-frame-write",
+          "framesAcknowledged": 0,
+          "returncode": null
+        },
+        {
+          "operation": "failure-poll",
+          "framesAcknowledged": 1,
+          "returncode": -25
+        }
+      ],
+      "observationFailures": [],
+      "returncode": -25,
+      "exitStatus": null,
+      "signalNumber": 25,
+      "signalName": "SIGXFSZ"
+    },
+    "primaryFailure": {
+      "type": "OSError",
+      "message": "INDEPENDENT_ack-newline",
+      "details": {
+        "unknown": {
+          "raw": "b'\\x00\\xff'",
+          "keep": [
+            false,
+            11
+          ]
+        },
+        "encoderTerminal": {
+          "returncodeKnown": true,
+          "observations": [
+            {
+              "operation": "before-frame-write",
+              "framesAcknowledged": 0,
+              "returncode": null
+            },
+            {
+              "operation": "failure-poll",
+              "framesAcknowledged": 1,
+              "returncode": -25
+            }
+          ],
+          "observationFailures": [],
+          "returncode": -25,
+          "exitStatus": null,
+          "signalNumber": 25,
+          "signalName": "SIGXFSZ"
+        },
+        "args": [
+          "INDEPENDENT_ack-newline"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual encode and DiagnosticStream; inert Popen/codec/pixel/rlimit ports. No native process."
+}

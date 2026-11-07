@@ -1,0 +1,84 @@
+{
+  "name": "stdin-flush",
+  "status": "PASS",
+  "actualAcknowledged": 0,
+  "framesAcceptedByWrite": 1,
+  "calls": [
+    "Popen",
+    "poll",
+    "write",
+    "flush",
+    "poll"
+  ],
+  "ackWriteCalls": 0,
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 0,
+    "encoderTerminal": {
+      "returncodeKnown": false,
+      "framesWrittenToEncoder": 0,
+      "framesAcknowledged": 0,
+      "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+      "ackDelivery": null,
+      "observations": [
+        {
+          "operation": "before-frame-write",
+          "framesWrittenToEncoder": 0,
+          "framesAcknowledged": 0,
+          "returncode": null
+        },
+        {
+          "operation": "failure-poll",
+          "framesWrittenToEncoder": 0,
+          "framesAcknowledged": 0,
+          "returncode": null
+        }
+      ],
+      "observationFailures": []
+    },
+    "primaryFailure": {
+      "type": "OSError",
+      "message": "INDEPENDENT_stdin-flush",
+      "details": {
+        "unknown": {
+          "raw": "b'\\x00\\xff'",
+          "keep": [
+            false,
+            11
+          ]
+        },
+        "encoderTerminal": {
+          "returncodeKnown": false,
+          "framesWrittenToEncoder": 0,
+          "framesAcknowledged": 0,
+          "acknowledgmentBasis": "Complete local ACK writes and flush; peer processing unobserved",
+          "ackDelivery": null,
+          "observations": [
+            {
+              "operation": "before-frame-write",
+              "framesWrittenToEncoder": 0,
+              "framesAcknowledged": 0,
+              "returncode": null
+            },
+            {
+              "operation": "failure-poll",
+              "framesWrittenToEncoder": 0,
+              "framesAcknowledged": 0,
+              "returncode": null
+            }
+          ],
+          "observationFailures": []
+        },
+        "args": [
+          "INDEPENDENT_stdin-flush"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual encode and DiagnosticStream; inert Popen/codec/pixel/rlimit ports. No native process."
+}

@@ -1,0 +1,86 @@
+{
+  "sourceSha256": "cb2e4045407d2115b174a567a207047de99d21fe0c113c49edeea1f192b4ded5",
+  "actualAcknowledged": 0,
+  "reportedAcknowledged": 1,
+  "pending": {
+    "workId": "native-189/diagnostic/0000",
+    "mediaFrameOrdinal": 0,
+    "sourcePngSha256": "2d200f143ce50ae3829f701c2423b2df3f969d601fb81f1690c87408916f83bc",
+    "rgbSha256": "966ddadb9aa413fcd18ae16af1fc0311d023efd67413fa762519979c4546e663",
+    "rgbaSha256": "705b2c62fe7ea86c0cef21d70efddb88d061e229b67f3301f5d1872c0f6991a3"
+  },
+  "calls": [
+    [
+      "poll"
+    ],
+    [
+      "rgb-write",
+      6220800
+    ],
+    [
+      "rgb-flush"
+    ],
+    [
+      "poll"
+    ]
+  ],
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 1,
+    "encoderTerminal": {
+      "returncodeKnown": true,
+      "observations": [
+        {
+          "operation": "before-frame-write",
+          "framesAcknowledged": 0,
+          "returncode": null
+        },
+        {
+          "operation": "failure-poll",
+          "framesAcknowledged": 1,
+          "returncode": -25
+        }
+      ],
+      "observationFailures": [],
+      "returncode": -25,
+      "exitStatus": null,
+      "signalNumber": 25,
+      "signalName": "SIGXFSZ"
+    },
+    "primaryFailure": {
+      "type": "BrokenPipeError",
+      "message": "ACK destination closed before first ACK write",
+      "details": {
+        "encoderTerminal": {
+          "returncodeKnown": true,
+          "observations": [
+            {
+              "operation": "before-frame-write",
+              "framesAcknowledged": 0,
+              "returncode": null
+            },
+            {
+              "operation": "failure-poll",
+              "framesAcknowledged": 1,
+              "returncode": -25
+            }
+          ],
+          "observationFailures": [],
+          "returncode": -25,
+          "exitStatus": null,
+          "signalNumber": 25,
+          "signalName": "SIGXFSZ"
+        },
+        "args": [
+          "ACK destination closed before first ACK write"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual default full-size localized DiagnosticStream and actual pixels(); only Popen and setrlimit ports are inert."
+}

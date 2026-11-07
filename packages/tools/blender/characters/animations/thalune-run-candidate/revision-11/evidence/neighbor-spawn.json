@@ -1,0 +1,46 @@
+{
+  "name": "spawn",
+  "status": "PASS",
+  "actualAcknowledged": 0,
+  "framesAcceptedByWrite": 0,
+  "calls": [
+    "Popen"
+  ],
+  "ackWriteCalls": 0,
+  "evidence": {
+    "schema": "t02-lossless-rgb-primary/v1",
+    "accepted": false,
+    "frames": 0,
+    "encoderTerminal": {
+      "returncodeKnown": false,
+      "observations": [],
+      "observationFailures": []
+    },
+    "primaryFailure": {
+      "type": "OSError",
+      "message": "INDEPENDENT_spawn",
+      "details": {
+        "unknown": {
+          "raw": "b'\\x00\\xff'",
+          "keep": [
+            false,
+            11
+          ]
+        },
+        "encoderTerminal": {
+          "returncodeKnown": false,
+          "observations": [],
+          "observationFailures": []
+        },
+        "args": [
+          "INDEPENDENT_spawn"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      }
+    },
+    "persistenceFailures": []
+  },
+  "qualification": "Actual encode and DiagnosticStream; inert Popen/codec/pixel/rlimit ports. No native process."
+}

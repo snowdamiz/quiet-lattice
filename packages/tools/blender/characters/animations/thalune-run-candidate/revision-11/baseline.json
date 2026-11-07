@@ -1,0 +1,58 @@
+{
+  "head": "3503cd7d5187b78140bc22fbb5e418ee9f2c6798",
+  "tree": "be67aeb7817b1af3b89a7a2a2c2093e6244c8b73",
+  "review": {
+    "verdict": "REVISE",
+    "scope": "INDEPENDENT_SOURCE_CPU_ACTUAL_NATIVE_FAILURE_CORRECTION_ONLY",
+    "head": "3503cd7d5187b78140bc22fbb5e418ee9f2c6798",
+    "tree": "be67aeb7817b1af3b89a7a2a2c2093e6244c8b73",
+    "base": "654658363a0347b1f50a40f868c32140b90881db",
+    "baseTree": "de2bacc2cec04a2dbb6dc9ef06a2499f82aac5f6",
+    "readinessSha256": "5064e8a496ca46fca55934cad60c77f4050d46a33af55093679d1e370ea4460c",
+    "report": "/private/tmp/t02-native189-c2-independent-2NeVsiha/REPORT.md",
+    "reportSha256": "17dfaa2c670a5d4326fe803826ba602919ab97f44affaa8adea8f2e1b0d84240",
+    "result": "/private/tmp/t02-native189-c2-independent-2NeVsiha/review-result.json",
+    "resultSha256": "c05f4eac7de162f8e5d2907deab270afba221eb1aa8561bfb7cfdc214457e8cd",
+    "manifest": "/private/tmp/t02-native189-c2-independent-2NeVsiha/artifact-hashes.json",
+    "manifestSha256": "8297aefe039dc3e8bf867f86d4cbeced50d1d25cc9b3b803531342567b35f6d7",
+    "sealedEvidenceFiles": 266,
+    "findings": [
+      {
+        "id": "C2-F1",
+        "severity": "P2",
+        "title": "Do not count a frame as acknowledged before ACK delivery succeeds",
+        "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py",
+        "line": 84,
+        "relatedLine": 109,
+        "status": "OPEN",
+        "reproduction": "/private/tmp/t02-native189-c2-independent-2NeVsiha/ack-count-regression.py",
+        "reproductionExit": 1,
+        "actualAcknowledged": 0,
+        "reportedAcknowledged": 1,
+        "remedy": "Track completed ACK emissions separately from encoder writes. Increment only after the ACK operation succeeds; explicitly represent partial/failed delivery as unconfirmed. Preserve the seen-work-ID guard and retain both write and ACK counts if both are useful. Add first-write/newline/flush failure controls to the actual encode path."
+      }
+    ],
+    "freshPassingCPUControls": 80,
+    "oldRedReproductions": 12,
+    "newDefectReproductions": 2,
+    "actualPixelRegressionExit": 1,
+    "actualCLIRefusals": 3,
+    "protectedEntries": 31268,
+    "prospectiveAbsent": 11,
+    "operationalGrants": 0,
+    "nativeJobs": 0,
+    "full189Qualification": false,
+    "currentCapacityAdmission": false,
+    "historicalSnapshot": "FAILED_THREE_PNPM_TASK_STATE_DEVIATIONS_RETAINED",
+    "observedUtc": "2026-11-07T10:48:10.722206+00:00"
+  },
+  "scratch": "/private/tmp/t02-ack-accounting-x5a_8ibx",
+  "sourceSha256": "cb2e4045407d2115b174a567a207047de99d21fe0c113c49edeea1f192b4ded5",
+  "reviewSnapshotSha256": "812f544a1159b0188025463880c0cd9e8dc1091bd03256cd313c444c1bd0f436",
+  "reviewScripts": {
+    "common.py": "98167f716364d999d7949e126f819b34a92af1554de23d6977bd4b4f3baa996a",
+    "guard.py": "28c4c1cb0d3df0b2a5ba08af61626b15d5c0eec7cc312bbfa65ec95ceeca3f90",
+    "ack-count-regression.py": "aed2b53ae57395c388202c94593f99fa62fc111e2b79f31eb33c5b663ebf0e64",
+    "neighbors.py": "7eb86d10c8e928bda5f4f0f6e14d22a4c83c0a282c60b51d34b5a752a5d94527"
+  }
+}
