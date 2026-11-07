@@ -1043,3 +1043,10 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 - **Does not authorize** freeze, native, timing/budget, push, PR, Trunk, or merge. Fresh freeze remains DISABLED; prospective `*-0b3adcd9` paths stay absent.
 - Seal retained under `docs/review-records/p1-e14-t13/category-retention-review-8a881e369/` (index `20261107-t13-category-retention-review-pass-8a881e369.json`). APPENDIX SHA256 `028bb31489ea2343bba65187d1b304b63da9f25577fe5105a02f329cd3b65df6`; seal SHA256 `f4d88fb674095653c1ce91e625b6891833316a12d02ca1d79f25b5c11477f8c7`.
 - Creature F2-R2 independent review and Lark density remain in flight. Exact-mask serial node unit stays HELD while Lark owns heavy CPU. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.
+
+## 2026-11-07 — Creature F2-R2 independent PASS
+
+- **Creature F2-R2 `aea791f561`:** independent SOURCE/CPU PASS for the late-same-group-fork ownership/admission unit. Exact-base RED reproduced; candidate GREEN drains the late leaf; full matrix 23/23; adversarial stale post-reap observe holds cleanup unverified and blocks retry. Assets 14/14 and PNGs 79/79 preserved. Finalizer still rejects cancelled/uncertain runs.
+- F1 exact-float export and native/visual gates remain open; whole-task incomplete. No Blender/codec/GPU/asset regen, push, PR, Trunk, or merge.
+- Seal retained under `docs/review-records/p1-e08-t08/f2-r2-review-aea791f/` (index `20261107-creature-f2-r2-review-pass-aea791f.json`). Report SHA256 `8761350a951d2d4d5fa16c9a17054ed7d80dc838f87ba028b02fdfdae9f7b4d0`.
+- Lark density remains in flight and still owns the heavy CPU lane; exact-mask serial node unit stays HELD. Screenshot cleanup STOPPED. No main/remote/PR/Trunk action.

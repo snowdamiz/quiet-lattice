@@ -1,0 +1,114 @@
+{
+  "mode": "late_same_group_fork",
+  "base": true,
+  "start": 1794056402.591966,
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": false,
+    "late leaf drained before admission opens": false,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "workerPIDs": [
+    2919,
+    2922
+  ],
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork/root/packages/tools/blender/e08t08/stage.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork",
+    "late_same_group_fork",
+    "base",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork",
+    "late-leader"
+  ],
+  "supervisorExit": 1,
+  "spawned": {
+    "leader": 2919,
+    "leaf": 2922,
+    "pgid": 2919
+  },
+  "leafAfterSupervisor": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "bd25888a8cc847bdbf67c7ac28616885",
+    "supervisorPID": 2918,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork",
+      "late-leader"
+    ],
+    "cwd": "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork/root",
+    "beforeFree": 36370722816,
+    "beforePayload": 1538274,
+    "start": 1794056402.63294,
+    "samples": [
+      {
+        "time": 1794056402.6779468,
+        "rss": 6062080,
+        "free": 36370702336,
+        "processes": [
+          {
+            "pid": 2919,
+            "ppid": 2918,
+            "pgid": 2919,
+            "rss": 6062080,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 2919,
+    "ownership": {
+      "directChild": {
+        "pid": 2919,
+        "birth": [
+          1794056402,
+          633217
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": []
+    },
+    "end": 1794056402.865304,
+    "maxRSS": 6062080,
+    "afterFree": 36370362368,
+    "afterPayload": 1538826,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "cancelled"
+  },
+  "settled": {
+    "runId": "bd25888a8cc847bdbf67c7ac28616885",
+    "admissionSHA256": "ac3c329bc055bf4f07f6b3c8b8b422a3c9361e71312b419a19e9f2bd87e46b1d",
+    "terminalSHA256": "279c2ae7959bd6ec7984c30d1868a94bb6bb840672fb19a09330374e3db8ba5d"
+  },
+  "retryExit": 0,
+  "leafAfterRetry": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+  "finalizerExit": 1,
+  "defectReproduced": true,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794056403.1404228,
+  "passed": false
+}

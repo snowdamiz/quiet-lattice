@@ -1,0 +1,134 @@
+{
+  "verdict": "PASS",
+  "task": "P1.E08.T08",
+  "unit": "F2-R2 late-same-group-fork ownership/admission (SOURCE/CPU only)",
+  "candidateHead": "aea791f5612e808af0caca8449844ef6c45b7f8b",
+  "candidateTree": "f0533b3aec27aa9cf10fcb5a5eb25be97775a3ba",
+  "exactBase": "ccdcb1b6079c4f6d6a64506e889f4a6e170464ba",
+  "exactBaseTree": "6cd252ce39721ba4355942ab967fe8148d562bc0",
+  "authorWorktreeClean": true,
+  "RED": {
+    "exit": 1,
+    "mode": "late_same_group_fork",
+    "base": true,
+    "passed": false,
+    "defectReproduced": true,
+    "supervisorExit": 1,
+    "retryExit": 0,
+    "finalizerExit": 1,
+    "leafAfterSupervisor": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+    "leafAfterRetry": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+    "cleanupRemaining": [
+      "",
+      ""
+    ],
+    "assertions": {
+      "late same-group fork cannot seal verified cleanup while leaf lives": false,
+      "late leaf drained before admission opens": false,
+      "cancelled/uncertain run still refused by finalizer": true,
+      "supervisor did not claim success": true
+    },
+    "harnessError": null,
+    "terminal.cleanup": "verified",
+    "terminal.remainingProcesses": [],
+    "terminal.outcome": "cancelled",
+    "terminal.directChildReaped": true,
+    "settled": true
+  },
+  "GREEN": {
+    "exit": 0,
+    "mode": "late_same_group_fork",
+    "base": false,
+    "passed": true,
+    "defectReproduced": false,
+    "supervisorExit": 1,
+    "retryExit": 0,
+    "finalizerExit": 1,
+    "leafAfterSupervisor": "",
+    "leafAfterRetry": "",
+    "cleanupRemaining": [
+      "",
+      ""
+    ],
+    "assertions": {
+      "late same-group fork cannot seal verified cleanup while leaf lives": true,
+      "late leaf drained before admission opens": true,
+      "cancelled/uncertain run still refused by finalizer": true,
+      "supervisor did not claim success": true
+    },
+    "harnessError": null,
+    "terminal.cleanup": "verified",
+    "terminal.remainingProcesses": [],
+    "terminal.outcome": "cancelled",
+    "terminal.directChildReaped": true,
+    "settled": true
+  },
+  "matrix": {
+    "exit": 0,
+    "base": false,
+    "cases": 23,
+    "passed": 23,
+    "failures": [],
+    "allFixtureWorkersExited": true
+  },
+  "preservation": {
+    "assetCount": 14,
+    "pngCount": 79,
+    "assetMismatches": [],
+    "protectedMismatches": [],
+    "liveAssetPngMismatches": [],
+    "liveMismatchCount": 0,
+    "inventoryPresent": true,
+    "invMismatchCount": 0,
+    "invMismatchesSample": [],
+    "parent": "ccdcb1b6079c4f6d6a64506e889f4a6e170464ba"
+  },
+  "adversarial": {
+    "staleUntilWaitPostReapHolds": {
+      "name": "stale-until-wait",
+      "supervisorExit": 1,
+      "leafAfter": false,
+      "leafAfterRetry": false,
+      "retryExit": 1,
+      "settled": false,
+      "cleanup": "unknown",
+      "remaining": [
+        {
+          "pid": 8398,
+          "ppid": 1,
+          "pgid": 8395,
+          "rss": 17072128,
+          "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ],
+      "outcome": "uncertain",
+      "defect": false
+    },
+    "noKillpgAfterReap": {
+      "name": "no-killpg-after-reap",
+      "supervisorExit": 1,
+      "cleanup": "unknown",
+      "remainingCount": 1,
+      "killpgAfterWait": [],
+      "outcome": "uncertain"
+    }
+  },
+  "sourceSHA256": {
+    "packages/tools/blender/e08t08/stage.py": "fa08bece0024f12c7e1d70eb690297df97046de81651900bd6b13845598d766f",
+    "packages/tools/blender/e08t08/stage_processes.py": "290ee97addd54affab8e15309f91a7863bdc8b0898b7d230981ce03b5bf6de45",
+    "packages/tools/blender/e08t08/stage_ownership.py": "7998d848c23a4200e1aa6f82e9c4aa502bcde50e9b8278151e60c5b21b8eed25",
+    "packages/tools/blender/e08t08/finalize.py": "027e8c39d53bc8baed2ce082d1a4e6048a9d928a596ddb5b94de85b2be8fa0ad",
+    "packages/tools/blender/e08t08/stage_lifecycle_test.py": "60e47dbfb548cbd084263681631542aac1e2788fa1d96e3276fa906daffe04ef",
+    "packages/tools/blender/e08t08/lifecycle_driver.py": "2b6579b6db3b8c7e380089279a26baffb1fcd3fd113fc018f94fae69ea7b090b",
+    "packages/tools/blender/e08t08/lifecycle_worker.py": "c403599670f6c2ccf160d290b007a7482641f99ff8a4f5819775777476534286"
+  },
+  "findings": [],
+  "nonClaims": [
+    "F1 exact-float COLOR_0 still OPEN",
+    "native/visual/Blender/codec/GPU out of scope",
+    "not whole-task PASS",
+    "not production-loader rejection PASS"
+  ],
+  "scratch": "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl",
+  "sealedAt": 1794056615.743389
+}

@@ -1,0 +1,189 @@
+{
+  "mode": "leader_loss",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss/root/packages/tools/blender/e08t08/stage.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss",
+    "leader_loss",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss",
+    "leader"
+  ],
+  "start": 1794056436.616048,
+  "assertions": {
+    "retry rejected while descendant alive": true,
+    "actual finalizer rejects active/uncertain ownership": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "explicit outcome": true,
+    "cleanup terminal": true,
+    "direct child reaped": true,
+    "no surviving fixture worker": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "successful retry does not erase failed admission": true
+  },
+  "workerPIDs": [
+    3530,
+    3532
+  ],
+  "supervisorPID": 3529,
+  "beforeAction": [
+    "3530  3529  3530 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss leader",
+    "3532  3530  3532 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss leaf"
+  ],
+  "leafDuringRetry": "3532     1  3532 Ss   /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss leaf",
+  "retryWhileOwned": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [
+    "",
+    ""
+  ],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "70c6f37ec44a4e7b96c3a42ab3acce24",
+    "supervisorPID": 3529,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss",
+      "leader"
+    ],
+    "cwd": "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/leader_loss/root",
+    "beforeFree": 36314222592,
+    "beforePayload": 1540893,
+    "start": 1794056436.655835,
+    "samples": [
+      {
+        "time": 1794056436.699557,
+        "rss": 5259264,
+        "free": 36314198016,
+        "processes": [
+          {
+            "pid": 3530,
+            "ppid": 3529,
+            "pgid": 3530,
+            "rss": 5259264,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794056436.847836,
+        "rss": 34177024,
+        "free": 36314161152,
+        "processes": [
+          {
+            "pid": 3530,
+            "ppid": 3529,
+            "pgid": 3530,
+            "rss": 17055744,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          },
+          {
+            "pid": 3532,
+            "ppid": 3530,
+            "pgid": 3532,
+            "rss": 17121280,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      },
+      {
+        "time": 1794056436.997708,
+        "rss": 17121280,
+        "free": 36314157056,
+        "processes": [
+          {
+            "pid": 3530,
+            "ppid": 3529,
+            "pgid": 3530,
+            "rss": 0,
+            "command": "<defunct>"
+          },
+          {
+            "pid": 3532,
+            "ppid": 1,
+            "pgid": 3532,
+            "rss": 17121280,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": "leader exited with live descendants",
+    "exit": -9,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 3530,
+    "ownership": {
+      "directChild": {
+        "pid": 3530,
+        "birth": [
+          1794056436,
+          656095
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 3532,
+          "birth": [
+            1794056436,
+            675363
+          ],
+          "exitObserved": true
+        }
+      ]
+    },
+    "end": 1794056439.3206809,
+    "maxRSS": 34177024,
+    "afterFree": 36306694144,
+    "afterPayload": 114807844,
+    "afterSources": {
+      "assets/blend/creatures/biped.blend": "bc486b2d4084e25e4d42ddb6b71ba51cbf42df7d6923db73d64108643081022e",
+      "assets/blend/creatures/quad_grazer.blend": "0600f84627e042e7a2e80c5a6ce7837bddb52cd6c6a0ee89134b3dbde8f2e619",
+      "assets/blend/creatures/quad_small.blend": "e265bee1b997cede003f58d89b8e7f9c9cffc540e8c1eaafab5b78f250b0966d",
+      "assets/blend/creatures/flyer.blend": "efa3752ff7bb7f19dd7e58474ca65d52ccb17a74f232fc60f52df10c9b087f84",
+      "assets/blend/creatures/quad_heavy.blend": "879d9ac53ed14da1005b179adc5617c4f7ba2873bb00828c0f644e0a2df00e6c",
+      "assets/blend/constructs/outpost_drone.blend": "15c90492c5a5c62b09d6b1501809a83bd91a64e0a6ab243c23d2ef5324bbf9c7",
+      "assets/blend/constructs/outpost_overseer.blend": "78b06fd9ae6e259d789c9c2621812b22e7e621a92b7df487e4f6c5911dd00da3"
+    },
+    "afterExports": {
+      "packages/client/public/models/creatures/quad_heavy.glb": "2a76d8d75d722167dbc8f7e654bd8b102e0d597943c82afab7d3c638719e0f04",
+      "packages/client/public/models/creatures/quad_small.glb": "06a1a3442303b35ef65837b5e698674787f8ac47385c665c2fd15bb5cc619ffb",
+      "packages/client/public/models/creatures/biped.glb": "7a6bd58cb7cad053c090660d15daf024911799a0d09b1186cb8e2070210525ad",
+      "packages/client/public/models/creatures/flyer.glb": "41f8e4ba6091eefc01013ef1e9f98890eb72d9a7937368409b294390bdc73450",
+      "packages/client/public/models/creatures/quad_grazer.glb": "c4662bc612a5db3d0d7a296f3f34fce87387d0114ac1396d885c8895b9c0f026",
+      "packages/client/public/models/constructs/outpost_overseer.glb": "9dc1a40d72875cc42eb966fb35cc6eae4cf4cfd0229abbc37086acab3b7a89c8",
+      "packages/client/public/models/constructs/outpost_drone.glb": "aac406aeb15e230b5f2122b8ee154bfc9657208cebf38689ed67bba3670437d5"
+    },
+    "outcome": "failed"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 0,
+  "workersDuringRetryAfterExit": [
+    "",
+    ""
+  ],
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794056439.8367512,
+  "passed": true
+}

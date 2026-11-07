@@ -1,0 +1,100 @@
+{
+  "mode": "publication_failure",
+  "base": false,
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/publication_failure/root/packages/tools/blender/e08t08/stage.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/publication_failure",
+    "publication_failure",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-c",
+    "from pathlib import Path; Path('/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/publication_failure/command-ran').touch(); print(\"finite success\")"
+  ],
+  "start": 1794056459.049453,
+  "assertions": {
+    "publication retains admission": true,
+    "terminal or durable unfinished admission exists": true,
+    "supervisor outcome": true,
+    "unsealed proposal cannot count as completion": true,
+    "actual finalizer outcome": true,
+    "no failed/incomplete promotion": true,
+    "admission after settlement only": true,
+    "uncertainty survives manual fixture cleanup": true,
+    "finalizer still rejects unresolved ownership": true
+  },
+  "workerPIDs": [],
+  "supervisorPID": 5230,
+  "retryDuringPublication": 1,
+  "supervisorExit": 1,
+  "workersAfterSupervisorExit": [],
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "c662f68a81dc4e889973fda76232d629",
+    "supervisorPID": 5230,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-c",
+      "from pathlib import Path; Path('/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/publication_failure/command-ran').touch(); print(\"finite success\")"
+    ],
+    "cwd": "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/publication_failure/root",
+    "beforeFree": 36209790976,
+    "beforePayload": 1540893,
+    "start": 1794056459.091757,
+    "samples": [
+      {
+        "time": 1794056459.133313,
+        "rss": 6062080,
+        "free": 36209774592,
+        "processes": [
+          {
+            "pid": 5231,
+            "ppid": 5230,
+            "pgid": 5231,
+            "rss": 6062080,
+            "command": "(python3.14)"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 5231,
+    "ownership": {
+      "directChild": {
+        "pid": 5231,
+        "birth": [
+          1794056459,
+          92048
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": []
+    },
+    "end": 1794056459.248283,
+    "maxRSS": 6062080,
+    "afterFree": 36209770496,
+    "afterPayload": 1541419,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "success"
+  },
+  "finalizeExit": 1,
+  "retryAfterExit": 1,
+  "workersDuringRetryAfterExit": [],
+  "cleanupRemaining": [],
+  "end": 1794056459.506277,
+  "passed": true
+}

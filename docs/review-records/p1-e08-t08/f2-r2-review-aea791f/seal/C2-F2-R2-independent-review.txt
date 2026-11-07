@@ -1,0 +1,65 @@
+VERDICT: PASS (independent SOURCE/CPU; F2-R2 late-same-group-fork unit only)
+TASK: P1.E08.T08 — F2-R2 ownership/admission fix review
+STATUS: F2-R2 SOURCE/CPU unit PASS. Full task remains incomplete. F1 exact-float and native/visual remain OPEN / out of scope.
+
+PINS
+- Author worktree (read-only): /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13
+- Branch: task/P1-E08-T08-creatures
+- Clean HEAD: aea791f5612e808af0caca8449844ef6c45b7f8b
+- Clean tree: f0533b3aec27aa9cf10fcb5a5eb25be97775a3ba
+- Exact F2 REVISE base: ccdcb1b6079c4f6d6a64506e889f4a6e170464ba / tree 6cd252ce39721ba4355942ab967fe8148d562bc0
+- Scratch: /private/tmp/space-e08t08-f2-r2-review-ZkN1rl
+- Python: /opt/homebrew/opt/python@3.14/bin/python3.14
+- GIT_DIR for finalizers: /Users/andreyyurlov/Documents/dev/space/.git/worktrees/t3-9af55c13
+
+SOURCE SHA256 (candidate HEAD)
+- stage.py: fa08bece0024f12c7e1d70eb690297df97046de81651900bd6b13845598d766f
+- stage_processes.py: 290ee97addd54affab8e15309f91a7863bdc8b0898b7d230981ce03b5bf6de45
+- stage_ownership.py: 7998d848c23a4200e1aa6f82e9c4aa502bcde50e9b8278151e60c5b21b8eed25
+- finalize.py: 027e8c39d53bc8baed2ce082d1a4e6048a9d928a596ddb5b94de85b2be8fa0ad
+- stage_lifecycle_test.py: 60e47dbfb548cbd084263681631542aac1e2788fa1d96e3276fa906daffe04ef
+- lifecycle_driver.py: 2b6579b6db3b8c7e380089279a26baffb1fcd3fd113fc018f94fae69ea7b090b
+- lifecycle_worker.py: c403599670f6c2ccf160d290b007a7482641f99ff8a4f5819775777476534286
+
+SCOPE DIFF (base..HEAD): stage.py, stage_processes.py, lifecycle_driver.py, lifecycle_worker.py, stage_lifecycle_test.py (+ revisions evidence). finalize.py/stage_ownership.py unchanged. Assets/PNGs unchanged.
+
+PRIOR F2-R2 DEFECT DISPOSITION
+Independent prior REVISE (lifecycle-review-ccdcb1b): drain could seal cleanup=verified from a stale final ps snapshot while a same-pgid child forked after that snapshot and before leader reap stayed alive, allowing retry admission.
+Claimed fix reviewed: re-observe before wait; all_exited requires latest snapshot only unreaped leader; post-reap same_group_leftovers refuses verified if orphans remain; Darwin zombie identity clearing no longer aborts drain mid-signal; no killpg after reap.
+
+VERIFY
+1. Pins: HEAD/tree match claimed; author status clean before/after; RED fixture stage.py/stage_processes.py byte-identical to ccdcb1b; GREEN stage differs; finalize unchanged.
+2. Preservation: live hash check vs preservation-final.json — 14 assets, 79 PNGs, 0 mismatches; inventory 0 mismatches.
+3. Exact-base RED: stage_lifecycle_test.py --base --cases late_same_group_fork → exit 1.
+   defectReproduced=true; leaf alive after supervisor and after retryExit=0; cleanup=verified; remainingProcesses=[]; settled; finalizerExit=1.
+4. Candidate GREEN: --cases late_same_group_fork → exit 0.
+   defectReproduced=false; leafAfterSupervisor empty; cleanup=verified; outcome=cancelled; settled; retryExit=0; finalizerExit=1.
+5. Full matrix: 23/23 passed; allFixtureWorkersExited=true; exit 0.
+6. Adversarial stale-until-wait (observe poisoned through wait; real post-reap ps): cleanup=unknown; remainingProcesses has leaf; settled=false; retryExit=1; defect=false. Post-reap leftovers hold when confirm observe is also stale.
+7. Adversarial no-killpg-after-reap: killpgAfterWait=[]; leftovers use individual SIGKILL; cleanup unknown.
+
+FINDINGS
+None at P2+. The previously reported late-same-group-fork admission race is closed for this unit under the actual stage.py/finalize.py callers and the serial matrix.
+
+HUNTS (no remaining P2+)
+- Stale-snapshot verified cleanup: closed by confirm observe + post-reap leftovers.
+- Retry admission while child lives: RED reproduces; GREEN/post-reap deny.
+- killpg-after-reap: not observed after wait; leftovers SIGKILL individuals only.
+- Finalizer weakening: cancelled/uncertain still refused (finalizerExit=1 on RED/GREEN).
+- Fixture constructor-only mismatch: late_same_group_fork asserts leaf liveness, cleanup/admission defect predicate, and finalizer refusal — behavioral, not pin-only.
+
+EXPLICIT NON-CLAIMS
+Not an F1 format PASS. Not native/visual PASS. Not whole-task PASS. Not production-loader rejection PASS. No push/PR/merge/Trunk/Blender/codec/GPU/asset regen performed.
+
+ARTIFACTS
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/seal/C2-F2-R2-independent-review.txt (this file)
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/seal/verification-summary.json
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/seal/SHA256SUMS
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/green-late-fork/
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/adversarial/stale-until-wait/
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/adversarial/no-killpg-after-reap/
+/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/pins/
+
+FILES CHANGED: none in author worktree, parent retention, assets, or git history. Review artifacts only under /private/tmp/space-e08t08-f2-r2-review-ZkN1rl.

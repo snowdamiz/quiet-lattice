@@ -1,0 +1,27 @@
+{
+  "mode": "late_same_group_fork",
+  "base": true,
+  "passed": false,
+  "defectReproduced": true,
+  "supervisorExit": 1,
+  "retryExit": 0,
+  "finalizerExit": 1,
+  "leafAfterSupervisor": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+  "leafAfterRetry": "2922     1  2919 S    /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python /Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py /private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/red-late-fork/late_same_group_fork late-leaf",
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": false,
+    "late leaf drained before admission opens": false,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "harnessError": null,
+  "terminal.cleanup": "verified",
+  "terminal.remainingProcesses": [],
+  "terminal.outcome": "cancelled",
+  "terminal.directChildReaped": true,
+  "settled": true
+}

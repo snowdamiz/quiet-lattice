@@ -1,0 +1,123 @@
+{
+  "mode": "late_same_group_fork",
+  "base": false,
+  "start": 1794056461.257824,
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": true,
+    "late leaf drained before admission opens": true,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "workerPIDs": [
+    5293,
+    5316
+  ],
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_driver.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/late_same_group_fork/root/packages/tools/blender/e08t08/stage.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/late_same_group_fork",
+    "late_same_group_fork",
+    "candidate",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+    "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/late_same_group_fork",
+    "late-leader"
+  ],
+  "supervisorExit": 1,
+  "spawned": {
+    "leader": 5293,
+    "leaf": 5316,
+    "pgid": 5293
+  },
+  "leafAfterSupervisor": "",
+  "terminal": {
+    "schema": 2,
+    "stage": "work",
+    "runId": "a42d28876bb845dcbad4e77d5b8f2384",
+    "supervisorPID": 5286,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-9af55c13/packages/tools/blender/e08t08/lifecycle_worker.py",
+      "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/late_same_group_fork",
+      "late-leader"
+    ],
+    "cwd": "/private/tmp/space-e08t08-f2-r2-review-ZkN1rl/evidence/matrix-full/late_same_group_fork/root",
+    "beforeFree": 36187602944,
+    "beforePayload": 1540893,
+    "start": 1794056461.300874,
+    "samples": [
+      {
+        "time": 1794056461.3466449,
+        "rss": 1048576,
+        "free": 36187570176,
+        "processes": [
+          {
+            "pid": 5293,
+            "ppid": 5286,
+            "pgid": 5293,
+            "rss": 1048576,
+            "command": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+          }
+        ]
+      }
+    ],
+    "limitSeconds": 2700,
+    "errors": [],
+    "cancelSignals": [
+      15
+    ],
+    "stopReason": null,
+    "exit": 0,
+    "directChildReaped": true,
+    "cleanup": "verified",
+    "remainingProcesses": [],
+    "observationUncertain": false,
+    "sampling": "process group and instance-watched descendant closure",
+    "beforeSources": {},
+    "beforeExports": {},
+    "pid": 5293,
+    "ownership": {
+      "directChild": {
+        "pid": 5293,
+        "birth": [
+          1794056461,
+          301208
+        ],
+        "waiterLost": false
+      },
+      "knownDescendants": [
+        {
+          "pid": 5316,
+          "birth": [
+            1794056461,
+            506094
+          ],
+          "exitObserved": true
+        }
+      ]
+    },
+    "end": 1794056463.832884,
+    "maxRSS": 1048576,
+    "afterFree": 36187082752,
+    "afterPayload": 1541443,
+    "afterSources": {},
+    "afterExports": {},
+    "outcome": "cancelled"
+  },
+  "settled": {
+    "runId": "a42d28876bb845dcbad4e77d5b8f2384",
+    "admissionSHA256": "3ad40d0fb86eb61e90600a85a64e04a1a34118231013e4e04fdb16fd56b2c155",
+    "terminalSHA256": "511f7e66269c0ebb38099d77877c618ec1cb8c32be0a77a5a577e354d8b30314"
+  },
+  "retryExit": 0,
+  "leafAfterRetry": "",
+  "finalizerExit": 1,
+  "defectReproduced": false,
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "end": 1794056464.20299,
+  "passed": true
+}

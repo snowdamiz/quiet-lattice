@@ -1,0 +1,27 @@
+{
+  "mode": "late_same_group_fork",
+  "base": false,
+  "passed": true,
+  "defectReproduced": false,
+  "supervisorExit": 1,
+  "retryExit": 0,
+  "finalizerExit": 1,
+  "leafAfterSupervisor": "",
+  "leafAfterRetry": "",
+  "cleanupRemaining": [
+    "",
+    ""
+  ],
+  "assertions": {
+    "late same-group fork cannot seal verified cleanup while leaf lives": true,
+    "late leaf drained before admission opens": true,
+    "cancelled/uncertain run still refused by finalizer": true,
+    "supervisor did not claim success": true
+  },
+  "harnessError": null,
+  "terminal.cleanup": "verified",
+  "terminal.remainingProcesses": [],
+  "terminal.outcome": "cancelled",
+  "terminal.directChildReaped": true,
+  "settled": true
+}
