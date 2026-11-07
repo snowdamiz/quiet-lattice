@@ -1,0 +1,2738 @@
+{
+  "asset": {
+    "assetClass": "effect",
+    "boundsBlender": [
+      [-0.1255086362361908, -0.5010707378387451, -0.12698976695537567],
+      [0.14278095960617065, 0.5004498958587646, 0.12964355945587158]
+    ],
+    "branch": "gravitic",
+    "drawCalls": 1,
+    "envelopeSeconds": 0.45,
+    "glb": "/models/effects/gravitic.glb",
+    "id": "gravitic_pull",
+    "lod": "gravitic_pull_LOD0",
+    "material": "LIB_FX_Gravitic",
+    "maxParticles": 12,
+    "mesh": "gravitic_pull_Surface",
+    "particle": "gravitic_particle",
+    "placement": "unit beam along Blender +Y / glTF -Z; stretch to target, at most 25 m",
+    "role": "beat",
+    "root": "gravitic_pull",
+    "silhouette": "three converging lens rails",
+    "source": "assets/blend/effects/gravitic.blend",
+    "triangles": 576
+  },
+  "assetHead": "2643aca9d8b85a45498d85eb637d20260ebf06d1",
+  "assetSourcePaths": [
+    "assets/blend/effects/evidence/audit.json",
+    "assets/blend/effects/evidence/command-tails.json",
+    "assets/blend/effects/evidence/commands.json",
+    "assets/blend/effects/evidence/gpu-inventory.json",
+    "assets/blend/effects/evidence/hashes.json",
+    "assets/blend/effects/evidence/previews/gravitic_eight_views.png",
+    "assets/blend/effects/evidence/previews/inventory.json",
+    "assets/blend/effects/evidence/previews/materials_and_particle_decay.png",
+    "assets/blend/effects/evidence/previews/recall_eight_views.png",
+    "assets/blend/effects/evidence/previews/recall_glyphs_front.png",
+    "assets/blend/effects/evidence/previews/recall_glyphs_oblique.png",
+    "assets/blend/effects/evidence/previews/resonance_eight_views.png",
+    "assets/blend/effects/evidence/previews/symbiotic_eight_views.png",
+    "assets/blend/effects/evidence/previews/thermal_eight_views.png",
+    "assets/blend/effects/evidence/previews/void_eight_views.png",
+    "assets/blend/effects/evidence/report.json",
+    "assets/blend/effects/evidence/source-before-export.json",
+    "assets/blend/effects/evidence/spore-initial-fail.json",
+    "assets/blend/effects/evidence/validation/effects__gravitic.blend.json",
+    "assets/blend/effects/evidence/validation/effects__gravitic.glb.json",
+    "assets/blend/effects/evidence/validation/effects__recall.blend.json",
+    "assets/blend/effects/evidence/validation/effects__recall.glb.json",
+    "assets/blend/effects/evidence/validation/effects__resonance.blend.json",
+    "assets/blend/effects/evidence/validation/effects__resonance.glb.json",
+    "assets/blend/effects/evidence/validation/effects__symbiotic.blend.json",
+    "assets/blend/effects/evidence/validation/effects__symbiotic.glb.json",
+    "assets/blend/effects/evidence/validation/effects__thermal.blend.json",
+    "assets/blend/effects/evidence/validation/effects__thermal.glb.json",
+    "assets/blend/effects/evidence/validation/effects__void.blend.json",
+    "assets/blend/effects/evidence/validation/effects__void.glb.json",
+    "assets/blend/effects/gravitic.blend",
+    "assets/blend/effects/manifest.json",
+    "assets/blend/effects/recall.blend",
+    "assets/blend/effects/resonance.blend",
+    "assets/blend/effects/symbiotic.blend",
+    "assets/blend/effects/thermal.blend",
+    "assets/blend/effects/void.blend",
+    "packages/client/public/models/effects/gravitic.glb",
+    "packages/client/public/models/effects/recall.glb",
+    "packages/client/public/models/effects/resonance.glb",
+    "packages/client/public/models/effects/symbiotic.glb",
+    "packages/client/public/models/effects/thermal.glb",
+    "packages/client/public/models/effects/void.glb",
+    "packages/client/public/particles/effects/gravitic_filament.png",
+    "packages/client/public/particles/effects/gravitic_particles.png",
+    "packages/client/public/particles/effects/recall_filament.png",
+    "packages/client/public/particles/effects/recall_particles.png",
+    "packages/client/public/particles/effects/resonance_filament.png",
+    "packages/client/public/particles/effects/resonance_particles.png",
+    "packages/client/public/particles/effects/symbiotic_filament.png",
+    "packages/client/public/particles/effects/symbiotic_particles.png",
+    "packages/client/public/particles/effects/thermal_filament.png",
+    "packages/client/public/particles/effects/thermal_particles.png",
+    "packages/client/public/particles/effects/void_filament.png",
+    "packages/client/public/particles/effects/void_particles.png",
+    "packages/tools/blender/effects/audit.py",
+    "packages/tools/blender/effects/author.py",
+    "packages/tools/blender/effects/catalog.py",
+    "packages/tools/blender/effects/ktx_cpu.py",
+    "packages/tools/blender/effects/package_evidence.py",
+    "packages/tools/blender/effects/preview.py",
+    "packages/tools/blender/effects/refine_textures.py",
+    "packages/tools/blender/effects/revise_spore.py",
+    "packages/tools/blender/effects/run.py"
+  ],
+  "bindings": [
+    {
+      "bytes": 112925600,
+      "path": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "realpath": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "sha256": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b"
+    },
+    {
+      "bytes": 52922,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/audit.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/audit.json",
+      "sha256": "ef76bb691c3d8ecf4b9f17b48021d011039a895e74eaae6c8bfeda8e13c19673"
+    },
+    {
+      "bytes": 9127,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/command-tails.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/command-tails.json",
+      "sha256": "f959e73bf963f36dc146553e97ed88a1365f2e2d59ef0694ef79a26ab2b45e6f"
+    },
+    {
+      "bytes": 1648,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/commands.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/commands.json",
+      "sha256": "cab232c2a26ce1d0405f130dd0a9a45dab35d89113bee1ab249fd53c87fa5a49"
+    },
+    {
+      "bytes": 28540,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/gpu-inventory.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/gpu-inventory.json",
+      "sha256": "d01c4e6ed9bd988fec8785c8baecfc9a77a164addac73466f1f7cb67b2f2c849"
+    },
+    {
+      "bytes": 7030,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/hashes.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/hashes.json",
+      "sha256": "7dec124ab6d24738270422751dee8f1c87a6c2bbe26c0ac972c94c50eeda1a01"
+    },
+    {
+      "bytes": 647379,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/gravitic_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/gravitic_eight_views.png",
+      "sha256": "f61ff6622fb5b492128b59b8f68e61d6cff6c0dc1a4139843d8a54ba4cc0df08"
+    },
+    {
+      "bytes": 5311,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/inventory.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/inventory.json",
+      "sha256": "8899c1a0ffe48e4870f6b4da3d33912f51540c5f3fb4554e61590da4f1e33d13"
+    },
+    {
+      "bytes": 537606,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/materials_and_particle_decay.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/materials_and_particle_decay.png",
+      "sha256": "e905ab87631110c474160fc35dae0ede2b22f16c2a46466366d8b636a9e6cbdf"
+    },
+    {
+      "bytes": 146420,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_eight_views.png",
+      "sha256": "86437784830f082a5b8c5893f560537ce456a6d0fe02414ba275f96795d1f89d"
+    },
+    {
+      "bytes": 337389,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_glyphs_front.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_glyphs_front.png",
+      "sha256": "bd766f785129aee1fca3c7afbdefdb19084fd42bbc3c08f45d4486f4b67ef551"
+    },
+    {
+      "bytes": 312215,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_glyphs_oblique.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/recall_glyphs_oblique.png",
+      "sha256": "cf98decf7ffa76ef58c5bd9fb02652f692537909f9ec1bee14b616f3cb4a26e0"
+    },
+    {
+      "bytes": 774058,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/resonance_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/resonance_eight_views.png",
+      "sha256": "2f85d0a2dc2b9163c03b4e594c4f46d9abdfdcea7852bb68bfb16d8f9af6c1d7"
+    },
+    {
+      "bytes": 691126,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/symbiotic_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/symbiotic_eight_views.png",
+      "sha256": "19a65e2a1b829fa16c4fd944d7296b42de0a542d1f72539b6c0b66857d67eaf3"
+    },
+    {
+      "bytes": 649994,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/thermal_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/thermal_eight_views.png",
+      "sha256": "3aeedf2d797e12dc369aa213b58cba39f0bfda567c9920419a88ff81d939de20"
+    },
+    {
+      "bytes": 689616,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/void_eight_views.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/previews/void_eight_views.png",
+      "sha256": "98ab345bde20e78c6924d24665258216bec7a33a2453aacc3b002e7123051af9"
+    },
+    {
+      "bytes": 4107,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/report.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/report.json",
+      "sha256": "9d71e62715c697f80cc26014bebe3a5142aca096994f29ac065260b5b544b685"
+    },
+    {
+      "bytes": 651,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/source-before-export.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/source-before-export.json",
+      "sha256": "45e527f15c0b54866783f7cb39c1a039090f6d941a2f1386649a5aec763fdf48"
+    },
+    {
+      "bytes": 7417,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/spore-initial-fail.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/spore-initial-fail.json",
+      "sha256": "0424272b0f1d47b159c4445d68c2364e0da8da6632cae3799d3b6500e1f5e507"
+    },
+    {
+      "bytes": 7369,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__gravitic.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__gravitic.blend.json",
+      "sha256": "101a911f86775e96778b11f9e10c66e0cf662095aceb05b85babbc46563c4ff1"
+    },
+    {
+      "bytes": 9156,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__gravitic.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__gravitic.glb.json",
+      "sha256": "0c8f7d06509ff9f21691576bd168726bd4ae03503fefddb2e282674fefc25f34"
+    },
+    {
+      "bytes": 27497,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__recall.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__recall.blend.json",
+      "sha256": "7f90d690cfc4d142ebb5441878c3da867cc44872eecc513f8e802dc50f39d0e1"
+    },
+    {
+      "bytes": 34690,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__recall.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__recall.glb.json",
+      "sha256": "68cddefcd558c3c426ed7e63e877d8a3d1f63bd092e8d8162ee27ce7d5a2c953"
+    },
+    {
+      "bytes": 8335,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__resonance.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__resonance.blend.json",
+      "sha256": "fe1d21e4d0fd9a5df98d50d79266e50f0341a139a9c640e2bdfd20d4307f5209"
+    },
+    {
+      "bytes": 10385,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__resonance.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__resonance.glb.json",
+      "sha256": "19215d6dc62a1e868311c22c0052210c6ff685bffaa8ed2c12d7c6d34bcd87dd"
+    },
+    {
+      "bytes": 7381,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__symbiotic.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__symbiotic.blend.json",
+      "sha256": "6a884185c58fb6c199677a6da1afd9c8a4ae9e418ae8ea61ee5b0df574a7bb3a"
+    },
+    {
+      "bytes": 9169,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__symbiotic.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__symbiotic.glb.json",
+      "sha256": "08dad9d2845a83932aeb61925d40668d1730340734c0590dad6665069f676e00"
+    },
+    {
+      "bytes": 6309,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__thermal.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__thermal.blend.json",
+      "sha256": "08693cd923af03bb5d31cd8c467d839184e1c531749d6a816a35e557124e3cb8"
+    },
+    {
+      "bytes": 7817,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__thermal.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__thermal.glb.json",
+      "sha256": "21edb2de9003abe54d5960710b74562308ec6492a32710f8e76aa28ae7267cdc"
+    },
+    {
+      "bytes": 9047,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__void.blend.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__void.blend.json",
+      "sha256": "3c92a8728cd4d20a5a813688d137c120a02fe5b3c370533b18d7e20f5ff6968c"
+    },
+    {
+      "bytes": 11314,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__void.glb.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/evidence/validation/effects__void.glb.json",
+      "sha256": "407f134a90a0353e947d864a25386e1d4ecd35425e910bf39046c4dd370dbff9"
+    },
+    {
+      "bytes": 737106,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/gravitic.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/gravitic.blend",
+      "sha256": "d3855d5d6d41726ccdff4cb2101711fbec40491b7ea339a87abfdfec30fe58de"
+    },
+    {
+      "bytes": 78106,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/manifest.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/manifest.json",
+      "sha256": "4fd74de92e47d75af47d6da235663574b8a3bc1cc9592adbb1e8e6167b5c89ae"
+    },
+    {
+      "bytes": 530671,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/recall.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/recall.blend",
+      "sha256": "19ed201b201b175aff621e7a0cde4eae6e03da1b5a0f5c97d197dc8591b22cc4"
+    },
+    {
+      "bytes": 977830,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/resonance.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/resonance.blend",
+      "sha256": "530dd29a82eb90dd9dcec45db9217ce768f71c9910784af43c995a2903f5f90e"
+    },
+    {
+      "bytes": 688644,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/symbiotic.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/symbiotic.blend",
+      "sha256": "42e33e2449f4992040efaf7f97e97b53b7386266258d643bb27d6ec1dd4443d8"
+    },
+    {
+      "bytes": 824716,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/thermal.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/thermal.blend",
+      "sha256": "6759ffc7cf1cc44811837ee11359f0e9f040a5905cf872eaf4662c68543defcc"
+    },
+    {
+      "bytes": 654778,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/void.blend",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/effects/void.blend",
+      "sha256": "47c36a6dd7d18139ed209fe3004d2ba5f21667a91467fb2c429a8a8be956ba5b"
+    },
+    {
+      "bytes": 2132,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/round4_capture_children.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/round4_capture_children.py",
+      "sha256": "e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07"
+    },
+    {
+      "bytes": 23061,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/round4_job_boundary.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/round4_job_boundary.py",
+      "sha256": "3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c"
+    },
+    {
+      "bytes": 23711,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/run_round4_browser_proof.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/run_round4_browser_proof.py",
+      "sha256": "f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab"
+    },
+    {
+      "bytes": 31906,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/run_round4_remaining8.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/blend/stations/_authoring/run_round4_remaining8.py",
+      "sha256": "4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8"
+    },
+    {
+      "bytes": 10590882,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+      "sha256": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384"
+    },
+    {
+      "bytes": 648,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
+      "sha256": "499da5dd8585212108a1443793de31ebc061ca7db02343f107955f261180cdfc"
+    },
+    {
+      "bytes": 97463,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/lib/main.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/lib/main.js",
+      "sha256": "61ec0ba144ff93f4bf0e96ad6fab6f430ede0aa13e27ace8063ed63ba416b3cd"
+    },
+    {
+      "bytes": 1135,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core/browsers.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core/browsers.json",
+      "sha256": "2cfd419f71ac6475d81e1301fa86c34cf2a2a6bae2a0da4b5a2b18310216b6bf"
+    },
+    {
+      "bytes": 697,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core/index.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core/index.js",
+      "sha256": "a58fb2cec4293e7dcf73c58a179898a4f3986666451a19da4e731fa3af63265b"
+    },
+    {
+      "bytes": 16770,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/esm/api/index.cjs",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/esm/api/index.cjs",
+      "sha256": "4c09cef408c1915365cda5d1769cb61a8ee0b05c6a4f57c44e6d9bffaacb5cb5"
+    },
+    {
+      "bytes": 1752,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/package.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/package.json",
+      "sha256": "a555ba885349efbf0e6d4247891fddd2a4918a84c4623b73d3b23266af39a944"
+    },
+    {
+      "bytes": 350,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/package.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/package.json",
+      "sha256": "201d21a152ab0781d06741ce28150c9690b885d627e9509e1bf2688de1f39c3f"
+    },
+    {
+      "bytes": 264032,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/gravitic.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/gravitic.glb",
+      "sha256": "ebcd9cc0876887547298108facb390b73ab97134359e9970f985bc95b331a610"
+    },
+    {
+      "bytes": 231960,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/recall.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/recall.glb",
+      "sha256": "f138cba75959be8dda6c7a532745fd99ed4f35449998550a8ddf8faca640beb5"
+    },
+    {
+      "bytes": 273208,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/resonance.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/resonance.glb",
+      "sha256": "d9622d3ed81ed4a7b0b8df5e8311c58334b269c10b08fe9050fc65c008a53fd5"
+    },
+    {
+      "bytes": 282328,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/symbiotic.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/symbiotic.glb",
+      "sha256": "36059151b368c6d5b5d5de510488991d5340690a352af7be5334773409ea0ecb"
+    },
+    {
+      "bytes": 239208,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/thermal.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/thermal.glb",
+      "sha256": "30a7ee9e483ad4d28f208256e9b9586e9f63c0df66041ffd442f3ca1e6a13143"
+    },
+    {
+      "bytes": 162284,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/void.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/models/effects/void.glb",
+      "sha256": "8a11ec3e42f91ae32a3d05889f04af8974b0cd8ffdae885896e240b755443f66"
+    },
+    {
+      "bytes": 318123,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/gravitic_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/gravitic_filament.png",
+      "sha256": "26ac4f5a1a9adaff58b966d163e76204ee0c466042c981af85b82317c4a7e9ec"
+    },
+    {
+      "bytes": 239871,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/gravitic_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/gravitic_particles.png",
+      "sha256": "ae26657306fc1b028753de0f000f4d6777444df38fa9320462c2392712d6631c"
+    },
+    {
+      "bytes": 278310,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/recall_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/recall_filament.png",
+      "sha256": "ab275c2064ed7a4fce25689d4b70a9123f7d5edd0434e56ff9abdf12924aab3a"
+    },
+    {
+      "bytes": 145384,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/recall_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/recall_particles.png",
+      "sha256": "449eeee79168b6323b1b352c25410acd607523f9517493df212aa82efecb1c2b"
+    },
+    {
+      "bytes": 442362,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/resonance_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/resonance_filament.png",
+      "sha256": "79980c96ba1f7de54d2cc3980d2e518a6e7538b05a40f1248e3f63b4b89229fe"
+    },
+    {
+      "bytes": 340115,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/resonance_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/resonance_particles.png",
+      "sha256": "f630b650af80cb4129e33a5f7d012de0b055c4e65acaaecee5aee4a0551f8323"
+    },
+    {
+      "bytes": 305999,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/symbiotic_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/symbiotic_filament.png",
+      "sha256": "134ef04827118b23286ac0fd84a03457e55082eadd1d9c60b939ab7b40d044ed"
+    },
+    {
+      "bytes": 155598,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/symbiotic_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/symbiotic_particles.png",
+      "sha256": "2bb92a5c08a38bf25449704d7e630f00bf5a1e6c6541cad423a98db0b652d751"
+    },
+    {
+      "bytes": 320558,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/thermal_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/thermal_filament.png",
+      "sha256": "7ae07adda6dd11ad26f25d3b93effe3f8e39824c49ebe2d7f97d666c86574ed3"
+    },
+    {
+      "bytes": 301840,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/thermal_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/thermal_particles.png",
+      "sha256": "3d0c64b01a4052cfcc288bc2746133e0388383f360e2b822e2247674d9c969c9"
+    },
+    {
+      "bytes": 391907,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/void_filament.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/void_filament.png",
+      "sha256": "fe864222f3a566e561ddc850f977cae07c43f83c239cf0774cd10b432d289a9e"
+    },
+    {
+      "bytes": 147882,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/void_particles.png",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public/particles/effects/void_particles.png",
+      "sha256": "0e986835d4d8b99cc1c9f0017196011c256c771cff86c3c313c8674c8c124a48"
+    },
+    {
+      "bytes": 93140,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/Game.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/Game.js",
+      "sha256": "d69741f7ae8161968e78d69d49d47e43e6f6d32d573c18be47dcfc27f31f46b1"
+    },
+    {
+      "bytes": 40476,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/Game.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/Game.test.js",
+      "sha256": "3ca5501fe39f69aa6f2a7b13394d03cf1251a22be64ae69f8f7cfc33a0d4ec2b"
+    },
+    {
+      "bytes": 21930,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/audio/Audio.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/audio/Audio.js",
+      "sha256": "122d966ccad3563ca689d8f0b0c96b7faefa46923c7f97e586008f65dfc03da0"
+    },
+    {
+      "bytes": 7851,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/audio/Samples.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/audio/Samples.js",
+      "sha256": "8c83df90387f2e9472fc687c504c9f42cde3284f51443d91c9b64cdef3747513"
+    },
+    {
+      "bytes": 3935,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/SHARED_RIG.md",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/SHARED_RIG.md",
+      "sha256": "0d52ed01a3fc9f517014ce96fab5f6ab48e8ca9fce40679e533eddcfb4d9e1a8"
+    },
+    {
+      "bytes": 6070,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/sharedRig.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/sharedRig.js",
+      "sha256": "9db49fc1d1c3455c3c6216602ac8c9a491c8a9c467a2e47c01bddce3c31e34ad"
+    },
+    {
+      "bytes": 16173,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/sharedRig.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/characters/sharedRig.test.js",
+      "sha256": "60c3d328e99f1c671928b5ae5c80613a34fcedfbf51b471c14d3b21b79ddb018"
+    },
+    {
+      "bytes": 12500,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/Engine.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/Engine.js",
+      "sha256": "36705414064d04cfaa744d554c0549365316e56f0b2bda139c5f0ccc9e213661"
+    },
+    {
+      "bytes": 3171,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/Input.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/Input.js",
+      "sha256": "75f17b772fa8def00b4dd3088c498e6804d8b61052a3f6868158744265c682cb"
+    },
+    {
+      "bytes": 1352,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/dispose.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/core/dispose.js",
+      "sha256": "bc83a28c7fd99b8b2ba3bd2ced5517b9d592483625dc16cff47915c1040f1f62"
+    },
+    {
+      "bytes": 13513,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CameraDirector.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CameraDirector.js",
+      "sha256": "5af511081899a86289ecf85038f6bb76f99e3940dc7d4ffcb98abd911bf58da9"
+    },
+    {
+      "bytes": 5256,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CameraDirector.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CameraDirector.test.js",
+      "sha256": "b5faee5b0740e4184796fc9115d48426d9d451eef3b8fa0648e8aab8003ce27a"
+    },
+    {
+      "bytes": 14245,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CutscenePlayer.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/CutscenePlayer.js",
+      "sha256": "c3a0fd1d75d1a3340adf3e555981ccc1c8f2f7064239d625b2ceae7a9c87eef6"
+    },
+    {
+      "bytes": 3872,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/curve.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/curve.js",
+      "sha256": "81ed3c8a56a4beb96d73a7da8412b58d890728bf88154ce010b51e566691305d"
+    },
+    {
+      "bytes": 4902,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/curve.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/curve.test.js",
+      "sha256": "f3c882441eb00f2a9df7dd510962021320c8ce47196a16c94471949aefdc14ed"
+    },
+    {
+      "bytes": 6168,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/link.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/link.js",
+      "sha256": "84b80d394d3ddebcc814360a9631b07ac4d12e4bb47908d829fdbb74f2eb7e80"
+    },
+    {
+      "bytes": 11211,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/link.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/link.test.js",
+      "sha256": "72cb30f34920eace67ffa4937a8e7d485c667aa640954a9a9a804a29915a6c9e"
+    },
+    {
+      "bytes": 3205,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/space.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/space.js",
+      "sha256": "763aac9cd76f84d76fdcfd7538aedc05e7dafdee1db0beea7aeacde4f35b32d3"
+    },
+    {
+      "bytes": 6091,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/space.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/space.test.js",
+      "sha256": "74c168229fa0f0f49cd1634b958c6dff8360066bd7dea1038cbe12b5eb5fb96e"
+    },
+    {
+      "bytes": 11505,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/timeline.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/timeline.js",
+      "sha256": "212208c49d32e7c4cfb34e0f078746208f560c45237d17e1b0c355969f00a2ea"
+    },
+    {
+      "bytes": 9074,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/timeline.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/cutscene/timeline.test.js",
+      "sha256": "9cee98ea9f2f54088684f3023953ea4f8d537f945b93e77e58ccbd8bf12538ed"
+    },
+    {
+      "bytes": 11512,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/PlanetPreview.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/PlanetPreview.js",
+      "sha256": "019e30a0d519232179ee5078c5f9037dbdd1fdff140b0f0a505e4961989cfcbd"
+    },
+    {
+      "bytes": 7647,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/TeleportPanel.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/TeleportPanel.js",
+      "sha256": "925490a8f7791de02589787e2e62044a87453d452da40bc0f89cc64f2e0872bd"
+    },
+    {
+      "bytes": 4989,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/hudCapture.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/hudCapture.js",
+      "sha256": "e485ac05627e0d22a755411247f646c5880ab98959654fb360ed1a91c14ea5f8"
+    },
+    {
+      "bytes": 13788,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/playthrough.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/playthrough.js",
+      "sha256": "df8708f62b67fd8dcfd57122a879c7ebdeb1e74a88eb3664ae95542b96d6b695"
+    },
+    {
+      "bytes": 62005,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/review.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/review.js",
+      "sha256": "4203df1c5817a9cf7db852976149e3481d4d0b84adf77c826f42b7d9309a2033"
+    },
+    {
+      "bytes": 19723,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/review.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/review.test.js",
+      "sha256": "0c9aa745a4eb954d6588183be48e5f292d1e90a8eb2d21a2235fb24aa63b0acf"
+    },
+    {
+      "bytes": 7525,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/showcase.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/showcase.js",
+      "sha256": "6de13ce468b1b17890aa04a2538337349d942dbca26e2573796cd180d7e435ad"
+    },
+    {
+      "bytes": 8822,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/take.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/dev/take.js",
+      "sha256": "5f18c2232aa12c2fbeeeed4a7fbdd0d443c1bc67b0c256bef0254ffee7c58df4"
+    },
+    {
+      "bytes": 5705,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Cockpit.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Cockpit.js",
+      "sha256": "cb5549e7b42b5d57b7e8b4955b716b2ff88cd909c93ffcd980f9b442a50c888b"
+    },
+    {
+      "bytes": 13785,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Multitool.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Multitool.js",
+      "sha256": "4eca6e7673fb8b34d7d7ab7ba06edeef818d0706cd1ab49f0cbb7bcc1a12c296"
+    },
+    {
+      "bytes": 14591,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Pirates.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Pirates.js",
+      "sha256": "d0383a8693dd61df253fca17cd2ce499d5caae7089635b27b4bc0d2fbf97e163"
+    },
+    {
+      "bytes": 10775,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Player.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Player.js",
+      "sha256": "acfdde163301ac98af00cf7b13c3229467a48a8f179b10fbd0738d8b23bcd8d0"
+    },
+    {
+      "bytes": 77383,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Ship.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Ship.js",
+      "sha256": "70c1bb35271bb37a758ef8e50e78babc19328b0202b742a6b68824a5badd9c4b"
+    },
+    {
+      "bytes": 6609,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Traffic.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/Traffic.js",
+      "sha256": "6f41a480b8b56ecf7aaa1dbc7ee635f9aba3df78b76c950be6b5edc0283cbd6e"
+    },
+    {
+      "bytes": 2787,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/hazards.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/hazards.test.js",
+      "sha256": "35d3f8a2e5988453b8aee9e6ef09bf9ecf1d0acbc28e5ac4b63c5bef53b07962"
+    },
+    {
+      "bytes": 6754,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/livelock.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/livelock.test.js",
+      "sha256": "0ae37aefdcd47ae535f73826f199dc69bbf928cc3d715795a005a51886e04fff"
+    },
+    {
+      "bytes": 16891,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/meters.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/meters.test.js",
+      "sha256": "27e0b1d2f894844cf4007256bcddf512a83f6795cbb9d30ed09da413275c089c"
+    },
+    {
+      "bytes": 2453,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/pirateContact.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/pirateContact.js",
+      "sha256": "7f55847e94e4ba563e18bbafa1ab71048f358749c8fb7c173b2e87f7c5b508da"
+    },
+    {
+      "bytes": 1502,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/pulseExit.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/entities/pulseExit.test.js",
+      "sha256": "2591a0e5189f36b887cd46adad9e2f510e26b92500687b491e7be97b485facb7"
+    },
+    {
+      "bytes": 11268,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/exosuit.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/exosuit.test.js",
+      "sha256": "9400c73b896766a04467d1c44b7e68553073023db1a401bad8106b07f3aecdbf"
+    },
+    {
+      "bytes": 29969,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Cities.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Cities.js",
+      "sha256": "1d8e526be2c8dbee41e803a013c61fe1bb71ef49930029b9c5edee19f4f64081"
+    },
+    {
+      "bytes": 27517,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Citizens.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Citizens.js",
+      "sha256": "4afca271f579ef61019d5011d47316bf7792e5f99b5b1787934cdb447680a566"
+    },
+    {
+      "bytes": 30961,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Fauna.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Fauna.js",
+      "sha256": "3c269065a54c640947514a4dd35c115bef5a2f86fb133b4e08ae16e643a37714"
+    },
+    {
+      "bytes": 41091,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Flora.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Flora.js",
+      "sha256": "73fd1d9beda93e6a58e5fa8cd5d53009cbad65283d945849ce332b6801a4bf58"
+    },
+    {
+      "bytes": 11108,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Flora.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Flora.test.js",
+      "sha256": "a87ae106e24f350fb330d249ad24c7e281e6f43e17d1598f9f30732ab245379b"
+    },
+    {
+      "bytes": 13129,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Inventory.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Inventory.js",
+      "sha256": "a30d96a4cc039699197e2b1d7b774ece00b3496fb5465e56bff0faf557531dc8"
+    },
+    {
+      "bytes": 8844,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Inventory.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Inventory.test.js",
+      "sha256": "064d2120b2c4bba6b8372d761993bef77350c8f304e7ed51b4b7d7c65a820106"
+    },
+    {
+      "bytes": 25386,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Structures.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/Structures.js",
+      "sha256": "29f663824315a393efbc670f7731a8d83d882030606e08455e822c0874bd45b4"
+    },
+    {
+      "bytes": 3864,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/creature.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/creature.glb",
+      "sha256": "0dc2e92daa3bb0a272773f05029a45c6e67e787c4912c9c564279d92c1abae41"
+    },
+    {
+      "bytes": 2604,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/flora.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/flora.glb",
+      "sha256": "e77ea888535039a1bad0c1fe58b0c59bcc6d10f909cccf1e9c5d44cf6087b8e1"
+    },
+    {
+      "bytes": 2232,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/hull.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/hull.glb",
+      "sha256": "4cd8e15cd138fe4e2f1ebc383dfcd00840ef4cffb5480671ead4d70c357b2192"
+    },
+    {
+      "bytes": 4076,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/textured.glb",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/fixtures/textured.glb",
+      "sha256": "25e3f2e7dd0b5e3dc4a0f13b38224a3698c87bd531d9d40b11dd6485066d07d7"
+    },
+    {
+      "bytes": 35547,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/floraModels.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/floraModels.js",
+      "sha256": "f7b4b9388b2362200ef3f8349f69109905ef640cfe6afa37640f15852b65d211"
+    },
+    {
+      "bytes": 6262,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/modelLibrary.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/modelLibrary.js",
+      "sha256": "913a3baa028f66df947f6b85d2b2d3b78e21fcd416d5d11024a8e12504faa7cd"
+    },
+    {
+      "bytes": 6872,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/modelLibrary.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/modelLibrary.test.js",
+      "sha256": "b4c3c72369a75b7e630488c3b5c97e0c45e1ce5540db54aa8d90d429d0a252fc"
+    },
+    {
+      "bytes": 1289,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/resonanceFx.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/resonanceFx.js",
+      "sha256": "c2dd26355cd68de9e9d97ce9e1afb69fe23f5a86db74a6efc2adab16606a8e99"
+    },
+    {
+      "bytes": 7551,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/resonanceFx.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/gameplay/resonanceFx.test.js",
+      "sha256": "4323691c21d6b613d4a3ede147d69ad95f3000babb7d3b0bbb8a47860dc795fd"
+    },
+    {
+      "bytes": 11510,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/main.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/main.js",
+      "sha256": "1f3f38014630d7c718cd2fa9c63646ec194f3dd0cba910c7608bde5175063a67"
+    },
+    {
+      "bytes": 15343,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/Net.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/Net.js",
+      "sha256": "633fcad1ca8e02131e8539debf76db8b1683dcf56fc8eee3a3f843bb4a57f13e"
+    },
+    {
+      "bytes": 23963,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/Net.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/Net.test.js",
+      "sha256": "240ec63671214367485f4a9e7d5dc41e4a4455b7109be0a9e11096568a6f636e"
+    },
+    {
+      "bytes": 9752,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/abilities.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/abilities.js",
+      "sha256": "a5cd3f3283b5a7c7977b67ddfd80b0e9eca8f258a6b23f52cd6574dcc9870cce"
+    },
+    {
+      "bytes": 6566,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/abilities.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/abilities.test.js",
+      "sha256": "364ebd97b703237502b62198de78001b12bea1dc8ceb1265277aa2553a351ad6"
+    },
+    {
+      "bytes": 4047,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/api.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/api.js",
+      "sha256": "41b48093c1a017e7097c2e5623d7615948ca1f4c668f5c6e680dab54d91c2325"
+    },
+    {
+      "bytes": 6020,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/api.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/api.test.js",
+      "sha256": "ee9bbab29ac941c2a3399663cab4fc8991dd9bd2be5f5f3a3721e108c36ed7a7"
+    },
+    {
+      "bytes": 5056,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/beacons.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/beacons.js",
+      "sha256": "e3172d26f3baca65d953b795b1462321bb2859daa7db732d4bbe7d9a01ce72f8"
+    },
+    {
+      "bytes": 5990,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/beacons.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/beacons.test.js",
+      "sha256": "b04a7f090a9aa4ddb8af6a0d050e563680dfe34ddc2c852a90ac6e34448f7e7e"
+    },
+    {
+      "bytes": 1762,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/clock.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/clock.js",
+      "sha256": "6c7f49a0e533d692598548253fedb20f64facc55d8bc591ca876a13762c7fd2d"
+    },
+    {
+      "bytes": 3194,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/combat.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/combat.js",
+      "sha256": "43cbb1e6624579d6b362ccdc027962cc2656dc5eee1cb1f99fa22da696536bb4"
+    },
+    {
+      "bytes": 1812,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/combat.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/combat.test.js",
+      "sha256": "fc6b2fe41d1e2c3cbfbf8954bb8cfb95c8a4f047c370ea7bc1720f73391277d2"
+    },
+    {
+      "bytes": 4402,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/crafting.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/crafting.js",
+      "sha256": "97a249c734d05dc72e72634e2e886f362239d88cda445086731b201e816b2fc8"
+    },
+    {
+      "bytes": 4607,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/crafting.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/crafting.test.js",
+      "sha256": "def09253ea8de88f313f6f5f6c0ab707aba085744b8543ac2bf0fed5f725efd0"
+    },
+    {
+      "bytes": 3644,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/discoveries.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/discoveries.js",
+      "sha256": "139469a139356a265f4678093fff29bda2b07a950cecc3c9f5d434c8c5cfebf2"
+    },
+    {
+      "bytes": 4546,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/discoveries.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/discoveries.test.js",
+      "sha256": "22df41832a91b3b2808a0099040b6181a70135e9b847a4e48cd52b9a6c7449c3"
+    },
+    {
+      "bytes": 4309,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/link.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/link.js",
+      "sha256": "c15aed3fc7e5bd1353ee2ece8d68524a73b602d464a05266fb08fe4f4890a945"
+    },
+    {
+      "bytes": 5037,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/link.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/link.test.js",
+      "sha256": "88a56f1b7f86a020587eceb69c29fdfb58bbf41c496117ed369f61a9914eca92"
+    },
+    {
+      "bytes": 7341,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/mining.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/mining.js",
+      "sha256": "f05a719a2ed60f0b698ab58b4fd4b7a4a5a75c7cecb8d517dac4d3da7fa1c456"
+    },
+    {
+      "bytes": 12767,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/mining.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/mining.test.js",
+      "sha256": "6941e6808ad45569f90f75ac23fdd53443d643f8e3993e84c08e61650735942f"
+    },
+    {
+      "bytes": 3028,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/pose.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/pose.js",
+      "sha256": "6e52902ebdd0d831a41706728007ecd9e6839013cba57e305b31b8e4f9d70553"
+    },
+    {
+      "bytes": 2785,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/pose.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/pose.test.js",
+      "sha256": "1592adf0cda8bbce667de4a5947b121e3690953d15c7ba69417fc6993ebd7b20"
+    },
+    {
+      "bytes": 12447,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/prediction.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/prediction.js",
+      "sha256": "3f8bd214b5c3e60f13626c1cfb453e9e07df9842c0addfc40926438f04293d5c"
+    },
+    {
+      "bytes": 24017,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/prediction.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/prediction.test.js",
+      "sha256": "3dde6e3f020a836d39233ab6285b50ec60917493293f6401999276421c7e7b2f"
+    },
+    {
+      "bytes": 4954,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/predictionFlight.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/predictionFlight.test.js",
+      "sha256": "b9302a647027d34c08a4d9848d3063254eab2674a62010dfbba85247e8091300"
+    },
+    {
+      "bytes": 2880,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/reputation.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/reputation.js",
+      "sha256": "21035dd1d3b9fa49fb79c455fbb7f7a3752b72b85714a819ef0ad8a1b6ec2ddd"
+    },
+    {
+      "bytes": 2709,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/reputation.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/reputation.test.js",
+      "sha256": "d6f34261f0516119c828fe931fae419929f7e8f4e2abb978e0d908eed8ecc3b4"
+    },
+    {
+      "bytes": 2881,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/session.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/session.js",
+      "sha256": "7358ed69683c149aa3f115f421a07a84b1883d44b033b597f88639fe1173e339"
+    },
+    {
+      "bytes": 1444,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/session.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/session.test.js",
+      "sha256": "0617bdba28075972b373746d2703aee051fc4885a43bfe64a568944183575d87"
+    },
+    {
+      "bytes": 2733,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/snapshots.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/snapshots.js",
+      "sha256": "c29549b24ed0d48654801faf4cc2dafbd5780c511de8087881d6358711a44cd4"
+    },
+    {
+      "bytes": 3977,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/worldEvents.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/worldEvents.js",
+      "sha256": "76688a11be5d8bf20269ec0c6fdd87f9ed71813727aa0aab2d73267bd7ce6508"
+    },
+    {
+      "bytes": 5454,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/worldEvents.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/net/worldEvents.test.js",
+      "sha256": "c6af5bae72348e9a419ebcee45d2402546663cc9f76b220c1a68ada882168682"
+    },
+    {
+      "bytes": 17572,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteEntities.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteEntities.js",
+      "sha256": "19bc8fcf92db5d5b737a254c9bf9a4acb3e1770289b7e0ceca26bf4136111a3f"
+    },
+    {
+      "bytes": 29139,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteEntities.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteEntities.test.js",
+      "sha256": "7f7edd21503a4f2d335c388e4a5dc0050058fe66ab831bfc56cf170f1cc240b4"
+    },
+    {
+      "bytes": 44258,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteShips.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteShips.js",
+      "sha256": "388cd577fd3dd81329a445309c6ad2b7554df886a1af15d2e8e4874b312b4fcd"
+    },
+    {
+      "bytes": 22747,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteShips.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/RemoteShips.test.js",
+      "sha256": "f79ac78dffd601f490dcb78b33025b2c326d59fef6b5cc0ae654475fb45d37bc"
+    },
+    {
+      "bytes": 13739,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/buffer.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/buffer.js",
+      "sha256": "0970e37c25bc2448688503c522a583380f05d94e1aa1e58b991dcd5451fdf187"
+    },
+    {
+      "bytes": 19652,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/buffer.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/buffer.test.js",
+      "sha256": "c4cfd096eb8841e5baa74d62be8650546cdf24b47915f4f9257c5598d200ee7a"
+    },
+    {
+      "bytes": 2869,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/clock.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/clock.js",
+      "sha256": "2679b1de21e17652c851548af3610fe8d6ecbf3e7317e4d73fbd32aef47aa34a"
+    },
+    {
+      "bytes": 2726,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/clock.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/clock.test.js",
+      "sha256": "3c1435353e97bc587b5a8abd53b5c1ed4654af584c32f6f45d775e5161728a33"
+    },
+    {
+      "bytes": 2726,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/frames.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/frames.js",
+      "sha256": "efaf7cbf5ac541db162647cd0b696731ff74a969262d8ed40c5db7ab3f939d9e"
+    },
+    {
+      "bytes": 19856,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/markers.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/markers.js",
+      "sha256": "c7b21e9dd6f178fe0e02e19812f44548e414ad2dbcdd6adbd54537385942ebbf"
+    },
+    {
+      "bytes": 16026,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/markers.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/markers.test.js",
+      "sha256": "f26f0840fe9d320e85a5fbd9b2f079159c6dadd833520551ade59a356350f8cf"
+    },
+    {
+      "bytes": 15406,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/replay.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/replay.js",
+      "sha256": "92a66ecce8e29f4a01aa4a7a2ba42b3959dd71105dd7ba65b37c0e5a8496b109"
+    },
+    {
+      "bytes": 5630,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/replay.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/remote/replay.test.js",
+      "sha256": "f817fe7e7700338c54aaa695512429ef0c1ecaa5605c7ea26a37ad5a7a5643fc"
+    },
+    {
+      "bytes": 46429,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/AtmospherePass.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/AtmospherePass.js",
+      "sha256": "c9e8966a95a6338dd3b024bbf4cb9de34a9ed9a5a473dc0c698cab2674ba850c"
+    },
+    {
+      "bytes": 4971,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/Lightning.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/Lightning.js",
+      "sha256": "5b4b7e4dedaba3adb7c716a8ca51bdbde3f6343f75c5ce6350cab9ac69deddf0"
+    },
+    {
+      "bytes": 14349,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/ShipFx.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/ShipFx.js",
+      "sha256": "c84137728138f48b0cf5cafa779e07718ad4ed8db037572e9e1b71cddbeeeb36"
+    },
+    {
+      "bytes": 3639,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/SpeedLines.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/SpeedLines.js",
+      "sha256": "96c815181a194af93f024cc76b9aeefa1b80fe5b3bf404727bc5f64ff30d26cd"
+    },
+    {
+      "bytes": 20003,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/UniverseSky.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/UniverseSky.js",
+      "sha256": "85e849d8ad84004a64fea749b6fb3a89fd4e2a2038f30f7486499280bcc487e5"
+    },
+    {
+      "bytes": 3621,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/UniverseSky.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/UniverseSky.test.js",
+      "sha256": "0e9cbabe72e1832d1baf8adb196212597e8ab1eac6faa42fec8156c90dfffc51"
+    },
+    {
+      "bytes": 9470,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/Weather.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/Weather.js",
+      "sha256": "15312f7b465209594f7b0f814ccdf741c533d2e86dec697f3f35336072d74586"
+    },
+    {
+      "bytes": 2746,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/glsl.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/glsl.js",
+      "sha256": "dfe8165f2c10ad464b35a3c99e235bd97dcf9bdba8e7e46a4b6aaa718102e941"
+    },
+    {
+      "bytes": 2592,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/panelMaterial.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/panelMaterial.js",
+      "sha256": "ebe8cc5994d4ab3338170d6b0d594073c5fdfc7cb1ff6f900c87461620e43894"
+    },
+    {
+      "bytes": 14172,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/terrainMaterial.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/terrainMaterial.js",
+      "sha256": "a475ea494776c4a3a67ac3fd3423d040f4efce0ce2688f10228e5cae144d4713"
+    },
+    {
+      "bytes": 12498,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/textures.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/textures.js",
+      "sha256": "1e219a5131dc0d3872836b1c35adbe9d892b494b33b4211360b310604b084962"
+    },
+    {
+      "bytes": 7490,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/treePoints.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/render/treePoints.js",
+      "sha256": "8067fc1e4c2e1d8c993e4c6298dee1ce1f5aaca77cb6f4e08e434bfa9d50c5b5"
+    },
+    {
+      "bytes": 10734,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/PlanetTerrain.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/PlanetTerrain.js",
+      "sha256": "3876aa75d4f7c6be6740a4193ea813ed6b58c26cc46aa748bc7c7051d2da22d5"
+    },
+    {
+      "bytes": 2182,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/WorkerPool.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/WorkerPool.js",
+      "sha256": "223f46683135b40a0a61cda233141ef357c8492d240296c6e37874260c918ac9"
+    },
+    {
+      "bytes": 11909,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/chunkWorker.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/terrain/chunkWorker.js",
+      "sha256": "ca5063794fe5a94d02a94488c56578963ce06b92b902231a83b301ecb5335598"
+    },
+    {
+      "bytes": 44979,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Account.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Account.js",
+      "sha256": "33653f41e0a00ee26a9091455a24a010add429228385fa13c6f3cef489d25bf4"
+    },
+    {
+      "bytes": 26590,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Account.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Account.test.js",
+      "sha256": "e807a380aeb34fb60d7718f4e37c99898461061384639c20b1da3aa4226a530c"
+    },
+    {
+      "bytes": 4460,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Cinematic.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Cinematic.js",
+      "sha256": "f6872c825c23a7b1e6214cb07fa4fca6fb57dc033accb7c753446eec0de9c69f"
+    },
+    {
+      "bytes": 1201,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Cinematic.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Cinematic.test.js",
+      "sha256": "52edb931e06366f95511c61e423aac180fa384bbfdfce882c875afd1f50017c6"
+    },
+    {
+      "bytes": 8354,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/EdgeCompass.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/EdgeCompass.js",
+      "sha256": "44c87f9d0a2cd499c30bd3e8379257b986db52e414a085c22d1709e67c5f99f3"
+    },
+    {
+      "bytes": 30609,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Fabricator.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Fabricator.js",
+      "sha256": "87a274cc445c0bd5b402eeafde213c6566d5ba0b73b0ae4366e0e9fd759288bc"
+    },
+    {
+      "bytes": 51277,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/HUD.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/HUD.js",
+      "sha256": "1bdff0b71846ea4629a7321870e4b22c438123c696a27837c3557af29949e482"
+    },
+    {
+      "bytes": 8727,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/HUD.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/HUD.test.js",
+      "sha256": "0cfb989aff7bed967eca45d0deab8b09db31200256613a02933546a3f8bdf460"
+    },
+    {
+      "bytes": 43704,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Menus.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/Menus.js",
+      "sha256": "3c3efdaf2999f17ef221665bd718c806b897be69517fc01fc0673829665a30b8"
+    },
+    {
+      "bytes": 2724,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/banners.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/banners.js",
+      "sha256": "77ca45724548fa248e1ad2f5dcacce756ef8a53975dfff1af34da595bf47d372"
+    },
+    {
+      "bytes": 6414,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/banners.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/banners.test.js",
+      "sha256": "166c9aaddb3cb9c9db83b912123dcbea3197a9dd259f84fbb09027a0432a5ba6"
+    },
+    {
+      "bytes": 16569,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/EdgeOfSpace.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/EdgeOfSpace.js",
+      "sha256": "4b5f46985c7f2f24483d5fc85ab458f964183644690e9f4e4ac12757304d14ed"
+    },
+    {
+      "bytes": 13659,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/EdgeOfSpace.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/EdgeOfSpace.test.js",
+      "sha256": "3911d848d4fdfdd400ef933bdb5c91eae4b90f71cd0bb3834ee44612cba4f762"
+    },
+    {
+      "bytes": 28293,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/GalaxyMap.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/GalaxyMap.js",
+      "sha256": "a794a45050d4e5074c1ccc2f3e5419b2049b7bdc94674f46377b4fa0af448290"
+    },
+    {
+      "bytes": 12140,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/MapView.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/MapView.js",
+      "sha256": "609fdd56f15f4920deddf0bd175c8de33167d93d8cd12a468df7a002506e721e"
+    },
+    {
+      "bytes": 19900,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/SystemMap.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/SystemMap.js",
+      "sha256": "c40758d10e243c55137c13b48262d15e9fd1e2126636c14f9bd9ba49213d1cbf"
+    },
+    {
+      "bytes": 6228,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/mapCommon.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/map/mapCommon.js",
+      "sha256": "dd5c8ef92b0208f6e252f60457f70e08dd3cccd6737dc19ca0b30be5c1aad84a"
+    },
+    {
+      "bytes": 42179,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/SocialUI.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/SocialUI.js",
+      "sha256": "b44d081bd5f0477789329ef8cdfea7e2dfc11400f0cbdac7a9f58a06116cc647"
+    },
+    {
+      "bytes": 7371,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/SocialUI.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/SocialUI.test.js",
+      "sha256": "6a8ebbdd4eb712de86a116ecd8415998080fcda24bde90dad7ceb8c794c29538"
+    },
+    {
+      "bytes": 2868,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/commands.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/commands.js",
+      "sha256": "b2ddbc143dc74c1125a31ed7edd543d3a478b5eb5566dcdb4626e60530301f01"
+    },
+    {
+      "bytes": 3467,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/commands.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/commands.test.js",
+      "sha256": "0b4ef37072ffcb9557b9a2918ca531070a2042c78f174477488f1c8d0a560bc3"
+    },
+    {
+      "bytes": 13485,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/model.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/model.js",
+      "sha256": "27d53d5b4e7751a28b179666d33c86c443e28039b4d3e70c048639466bc8edfa"
+    },
+    {
+      "bytes": 14707,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/model.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/model.test.js",
+      "sha256": "d63f8829cdc2a86ac1958ced2ce043943ef21daee6034d3af5cb1e210de1259a"
+    },
+    {
+      "bytes": 13491,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/motion.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/motion.js",
+      "sha256": "01e21aaeb34fed1d5c1bc27704cd6e4080029a494e8aae74c0f205b463ae1f0f"
+    },
+    {
+      "bytes": 5881,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/motion.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/motion.test.js",
+      "sha256": "a60c39476ea395c773748d7de097605287b3faaf914861ac1bccff193669d4fd"
+    },
+    {
+      "bytes": 6890,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/words.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/words.js",
+      "sha256": "8293a9dbf80c2f62e54d041b60be1fe0cd81b6f0e9a52d1a1dd2a938dbb2d0b9"
+    },
+    {
+      "bytes": 3580,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/words.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/social/words.test.js",
+      "sha256": "74c85e9d5608df3088b52a788366a585f4bd078e7964d5ab1649bdf560316b85"
+    },
+    {
+      "bytes": 118063,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/style.css",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/ui/style.css",
+      "sha256": "f66f79513281836ca4fd01d1d2210b008e869f18b5c24d4c9f367c8a5d76450f"
+    },
+    {
+      "bytes": 10382,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Asteroids.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Asteroids.js",
+      "sha256": "fcacd5fb673cfe70a81fe1ca8d7556b3a0d9eff4e51ba18fad2980ad1db48d96"
+    },
+    {
+      "bytes": 3446,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Body.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Body.js",
+      "sha256": "7abef1f2870f12f5c697cf29d0e49ac771a8f5bca16046ebe610a34cad6cba9a"
+    },
+    {
+      "bytes": 14853,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Planet.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Planet.js",
+      "sha256": "3b7df040168645a7c8b25daf62635beffe619138705a6955ad45b2fde6e6ddd0"
+    },
+    {
+      "bytes": 3148,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/SolarSystem.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/SolarSystem.js",
+      "sha256": "5001b75071c8a01dcec190c1bac49df4d9a9df28e0e400e99c6de26f932254c9"
+    },
+    {
+      "bytes": 4119,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Star.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Star.js",
+      "sha256": "5b5dae9de46381c3ff471f4baaafe85028234ce04a9492665d27058a97635336"
+    },
+    {
+      "bytes": 38346,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Station.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Station.js",
+      "sha256": "3f2776b642fc2a606b4fce97488b4fe8cf8adac200ec9ade0d4528d5771c694b"
+    },
+    {
+      "bytes": 9796,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Universe.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Universe.js",
+      "sha256": "3e70fbc93622c4156b936b73b90dc752f3a681fd1c648f8d4c73eb67b6e5ab7f"
+    },
+    {
+      "bytes": 5993,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Universe.test.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/src/universe/Universe.test.js",
+      "sha256": "23cd7a835dd70a284b03a46a2d6ed6923654d8485db749a42e5c84e17c7935f7"
+    },
+    {
+      "bytes": 723,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/vite.config.js",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/vite.config.js",
+      "sha256": "d9ad7b3b5e27e07791fd1ae60320483ed594a0208e2d3136d1a8ecc735a2885e"
+    },
+    {
+      "bytes": 404,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/package.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/package.json",
+      "sha256": "3ca8a603abecdbcffa18c2e1c76e14ebc211e2cab8af3f0edceace64a76da4ed"
+    },
+    {
+      "bytes": 4335,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/index.ts",
+      "sha256": "b2b8e9650cb7dc7284efa4532c25f15c518b2b748357d115ceb139947bfcdbae"
+    },
+    {
+      "bytes": 1886,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/resonance.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/resonance.ts",
+      "sha256": "d6a8ba1b718cdfa077b5e3de94a55581a6ee34589eb8a33043029b7b99126d68"
+    },
+    {
+      "bytes": 1687,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/thermal.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/abilities/thermal.ts",
+      "sha256": "0aae089ddc95bcd3cc359f1729dd18b4da1279dc3e626beb341b42af50a69865"
+    },
+    {
+      "bytes": 3947,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/glyphs.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/glyphs.ts",
+      "sha256": "8f4ad4410689222515b56039555e775aad9869cb22f6fcaff35351a0f4ac0bac"
+    },
+    {
+      "bytes": 57,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/index.ts",
+      "sha256": "2e2dec81135d3b0fc298775cf325f3a7ffd6c19c9c05a5086d39ff401d2e0f65"
+    },
+    {
+      "bytes": 2601,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/looks.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/art/looks.ts",
+      "sha256": "fa8f5d047d698b1e08eb4d3c115fd37ef460ce244c4164c892c82216eb1fb43d"
+    },
+    {
+      "bytes": 12588,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/codex/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/codex/index.ts",
+      "sha256": "dd22f351c7b9c054a3457f63f6b8d3acd2a50ac55ed73940c7bad22de2993ab0"
+    },
+    {
+      "bytes": 6150,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/aggro.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/aggro.ts",
+      "sha256": "435d1ee398d78b7cc6a975598111ce8d527c6ef75672111a94c35fd8710eb3b4"
+    },
+    {
+      "bytes": 7658,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/damage.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/damage.ts",
+      "sha256": "286dae7c0940ad84947cdc99113a8bd2cfcd64cc05653cfc8e95f6e98ed465d4"
+    },
+    {
+      "bytes": 9479,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/hits.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/hits.ts",
+      "sha256": "cd0d55c1f3a86143d419d1368cb42bdfcd4257e7f7cb1b8ceec51c0d399f1665"
+    },
+    {
+      "bytes": 576,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/index.ts",
+      "sha256": "1792d80d841ca0145bbcaf6ddfa71c4f7e3be3733f0b16d18924117565b4f3ec"
+    },
+    {
+      "bytes": 2380,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/level.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/level.ts",
+      "sha256": "36564d3b26fedba127b6c1f3da0f6ef7dda5c31b2932f11cdf701de704cc85e4"
+    },
+    {
+      "bytes": 3485,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/loot.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/loot.ts",
+      "sha256": "93b01c0e5e731ac65de954e4eafb21862b4827742572a0130cbc4259168d9fee"
+    },
+    {
+      "bytes": 5949,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/mobs.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/mobs.ts",
+      "sha256": "a1ddf6a9668dd8323fc33c89ab1f301746a345cf5875bcf8b1c176e04cb14929"
+    },
+    {
+      "bytes": 2288,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/stats.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/combat/stats.ts",
+      "sha256": "2e3856c5614876a9f9a8b1c75d3463f34260dfc0c62510dff2bf64ad2618c52c"
+    },
+    {
+      "bytes": 14168,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/crafting/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/crafting/index.ts",
+      "sha256": "60010c875483145e2b64c7cab8adc449b9d944372babf8e9eb1e95a351a72258"
+    },
+    {
+      "bytes": 2826,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/crafting/places.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/crafting/places.ts",
+      "sha256": "bd28911ae252fcc4903203c47cc0a8d926535ef3a6c5ced7bb9c4f700796bbe4"
+    },
+    {
+      "bytes": 14279,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/bosses.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/bosses.ts",
+      "sha256": "32cae5b1685918a1919072915d12a8ed6e2208239a2ad42baba055e907f3ae20"
+    },
+    {
+      "bytes": 5147,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/common.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/common.ts",
+      "sha256": "b52658cde2b65a9747befd7f3e67fd9b7c729fb35e36810c927104d5265b752a"
+    },
+    {
+      "bytes": 8224,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/factions.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/factions.ts",
+      "sha256": "e3d755f43da59016f4ca16365a0aa156f60bb14590940eaacb145aa0e5d3d947"
+    },
+    {
+      "bytes": 9312,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/hulls.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/hulls.ts",
+      "sha256": "785fdb46c08f91a78a14f814bd689b4f4202a837790e7c75de3082e5d74950c6"
+    },
+    {
+      "bytes": 906,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/index.ts",
+      "sha256": "7cd697f497ad1834bd734787bdd2049fccc286528dd2546f73ee6591bb2879fa"
+    },
+    {
+      "bytes": 8380,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/items.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/items.ts",
+      "sha256": "be1d83a0bb62d3015e034e42ea1d708f5df95a2c5567e1b48ea06151dca230c0"
+    },
+    {
+      "bytes": 2279,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/meters.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/meters.ts",
+      "sha256": "3f70a788dccdb9d584f4440789d5b7f8009d7c60a8952dbfff1dd6a3267eab27"
+    },
+    {
+      "bytes": 28743,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/mobs.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/mobs.ts",
+      "sha256": "cff9e6e154649375ab73e3f6cbb36a07671c9a4701bfe4c459e5c52904cb0f12"
+    },
+    {
+      "bytes": 5615,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/modifiers.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/modifiers.ts",
+      "sha256": "f34558193f653531479ae382a8af8b11258acdf648451f1aef06425cc7c961df"
+    },
+    {
+      "bytes": 3066,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/names.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/names.ts",
+      "sha256": "5018f0a4b52cf069853afc5f51b03013a1bc6b8ec2bb2f08f11ff104f7304072"
+    },
+    {
+      "bytes": 4479,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/peoples.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/peoples.ts",
+      "sha256": "00e2424c3b0b13875bcbb8e155993ae64fbb6e5b34c3e06e9d61ecedc8523758"
+    },
+    {
+      "bytes": 421,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/progression.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/progression.ts",
+      "sha256": "73438dab38f9fb4f20fec73a35f3e90fa9a0ac976a9fcea209daf274714179b9"
+    },
+    {
+      "bytes": 12650,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/recipes.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/recipes.ts",
+      "sha256": "547dd5f1efdf243ba65e4ade47ef159e2d74d0be8e434e630ab83ca597a821b3"
+    },
+    {
+      "bytes": 7101,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/resources.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/resources.ts",
+      "sha256": "fd974b8da29472d3040eae5861798ab13ad8c11bc7cf4d4f581b43e41491e84d"
+    },
+    {
+      "bytes": 4697,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/sensors.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/sensors.ts",
+      "sha256": "7f585bf67ee5c5927e048084b2dd8ac3ffb77e39875974987e20ea717f5bcefc"
+    },
+    {
+      "bytes": 1763,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/conjunctions.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/conjunctions.ts",
+      "sha256": "1de2c8de292f3ea5e04e478709b05033be32ddf5bc6fe8a7f726e97de152fed6"
+    },
+    {
+      "bytes": 4334,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/exosuit.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/exosuit.ts",
+      "sha256": "d19198d23aa26f61c4005bc6b42e7cc519b6a5a22aa7b2d751dab9b0f76be565"
+    },
+    {
+      "bytes": 4735,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/gravitic.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/gravitic.ts",
+      "sha256": "353a0e7b60aa7f00a37ad473a2ed6eba1c4cddd8f9087f7b0e88104ff8f552de"
+    },
+    {
+      "bytes": 1272,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/index.ts",
+      "sha256": "1e9b883e7ac497b62de2e611bf67c7a39895201a5b163ffe7eb906896d49dd99"
+    },
+    {
+      "bytes": 4275,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/pilot.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/pilot.ts",
+      "sha256": "2c1079f3a883b2ea79bd0763840fb4044c830c564c1a3f043fb7bee8af4cd3f3"
+    },
+    {
+      "bytes": 4693,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/resonance.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/resonance.ts",
+      "sha256": "59dfb039c899e6242fc37bc3ee21a3ba04ccfb6479b0f375e0f8b0c2cd808b4e"
+    },
+    {
+      "bytes": 14501,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/schema.ts",
+      "sha256": "fc0e200b8334d07b04d6a2bd0f0b1ff1db9b1b766610bbb6df557d6e9d36ab84"
+    },
+    {
+      "bytes": 4304,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/symbiotic.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/symbiotic.ts",
+      "sha256": "80a4843641eb4cfe116876ae7419bd7ffff9b96a277f0abe639ac069cf6362cc"
+    },
+    {
+      "bytes": 4379,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/thermal.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/thermal.ts",
+      "sha256": "8e506648c6e1d5434483caa82d5e75b290fc94770c3e04227c4c21f7d299bbcf"
+    },
+    {
+      "bytes": 4338,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/void.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/skills/void.ts",
+      "sha256": "8f26b67d2e63121485e004866fc047b15231899c182ff7d127673e7f11d3fc67"
+    },
+    {
+      "bytes": 3248,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/station.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/station.ts",
+      "sha256": "93a3225f052d8fc240485026f2bd08aa82673c633a7d17693f29f3571a059a02"
+    },
+    {
+      "bytes": 3375,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/suit.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/suit.ts",
+      "sha256": "9bc06fb9433b16440d7fb1b7f2fffab2e069c0a5ef39eca49aaca2617ef125df"
+    },
+    {
+      "bytes": 2540,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/trainers.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/trainers.ts",
+      "sha256": "3cd91223530cc24ac212a771c4e41985852f163b98119c11e6837e1231ffd2fc"
+    },
+    {
+      "bytes": 3159,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/walker.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/walker.ts",
+      "sha256": "f39f1ccf1b520799a50438c352d5506d4155418db4db363d7333aa3290af4197"
+    },
+    {
+      "bytes": 4998,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/weapons.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/data/weapons.ts",
+      "sha256": "662f1e94607af472212e5b29ff2421f1d40fad49e89de3194740e7066dc5e412"
+    },
+    {
+      "bytes": 13176,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/discovery/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/discovery/index.ts",
+      "sha256": "63ceb780545039cc1217ca01930889d870419b8648939b3d536a92788da5f001"
+    },
+    {
+      "bytes": 13392,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/events/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/events/index.ts",
+      "sha256": "e34cc099338b9681c74db7198e8bfdc7c7e4c52978037b3082784086275d696b"
+    },
+    {
+      "bytes": 4593,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/exosuit/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/exosuit/index.ts",
+      "sha256": "ae561d13223b6cacfe261d2ae24c5d0c43058701eac9ad334ae1c5fa6bf6edce"
+    },
+    {
+      "bytes": 234,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/index.ts",
+      "sha256": "b8399bbedcb2576d3b7722ab44b9f082819e828738c16ceca2b605e5d441e79e"
+    },
+    {
+      "bytes": 434,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/index.ts",
+      "sha256": "db2847883900d9b087ce48d546ff56370b7ef822d029a522569a29c4702c1166"
+    },
+    {
+      "bytes": 5040,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/layout.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/layout.ts",
+      "sha256": "0bfe2bee0e7030ee57a4607690863d928e7a4568eff87b9cf4de6a1c81fed826"
+    },
+    {
+      "bytes": 15393,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/ops.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/ops.ts",
+      "sha256": "c69cc90c0e8fed6f6d67f7610c2ad500a4f4f83806fd16a7cc56540e78c3a839"
+    },
+    {
+      "bytes": 7455,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/inventory/schema.ts",
+      "sha256": "933e47afab5a2db6292f01538a4382b94e8ce396fa2bd82e9f0df65935155f27"
+    },
+    {
+      "bytes": 34237,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/math/det.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/math/det.ts",
+      "sha256": "c56ce52498c5885c3d7785808096d965b9bf43f1b9a9f73bcad2451e336024a2"
+    },
+    {
+      "bytes": 10083,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/environment.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/environment.ts",
+      "sha256": "d1eaca75a443c3df38bcc82ac5f87985d7d729e36872d9b1f69041a8763c9606"
+    },
+    {
+      "bytes": 517,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/index.ts",
+      "sha256": "acfae76e652b656ac1787c23ea77b46d3e4a0dfd89dd1e0cbb48ae7354e2d39d"
+    },
+    {
+      "bytes": 13942,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/rules.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/rules.ts",
+      "sha256": "bc97f45e884c5bd04383ca90482d313802f16521d84999920c8ecb5db6a4e3a7"
+    },
+    {
+      "bytes": 1643,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/schema.ts",
+      "sha256": "8a3b493eec2c2efc5faa7b37314d2fa444bbcafacf43101f376d6ba0b4adfb94"
+    },
+    {
+      "bytes": 11045,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/suit.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/meters/suit.ts",
+      "sha256": "98be92c256a97d02fab9627161aca6448f3de53a61b5eab9a5ebd873125466fd"
+    },
+    {
+      "bytes": 3446,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/analyze.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/analyze.test.ts",
+      "sha256": "ca0d2d2e3a1f0baff5b943f6ba500ba7234baafa59d6ced054cc78dae892eb40"
+    },
+    {
+      "bytes": 6218,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/beacon.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/beacon.test.ts",
+      "sha256": "16c526119d3232be2beb224833158b3c3d329b2552e534a98520506a27f458cc"
+    },
+    {
+      "bytes": 2781,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/codec.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/codec.ts",
+      "sha256": "3187dd9afc3e7c6907bcb6ab540859c09c6faf9be8e00f4d5d66c708af703ab8"
+    },
+    {
+      "bytes": 4277,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/combat.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/combat.test.ts",
+      "sha256": "f6c8e3a98eb981f8b99c2dd465ecbe814c122981c67b0d47eee2ad0ad2760b9e"
+    },
+    {
+      "bytes": 4775,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/craft.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/craft.test.ts",
+      "sha256": "c8dee127f151dec6c91c458cfd9c858ab470bd6c8e2e4eae944232b88cc1cebe"
+    },
+    {
+      "bytes": 3301,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/cutscene.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/cutscene.test.ts",
+      "sha256": "6b4be1a7b024a1be6ddcc9777bfaef258d287363661c67c189c0f6bba8a57fbd"
+    },
+    {
+      "bytes": 3339,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/discovery.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/discovery.test.ts",
+      "sha256": "d7bf780080ac48944d69341a70e268e713ccbe711f0404e2bf5cac0554696c14"
+    },
+    {
+      "bytes": 90,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/index.ts",
+      "sha256": "e2aa4a0cd7793580bcf7709887fd017b45c12f1fd4241ef0da82cb134b9a56bb"
+    },
+    {
+      "bytes": 60369,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/messages.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/messages.ts",
+      "sha256": "8e88c43949e80d1f753294e85ad7821db032b597ce25522e7d94b1a31ffcdde5"
+    },
+    {
+      "bytes": 5726,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/mine.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/mine.test.ts",
+      "sha256": "b283d9c404cd99c565cf48612aec7e1340574561dfcf56cc177278478ea43947"
+    },
+    {
+      "bytes": 2139,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/prediction.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/prediction.test.ts",
+      "sha256": "89a7831d408bcd1e7a4267692888967e6648a5edc60ce7e0c9143e87159ec8ec"
+    },
+    {
+      "bytes": 9147,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/snapshot.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/snapshot.ts",
+      "sha256": "e0d3cd7cb6a52b54dd6b012bd0e16a0900ad8a041daa89621e2bac1789e0dfc2"
+    },
+    {
+      "bytes": 2481,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/worldEvent.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/protocol/worldEvent.test.ts",
+      "sha256": "045ea5f8a58272a036fc57b61ea7bc5dd4824fcc806531ba0b471ccab41e93fd"
+    },
+    {
+      "bytes": 9801,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/catalog.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/catalog.ts",
+      "sha256": "f7453ae9ae859c432388921ec72dfb6d7b27898310cf47741f61fdd87de6a19c"
+    },
+    {
+      "bytes": 33978,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/engine.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/engine.ts",
+      "sha256": "9330977a3bd735188a0dd1f58745b8cd2225bcd199304776802a22d7e875b966"
+    },
+    {
+      "bytes": 406,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/index.ts",
+      "sha256": "8f6e90c693d21423cb96fae01ff595eccabedb0d8f0a443139b2ae34f0db3228"
+    },
+    {
+      "bytes": 25775,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/schema.ts",
+      "sha256": "df1846df8b25bcd7ffee854186d4761d3d578ce0ad2ae9a8570ea9026206c045"
+    },
+    {
+      "bytes": 11247,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/world.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/quests/world.ts",
+      "sha256": "78c90efcf45d93b48c5f5b121ab1beede93bbce89cb541be9f26c9398df8ef66"
+    },
+    {
+      "bytes": 14500,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/reputation/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/reputation/index.ts",
+      "sha256": "c324f8f72406151e58e8dd0057b09718afb971463fc02ba6dd2f82e7fd49a77c"
+    },
+    {
+      "bytes": 3653,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/edge.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/edge.ts",
+      "sha256": "41f00b77b3be6d72b6565951d14a12f7ad39f2f4431063698f7ba0af8bde47ba"
+    },
+    {
+      "bytes": 403,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/index.ts",
+      "sha256": "fdbc87b956a10fa7f2e2504445d5b77b315f38a9a0be684371e25b15d6eba9c7"
+    },
+    {
+      "bytes": 8172,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/rules.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/rules.ts",
+      "sha256": "99fefb29d6de99550a8cdee02dbba30681afab3e87250bbb64b2d8e8bb3b7b8a"
+    },
+    {
+      "bytes": 6893,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/seasons/schema.ts",
+      "sha256": "239010d778ab79d5420cc407704e314a30365c93ab62d8cc542f6a56188f4b5f"
+    },
+    {
+      "bytes": 7366,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/environment.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/environment.ts",
+      "sha256": "930d951e32cd76c446b349c0ac97f29acb30c4df9671883aa487f1039c365cd6"
+    },
+    {
+      "bytes": 8618,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/flight.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/flight.ts",
+      "sha256": "ffa4b6f62bc2356e20b721f2315f1e03632aec308992609c5953c5edbf99a24d"
+    },
+    {
+      "bytes": 793,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/index.ts",
+      "sha256": "bec90a3a1389117a10197ebc9b1cb263cd830ec2b43c76d18a59620c5a7e35b7"
+    },
+    {
+      "bytes": 3650,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/loadout.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/loadout.ts",
+      "sha256": "33e64a49a77d80be8a10ec6c0a292e14e6a6ecfa51eb6f38a27986c8ee8fa8e5"
+    },
+    {
+      "bytes": 4794,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/signature.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/signature.ts",
+      "sha256": "050cb2353892ba287514864d7e5b141c19fc83958675987db3edebabc078aa42"
+    },
+    {
+      "bytes": 10195,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/stats.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/stats.ts",
+      "sha256": "230b283fae22648d61a5c39de9453b4be7c0c62b1f91f261793a504e1948e07c"
+    },
+    {
+      "bytes": 4972,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/walker.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/ships/walker.ts",
+      "sha256": "56776c253cf1a1e4e59e962c6dea3384f1b9ea0f96cfe76568ee961c748065a7"
+    },
+    {
+      "bytes": 548,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/index.ts",
+      "sha256": "b91d6cc541f207cd5baa3a28ade4e8e4d390011c084f94863f0a97ca590d6d17"
+    },
+    {
+      "bytes": 22445,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/rules.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/rules.ts",
+      "sha256": "267bfcd90e96742b3b0c44105a5ce65970f1f95141e728eb03144c5d3af9369c"
+    },
+    {
+      "bytes": 12228,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/schema.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/schema.ts",
+      "sha256": "2d2c89e3573bd085947a44d4b9750a559464c30b50844470588c85da5f455993"
+    },
+    {
+      "bytes": 11955,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/stored.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/skills/stored.ts",
+      "sha256": "a494b6c11a9c99aadde996a63d9e4334109cef242161b57b410188d240131a38"
+    },
+    {
+      "bytes": 9471,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cities.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cities.ts",
+      "sha256": "7d74bf84e71128221d27eb1bd96be085eca8ee2164cdb46516c4729c6aa91411"
+    },
+    {
+      "bytes": 8631,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cosmos.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cosmos.ts",
+      "sha256": "2f1406bcf2f0024616aed0679171bae24f476a5e78b9c4375bc3639c9d239a33"
+    },
+    {
+      "bytes": 4618,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cover.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/cover.ts",
+      "sha256": "0fb59504f070fc6da933a6392d9efee7b22bc341a9e4abb3ec463f5f0e4b922a"
+    },
+    {
+      "bytes": 1520,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/edge.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/edge.ts",
+      "sha256": "3fdeb6e2dc8de3cc231d6d682bb8b165cf1c75cfcabdd35caa4091a83cd5150b"
+    },
+    {
+      "bytes": 14371,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/fauna.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/fauna.ts",
+      "sha256": "1cfb35667951a28bb79767364fc77ebffda3ec9885ced7c5970dd1275a62f983"
+    },
+    {
+      "bytes": 8409,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/frames.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/frames.ts",
+      "sha256": "f5ceb9dc8ca0b9f2ef66a3ae583c37755a530d6c9864a3e6b1d87e478940aa85"
+    },
+    {
+      "bytes": 3248,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/galaxy.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/galaxy.ts",
+      "sha256": "6fb955024a28dba18cecfc03f7a9248ec91d5310dfa64ccc590e71472ecda655"
+    },
+    {
+      "bytes": 4613,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/ground.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/ground.ts",
+      "sha256": "4d58d3294ed85ef6380fdd74e5cefb61097af6928d4635ef04a31c92f6e9ce08"
+    },
+    {
+      "bytes": 5894,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/homes.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/homes.ts",
+      "sha256": "109169946b44c5e062bb36fac7552123800d13bbdcd0e73c28426eee0c4fd705"
+    },
+    {
+      "bytes": 808,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/index.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/index.ts",
+      "sha256": "2c2c9301b0aec32966d23ed9dde25e5479f65b597a6a88f305fbaa76c4bd4d32"
+    },
+    {
+      "bytes": 14686,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/kinematics.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/kinematics.ts",
+      "sha256": "9152141da62267de168d172ea379adffdb987e2265ef31fa7bb15492dd6eee17"
+    },
+    {
+      "bytes": 5429,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/noise.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/noise.ts",
+      "sha256": "f7b9731d21d3e2d44d00337c8f646b628ac8376133b863752b4dc318ec516797"
+    },
+    {
+      "bytes": 1832,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/planetgen.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/planetgen.test.ts",
+      "sha256": "1d515c8f4076b77a300d21c3620ea90f49b52dcf984ea30c87848aedd603378e"
+    },
+    {
+      "bytes": 47372,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/planetgen.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/planetgen.ts",
+      "sha256": "b3e824fe8797908da9436551d13b887f67e797344ecf09b456ffc8186656b73d"
+    },
+    {
+      "bytes": 28393,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/resourceNodes.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/resourceNodes.ts",
+      "sha256": "199b5e406ae5ac19dcf15426d95a28e72bf41fae3c394360c0ac067b83c3f878"
+    },
+    {
+      "bytes": 1106,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/rng.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/rng.test.ts",
+      "sha256": "72905d0bbf67c10bb23a11e708a58e7c96fcfc8b6d531e728d48392014ea4977"
+    },
+    {
+      "bytes": 2486,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/rng.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/rng.ts",
+      "sha256": "f525c94ce342ba796e0964ba10c8b8edb2336298c8cda27f1b596b1305f5453c"
+    },
+    {
+      "bytes": 14159,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/sites.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/sites.test.ts",
+      "sha256": "093590a6ca64d70a04b76e4ab08c2baaf39b4075a93b3c68f8714acafcc4ecd7"
+    },
+    {
+      "bytes": 24113,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/sites.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/sites.ts",
+      "sha256": "f588509eab47d484c36544f1595b47ac6431f561c7fadedcd7238287b4430483"
+    },
+    {
+      "bytes": 17534,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/system.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/system.ts",
+      "sha256": "727619649817080e941cf4a0cb18ad4c4fe7e2654b8ee446ec025e24e68b8d19"
+    },
+    {
+      "bytes": 7431,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/tiers.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/src/world/tiers.ts",
+      "sha256": "a83cf8536be68161d05a4f9cc738b9362a04fe1f1bf66f0dda6a6c3c965d0ff9"
+    },
+    {
+      "bytes": 12515,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/audit.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/audit.py",
+      "sha256": "dd676083e29d018451c04304c6af3268997da739e56a5b35529497e59ee80d63"
+    },
+    {
+      "bytes": 20792,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/author.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/author.py",
+      "sha256": "ce683e40005d41dfc3ce95b836634d3f8d3996c8ea40d6bf9f532e7185845a4a"
+    },
+    {
+      "bytes": 8194,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/catalog.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/catalog.py",
+      "sha256": "d35de7826945e12bfb8989760d2696f054c0262d1f10455dcff0d02150aa7965"
+    },
+    {
+      "bytes": 275,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/ktx_cpu.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/ktx_cpu.py",
+      "sha256": "c9287811d0613f5dc45f71af66f381ddc0791a821d3e8eb0852cc3a14b845d60"
+    },
+    {
+      "bytes": 8719,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/package_evidence.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/package_evidence.py",
+      "sha256": "489a5670567909724c8f3db99e2bf6d5ba8aa66583735da9c7819e162054fe43"
+    },
+    {
+      "bytes": 7491,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/preview.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/preview.py",
+      "sha256": "254a8339ae78b016649f27f93691d6cc9cb65a7c9600ddecb81ff4033f5ff108"
+    },
+    {
+      "bytes": 1329,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/refine_textures.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/refine_textures.py",
+      "sha256": "e27786410c12f5cb23200427a1dbffaea3b8ff7b224563c83fce275ff1a5bd73"
+    },
+    {
+      "bytes": 1140,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/revise_spore.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/revise_spore.py",
+      "sha256": "f12c9524a4af2056f4228677e8263c7ff396e662f9e01f2f4dfa38439e82c778"
+    },
+    {
+      "bytes": 2222,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/run.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/effects/run.py",
+      "sha256": "23466e381713b513969fdba1f8575b2fbbd4831aa59ce0071c294c16ff732b08"
+    },
+    {
+      "bytes": 16731,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/families.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/blender/families.json",
+      "sha256": "2670f60f2323d303a79abc2dfada1a12c66ca0afcd476ddbea6f1cf875f9e28d"
+    },
+    {
+      "bytes": 565,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/package.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/package.json",
+      "sha256": "dd24cb2cecf85efae70f043dc9d3d88f23d9fe4d967bd11a0da61f6026a7e6c0"
+    },
+    {
+      "bytes": 20729,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/capture.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/capture.ts",
+      "sha256": "3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc"
+    },
+    {
+      "bytes": 2050,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/classes.test.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/classes.test.ts",
+      "sha256": "8efef27406eeec993402f9b1323ca1f3aada62731db5d05b9c95d2e089fa91d9"
+    },
+    {
+      "bytes": 2789,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/classes.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/classes.ts",
+      "sha256": "3aac3f7be1fa76bd8fe8138e189b86acf25c2b725f37a1d572fcf2a4f8aba4ff"
+    },
+    {
+      "bytes": 9864,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/README.md",
+      "sha256": "eada85965d38ffc5f8db9aa37482e402e809575a63912831f33d1d88d0021b60"
+    },
+    {
+      "bytes": 5950,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/bindings.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/bindings.py",
+      "sha256": "ee69ead61e317c1cd4f7986abde4dd8a8b6cf04703ce1448fd5ff28bcb9ce441"
+    },
+    {
+      "bytes": 9057,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py",
+      "sha256": "86975976ba0914718a9c36135475acc517e54feaa788d6e28e0d1eb60a0b29a9"
+    },
+    {
+      "bytes": 2522,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/check_ready.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/check_ready.py",
+      "sha256": "e0826eb9b9cfc229d6308e3b6fa52888e96366ac38e85ab1e6209795d8ec4c0c"
+    },
+    {
+      "bytes": 4768,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/contract.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/contract.py",
+      "sha256": "226d14dfa8375a2ac0fef7ede3ab9a97e73a02ef70b5e00a87d8d28e120f14f2"
+    },
+    {
+      "bytes": 9887,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.mjs",
+      "sha256": "09cf2144f8d8cb04ece104e467365c6310703ef191bf75a8708500660a56569f"
+    },
+    {
+      "bytes": 28986,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/controls.py",
+      "sha256": "6b4db1b966ef9aa76359b4f2c84ce98c5964597bc511e45ea5773cd00e1081cc"
+    },
+    {
+      "bytes": 11332,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
+      "sha256": "41d9b48367230c226a63a21788f4c3dc67f457e90029bf28c34aa5d7bb4f81b4"
+    },
+    {
+      "bytes": 3698,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/evidence.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/evidence.py",
+      "sha256": "a64f2614aaed7cb7a0209dbd2b4622e2cb6f856b6d06d18fbd08786a73e2194f"
+    },
+    {
+      "bytes": 9286,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/freeze.py",
+      "sha256": "c0397f04f1b450f5b99da0153be85186f1333c84f706aa8a9525e5175c1410f6"
+    },
+    {
+      "bytes": 8367,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/inspect_packet.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/inspect_packet.py",
+      "sha256": "f98b2e0b067f7977bc06445cff7ada6aeee08e785088f41f220312381b2d7f28"
+    },
+    {
+      "bytes": 12075,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/native_ports.py",
+      "sha256": "7cba4e13758ea88b01277b88bca961f20e731772a56cf1771db28d29a2e4de9b"
+    },
+    {
+      "bytes": 1154,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/recovery.json",
+      "sha256": "a085ec80dd701d45f472720ee6d05a30fca846e40f8aa93b8d408b96dd847388"
+    },
+    {
+      "bytes": 2595,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/playthrough-run.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/playthrough-run.ts",
+      "sha256": "0a851b2a810fe1104d9591e710b120791283e0f4d29c1ae89473fb876cc8b090"
+    },
+    {
+      "bytes": 127315,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/screens.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/screens.ts",
+      "sha256": "1cd9f45432e4045cd3ec35e3373defab66bb997d614005de60828e9b8317c42d"
+    },
+    {
+      "bytes": 3797,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/turntable.ts",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/turntable.ts",
+      "sha256": "b020cb5563c2a35b1de3dd59892d2cd76360ac6b025e4dc2136d0ed50ab6bac5"
+    },
+    {
+      "bytes": 119313,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/pnpm-lock.yaml",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/pnpm-lock.yaml",
+      "sha256": "120259c181fe999fbfa6defa856b0f65e28c7f01da8bfd6c6f2a60d9aa96d75f"
+    },
+    {
+      "bytes": 54,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/pnpm-workspace.yaml",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/pnpm-workspace.yaml",
+      "sha256": "9c981cc0d2c56bdf50ae9c13ad357f70c8491dcc29820cb0e0b2905136c9e224"
+    },
+    {
+      "bytes": 471,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/tsconfig.base.json",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/tsconfig.base.json",
+      "sha256": "bb9a01046cd8fac19e437826e969b3786588d88f919dbbc3e6d0681f7a473fda"
+    },
+    {
+      "bytes": 16327,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e07-t14/source-review-01-2643aca.txt",
+      "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e07-t14/source-review-01-2643aca.txt",
+      "sha256": "e13035ddafb81ccbfcaa184db62aca8af9fd248a0239a0c03a032b265c8ae9a7"
+    },
+    {
+      "bytes": 176747664,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "realpath": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "bytes": 736,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libEGL.dylib",
+      "realpath": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libEGL.dylib",
+      "sha256": "8b7e5b3ebed9cd5fc1cde7ff1458fd5eb150d496d7474e13f963d43546c08aeb"
+    },
+    {
+      "bytes": 736,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libGLESv2.dylib",
+      "realpath": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libGLESv2.dylib",
+      "sha256": "7765bf768e52ced295a67cb362e3ca9714e64208e6ecea4e67e5b4b85e094934"
+    },
+    {
+      "bytes": 16326576,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libvk_swiftshader.dylib",
+      "realpath": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libvk_swiftshader.dylib",
+      "sha256": "ffac89c5953500b93fc97e3191a8b38f446594bd503126f67c221608057f2160"
+    },
+    {
+      "bytes": 499488,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libvulkan.dylib",
+      "realpath": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/libvulkan.dylib",
+      "sha256": "39fd23b6edf852a12cefb0c801f687282ae4763fdf48469d62fe76073ef48a31"
+    },
+    {
+      "bytes": 396208,
+      "path": "/bin/launchctl",
+      "realpath": "/bin/launchctl",
+      "sha256": "4a314b02f513882e2d3dcc6f704368f2c35358c437e8bb2157acfa1e64a1bc7a"
+    },
+    {
+      "bytes": 268736,
+      "path": "/bin/ps",
+      "realpath": "/bin/ps",
+      "sha256": "a06fe087161557f1f8c030672eaedcd90bc6a8e92b8f2d44e07cffedc3349205"
+    },
+    {
+      "bytes": 33568,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+    },
+    {
+      "bytes": 34640,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a"
+    },
+    {
+      "bytes": 76192,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so",
+      "sha256": "7dbded3fc6b05543bbd87a0adcb05f14ec5f044fe257d26dfe631b816734d7bb"
+    },
+    {
+      "bytes": 5468144,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/Python",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Python",
+      "sha256": "be817d3b7f63243024a047fb401ea5f53324d19046e6fc5657d76d3a06ca3680"
+    },
+    {
+      "bytes": 27801,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py",
+      "sha256": "c1e0d67b2007de11ae93cd36cf6faf38d9ab32656a832d592a49325eec579f96"
+    },
+    {
+      "bytes": 9459,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/hashlib.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/hashlib.py",
+      "sha256": "88fa624821fbdee7eb2ef87c2437b207afe328cf117c7463367e2db5eb1af492"
+    },
+    {
+      "bytes": 14132,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py",
+      "sha256": "2dd10f1bf4c9ea5478e589216805e7f279d0e4bce134a19efa297404fb87407d"
+    },
+    {
+      "bytes": 12877,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py",
+      "sha256": "dc98d3e677612ea7311303f06a144cec6b91ebadc7ec037d1777501647578a07"
+    },
+    {
+      "bytes": 16990,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py",
+      "sha256": "d68a4d04d2cfd95897498307f29349058b42c3f48ea6aa6739714a09200a7d01"
+    },
+    {
+      "bytes": 2434,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/scanner.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/scanner.py",
+      "sha256": "572958017eae8842eeddd0e3d18d3c56cc0a197348224915e1d87ce937841764"
+    },
+    {
+      "bytes": 80448,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_hashlib.cpython-314-darwin.so",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_hashlib.cpython-314-darwin.so",
+      "sha256": "77685ef2a80b3f0be8dd4c185cc77b08e1f954901c8dd64ff5ed241e1654ddce"
+    },
+    {
+      "bytes": 72912,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_json.cpython-314-darwin.so",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_json.cpython-314-darwin.so",
+      "sha256": "89255d19b3316a77fbc110f2bfcee0e70123d1434d036eb66ad77d4139cd0dcd"
+    },
+    {
+      "bytes": 77888,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_struct.cpython-314-darwin.so",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_struct.cpython-314-darwin.so",
+      "sha256": "301274ebab364167b3aa8dc62e93e2cddab1038c1decd59d5813d0bd168fc20d"
+    },
+    {
+      "bytes": 46807,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py",
+      "sha256": "042a4d0a5e1ef66778daa86dc269af205bd42d06e793e53d8b99dff4c45928ca"
+    },
+    {
+      "bytes": 60235,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/shutil.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/shutil.py",
+      "sha256": "28a5df6415bf1a7ab36cbd544d6d35ae0f056a198e3872a786dc4e156d5fcd7d"
+    },
+    {
+      "bytes": 2495,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/signal.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/signal.py",
+      "sha256": "0363c964c90ac0b3e515de5749205e6e6454051a1211058375d84d91eab6071a"
+    },
+    {
+      "bytes": 6308,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py",
+      "sha256": "07217986d9b2172b509dab3578d18ac05ba768b418e1f1e8c90e38a8f7c2b3c6"
+    },
+    {
+      "bytes": 285,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/struct.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/struct.py",
+      "sha256": "50c14e55f94957804c1e45e975fedbe8e86f7e1dbb745b150370ff681155370a"
+    },
+    {
+      "bytes": 90748,
+      "path": "/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py",
+      "sha256": "7fa4af83422024a19e64a80937f6c8094244c3397372a495b348dfbe44a5dd72"
+    },
+    {
+      "bytes": 217632,
+      "path": "/usr/bin/caffeinate",
+      "realpath": "/usr/bin/caffeinate",
+      "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    {
+      "bytes": 200560,
+      "path": "/usr/bin/git",
+      "realpath": "/usr/bin/git",
+      "sha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2"
+    },
+    {
+      "bytes": 565168,
+      "path": "/usr/bin/pmset",
+      "realpath": "/usr/bin/pmset",
+      "sha256": "de76e777d9c194f1e1a89774021541284f9b317740959ceb4ca41b5842dbc808"
+    },
+    {
+      "bytes": 470608,
+      "path": "/usr/sbin/lsof",
+      "realpath": "/usr/sbin/lsof",
+      "sha256": "deff85c7b4750a948a69fcd48eae3b394a37575e5048e5eb4a35b7a0482c3dc8"
+    }
+  ],
+  "budget": {
+    "admissionBytes": 5402312704,
+    "imageArchiveCopyBytes": 0,
+    "imageStagingBytes": 0,
+    "nativeOSQuotas": false,
+    "outputCapBytes": 184565760,
+    "rows": [
+      {
+        "bytes": 184565760,
+        "semantics": "11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root",
+        "writer": "capture_outputs"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later Git LFS adoption; this pilot performs no git add or LFS write",
+        "writer": "future_lfs_copy"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later parent hydration; this pilot makes no main-worktree copy",
+        "writer": "future_main_hydration"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "Node and Python each reserve attempted receipt bytes before writing, 32 MiB each",
+        "writer": "controlled_metadata"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained",
+        "writer": "cache_snapshot"
+      },
+      {
+        "bytes": 2147483648,
+        "semantics": "StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive",
+        "writer": "profile_work_and_archive"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles",
+        "writer": "private_tmp_work_and_archive"
+      },
+      {
+        "bytes": 134217728,
+        "semantics": "StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job",
+        "writer": "helper_logs_work_and_archive"
+      },
+      {
+        "bytes": 268435456,
+        "semantics": "Observed additional Vite cache growth; original cache bytes already reduce free space",
+        "writer": "generated_cache_growth"
+      },
+      {
+        "bytes": 16777216,
+        "semantics": "Directory and filesystem overhead reserve",
+        "writer": "filesystem_metadata"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "Fresh disk safety reserve, checked at admission and while observing",
+        "writer": "safety"
+      }
+    ],
+    "scope": "One pilot only; native thresholds are observations and can overshoot, not OS quotas."
+  },
+  "core": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/playwright-core@1.64.1/node_modules/playwright-core/index.js",
+  "deadlines": {
+    "cacheCopy": 30,
+    "capture": 600,
+    "cleanup": 60,
+    "decode": 45
+  },
+  "decoder": {
+    "deadlineSeconds": 45,
+    "kind": "IN_PROCESS_STDLIB_ZLIB_ALL_PNG_SCANLINES",
+    "nativeCodecJob": false,
+    "python": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "zlib": {
+      "bytes": 76192,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so",
+      "sha256": "7dbded3fc6b05543bbd87a0adcb05f14ec5f044fe257d26dfe631b816734d7bb"
+    }
+  },
+  "dependencyTrees": [
+    {
+      "bytes": 234972423,
+      "entries": 12978,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules",
+      "sha256": "f27ace764f39acd5423f05c42f32634e06fa5703435a8e2ef145df1cad4a8336"
+    },
+    {
+      "bytes": 213060105,
+      "entries": 16,
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64",
+      "sha256": "52724b245a2a601fdaf20420b6e1f450a6b61ab712a4a098729ce7feee52f564"
+    },
+    {
+      "bytes": 180731228,
+      "entries": 133,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/public",
+      "sha256": "27af23f98d18ac9d5ba7c038ef205d3ae9df16766b57590adf7dc9f4be6477dd"
+    },
+    {
+      "bytes": 4746,
+      "entries": 4,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules",
+      "sha256": "40d605de74d1d53904bcd12f0ed0e6ea7214a33f7f99246dbc0bbb7e58eda5bc"
+    },
+    {
+      "bytes": 9191,
+      "entries": 9,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/node_modules",
+      "sha256": "c6bcf368ba6807b30d117cb241d1f8cbe298dc419742d3cb6d93352d6efc4507"
+    },
+    {
+      "bytes": 0,
+      "entries": 4,
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/shared/node_modules",
+      "sha256": "fdc9a21b6ec8aa57c59b78608186f0cbb708aa8509ab57d074d6320998ad2fc6"
+    }
+  ],
+  "esbuild": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/lib/main.js",
+  "esbuildBinary": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+  "externalSystemXpcOwnership": "UNQUALIFIED; no recorder/encoder requested",
+  "freezePredecessor": {
+    "head": "22506166571d4045eeb4902b1f278bdcafa2ad19",
+    "informativeOnly": true,
+    "tree": "b8f644aca4dff7e4c85e3b4beecfbd6742c857f8"
+  },
+  "generatedCaches": [
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/client/node_modules/.vite-temp"
+  ],
+  "initialCacheBytes": 0,
+  "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "nodeVersion": "v22.23.3",
+  "path": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin",
+  "phase": "SOURCE_ONLY_PENDING_PARENT_CALLER_REVIEW_AND_ONE_USE_GRANT",
+  "pilot": {
+    "asset": "gravitic_pull",
+    "attemptId": "6d82813a25c341daa05c699c0fad8e40",
+    "authorizationId": "effects-6d82813a25c341daa05c699c0fad8e40",
+    "consumption": "/private/tmp/egc-6d82813a25c341daa05c699c0fad8e40.json",
+    "evidence": "/private/tmp/egp-6d82813a25c341daa05c699c0fad8e40",
+    "file": "effects/gravitic",
+    "files": [
+      "gravitic_pull/noon-lush_lod0.png",
+      "gravitic_pull/noon-lush_lod2.png",
+      "gravitic_pull/wireframe_lod0.png",
+      "gravitic_pull/wireframe_lod2.png",
+      "gravitic_pull/overlay.png",
+      "gravitic_pull/far_lod2.png",
+      "gravitic_pull/night-exotic_lod0.png",
+      "gravitic_pull/night-exotic_lod2.png",
+      "gravitic_pull/open-space_lod0.png",
+      "gravitic_pull/open-space_lod2.png",
+      "gravitic_pull/perf.json",
+      "gravitic_pull/sheet.png"
+    ],
+    "gl": "metal",
+    "grant": "/private/tmp/egg-6d82813a25c341daa05c699c0fad8e40.json",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-6d82813a25c341daa05c699c0fad8e40",
+    "viewport": [1920, 1080]
+  },
+  "playwright": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@playwright+test@1.64.1/node_modules/@playwright/test/index.js",
+  "process_binary_sha256": {
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node": "68f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384",
+    "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634",
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22",
+    "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a",
+    "/usr/bin/caffeinate": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+  },
+  "python": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "pythonRuntime": {
+    "kernelExecutable": {
+      "bytes": 33568,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+    },
+    "launcher": {
+      "bytes": 34640,
+      "path": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "sha256": "e401ac7a95cda75dee34a0cfe1e4faf0a6df1a501cf67887f177fb78cd4eb60a"
+    },
+    "probe": {
+      "nativeCaptureStarted": false,
+      "pid": 89318,
+      "scope": "CURRENT_CPU_SELF_PROCESS_ONLY",
+      "uid": 501
+    }
+  },
+  "remainingPrerequisites": [
+    "Both source runtime flags and readiness remain false; enabling changes needs a new source review and freeze.",
+    "Parent independent caller review tied to exact clean head/tree and exact readiness bytes.",
+    "Parent scheduled native slot after fauna and explicit one-use grant; no grant is created here.",
+    "Parent observed OS exit zero plus exact terminal result and consumption hashes.",
+    "Native Metal/backend performance and blind visual acceptance remain unqualified."
+  ],
+  "resolver": {
+    "selectedExecutable": {
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    }
+  },
+  "retainedAssetSourceReview": {
+    "bytes": 16327,
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e07-t14/source-review-01-2643aca.txt",
+    "realpath": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e07-t14/source-review-01-2643aca.txt",
+    "sha256": "e13035ddafb81ccbfcaa184db62aca8af9fd248a0239a0c03a032b265c8ae9a7"
+  },
+  "root": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects",
+  "runtimeEnabled": false,
+  "scope": "Only gravitic_pull; static 12-file pilot, requested LOD2 selects only authored LOD0; no motion/atlas/21:9/alpha-overlap/batch.",
+  "systemLibraryBoundary": "macOS system libraries in the OS dyld cache are platform dependencies, not standalone file byte pins; Python framework, decoder extension and loaded stdlib files are pinned.",
+  "tsxApi": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/esm/api/index.cjs",
+  "uid": 501
+}
