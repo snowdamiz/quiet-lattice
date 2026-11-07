@@ -1,0 +1,288 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "Encoder exited before frame write",
+    "details": {
+      "mediaFailure": {
+        "schema": "t02-lossless-rgb-primary/v1",
+        "accepted": false,
+        "frames": 87,
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "Encoder exited before frame write",
+          "details": {
+            "args": [
+              "Encoder exited before frame write"
+            ]
+          }
+        },
+        "persistenceFailures": []
+      },
+      "args": [
+        "Encoder exited before frame write"
+      ]
+    }
+  },
+  "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "AssertionError",
+    "message": "",
+    "details": {
+      "args": []
+    }
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-native189-r04-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 8817,
+          "recorded": {
+            "pid": 8817,
+            "ppid": 1,
+            "pgid": 8817,
+            "birth": [
+              1794046251,
+              543684
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 8823,
+          "recorded": {
+            "pid": 8823,
+            "ppid": 8817,
+            "pgid": 8823,
+            "birth": [
+              1794046251,
+              704483
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 8822,
+          "recorded": {
+            "pid": 8822,
+            "ppid": 8817,
+            "pgid": 8822,
+            "birth": [
+              1794046251,
+              700968
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 8836,
+          "recorded": {
+            "pid": 8836,
+            "ppid": 8822,
+            "pgid": 8822,
+            "birth": [
+              1794046252,
+              79930
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 8845,
+          "recorded": {
+            "pid": 8845,
+            "ppid": 8822,
+            "pgid": 8822,
+            "birth": [
+              1794046252,
+              143542
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 8846,
+          "recorded": {
+            "pid": 8846,
+            "ppid": 8822,
+            "pgid": 8822,
+            "birth": [
+              1794046252,
+              163824
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              42803,
+              42804
+            ]
+          },
+          "current": null
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.fca8363cf5c14a40aca3f28654338ffc"
+      ],
+      "registrationExit": 113,
+      "registrationStdout": "",
+      "registrationStderr": "Bad request.\nCould not find service \"local.stations.round4.fca8363cf5c14a40aca3f28654338ffc\" in domain for user gui: 501\n",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    }
+  ],
+  "terminalAuditFailures": [],
+  "nativeJobs": 1,
+  "pipelineSeconds": 17.369220875028986,
+  "outputInventory": {
+    "normalBytes": 0,
+    "reservedBytes": 0,
+    "files": 1,
+    "reservedFiles": 0,
+    "paths": [
+      "captures/motion-thalune-run-lod0/primary.mp4"
+    ],
+    "totalBytes": 39354368,
+    "complete": true,
+    "enumeration": {
+      "root": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet",
+      "complete": true,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet",
+          "directories": [
+            "captures",
+            "inspections"
+          ],
+          "files": [],
+          "entries": [
+            {
+              "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/captures",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 489800441,
+              "bytes": 96,
+              "uid": 501
+            },
+            {
+              "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/inspections",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 489800442,
+              "bytes": 64,
+              "uid": 501
+            }
+          ],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/captures",
+          "directories": [
+            "motion-thalune-run-lod0"
+          ],
+          "files": [],
+          "entries": [
+            {
+              "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/captures/motion-thalune-run-lod0",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 489800443,
+              "bytes": 96,
+              "uid": 501
+            }
+          ],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/captures/motion-thalune-run-lod0",
+          "directories": [],
+          "files": [
+            "primary.mp4"
+          ],
+          "entries": [
+            {
+              "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/captures/motion-thalune-run-lod0/primary.mp4",
+              "mode": 33188,
+              "dev": 16777232,
+              "ino": 489800677,
+              "bytes": 39354368,
+              "uid": 501
+            }
+          ],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/inspections",
+          "directories": [],
+          "files": [],
+          "entries": [],
+          "enumerated": true
+        }
+      ]
+    }
+  },
+  "outputBytes": 39354368,
+  "freeBytesAfter": 26727571456,
+  "terminalReleaseProved": true,
+  "receiptFallbacks": [],
+  "jobs": [
+    {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "sha256": "528b18bdc6a83b2a5d63cf9f04eb4210902022206841f046f192d758894c7450"
+    }
+  ],
+  "terminalPersistenceFailures": [],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/proof/result.json",
+      "status": "written",
+      "sha256": "75576f865068932497b5e1c3688b20b9023df44648d56b6fce7c97b504a43c69",
+      "bytes": 7499
+    },
+    "packet": {
+      "path": "/private/tmp/t02-native189-r04-20261107-t3-11167406/packet/integration-result.json",
+      "status": "attempting"
+    },
+    "completeObservationsPersisted": true,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+  }
+}

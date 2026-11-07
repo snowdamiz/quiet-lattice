@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-07T10:13:23.409185+00:00",
+  "callerExitCode": 1,
+  "knownPidChecks": [
+    {
+      "pid": 8766,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8769,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8817,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8822,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8823,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8836,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8845,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "pid": 8846,
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "registrationChecks": [
+    {
+      "argv": [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.fca8363cf5c14a40aca3f28654338ffc"
+      ],
+      "exit": 113,
+      "stdout": "",
+      "stderr": "Bad request.\nCould not find service \"local.stations.round4.fca8363cf5c14a40aca3f28654338ffc\" in domain for user gui: 501\n"
+    }
+  ],
+  "terminalReleaseProved": true,
+  "taskAccepted": false,
+  "completedNativeJobs": 1,
+  "validatorDispatched": false,
+  "producerFramesReported": 87,
+  "partialReelBytes": 39354368,
+  "proofSha256": "75576f865068932497b5e1c3688b20b9023df44648d56b6fce7c97b504a43c69",
+  "packetResultSha256": "09018dad0b912ef4d1ab023f1ae867fe7842d6482abfddf09e7f9aef7b729f9e",
+  "nativeSlotReleased": true
+}
