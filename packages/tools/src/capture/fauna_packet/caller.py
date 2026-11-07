@@ -66,15 +66,36 @@ def read_json_snapshot(path, maximum=2 * 1024 * 1024, expected_sha256=None):
     except OSError as error:
         raise Refused('Unsafe/missing JSON: ' + str(p)) from error
     require(stat.S_ISREG(before.st_mode) and before.st_size <= maximum, 'Unsafe/oversized JSON: ' + str(p))
-    with p.open('rb') as stream:
-        opened = os.fstat(stream.fileno())
+    fd = os.open(p, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    stream = None
+    primary = None
+    try:
+        opened = os.fstat(fd)
         require(stat.S_ISREG(opened.st_mode) and opened.st_size <= maximum
                 and (opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino), 'JSON changed before read: ' + str(p))
+        stream = os.fdopen(fd, 'rb', buffering=0, closefd=False)
         data = stream.read(maximum + 1)
-    require(len(data) <= maximum, 'JSON grew beyond cap: ' + str(p))
-    digest = hashlib.sha256(data).hexdigest()
-    require(expected_sha256 is None or digest == expected_sha256, 'JSON reference drifted: ' + str(p))
-    return json.loads(data), digest
+        require(len(data) <= maximum, 'JSON grew beyond cap: ' + str(p))
+        require(len(data) == opened.st_size, 'JSON size changed during read: ' + str(p))
+        digest = hashlib.sha256(data).hexdigest()
+        require(expected_sha256 is None or digest == expected_sha256, 'JSON reference drifted: ' + str(p))
+        return json.loads(data), digest
+    except BaseException as error:
+        primary = error
+        raise
+    finally:
+        pending = primary
+        # The stream borrows the descriptor; even failed wrapping/validation has one owner.
+        for operation, close in ([('stream.close', stream.close)] if stream is not None else []) + [('os.close', lambda: os.close(fd))]:
+            try:
+                close()
+            except BaseException as error:
+                fact = {'operation': operation, 'path': str(p), 'descriptor': fd, **failure(error)}
+                if pending is None:
+                    pending = error
+                pending.metadata_close_failures = getattr(pending, 'metadata_close_failures', []) + [fact]
+        if primary is None and pending is not None:
+            raise pending
 
 
 def read_json(path, maximum=2 * 1024 * 1024, expected_sha256=None):

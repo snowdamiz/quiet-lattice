@@ -892,7 +892,7 @@ class BoundaryControls(unittest.TestCase):
                 else: failed['authorizationId'] = 'AUTHENTICATED_WRONG_TRANSACTION'
                 failed_bytes = json.dumps(failed).encode(); path.write_bytes(failed_bytes)
                 reference['sha256'] = caller.sha(path); Path(case.next_spec['grant']).write_text(json.dumps(case.next_grant))
-                original_open, original_read = Path.open, caller.read_json
+                original_fdopen, original_read = os.fdopen, caller.read_json
                 reads, schedule = [], []
                 class Swapping:
                     def __init__(self, stream): self.stream = stream
@@ -904,14 +904,14 @@ class BoundaryControls(unittest.TestCase):
                         if not schedule:
                             path.write_bytes(success); schedule.append('replace-after-real-read')
                         return data
-                def opened(p, *a, **kw):
-                    stream = original_open(p, *a, **kw)
-                    return Swapping(stream) if p == path and a and a[0] == 'rb' else stream
+                def opened(fd, *a, **kw):
+                    stream = original_fdopen(fd, *a, **kw)
+                    return Swapping(stream) if os.fstat(fd).st_ino == path.stat().st_ino else stream
                 def restore(p, *a, **kw):
                     value = original_read(p, *a, **kw)
                     if Path(p) == path: path.write_bytes(failed_bytes); schedule.append('restore-after-real-parse')
                     return value
-                with patch.object(Path, 'open', opened), patch.object(caller, 'read_json', side_effect=restore), self.assertRaises(caller.Refused):
+                with patch.object(os, 'fdopen', opened), patch.object(caller, 'read_json', side_effect=restore), self.assertRaises(caller.Refused):
                     self.next_consumption(case)
                 self.assertEqual(reads, [(2 * 1024 * 1024 + 1, len(failed_bytes))])
                 self.assertEqual(schedule, ['replace-after-real-read', 'restore-after-real-parse'])
@@ -949,7 +949,7 @@ class BoundaryControls(unittest.TestCase):
                         saved = case.base / 'saved-metadata'; path.rename(saved)
                         if fault == 'symlink': path.symlink_to(saved)
                         else: path.mkdir()
-                    original_open, original_snapshot = Path.open, caller.read_json_snapshot
+                    original_open, original_fdopen, original_snapshot = Path.open, os.fdopen, caller.read_json_snapshot
                     reads, snapshots = [], []
                     class Measured:
                         def __init__(self, stream): self.stream = stream
@@ -960,9 +960,9 @@ class BoundaryControls(unittest.TestCase):
                             if fault == 'growth' and not reads:
                                 with original_open(path, 'ab') as writer: writer.write(b' ' * (maximum + 9))
                             data = self.stream.read(n); reads.append((n, len(data))); return data
-                    def opened(p, *a, **kw):
-                        stream = original_open(p, *a, **kw)
-                        return Measured(stream) if p == path and a and a[0] == 'rb' else stream
+                    def opened(fd, *a, **kw):
+                        stream = original_fdopen(fd, *a, **kw)
+                        return Measured(stream) if os.fstat(fd).st_ino == path.stat().st_ino else stream
                     def observe(p, *a, **kw):
                         snapshot = original_snapshot(p, *a, **kw)
                         if Path(p) == path:
@@ -970,7 +970,7 @@ class BoundaryControls(unittest.TestCase):
                             if fault == 'after-snapshot-growth':
                                 with original_open(path, 'ab') as writer: writer.write(b' ' * (8 * 1024 * 1024))
                         return snapshot
-                    with patch.object(Path, 'open', opened), patch.object(caller, 'read_json_snapshot', side_effect=observe):
+                    with patch.object(os, 'fdopen', opened), patch.object(caller, 'read_json_snapshot', side_effect=observe):
                         if fault in ('exact-cap', 'unknown-fields', 'after-snapshot-growth'):
                             _, record = self.next_consumption(case)
                             if key == 'grant': self.assertEqual(record['grantSha256'], snapshots[0][1])
@@ -984,6 +984,121 @@ class BoundaryControls(unittest.TestCase):
                     if fault == 'unknown-fields': self.assertEqual(snapshots[0][0]['futureMetadata'], value['futureMetadata'])
                     if fault == 'after-snapshot-growth': self.assertNotEqual(record['grantSha256'], caller.sha(path))
                     self.assertEqual(case.calls.count('inert-start'), 1)
+
+    def test_actual_admission_refuses_open_races_without_a_timer_or_descriptor_leak(self):
+        for key in ('grant', 'result', 'consumption'):
+            for fault in ('fifo', 'symlink', 'different-regular', 'directory', 'oversized'):
+                with self.subTest(key=key, fault=fault), self.boundary(clean=True, real_git=True) as case:
+                    first = case.ready['unitOrder'][0]
+                    reference = None if key == 'grant' else case.next_grant['previousUnitReceipts'][first][key]
+                    path = Path(case.next_spec['grant'] if reference is None else reference['path'])
+                    original_open, original_close, original_fdopen = os.open, os.close, os.fdopen
+                    descriptors, closed, flags_seen, swaps = [], [], [], []
+                    def opened(p, flags, *a, **kw):
+                        if Path(p) == path:
+                            self.assertEqual(signal.getitimer(signal.ITIMER_REAL), (0.0, 0.0))
+                            flags_seen.append(flags)
+                            if fault == 'oversized':
+                                with path.open('ab') as writer: writer.write(b' ' * (2 * 1024 * 1024 + 1))
+                            else:
+                                saved = path.with_name(path.name + '.preserved'); path.rename(saved)
+                                if fault == 'fifo': os.mkfifo(path, 0o600)
+                                elif fault == 'symlink': path.symlink_to(saved)
+                                elif fault == 'directory': path.mkdir()
+                                else: path.write_bytes(saved.read_bytes())
+                            swaps.append(fault)
+                        fd = original_open(p, flags, *a, **kw)
+                        if Path(p) == path: descriptors.append(fd)
+                        return fd
+                    def closed_fd(fd):
+                        if fd in descriptors: closed.append(fd)
+                        return original_close(fd)
+                    def fdopen(fd, *a, **kw):
+                        self.assertNotIn(fd, descriptors, 'Rejected metadata reached payload read')
+                        return original_fdopen(fd, *a, **kw)
+                    with patch.object(os, 'open', opened), patch.object(os, 'close', closed_fd), patch.object(os, 'fdopen', fdopen):
+                        with self.assertRaises((caller.Refused, OSError)): self.next_consumption(case)
+                    self.assertEqual(swaps, [fault])
+                    self.assertTrue(all(flags & os.O_NONBLOCK and flags & os.O_NOFOLLOW for flags in flags_seen))
+                    self.assertEqual(closed, descriptors)
+                    for fd in descriptors:
+                        with self.assertRaises(OSError): os.fstat(fd)
+                    for field in ('output', 'evidence', 'consumption'): self.assertFalse(Path(case.next_spec[field]).exists())
+                    self.assertEqual(case.calls.count('inert-start'), 1)
+
+    def test_metadata_descriptor_owner_preserves_primary_and_all_close_failures(self):
+        for fault in ('success', 'empty', 'wrong-hash', 'fstat', 'fdopen', 'read', 'cancel', 'stream-close', 'descriptor-close', 'both-close', 'read-both-close', 'cancel-both-close'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-descriptor-') as tempdir:
+                path = Path(tempdir) / 'metadata.json'; path.write_bytes(b'' if fault == 'empty' else b'{}')
+                descriptors, closes, streams = [], [], []
+                original_open, original_close, original_fdopen, original_fstat = os.open, os.close, os.fdopen, os.fstat
+                primary = KeyboardInterrupt('PRIMARY_CANCEL') if fault.startswith('cancel') else OSError('PRIMARY_' + fault)
+                primary.futureFact = {'bytes': b'RAW\x00\xff', 'unknown': [7]}
+                def opened(*a, **kw):
+                    fd = original_open(*a, **kw); descriptors.append(fd); return fd
+                def fstat(fd):
+                    if fault == 'fstat': raise primary
+                    return original_fstat(fd)
+                class Stream:
+                    def __init__(self, stream): self.stream = stream; streams.append(stream)
+                    def read(self, count):
+                        if fault.startswith(('read', 'cancel')): raise primary
+                        return self.stream.read(count)
+                    def close(self):
+                        self.stream.close(); closes.append('stream')
+                        if fault == 'stream-close' or fault.endswith('both-close'):
+                            error = OSError('STREAM_CLOSE_AFTER_REAL_CLOSE'); error.unknownStream = b'RAW_STREAM'; raise error
+                def fdopen(*a, **kw):
+                    if fault == 'fdopen': raise primary
+                    return Stream(original_fdopen(*a, **kw))
+                def close(fd):
+                    original_close(fd); closes.append('descriptor')
+                    if fault == 'descriptor-close' or fault.endswith('both-close'):
+                        error = OSError('FD_CLOSE_AFTER_REAL_CLOSE'); error.unknownDescriptor = b'RAW_FD'; raise error
+                error = None
+                with patch.object(os, 'open', opened), patch.object(os, 'fstat', fstat), patch.object(os, 'fdopen', fdopen), patch.object(os, 'close', close):
+                    try:
+                        value, digest = caller.read_json_snapshot(path, expected_sha256='0' * 64 if fault == 'wrong-hash' else None)
+                    except BaseException as caught: error = caught
+                self.assertEqual(len(descriptors), 1)
+                self.assertEqual(closes.count('descriptor'), 1)
+                for fd in descriptors:
+                    with self.assertRaises(OSError): original_fstat(fd)
+                self.assertTrue(all(stream.closed for stream in streams))
+                if fault == 'success': self.assertIsNone(error); self.assertEqual(value, {}); continue
+                self.assertIsNotNone(error)
+                if fault.startswith(('read', 'cancel')) or fault in ('fstat', 'fdopen'):
+                    self.assertIs(error, primary)
+                    self.assertEqual(base64.b64decode(caller.failure(error)['attributes']['futureFact']['bytes']['base64']), b'RAW\x00\xff')
+                if 'close' in fault:
+                    facts = caller.failure(error)['attributes']['metadata_close_failures']
+                    self.assertEqual([f['operation'] for f in facts], ['stream.close', 'os.close'] if fault.endswith('both-close') else [fault.replace('stream-close', 'stream.close').replace('descriptor-close', 'os.close')])
+                    self.assertTrue(all(f['path'] == str(path) and f['descriptor'] == descriptors[0] for f in facts))
+                    for fact in facts:
+                        key = 'unknownStream' if fact['operation'] == 'stream.close' else 'unknownDescriptor'
+                        self.assertIn('base64', fact['attributes'][key])
+
+    def test_metadata_unbuffered_reads_keep_exact_caps_and_refuse_size_changes(self):
+        for fault in ('empty-object', 'exact-cap', 'growth-sentinel', 'growth-within-cap', 'truncated'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory(prefix='fauna-read-cap-') as tempdir:
+                maximum = 64; path = Path(tempdir) / 'metadata.json'
+                path.write_bytes(b'{}' + b' ' * (maximum - 2 if fault == 'exact-cap' else 8))
+                original_fdopen = os.fdopen; reads = []
+                class Stream:
+                    def __init__(self, stream): self.stream = stream
+                    def close(self): self.stream.close()
+                    def read(self, n):
+                        if fault.startswith('growth'):
+                            with path.open('ab') as writer: writer.write(b' ' * (maximum if fault == 'growth-sentinel' else 1))
+                        if fault == 'truncated': path.write_bytes(b'{}')
+                        data = self.stream.read(n); reads.append((n, len(data))); return data
+                with patch.object(os, 'fdopen', side_effect=lambda *a, **kw: Stream(original_fdopen(*a, **kw))):
+                    if fault in ('empty-object', 'exact-cap'): self.assertEqual(caller.read_json(path, maximum), {})
+                    else:
+                        with self.assertRaises(caller.Refused): caller.read_json(path, maximum)
+                self.assertEqual(len(reads), 1); self.assertEqual(reads[0][0], maximum + 1)
+                self.assertLessEqual(reads[0][1], maximum + 1)
+                if fault == 'growth-sentinel': self.assertEqual(reads[0][1], maximum + 1)
 
     def test_real_git_successor_admission_allows_only_exact_predecessor_artifacts(self):
         for mutation in ('none', 'unrelated', 'quoted-untracked', 'tracked-edit', 'staged-edit', 'modified-artifact',
