@@ -10,8 +10,8 @@ Identity:
 - Base: `55a8d58c27db35782b89142fc8a4f8d25f52f379`
 - Reviewed shared pin: `515ba1f00810a50b499970b5468ef7bf0af84c32`
 - Exact three-file cherry-pick: `60aa8bfb5a771e14944b6a130c96cd9a2cb83228`
-- Payload HEAD: `c7af2f4a2feb220afbfa4ef0b87b46f46319e61e`
-- Payload tree: `e60d9758f2c1fb16f32ced1e86c16fd76c98d320`
+- Payload HEAD: `90f884429bda22001bc9e4757dd5e9e93b08a3ef`
+- Payload tree: `ce2be4e93417fff360e5663eaa56815f8229bfee`
 - The following report commit adds metadata only. Its delivery HEAD/tree are reported in the thread handoff; an embedded report cannot contain its own commit hash.
 
 FILES CHANGED:
