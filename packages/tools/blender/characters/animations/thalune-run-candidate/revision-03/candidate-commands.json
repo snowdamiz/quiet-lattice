@@ -1,0 +1,125 @@
+[
+  {
+    "name": "node-18",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/tmp/thalune-combined-controls-_czc1gcj/isolated/source/candidate/controls.mjs"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"status\":\"PASS_SYNTHETIC_SOURCE_CONTROLS_NO_NATIVE_JOBS\",\"controls\":18,\"nativeCalls\":0,\"fixtureRoot\":\"/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-run-pure-hCFY3u/complete\"}\n",
+    "stderr": ""
+  },
+  {
+    "name": "python-108",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/tmp/thalune-combined-controls-_czc1gcj/isolated/source/candidate/controls.py"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"status\": \"PASS\", \"controls\": 108, \"nativeCalls\": 0}\n",
+    "stderr": ""
+  },
+  {
+    "name": "evidence-20",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/tmp/thalune-combined-controls-_czc1gcj/isolated/source/candidate/evidence-controls.py",
+      "--report",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/evidence-controls.json"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"status\": \"PASS_REAL_ADAPTER_DISPATCHER_INERT_OS_FACTS\", \"controls\": 20, \"nativeCalls\": 0, \"root\": \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-evidence-controls-vkqhxwmz\"}\n",
+    "stderr": ""
+  },
+  {
+    "name": "terminal-30",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/tmp/thalune-combined-controls-_czc1gcj/isolated/source/candidate/terminal-controls.py",
+      "--report",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/terminal-controls.json"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"status\": \"PASS\", \"controls\": 30, \"nativeCalls\": 0, \"root\": \"/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu\"}\n",
+    "stderr": ""
+  },
+  {
+    "name": "caller-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "--execute"
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 321, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 312, in main\n    record = consume(ready, args.grant)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 70, in consume\n    verify_runtime(ready)  # Disabled candidates fail before reading a grant or allocating output.\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py\", line 46, in verify_runtime\n    assert ready['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+  },
+  {
+    "name": "optimized-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "-O",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "--execute"
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "T02_ASSERTIONS_REQUIRED: optimized/assertion-disabled Python is refused\n"
+  },
+  {
+    "name": "node-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+      "motion-thalune-run-lod0",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/future-attempt/packet/captures/motion-thalune-run-lod0"
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "{\"status\":\"ENTRY_REFUSED\",\"primaryFailure\":{\"name\":\"Error\",\"message\":\"CPU-only source candidate; browser runtime disabled\",\"stack\":\"Error: CPU-only source candidate; browser runtime disabled\\n    at admit (file:///Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs:221:46)\\n    at file:///Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs:292:17\\n    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)\\n    at async node:internal/modules/esm/loader:650:26\\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)\"}}\n"
+  },
+  {
+    "name": "worker-disabled",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py",
+      "validate-primary",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/no-config.json"
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py\", line 152, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py\", line 148, in main\n    assert json.loads((Path(__file__).resolve().parent/'readiness.json').read_text())['runtimeAuthorization'] is True, 'SOURCE_ONLY_RUNTIME_DISABLED'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SOURCE_ONLY_RUNTIME_DISABLED\n"
+  },
+  {
+    "name": "preflight",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "--preflight"
+    ],
+    "exitCode": 0,
+    "stdout": "{\n  \"status\": \"PASS_SOURCE_ONLY_RUNTIME_DISABLED\",\n  \"motionFrames\": 378,\n  \"stills\": 8,\n  \"plannedJobs\": 5,\n  \"runtimeJobs\": 0,\n  \"runtimeAuthorization\": false\n}\n",
+    "stderr": ""
+  },
+  {
+    "name": "timed-11",
+    "argv": [
+      "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/timed-controls.py",
+      "--report",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/timed-controls-final.json"
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/timed-controls.py\", line 190, in <module>\n    if __name__=='__main__':main()\n                            ^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/timed-controls.py\", line 186, in main\n    rows=[scenario(mode,ready) for mode in modes]\n          ^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/timed-controls.py\", line 28, in scenario\n    core = retained('round4_job_boundary.py', {'round4_capture_children'},\n           ^^^^^^^^\nUnboundLocalError: cannot access local variable 'retained' where it is not associated with a value\n"
+  }
+]

@@ -1,0 +1,11 @@
+$ pnpm -r typecheck
+packages/shared typecheck$ tsc -p .
+packages/shared typecheck: Done
+packages/server typecheck$ tsc -p .
+packages/client typecheck$ tsc -p .
+packages/tools typecheck$ tsc -p .
+packages/tools typecheck: Done
+packages/client typecheck: Done
+packages/server typecheck: Done
+
+END_OF_CAPTURE exit=0

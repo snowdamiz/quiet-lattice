@@ -1,0 +1,527 @@
+{
+  "status": "PASS_REAL_TIMERS_EXACT_HELPER_BODIES",
+  "controls": [
+    {
+      "case": "capture-receipt-deadline",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-vg8wq4zc",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": true,
+          "timer": 0.999996
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": true,
+          "timer": 0.998916
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.998909
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": true
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.989576
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.0
+        }
+      ],
+      "timers": [
+        {
+          "label": "capture receipt",
+          "armedBefore": 0.998218,
+          "remainingAfterSignal": 0.0
+        }
+      ],
+      "resultSha256": "889b2004778299bb72c4bf215dba95c18636bca238de1e70514b75841e6450be"
+    },
+    {
+      "case": "observer-receipt-deadline",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-qxlon0ou",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": true,
+          "timer": 0.999998
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": true,
+          "timer": 0.999723
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.999721
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": true
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.997824
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.0
+        }
+      ],
+      "timers": [
+        {
+          "label": "observer receipt",
+          "armedBefore": 0.999892,
+          "remainingAfterSignal": 0.0
+        }
+      ],
+      "resultSha256": "6715fa59b30235a461c93464ab48563b0790509b52e3f3d451a8341c57a8e641"
+    },
+    {
+      "case": "cleanup-archive-deadline",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-1jyg883k",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999853
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999851
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.0
+        }
+      ],
+      "timers": [
+        {
+          "label": "archive observation write",
+          "armedBefore": 0.999843,
+          "remainingAfterSignal": 0.0
+        }
+      ],
+      "resultSha256": "c344e543bbbf21624a5a36e0d68018ef6afc6c60373d501aa4953d1fb0ed0e12"
+    },
+    {
+      "case": "cleanup-copy-deadline",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-yrxwxx1v",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999866
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999864
+        },
+        {
+          "kind": "print",
+          "afterExpiry": true,
+          "timer": 0.0
+        }
+      ],
+      "timers": [
+        {
+          "label": "private namespace copy",
+          "armedBefore": 0.998639,
+          "remainingAfterSignal": 0.0
+        }
+      ],
+      "resultSha256": "e3ecfa3093aa6daa1dabf785f8b1bf34a11ed569d7c19a9557bcf746287e58d9"
+    },
+    {
+      "case": "allocation-proof-error",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-kfmd7un0",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [],
+      "events": [],
+      "timers": [],
+      "resultSha256": "3050cbd9941696a64bf4ba869efa648c59fd42691932af0dc4683b144fabf6b4"
+    },
+    {
+      "case": "allocation-all-sinks",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-d42q15og",
+      "cliExitCode": 1,
+      "structuredException": true,
+      "starts": [],
+      "events": [],
+      "timers": [],
+      "resultSha256": "fe3f126a766ef942ab9ee7cc548de9887a1372ad37f91a95393f564524434bdd"
+    },
+    {
+      "case": "archive-timeout",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-c2zm0mff",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999998
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999872
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        }
+      ],
+      "timers": [],
+      "resultSha256": "73e54043904346cdc613e30286dbff19cb702cc456ac5d0a38a4186ee9d894fe"
+    },
+    {
+      "case": "terminal-timeout",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-vxwwv16a",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.99986
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999857
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.998771
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        }
+      ],
+      "timers": [],
+      "resultSha256": "10f6d7e9c7c7a188ec7964b80b78fda8fbeb3c109e4185e80f036e66119980f6"
+    },
+    {
+      "case": "terminal-timeout-all-sinks",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-yuud72e_",
+      "cliExitCode": 1,
+      "structuredException": true,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999569
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999091
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999088
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.991938
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        }
+      ],
+      "timers": [],
+      "resultSha256": "4a0bdaa8d1fa6fd95cce0dabd2b7a74edbd1c3379155b8a8382bfa1741808ea3"
+    },
+    {
+      "case": "final-receipt-after-bytes",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-lrifogl3",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999787
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999785
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.998053
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        }
+      ],
+      "timers": [],
+      "resultSha256": "89c1e1094c134e40dbafe1643fa8e1abe76fd12f089d86da582a240cde5cdc9c"
+    },
+    {
+      "case": "terminal-proof-after-bytes",
+      "status": "PASS",
+      "root": "/private/tmp/t02-time-neb3eiw6",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": [
+        "motion-thalune-run-lod0",
+        "motion-thalune-run-lod2",
+        "stills-thalune-run",
+        "validate-thalune-run-lod0",
+        "validate-thalune-run-lod2"
+      ],
+      "events": [
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999998
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999835
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999833
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.998533
+        },
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999863
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999862
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.997961
+        },
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999999
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999597
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999593
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.997337
+        },
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999998
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999835
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999833
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.998686
+        },
+        {
+          "kind": "drain",
+          "afterExpiry": false,
+          "timer": 0.999998
+        },
+        {
+          "kind": "bootout",
+          "afterExpiry": false,
+          "timer": 0.999824
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.999822
+        },
+        {
+          "kind": "tmp-preserved",
+          "afterExpiry": false
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.998468
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        },
+        {
+          "kind": "print",
+          "afterExpiry": false,
+          "timer": 0.0
+        }
+      ],
+      "timers": [],
+      "resultSha256": "f745f07790810dfd0f98b06107b089153f7a204c64c033456f5968ff1e878675"
+    }
+  ],
+  "nativeCalls": 0
+}

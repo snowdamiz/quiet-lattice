@@ -1,0 +1,782 @@
+{
+  "base": "c8f2103ae22af6f3479cfa81716e343831ec7065",
+  "tree": "2f498ab6a5f6ca146b14aa8620eb682a2116aefd",
+  "donorCommits": [
+    "07768bf14fce30c1e78db6750f44d8fbd561f4b5",
+    "83b145e9d6dc845aa6c7706ada69019fc813b202"
+  ],
+  "identicalData": [
+    {
+      "path": "assets/blend/characters/animations/shared_motion.blend",
+      "gitBlobs": {
+        "c8f2103ae22af6f3479cfa81716e343831ec7065": "f81dbdbea4a6aaa3b3b19b9ac919af6074e5e5da",
+        "07768bf14fce30c1e78db6750f44d8fbd561f4b5": "f81dbdbea4a6aaa3b3b19b9ac919af6074e5e5da",
+        "83b145e9d6dc845aa6c7706ada69019fc813b202": "f81dbdbea4a6aaa3b3b19b9ac919af6074e5e5da"
+      }
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/shared_motion.glb",
+      "gitBlobs": {
+        "c8f2103ae22af6f3479cfa81716e343831ec7065": "64b83958bf6a278bd71895f470e985e0882b9bab",
+        "07768bf14fce30c1e78db6750f44d8fbd561f4b5": "64b83958bf6a278bd71895f470e985e0882b9bab",
+        "83b145e9d6dc845aa6c7706ada69019fc813b202": "64b83958bf6a278bd71895f470e985e0882b9bab"
+      }
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/manifest.json",
+      "gitBlobs": {
+        "c8f2103ae22af6f3479cfa81716e343831ec7065": "ac9aef09e60789692f261c90b86bab64666432d5",
+        "07768bf14fce30c1e78db6750f44d8fbd561f4b5": "ac9aef09e60789692f261c90b86bab64666432d5",
+        "83b145e9d6dc845aa6c7706ada69019fc813b202": "ac9aef09e60789692f261c90b86bab64666432d5"
+      }
+    },
+    {
+      "path": "packages/client/public/models/characters/animations/source-bind.json",
+      "gitBlobs": {
+        "c8f2103ae22af6f3479cfa81716e343831ec7065": "9fed181f5d7fe42a264ddfe259bfd84063fb1332",
+        "07768bf14fce30c1e78db6750f44d8fbd561f4b5": "9fed181f5d7fe42a264ddfe259bfd84063fb1332",
+        "83b145e9d6dc845aa6c7706ada69019fc813b202": "9fed181f5d7fe42a264ddfe259bfd84063fb1332"
+      }
+    }
+  ],
+  "protected": [
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/REPORT.md",
+      "bytes": 15859,
+      "sha256": "80dea3ed5d347d95d73f4e2f41503ae1b808e07b2d91f45087099f98cb6fe7a7",
+      "mtimeNs": 1794022689550610803
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/assertion_guard.py",
+      "bytes": 329,
+      "sha256": "a2a29fc3d672bcd56bd55fa718f055ed029ad8d158e3882c43358f84f2c8cd21",
+      "mtimeNs": 1794021698068830522
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
+      "bytes": 19721,
+      "sha256": "9d6f2877c06594c7e0ca7877accdcbd11cc1a7b4dace911bd8f46c9f1faa8070",
+      "mtimeNs": 1794024685580249148
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
+      "bytes": 3812,
+      "sha256": "aa7d0b5a89d52177019c7504de7de0297e9f789fa88532db54f960981d02275f",
+      "mtimeNs": 1794024987667286140
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/contract.py",
+      "bytes": 3795,
+      "sha256": "43ee39cc429e140283b8081d2fecbae04a13d2d79a3e0906bf6a63aabfdbc75b",
+      "mtimeNs": 1794022245608069363
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/controls.mjs",
+      "bytes": 8073,
+      "sha256": "95758bf3265292e2332291ad223032ecbebe570b02b6ff543fce44013a672fc8",
+      "mtimeNs": 1794022245607478654
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/controls.py",
+      "bytes": 17811,
+      "sha256": "59e847fedebca4078cc3a61230f26d62448ed6aa534aa861e2172d796b25a314",
+      "mtimeNs": 1794023401525934753
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/disabled-entry-controls.json",
+      "bytes": 994,
+      "sha256": "0e2ad625a8bdf5e77e872890a0e5350ce9030772130aea0fc37031122bf51140",
+      "mtimeNs": 1794022642734952931
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs",
+      "bytes": 22629,
+      "sha256": "f7f6f17a3dcf4aaa6cee1e814673eee7ec0b686cbdee0592d09bb42670c53a55",
+      "mtimeNs": 1794021949692838891
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/evidence-controls.py",
+      "bytes": 12035,
+      "sha256": "4313639dd335e0b0ee42f1b349cb5851c2130515d5bec205b8b08b3190c0537f",
+      "mtimeNs": 1794024685580461441
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/freeze.py",
+      "bytes": 5531,
+      "sha256": "c3696c4dc6a18ffc359b82da9996b5b6675ea159d79278e1017096ac222cf067",
+      "mtimeNs": 1794022503165787647
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/inspector.py",
+      "bytes": 14471,
+      "sha256": "17b1580b8530c0d258af1b08455499c7a7b379977cf5ccaf7a4240d8812caa8e",
+      "mtimeNs": 1794022689265849349
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/packet-budget.mjs",
+      "bytes": 3341,
+      "sha256": "d887131907382e1be45cc282a553e2025463fe68737905b9f72673819d9a503e",
+      "mtimeNs": 1794021949691455430
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/packet_budget.py",
+      "bytes": 3973,
+      "sha256": "fd1fd0846f5985f39d96bc7ea5a02c61ab825fb2eb3aba1affb33cb99ce0ac3f",
+      "mtimeNs": 1794021949689315675
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/page-api.mjs",
+      "bytes": 4192,
+      "sha256": "03acc5f967c1a3fddb8d07cf329e1f3b7349f3995dd37f08b708a889b7f505f7",
+      "mtimeNs": 1794021697991522806
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/playback.mjs",
+      "bytes": 4938,
+      "sha256": "45a07d10626da845261f336d6202ef460e53ff6cfe4e58f5a5ef45cfdab72f2a",
+      "mtimeNs": 1794021698004129084
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/pure-node-controls.json",
+      "bytes": 2053,
+      "sha256": "52d39c62481006a6afb34f5f0f46a5925b713762cc7760f0f79bf0f1a0c5cb40",
+      "mtimeNs": 1794022249837442964
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/pure-python-controls.json",
+      "bytes": 10577,
+      "sha256": "2ea780fe646f7825a3e69a2d9ce93ad2af0528c5cb8a660fd05f3de2a6e5f500",
+      "mtimeNs": 1794022531146275391
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
+      "bytes": 209240,
+      "sha256": "8f756fc1b9b29e27c8d1778e45edc286a2c0279953575e67e170f44721b00f5d",
+      "mtimeNs": 1794024987665517678
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/recovery-provenance.json",
+      "bytes": 8762,
+      "sha256": "6bd3f2a88cb28062e342a0b4a7345dc73d318dda864cb66f0714e1e9c5d87c38",
+      "mtimeNs": 1794022503165361813
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/red-controls.json",
+      "bytes": 407,
+      "sha256": "3928b1e490366265ec497d03532d38e0d313b5d6b234c55458b2cd8af27da33d",
+      "mtimeNs": 1794021949624452117
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/release_accounting.py",
+      "bytes": 9764,
+      "sha256": "4bb93b7d7073f09204e4ffb63b636ae749851781600ba54bc635e2c7dee6980c",
+      "mtimeNs": 1794024685579999648
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/round4_capture_children.py",
+      "bytes": 2132,
+      "sha256": "e6bca98d53ce502a4115a6220a2aa78b27b3ab9ee1383c30165c274aaabb1f07",
+      "mtimeNs": 1794021698115365419
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/round4_job_boundary.py",
+      "bytes": 23061,
+      "sha256": "3f5ca99841be6a2ab4218bd45c5e44c5bb368e331d4b323b906b25354baa444c",
+      "mtimeNs": 1794021698105418855
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/run_round4_browser_proof.py",
+      "bytes": 23711,
+      "sha256": "f550d2e70238c9ff5527a4316833b83a38cdcf519273ed4b366491a936961fab",
+      "mtimeNs": 1794021698126833487
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/run_round4_remaining8.py",
+      "bytes": 31906,
+      "sha256": "4cc69399da225c755833ab8c35972e2a1845eec45198cad29488994ff870c5d8",
+      "mtimeNs": 1794021698137014760
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "7eebfd8a27f9fe01c2e8b716fbe75a968033758911631e1932cbe9f5d6fdc8ae",
+      "mtimeNs": 1794023444872328474
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9",
+      "mtimeNs": 1794023444873668686
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794023444875807232
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 825,
+      "sha256": "14bbce6ebc9c80a41f6cc2d973450b34a24456bfc6094c6007b1d9ed8cdf357c",
+      "mtimeNs": 1794023444875448815
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/result.json",
+      "bytes": 5703,
+      "sha256": "9abea4f54d32a9a4a51f9aa0c291b00b252a17c6d1f2b86aec58ede6402c164d",
+      "mtimeNs": 1794023444877588236
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-1-proof/returned-receipts.json",
+      "bytes": 3463,
+      "sha256": "61291d9f8ee79202351414b7de231f7d1821ffe21cccb2c14c786dc1edfd70e2",
+      "mtimeNs": 1794023444876885442
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "def90b9e71c19cff990b10d3ea52ab367dcee5dc6ec0176f7043ff2737c9f859",
+      "mtimeNs": 1794023444880882910
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9",
+      "mtimeNs": 1794023444881804328
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794023444883923541
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 2491,
+      "sha256": "14b32af50ef755070e23d19bd9978323ff7ada78e39385071c239b6c15a5f8c1",
+      "mtimeNs": 1794023444884373209
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/result.json",
+      "bytes": 5425,
+      "sha256": "3978016c7c2df1300d137f2f29fd569687a257901cac4059ea906ca4d69c2531",
+      "mtimeNs": 1794023444885366961
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-2-proof/returned-receipts.json",
+      "bytes": 2704,
+      "sha256": "34780b6cfcf05c95d8e2bae7eb48898d79bcab0092e2230af558669088bda6c3",
+      "mtimeNs": 1794023444884764460
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/GREEN-review-repro-results.json",
+      "bytes": 2054,
+      "sha256": "80d42bdfa0dfc0d36eecc60561cde4f0dc3b49aa439f4bed403fbef09bdc249d",
+      "mtimeNs": 1794023444898381323
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "6f2cb99c1dae068fe7126c397d534b455049ce243a5d51a4008e0fabde307964",
+      "mtimeNs": 1794023334885027927
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9",
+      "mtimeNs": 1794023334886157763
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794023334887681225
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 821,
+      "sha256": "de91517e6b2a61805894f44599b2619a1f4573dc42fb55c2521f30e3f2724b4e",
+      "mtimeNs": 1794023334887381932
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-1-proof/result.json",
+      "bytes": 1010,
+      "sha256": "eab42dd0adda4768e7a7ee6c91b26d659fb08cc35f2020045efb3bd392fce8f4",
+      "mtimeNs": 1794023334888473893
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/attempts.json",
+      "bytes": 151,
+      "sha256": "f2c0b02a5c2dc3cbca489c3b75d2985cb2d36df0081a5c8af7b6a6e1a3837003",
+      "mtimeNs": 1794023334891158941
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 204,
+      "sha256": "56056b879f6af4e9d40d2ae120135776a48c8a7859b568b6c908bc4d7599a9c9",
+      "mtimeNs": 1794023334891955984
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794023334893282529
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1522,
+      "sha256": "77ca0b7e6a564f60d669feccde37db56206dc89c567470d3637728357a4a5b94",
+      "mtimeNs": 1794023334893551904
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/result.json",
+      "bytes": 1248,
+      "sha256": "5da6dcc89c82e6178199fa2a9712efc3ed14f320d6c524f9fa94be0c868eef3b",
+      "mtimeNs": 1794023334894190322
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-2-proof/returned-receipts.json",
+      "bytes": 1659,
+      "sha256": "163e0a03f354b9d49bfa940e35d94c9d9b8b108316b5094d64204cf12bbfe54d",
+      "mtimeNs": 1794023334893777238
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/RED-results.json",
+      "bytes": 1607,
+      "sha256": "7d0b741396afc3927d18f1c5851cb3ccdfa3a730fbb4cb381558dd9a6bc75dba",
+      "mtimeNs": 1794023334903880552
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/REPORT.md",
+      "bytes": 10794,
+      "sha256": "22e67b89cc81dbf692f64dedd2f2602c572627687910427ab03f64d208ad1954",
+      "mtimeNs": 1794023723754178108
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/disabled-entry-controls.json",
+      "bytes": 5579,
+      "sha256": "1c89c0a16cf95abe36013e8120d4aaac2f49d8e3adefb455219ed0136a5f3368",
+      "mtimeNs": 1794023639028792541
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/evidence-controls.json",
+      "bytes": 7000,
+      "sha256": "2373b47e50fbf51d6e8432f642c416543c56b661d3d5ecad1393b4147d7ccbca",
+      "mtimeNs": 1794023519641781157
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/independent-review-20023a3.md",
+      "bytes": 11588,
+      "sha256": "3e26d8159710e35ef9bd06f595c1ab31c0d1c71efc05c4f9a3262325aeb34a95",
+      "mtimeNs": 1794023183445086332
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/node-controls-run.json",
+      "bytes": 475,
+      "sha256": "f9baaa8c30d2f9a197498f211e6b0db1c7f5bb10057f8970f490d669b9f6f5ab",
+      "mtimeNs": 1794023573238530196
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/preflight.json",
+      "bytes": 524,
+      "sha256": "d5d9b232e7c93342b02d4c08bac1032507e080875e669087f54fbf572bb62353",
+      "mtimeNs": 1794023639208732934
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/preservation.json",
+      "bytes": 1346,
+      "sha256": "9da1bc54b6cea01e8dd5edb4435084aad99e658ee323bf76935f1337ff9dc3d4",
+      "mtimeNs": 1794023639429300540
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/provenance.json",
+      "bytes": 1478,
+      "sha256": "855815598f3f24755dafd5c5d4ced5e06c67eb468f4e023c122221e065935a85",
+      "mtimeNs": 1794023723750821809
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/pure-node-controls.json",
+      "bytes": 2053,
+      "sha256": "1e3f9bda4512cd8ea5257d97ea65095831774dff76bf32f6ad8e94a4a6f68d53",
+      "mtimeNs": 1794023573228372549
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/pure-python-controls.json",
+      "bytes": 10577,
+      "sha256": "2ea780fe646f7825a3e69a2d9ce93ad2af0528c5cb8a660fd05f3de2a6e5f500",
+      "mtimeNs": 1794023575283701324
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/python-controls-run.json",
+      "bytes": 368,
+      "sha256": "97b2eff055466509da378600448c3b5c3af8c9fa5e00d381c4834ad998dc1188",
+      "mtimeNs": 1794023575298657148
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-01/review-repro.py",
+      "bytes": 3202,
+      "sha256": "d4d898b8b0f8ec21936e299d2a574a23a0c0708ac492f7c5e25d25cc97fad059",
+      "mtimeNs": 1794023183439231986
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/oversized-audit-final-returned-proof-fail/packet/integration-result.json",
+      "bytes": 748,
+      "sha256": "b5d38181b0340f91f1cd82b5df7b6247779869938448ffaf723f7e0451179bd5",
+      "mtimeNs": 1794024857240791757
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/oversized-audit-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 276,
+      "sha256": "fd75636901e7245c9557a1e94355ea9eee89e500e62bb877a2e7ed3c7661ede0",
+      "mtimeNs": 1794024857235307205
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024857236204998
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024857237285000
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1201,
+      "sha256": "b09587c991781ac56c8a66ecfd6691f6f9e2ee6642b775a4d117989529b17e3b",
+      "mtimeNs": 1794024857237102042
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/start-final-returned-proof-fail/packet/integration-result.json",
+      "bytes": 9298,
+      "sha256": "5604e466c9632488c50b2eb1eee719a3d73f2ff172af390050b5fad097f88140",
+      "mtimeNs": 1794024857224877309
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/start-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 266,
+      "sha256": "96b5710b38e323a9873d24a03b272c0a747dd574e1e70983d3ddba403ea9e68b",
+      "mtimeNs": 1794024857220402133
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024857222524846
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024857223534223
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1069,
+      "sha256": "fec539559c40c6293aa864dc04aa12d3722dc372db2a379d155db491eb027070",
+      "mtimeNs": 1794024857223318764
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/GREEN-results.json",
+      "bytes": 4603,
+      "sha256": "f6a04282fbb546d266333fbda5675786c2897b3b8be41b465a5447bbf28ca3d2",
+      "mtimeNs": 1794024857276999705
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/oversized-audit-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 274,
+      "sha256": "ca4e4f43fba584ab31bead8fa238c4513336901e4165a323b033b0302724dfcb",
+      "mtimeNs": 1794024397152326325
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024397153663786
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024397156488042
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/oversized-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1193,
+      "sha256": "2cd8a8981bb511147bc1df98534fa4b66c557aaf1e37649b7d9720801ef73cac",
+      "mtimeNs": 1794024397156043499
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/small-audit-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 270,
+      "sha256": "e2c081d59b3dc4118c4b6a41e2148c68e80ea658db3e67a2b26510d17d191163",
+      "mtimeNs": 1794024397162474221
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/small-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024397163712057
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/small-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024397166283353
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/small-audit-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1185,
+      "sha256": "d6770ef6c7de2f6f70f150299356c127af59fac68dc3359019fe44236e370c51",
+      "mtimeNs": 1794024397165786477
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-cleanup-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 272,
+      "sha256": "a6e94c1e170bb78676f885cb7dfc202c004f694667325cf007cbf8387f593684",
+      "mtimeNs": 1794024397144632685
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-cleanup-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024397145897771
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-cleanup-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1077,
+      "sha256": "3870a67621a9f5ebc66228fb8a1fb83bc49a09e02098b9d627709f01f4682797",
+      "mtimeNs": 1794024397148077442
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-packet-fail/proof/attempts.json",
+      "bytes": 265,
+      "sha256": "8b71816f86e3e776ab1a019f92cea9716116a95e8c66cca8982a8fd569f94a85",
+      "mtimeNs": 1794024397131457825
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-packet-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024397133642413
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-packet-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024397138418839
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-packet-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1063,
+      "sha256": "f788906d61d8112212668f3db0291a08c36e40c87c6acad4974e6a30a1aaba87",
+      "mtimeNs": 1794024397137358504
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-packet-fail/proof/result.json",
+      "bytes": 8459,
+      "sha256": "67e8fcf713caa57c1f73b282b1990357d2a0aee8db2662a4594ed2e09faf2fa2",
+      "mtimeNs": 1794024397140713219
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-proof-fail/proof/attempts.json",
+      "bytes": 264,
+      "sha256": "aca9125aec29fd95018cebd423877056b9ccedab30d6e3571ddc48ea7d7b0a3c",
+      "mtimeNs": 1794024397112850996
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/launch-claim/admission.json",
+      "bytes": 200,
+      "sha256": "9846bc06b8b46777bbbd698f01d694c8206889c440ee9e8cf2f4cd52386c3e6a",
+      "mtimeNs": 1794024397115928502
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/owned-job/profile_release.json",
+      "bytes": 25,
+      "sha256": "795a322dc0ee0482e6c57329d0d551aa6f6cba1cfba38fb821fd9ac634c9b0cd",
+      "mtimeNs": 1794024397121830722
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-proof/start-final-returned-proof-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "bytes": 1061,
+      "sha256": "4fbb54738a2d448df63859f3eadbc581309289417dc07e294662d520d494a859",
+      "mtimeNs": 1794024397120222011
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/RED-results.json",
+      "bytes": 5134,
+      "sha256": "6af21dffb2db5bda7191b29a428027ba5695fa0dc3f8e7bbeddcb32448955551",
+      "mtimeNs": 1794024397234445240
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/REPORT.md",
+      "bytes": 13722,
+      "sha256": "6a96f60c22c5f532df3787d0f10f99a7f53243d98b4c77e1dc9ae32c818e083d",
+      "mtimeNs": 1794025170946654488
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/disabled-entry-controls.json",
+      "bytes": 5577,
+      "sha256": "949514f3d9ceccd807447fb201da9423dda7238fbefda50fc1b45e615a54ac30",
+      "mtimeNs": 1794024987407128785
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/evidence-controls.json",
+      "bytes": 7000,
+      "sha256": "f47d0cc114fc72152ccfbbcf0aacd60ad280f4867a2dc2c707cf3ec8afc67572",
+      "mtimeNs": 1794024864480514164
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/evidence-run.json",
+      "bytes": 648,
+      "sha256": "3758962baff98a16c9460ec9d1a45fdcc7a1147c55807ff68e70b9155d5924bf",
+      "mtimeNs": 1794024864491979646
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/freeze.json",
+      "bytes": 842,
+      "sha256": "6dd41a5c95f78f13afb3cb107b8f09e9495fea38deb59e3000a7c46df515b5a1",
+      "mtimeNs": 1794024987676576367
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/green-combined-repro.py",
+      "bytes": 8172,
+      "sha256": "822868f87d38b92e0a8a1bab76ba8196592de9916d91c36206c0da516241c6b3",
+      "mtimeNs": 1794024857057793265
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/green-repro-assertions.diff",
+      "bytes": 2724,
+      "sha256": "fe7cbd624295641c18f7c1d451c6aa5ce603a444d7bb9ba61b079a38eec1f6a4",
+      "mtimeNs": 1794024857057955015
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/independent-review-4c92a6f.md",
+      "bytes": 13217,
+      "sha256": "2dc6d946cbe655deb12c807635d0bcc8db18cc6dfa44e3b680730a7c80cb94ab",
+      "mtimeNs": 1794024296582811957
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/node-run.json",
+      "bytes": 469,
+      "sha256": "46470cf40ce5aa40faaa7df925b7b92920518789ffc6527d71629d0d64c356e7",
+      "mtimeNs": 1794024862167058646
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/preflight.json",
+      "bytes": 714,
+      "sha256": "43a98e5c2ff43b4fd3fc31aab5e6368cddd37ffb0acbade73d300e896ce16cbb",
+      "mtimeNs": 1794024987820976282
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/premise.md",
+      "bytes": 914,
+      "sha256": "f7233fbfda6f3c99322ef5da5903522e1370ea7e3aeeee0bd142658cf994b239",
+      "mtimeNs": 1794024539218075820
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/preservation.json",
+      "bytes": 32345,
+      "sha256": "8d03f26b0723fb4a25d999452fc027eb78f248f884bd1013d80cd9050992007d",
+      "mtimeNs": 1794025027183544835
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/provenance.json",
+      "bytes": 2629,
+      "sha256": "bf7946856d9d6ca4b87d680d154ebdad41fe9b7ea20e328651fb977bfcaca465",
+      "mtimeNs": 1794025170939849058
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/pure-node-controls.json",
+      "bytes": 2053,
+      "sha256": "2c63380307641b2cd3399b281e87574e3cad8ecf6fb2a7b0f3ec7dd24826f24a",
+      "mtimeNs": 1794024862154986955
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/pure-python-controls.json",
+      "bytes": 10577,
+      "sha256": "2ea780fe646f7825a3e69a2d9ce93ad2af0528c5cb8a660fd05f3de2a6e5f500",
+      "mtimeNs": 1794024864006178337
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/python-run.json",
+      "bytes": 362,
+      "sha256": "9eda4e65f94dd69a3271122858eceb9886b2d3ed69c07c9232a52dd89aabcba2",
+      "mtimeNs": 1794024864024766791
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/review-combined-repro.py",
+      "bytes": 7214,
+      "sha256": "d93a20a05f41d8744bcefa69263a7300c886ae419b7dffbc93f28c54d3e57ae3",
+      "mtimeNs": 1794024146123432175
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-02/terminal-controls.json",
+      "bytes": 15391,
+      "sha256": "ab319f1e64208efd0e9d16ff205ba2e9b2d442d03ada3334c051f67fcdc1c063",
+      "mtimeNs": 1794024796751901132
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py",
+      "bytes": 10298,
+      "sha256": "ba641ecfdd98a233d5c91fac9074ed13d2020c83942d445550ed060492397205",
+      "mtimeNs": 1794022245608269239
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/rgb-sink.mjs",
+      "bytes": 4315,
+      "sha256": "cf6f9dc43d4ea5b6d11d54a19844dd61fcce1a7f0fe9f29fc337686a99c0f10e",
+      "mtimeNs": 1794021949692439849
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/source-audit.json",
+      "bytes": 30330,
+      "sha256": "cc283273f8e8dba2d4c20b48bf27be85d72962bafe608dda94f405d55f389640",
+      "mtimeNs": 1794025171064020390
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/terminal-controls.py",
+      "bytes": 13132,
+      "sha256": "9321eaadd0dc94967ef3e132da7a0c1cddf1a9828b12f9d103866a73072a51c0",
+      "mtimeNs": 1794024796399587800
+    },
+    {
+      "path": "assets/blend/characters/thalune.blend",
+      "bytes": 69378059,
+      "sha256": "d1fc6986ad5fc164279e12a299aa6bc62b499084a6e8afee1b87315832c8d74b",
+      "mtimeNs": 1794021611445825227
+    },
+    {
+      "path": "assets/blend/characters/ixari.blend",
+      "bytes": 170752716,
+      "sha256": "9779f0a9dc8b3a69257124bb962b0e51c526f9b80501d35833c02674e3fa2f0c",
+      "mtimeNs": 1794021611375653402
+    },
+    {
+      "path": "assets/blend/characters/ulgani.blend",
+      "bytes": 73478111,
+      "sha256": "06fe606bd2f5d964423f6f69bf1da31ae38acc8052c53cd763b487cdc501a38b",
+      "mtimeNs": 1794021611515560093
+    },
+    {
+      "path": "packages/client/public/models/characters/thalune.glb",
+      "bytes": 41128548,
+      "sha256": "dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+      "mtimeNs": 1794021627667928780
+    },
+    {
+      "path": "packages/client/public/models/characters/ixari.glb",
+      "bytes": 43870856,
+      "sha256": "1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b",
+      "mtimeNs": 1794021627629764819
+    },
+    {
+      "path": "packages/client/public/models/characters/ulgani.glb",
+      "bytes": 47796920,
+      "sha256": "9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682",
+      "mtimeNs": 1794021627715546012
+    }
+  ]
+}

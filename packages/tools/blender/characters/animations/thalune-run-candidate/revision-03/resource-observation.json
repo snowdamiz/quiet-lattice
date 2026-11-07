@@ -1,0 +1,1561 @@
+{
+  "observedUtc": "2026-11-07T04:47:10.721088+00:00",
+  "admission": false,
+  "scope": "Fresh read-only observation; must be refreshed by the authorized parent before allocation",
+  "disk": {
+    "total": 994610155520,
+    "used": 901074137088,
+    "free": 93536018432
+  },
+  "physicalMemoryBytes": 51539607552,
+  "commands": {
+    "memory": {
+      "argv": [
+        "/usr/bin/vm_stat"
+      ],
+      "exitCode": 0,
+      "stdout": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   205380.\nPages active:                                 919748.\nPages inactive:                               903307.\nPages speculative:                             15251.\nPages throttled:                                   0.\nPages wired down:                             373407.\nPages purgeable:                               15470.\n\"Translation faults\":                    27965914691.\nPages copy-on-write:                      1449889654.\nPages zero filled:                       14375597663.\nPages reactivated:                        1090192107.\nPages purged:                               29712047.\nFile-backed pages:                            599584.\nAnonymous pages:                             1238722.\nPages stored in compressor:                  1204885.\nPages occupied by compressor:                 669977.\nDecompressions:                            796778387.\nCompressions:                             1108827612.\nPageins:                                   552789153.\nPageouts:                                     241313.\nSwapins:                                     3698815.\nSwapouts:                                    5385459.\nPages tagged:                                 180827.\nPages tagged resident:                        157514.\nPages tagged compressed:                       23313.\nPages tag-storage:                             98304.\nPages tag-storage holding tags:                11471.\nPages tag-storage free:                          515.\nPages tag-storage non-tag pageable:            86219.\nPages tag-storage non-tag wired:                   8.\nBytes of compressed tags:                    3666112.\nTagged compressions:                         6957983.\nTagged decompressions:                       6739680.\n"
+    },
+    "physicalMemory": {
+      "argv": [
+        "/usr/sbin/sysctl",
+        "-n",
+        "hw.memsize"
+      ],
+      "exitCode": 0,
+      "stdout": "51539607552\n"
+    },
+    "processes": {
+      "argv": [
+        "/bin/ps",
+        "-axo",
+        "pid=,ppid=,uid=,rss=,comm="
+      ],
+      "exitCode": 0,
+      "selectedProcesses": [
+        {
+          "pid": 209,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9814016,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 861,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 6733824,
+          "executable": "/Applications/Brave Browser.app/Contents/Frameworks/Brave Browser Framework.framework/Versions/155.1.97.56/Helpers/chrome_crashpad_handler"
+        },
+        {
+          "pid": 971,
+          "parent": 851,
+          "uid": 501,
+          "rssBytes": 4276224,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/L7_fZdGvp_0kM8oP/bin/python"
+        },
+        {
+          "pid": 1216,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 7421952,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 1242,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 192397312,
+          "executable": "node"
+        },
+        {
+          "pid": 1249,
+          "parent": 1242,
+          "uid": 501,
+          "rssBytes": 47333376,
+          "executable": "/Users/andreyyurlov/.t3/worktrees/megpt-mono/t3-0d6f814e/tool-frontend/node_modules/@esbuild/darwin-arm64/bin/esbuild"
+        },
+        {
+          "pid": 1344,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11747328,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 1966,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 6701056,
+          "executable": "/Applications/Discord.app/Contents/Frameworks/Electron Framework.framework/Helpers/chrome_crashpad_handler"
+        },
+        {
+          "pid": 2297,
+          "parent": 2108,
+          "uid": 501,
+          "rssBytes": 23478272,
+          "executable": "/Applications/Cloudroom.app/Contents/Resources/app.asar.unpacked/node_modules/bb-app/server/dist/assets/python/bin/python3"
+        },
+        {
+          "pid": 2640,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12894208,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 2641,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11796480,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 2981,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11763712,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 3848,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 3849,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 3857,
+          "parent": 39190,
+          "uid": 501,
+          "rssBytes": 12140544,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+        },
+        {
+          "pid": 3858,
+          "parent": 39190,
+          "uid": 501,
+          "rssBytes": 9289728,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 3859,
+          "parent": 39190,
+          "uid": 501,
+          "rssBytes": 6553600,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 3860,
+          "parent": 39190,
+          "uid": 501,
+          "rssBytes": 8601600,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 6307,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 13811712,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 9903,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11649024,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 9904,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12828672,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 10227,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 10228,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 11051,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 8486912,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 11053,
+          "parent": 11051,
+          "uid": 501,
+          "rssBytes": 47316992,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 11105,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 11239424,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 12822,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 14401536,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 12823,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13484032,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 14604,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5783552,
+          "executable": "/opt/homebrew/Cellar/python@3.13/3.13.16/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 14606,
+          "parent": 14604,
+          "uid": 501,
+          "rssBytes": 6799360,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node"
+        },
+        {
+          "pid": 15468,
+          "parent": 93991,
+          "uid": 501,
+          "rssBytes": 33210368,
+          "executable": "/Users/andreyyurlov/.t3/tools/chrome-headless-shell/mac-arm64/154.0.8037.92/chrome-headless-shell"
+        },
+        {
+          "pid": 15469,
+          "parent": 15468,
+          "uid": 501,
+          "rssBytes": 14417920,
+          "executable": "/Users/andreyyurlov/.t3/tools/chrome-headless-shell/mac-arm64/154.0.8037.92/chrome-headless-shell"
+        },
+        {
+          "pid": 15470,
+          "parent": 15468,
+          "uid": 501,
+          "rssBytes": 17154048,
+          "executable": "/Users/andreyyurlov/.t3/tools/chrome-headless-shell/mac-arm64/154.0.8037.92/chrome-headless-shell"
+        },
+        {
+          "pid": 15595,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11583488,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 15596,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12746752,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 16703,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11747328,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 20261,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12779520,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 20263,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 21256,
+          "parent": 75402,
+          "uid": 501,
+          "rssBytes": 178356224,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 21320,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 21321,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 21820,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11730944,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 21821,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12943360,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 23572,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5668864,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 24825,
+          "parent": 24816,
+          "uid": 501,
+          "rssBytes": 4210688,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/L7_fZdGvp_0kM8oP/bin/python"
+        },
+        {
+          "pid": 24967,
+          "parent": 24815,
+          "uid": 501,
+          "rssBytes": 6193152,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/O_VfIcmaR6iEMwIr/bin/python"
+        },
+        {
+          "pid": 25221,
+          "parent": 25171,
+          "uid": 501,
+          "rssBytes": 4014080,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/s87sa4QAPEvXZun7/bin/python"
+        },
+        {
+          "pid": 25229,
+          "parent": 25170,
+          "uid": 501,
+          "rssBytes": 5881856,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/kVbL7ROsMJzGiI8K/bin/python"
+        },
+        {
+          "pid": 25825,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13287424,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 25826,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12271616,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 26803,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 14221312,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 26804,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13402112,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 28091,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12320768,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 28092,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13320192,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 28424,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 37634048,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 28966,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 28967,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12779520,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 29167,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 20086784,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 29168,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 18481152,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 29334,
+          "parent": 29216,
+          "uid": 501,
+          "rssBytes": 4308992,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/L7_fZdGvp_0kM8oP/bin/python"
+        },
+        {
+          "pid": 30027,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11943936,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 30028,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13058048,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 30328,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 30329,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 30966,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11878400,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 30967,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13139968,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 31991,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 31992,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12828672,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 32743,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 18661376,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 34174,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12795904,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 34175,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11649024,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 34503,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12828672,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 34505,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 35357,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11796480,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 35653,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 18612224,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 35654,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 19890176,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 35831,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11763712,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 35833,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12943360,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 36752,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5668864,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 38264,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11747328,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 38346,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11747328,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 39519,
+          "parent": 38817,
+          "uid": 501,
+          "rssBytes": 10207232,
+          "executable": "/Users/andreyyurlov/Library/Application Support/Codex/artifact-sessions/runtime-generations/generation-Gi2uKl/runtime/bin/node"
+        },
+        {
+          "pid": 39668,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12845056,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 39669,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 42720,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11583488,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 42721,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12746752,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 43132,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11878400,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 43133,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13041664,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 46276,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11780096,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 46307,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 46308,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12779520,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 46601,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 46602,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 50968,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 13418496,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 51170,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13008896,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 51172,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11829248,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 51175,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13221888,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 51176,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12058624,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 51477,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5701632,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 54689,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11829248,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 54690,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12926976,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 54791,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11862016,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 54792,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13008896,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 57324,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 20709376,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 57329,
+          "parent": 57324,
+          "uid": 501,
+          "rssBytes": 537542656,
+          "executable": "/Applications/Blender.app/Contents/MacOS/Blender"
+        },
+        {
+          "pid": 58152,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 24739840,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 58253,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 162086912,
+          "executable": "node"
+        },
+        {
+          "pid": 58271,
+          "parent": 57329,
+          "uid": 501,
+          "rssBytes": 99958784,
+          "executable": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx"
+        },
+        {
+          "pid": 58272,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 31211520,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 58276,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 21594112,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 60378,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12828672,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 60380,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11649024,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 62080,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5816320,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 62081,
+          "parent": 62080,
+          "uid": 501,
+          "rssBytes": 7340032,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 62095,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9682944,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 62562,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9682944,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 62659,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5783552,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 62660,
+          "parent": 62659,
+          "uid": 501,
+          "rssBytes": 12943360,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 64259,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 15286272,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 64265,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11780096,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 64266,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12910592,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 64915,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 64916,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12779520,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 65383,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 65385,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12746752,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 65456,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12894208,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 65457,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11780096,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 65900,
+          "parent": 65869,
+          "uid": 501,
+          "rssBytes": 3981312,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/s87sa4QAPEvXZun7/bin/python"
+        },
+        {
+          "pid": 65907,
+          "parent": 65863,
+          "uid": 501,
+          "rssBytes": 5865472,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/kVbL7ROsMJzGiI8K/bin/python"
+        },
+        {
+          "pid": 66602,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 68378,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 14991360,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 68379,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13336576,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 68497,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 16203776,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 68498,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13975552,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 72083,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13910016,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 72084,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12926976,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 72630,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12763136,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 72631,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 73014,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 73015,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12795904,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 73556,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11649024,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 73557,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12795904,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 75163,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 6045696,
+          "executable": "/Users/andreyyurlov/.local/share/vite-plus/js_runtime/node/26.13.0/bin/node"
+        },
+        {
+          "pid": 75400,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 6258688,
+          "executable": "/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin/node"
+        },
+        {
+          "pid": 75401,
+          "parent": 75400,
+          "uid": 501,
+          "rssBytes": 20643840,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 75402,
+          "parent": 75400,
+          "uid": 501,
+          "rssBytes": 12861440,
+          "executable": "/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin/node"
+        },
+        {
+          "pid": 76205,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11730944,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 76206,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12877824,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 76879,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 8716288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 76880,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 9306112,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 77894,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11714560,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 77895,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12959744,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 77913,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12845056,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 77914,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 80668,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 81504,
+          "parent": 81498,
+          "uid": 501,
+          "rssBytes": 140328960,
+          "executable": "node"
+        },
+        {
+          "pid": 81517,
+          "parent": 81504,
+          "uid": 501,
+          "rssBytes": 13680640,
+          "executable": "/Users/andreyyurlov/.t3/worktrees/megpt-mono/t3-3f03e61d/tool-frontend/node_modules/@esbuild/darwin-arm64/bin/esbuild"
+        },
+        {
+          "pid": 81630,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13008896,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 81631,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11796480,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 82022,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5931008,
+          "executable": "/Applications/Claude.app/Contents/Frameworks/Electron Framework.framework/Helpers/chrome_crashpad_handler"
+        },
+        {
+          "pid": 82709,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11616256,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 82710,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12746752,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 82839,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12926976,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 82840,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11730944,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 83454,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11649024,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 83683,
+          "parent": 99429,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 84499,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12763136,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 84500,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 84874,
+          "parent": 84861,
+          "uid": 501,
+          "rssBytes": 25460736,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/L7_fZdGvp_0kM8oP/bin/python"
+        },
+        {
+          "pid": 85564,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 14417920,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 85565,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13598720,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 87210,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12877824,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 87211,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11747328,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 87675,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12468224,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 87676,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 13811712,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 89720,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12795904,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 89721,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11632640,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 90558,
+          "parent": 90556,
+          "uid": 501,
+          "rssBytes": 13680640,
+          "executable": "/Users/andreyyurlov/.cache/uv/archive-v0/L7_fZdGvp_0kM8oP/bin/python"
+        },
+        {
+          "pid": 90724,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12861440,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 90725,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11599872,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 93176,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 7405568,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 94906,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12992512,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 94907,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11829248,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 97179,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5898240,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97238,
+          "parent": 97179,
+          "uid": 501,
+          "rssBytes": 39763968,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 97265,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5783552,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97290,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5767168,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97351,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5767168,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97387,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5881856,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97388,
+          "parent": 97387,
+          "uid": 501,
+          "rssBytes": 16269312,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 97396,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9781248,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 97508,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11583488,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 97509,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12812288,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 98618,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 11665408,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 98619,
+          "parent": 76711,
+          "uid": 501,
+          "rssBytes": 12845056,
+          "executable": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+        },
+        {
+          "pid": 98790,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9879552,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 98924,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5767168,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 98984,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5767168,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 99020,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 5898240,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        },
+        {
+          "pid": 99021,
+          "parent": 99020,
+          "uid": 501,
+          "rssBytes": 16285696,
+          "executable": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node"
+        },
+        {
+          "pid": 99028,
+          "parent": 1,
+          "uid": 501,
+          "rssBytes": 9699328,
+          "executable": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+        }
+      ]
+    }
+  },
+  "caches": [
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/client/node_modules/.vite",
+      "exists": false,
+      "ownedByThisTask": false,
+      "cleanupAuthorized": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/client/node_modules/.vite-temp",
+      "exists": true,
+      "ownedByThisTask": false,
+      "cleanupAuthorized": false,
+      "uid": 501,
+      "mode": "0o755",
+      "device": 16777232,
+      "inode": 477605534,
+      "mtimeNs": 1794026144068990547,
+      "observedFiles": 0,
+      "observedBytes": 0
+    },
+    {
+      "path": "/Users/andreyyurlov/Library/Caches/ms-playwright",
+      "exists": true,
+      "ownedByThisTask": false,
+      "cleanupAuthorized": false,
+      "uid": 501,
+      "mode": "0o755",
+      "device": 16777232,
+      "inode": 94096438,
+      "mtimeNs": 1793894069011535291,
+      "observedFiles": 14758,
+      "observedBytes": 2494816143
+    },
+    {
+      "path": "/private/tmp",
+      "exists": true,
+      "ownedByThisTask": false,
+      "cleanupAuthorized": false,
+      "uid": 0,
+      "mode": "0o777",
+      "device": 16777232,
+      "inode": 315902304,
+      "mtimeNs": 1794026830679740045,
+      "priorNamespaces": [
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-2C7en8",
+          "uid": 501,
+          "mtimeNs": 1793963561429963814
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-HanUNo",
+          "uid": 501,
+          "mtimeNs": 1793963210807281598
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-JQVmHV",
+          "uid": 501,
+          "mtimeNs": 1793963567650872590
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-KD19JI",
+          "uid": 501,
+          "mtimeNs": 1793964029933191379
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-OZ0ODZ",
+          "uid": 501,
+          "mtimeNs": 1793964026147471697
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-cM45mi",
+          "uid": 501,
+          "mtimeNs": 1793964029893231173
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-g3yCLW",
+          "uid": 501,
+          "mtimeNs": 1793964026239482135
+        },
+        {
+          "path": "/private/tmp/playwright_chromiumdev_profile-rogTJd",
+          "uid": 501,
+          "mtimeNs": 1793963431808247885
+        }
+      ]
+    }
+  ],
+  "prospectivePaths": [
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/grant.json",
+      "exists": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/consumed-attempt.json",
+      "exists": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/future-attempt",
+      "exists": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-proposed-r03-20261107/grant.json",
+      "exists": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-proposed-r03-20261107/consumed-attempt.json",
+      "exists": false
+    },
+    {
+      "path": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189-proposed-r03-20261107/output",
+      "exists": false
+    }
+  ],
+  "runtimeAuthorization": false,
+  "nativeFixtureAuthorization": false
+}

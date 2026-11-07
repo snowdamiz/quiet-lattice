@@ -1,0 +1,4 @@
+resolve-bindings.mjs
+  46:1   error  'process' is not defined  no-undef
+  50:23  error  'process' is not defined  no-undef
+Exit 1. Added the explicit node:process import; see binding-checks.json for the subsequent check.

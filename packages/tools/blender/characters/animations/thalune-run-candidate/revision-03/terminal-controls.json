@@ -1,0 +1,427 @@
+{
+  "status": "PASS_ACTUAL_CLI_DISPATCHER_ADAPTER_INERT_SINK_MATRIX",
+  "nativeCalls": 0,
+  "runtimeJobs": 0,
+  "controls": [
+    {
+      "control": "start-proof-ok-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/start-proof-ok-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "4b892f1445ce2bc66814d2c78811c6f264f15b0132a57478a891006eef77e415"
+    },
+    {
+      "control": "start-proof-ok-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/start-proof-ok-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "dbfd56ce2ae87a31de2b7fa345d57f0bf89ba591bc3d463c2d8ec285c8e3b117"
+    },
+    {
+      "control": "start-proof-fail-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/start-proof-fail-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "3475ef70dae1b6396d31d06e6812c8612882a75d1e92a8dc7f4fcbed19c6b06c"
+    },
+    {
+      "control": "start-proof-fail-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/start-proof-fail-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "76cf280df4d237f01fce416d205892ed9c6637405a4101acf5c9e9ac0c322979"
+    },
+    {
+      "control": "cleanup-proof-ok-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/cleanup-proof-ok-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "f8f8806fef02e06ab3ec73a9d832726b75b56eeb2443f3ad87a474a324e07ba8"
+    },
+    {
+      "control": "cleanup-proof-ok-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/cleanup-proof-ok-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "fa1f3002e81baef48d33386e573cb001fab0373bea6c38cecaa6c86fa35e433e"
+    },
+    {
+      "control": "cleanup-proof-fail-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/cleanup-proof-fail-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "66185a128949802ed3c6f1dfee5ca92b838f8af69fc0108f5734c64bc1174e82"
+    },
+    {
+      "control": "cleanup-proof-fail-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/cleanup-proof-fail-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "4778bca7cff2d319b8e643ae3ef2bc651658257b90caf62bcae6829d7d451269"
+    },
+    {
+      "control": "small-audit-proof-ok-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/small-audit-proof-ok-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "c8102472a1df880b5fadd1b8fb345172ab076bcecbec9a451f623a8be8bbc12b"
+    },
+    {
+      "control": "small-audit-proof-ok-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/small-audit-proof-ok-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "44b63bdc59adc7a0fe93644dcba8f6012c1c577cc00757bcb3e72e4c16c22ab1"
+    },
+    {
+      "control": "small-audit-proof-fail-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/small-audit-proof-fail-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "fe516c736a608c68e1c969e4fe1c6f06eb41b02628923da4e74a120b45899ac6"
+    },
+    {
+      "control": "small-audit-proof-fail-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/small-audit-proof-fail-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "6b73f31c2cdbd2d2f493f3e582a87276d40cd533c4d026d0e6755f19df9dbc41"
+    },
+    {
+      "control": "large-audit-proof-ok-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-audit-proof-ok-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "1c1411a53882d98e92745c587516137e921f46fb5b0f90c9854e504269ddd913"
+    },
+    {
+      "control": "large-audit-proof-ok-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-audit-proof-ok-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "ab42200a3503944b771ca5478c1eba59528960c2053ff0b26c155e323dbba174"
+    },
+    {
+      "control": "large-audit-proof-fail-packet-ok",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-audit-proof-fail-packet-ok",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "e15bab6cb3bcadc7f9c90982f4cd8fc5ce35de7d039379e6b54e8d0e56daae62"
+    },
+    {
+      "control": "large-audit-proof-fail-packet-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-audit-proof-fail-packet-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "9ab36554d046d3c5037386e915dc21989d243f4ea60d0ddd3e44007de381869a"
+    },
+    {
+      "control": "large-error-proof-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-error-proof-fail",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "f6abaadffb3a3b33c1ff9dc6ab3377bcae68fec5d9d3f1f9fb9dfd197a711b0b"
+    },
+    {
+      "control": "happy-five",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/happy-five",
+      "cliExitCode": 0,
+      "structuredException": false,
+      "starts": 5,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "89da4b5ac8af73488dd1d0b6769718b7351c8ff001892df7d1a15b582e4afa57"
+    },
+    {
+      "control": "first-refused-audit-recovers",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/first-refused-audit-recovers",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "c3e15a8420d1ed8f46edbc63e993f761c89bf9f29972ec2bab3c0a8691cc153c"
+    },
+    {
+      "control": "partial-proof-write",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/partial-proof-write",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "d2f2ccd0ec1e89e8026fbec42f4460a426569635161fcdbcbc783958d3baad28"
+    },
+    {
+      "control": "mismatched-proof-write",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/mismatched-proof-write",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "940c8874d145df1f9621a83d5235250ee140f1f1790a289e7a76821d9f231337"
+    },
+    {
+      "control": "partial-packet-write",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/partial-packet-write",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "5e1376a68c6eaff20c014b58450bdca36d6f3fbe5363287c58a4641a93ea5a1b"
+    },
+    {
+      "control": "mismatched-packet-write",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/mismatched-packet-write",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "8877ed3c5d29f4460485143eea4d519d23b1eb060ab7f7ff49b3a44eb05ef5b6"
+    },
+    {
+      "control": "disk-observation-failure",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/disk-observation-failure",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": true,
+      "returnedResultSha256": "a814523f1ee6e16928c9645a240885790bbdb1979e8f02c89a2a69a902714b21"
+    },
+    {
+      "control": "stdout-fails",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/stdout-fails",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "e02cac32038398330e47ee8fbcc8010c433c7bb6578fbb0e34154732a0003f4a"
+    },
+    {
+      "control": "stdout-short-write",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/stdout-short-write",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "3dc096ec1b7f03958c759e4e323a21e67e40513783790be26e03a8f4775c7c94"
+    },
+    {
+      "control": "stdout-flush-fails",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/stdout-flush-fails",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "d3bf04dc2bb6f8aafc6282dfedc808205682c13ae47a85ba14f8c4e9e9fb8213"
+    },
+    {
+      "control": "all-sinks-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/all-sinks-fail",
+      "cliExitCode": 1,
+      "structuredException": true,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "e5c4f27bd302aee36704407021d3ab49df3a2efe36fdcf1351a7af932800e568"
+    },
+    {
+      "control": "large-stdout-fails",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-stdout-fails",
+      "cliExitCode": 1,
+      "structuredException": false,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "22f2f5d3fe4a5e60fef652cce78ddae57c7109003493bd41b7caffb1110b5d3d"
+    },
+    {
+      "control": "large-all-sinks-fail",
+      "pass_": true,
+      "root": "/private/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/thalune-terminal-controls-dos3mexu/large-all-sinks-fail",
+      "cliExitCode": 1,
+      "structuredException": true,
+      "starts": 1,
+      "sinkAttempts": {
+        "proof": 1,
+        "packet": 1
+      },
+      "completeObservationsPersisted": false,
+      "returnedResultSha256": "7f649a2da5e04c8b1dac6d93222c134c09501aca441eb354f830eb3c22bcb232"
+    }
+  ]
+}

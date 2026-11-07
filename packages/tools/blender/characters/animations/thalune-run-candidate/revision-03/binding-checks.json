@@ -1,0 +1,49 @@
+[
+  {
+    "name": "binding-format",
+    "argv": [
+      "pnpm",
+      "exec",
+      "prettier",
+      "--check",
+      "--ignore-path",
+      "/dev/null",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/resolve-bindings.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/CURRENT_USAGE.md"
+    ],
+    "exitCode": 0,
+    "stdout": "Checking formatting...\nAll matched files use Prettier code style!\n",
+    "stderr": "",
+    "note": ""
+  },
+  {
+    "name": "binding-lint",
+    "argv": [
+      "pnpm",
+      "exec",
+      "eslint",
+      "--no-ignore",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/resolve-bindings.mjs"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "",
+    "note": ""
+  },
+  {
+    "name": "cache-cwd-owners",
+    "argv": [
+      "/usr/sbin/lsof",
+      "-a",
+      "-u",
+      "501",
+      "-d",
+      "cwd",
+      "-Fpcn"
+    ],
+    "exitCode": 0,
+    "stdout": "[[\"p65163\", \"cPython\", \"fcwd\", \"n/Users/andreyyurlov/.t3/worktrees/space/t3-11167406\"], [\"p65218\", \"clsof\", \"fcwd\", \"n/Users/andreyyurlov/.t3/worktrees/space/t3-11167406\"], [\"p65456\", \"cnode_repl\", \"fcwd\", \"n/Users/andreyyurlov/.t3/worktrees/space/t3-11167406\"], [\"p65457\", \"cnode_repl\", \"fcwd\", \"n/Users/andreyyurlov/.t3/worktrees/space/t3-11167406\"]]",
+    "stderr": "",
+    "note": "Current cwd owners only; a cwd name is not proof of cache ownership or native release. Other namespaces remain unowned."
+  }
+]

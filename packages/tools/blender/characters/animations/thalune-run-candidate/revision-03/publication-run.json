@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/publication-controls.mjs",
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/t02-run-pure-hCFY3u/complete",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/publication-controls.json"
+  ],
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "node:internal/modules/run_main:111\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 8\n\n    at file:///Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision-03/publication-controls.mjs:40:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 0,\n  expected: 8,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v26.12.1\n"
+}

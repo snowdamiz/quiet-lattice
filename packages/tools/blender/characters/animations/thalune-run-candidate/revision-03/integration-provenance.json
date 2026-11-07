@@ -1,0 +1,31 @@
+{
+  "base": "c8f2103ae22af6f3479cfa81716e343831ec7065",
+  "combinedLibraryHead": "afb3921ae59616ab5b555b771cd9dc1a914d78f2",
+  "combinedLibraryTree": "ac859db599e124c7d91d462e329deae5b9d91e37",
+  "cherryPicks": [
+    {
+      "source": "07768bf14fce30c1e78db6750f44d8fbd561f4b5",
+      "destination": "ebdcf455096a1d74e0df204e3c96a702e58b6891"
+    },
+    {
+      "source": "83b145e9d6dc845aa6c7706ada69019fc813b202",
+      "destination": "afb3921ae59616ab5b555b771cd9dc1a914d78f2"
+    }
+  ],
+  "additionalRecovery": [
+    {
+      "commit": "906721560c059fc12962e7b44cbe067303136a47",
+      "source": "packages/tools/blender/characters/animations/lossless-primary-observer-corrected/resolve-browser.cjs",
+      "destination": "packages/tools/blender/characters/animations/thalune-run-candidate/resolve-browser.cjs",
+      "sha256": "f1d2b272fcf61c9e6ad302e65168b754d88963c4c48c4e67bd19a3da622c676a",
+      "mode": "exact"
+    },
+    {
+      "commit": "ca7d91e378e9d2f3f0ce8f0651475dcb843875d9",
+      "source": "assets/blend/stations/_authoring/resolve_round4_station_routes.mjs",
+      "destination": "packages/tools/blender/characters/animations/thalune-run-candidate/retained-station/resolve_round4_station_routes.mjs",
+      "sha256": "a214b5e87505c399d52daab94628c82e16b5f75a7aa579b714e7be724028b2f4",
+      "mode": "exact"
+    }
+  ]
+}

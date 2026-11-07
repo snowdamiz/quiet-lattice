@@ -19,7 +19,8 @@ def main():
     provenance=json.loads((here/'recovery-provenance.json').read_text())
     for row in provenance['files']:
         if row['mode'].startswith('exact'):assert sha(root/row['destination']) in [row['sha256'],row.get('lfsOid')]
-    source_paths=sorted([*here.glob('*.py'),*here.glob('*.mjs'),*(here/'retained-station').glob('*.py')])
+    source_paths=sorted([*here.glob('*.py'),*here.glob('*.mjs'),*here.glob('*.cjs'),
+                         *(here/'retained-station').glob('*.py'),*(here/'retained-station').glob('*.mjs')])
     asset_paths=[root/'assets/blend/characters/animations/shared_motion.blend',*sorted(assets.iterdir())]
     for species in ['thalune','ixari','ulgani']:
         asset_paths.append(root/f'packages/client/public/models/characters/{species}.glb')
@@ -57,9 +58,25 @@ def main():
         bindings=[dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p)) for p in [*source_paths,*asset_paths]])
     binary_paths=[Path(ready['node']),Path(ready['rgbPrimary']['python']),Path(ready['rgbPrimary']['ffmpeg']),Path(ready['rgbPrimary']['ffprobe'])]
     ready['softwareBindings']=[dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p)) for p in binary_paths]
+    installed_path=here/'runtime-bindings.json'
+    if installed_path.exists():
+        installed=json.loads(installed_path.read_text())
+        assert installed['runtimeAuthorization'] is False and installed['nativeFixtureAuthorization'] is False
+        assert installed['root']==str(root) and installed['pathEnvironment']==os.environ['PATH']
+        assert installed['executables']['node']==ready['node'] and installed['executables']['pythonLauncher']==ready['rgbPrimary']['python']
+        assert installed['executables']['ffmpeg']==ready['rgbPrimary']['ffmpeg'] and installed['executables']['ffprobe']==ready['rgbPrimary']['ffprobe']
+        assert installed['browser']==installed['resolver'] and installed['browser']['spawnCalls']==[] and installed['routes']['forbiddenCalls']==[]
+        for name in ['tsxImport','browser','resolver','process_binary_sha256']:ready[name]=installed[name]
+        for name in ['bindings','softwareBindings']:
+            combined={row['path']:row for row in [*ready[name],*installed[name]]}
+            ready[name]=list(combined.values())
+            for row in ready[name]:assert Path(row['path']).stat().st_size==row['bytes'] and sha(row['path'])==row['sha256'],'Installed binding drift: '+row['path']
+        ready['bindings'].append(dict(path=str(installed_path),bytes=installed_path.stat().st_size,sha256=sha(installed_path)))
+        ready['runtimeRoutes']='Installed local identities frozen; runtime/native qualification and current resource admission remain disabled'
     c.verify_structure(ready)
     save(here/'readiness.json',ready)
     files=[*source_paths,here/'readiness.json',here/'recovery-provenance.json',here/'red-controls.json']
+    if installed_path.exists():files.append(installed_path)
     save(here/'candidate-index.json',dict(phase='SOURCE_ONLY_DISABLED_REVIEW_CANDIDATE',runtimeAuthorization=False,
         files=[dict(path=str(p.relative_to(here)),bytes=p.stat().st_size,sha256=sha(p)) for p in files]))
     print(json.dumps(dict(status='FROZEN_SOURCE_ONLY',sources=len(source_paths),bindings=len(ready['bindings']),
