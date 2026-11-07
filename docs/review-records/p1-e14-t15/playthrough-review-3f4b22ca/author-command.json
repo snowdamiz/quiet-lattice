@@ -1,0 +1,16 @@
+{
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570",
+  "argv": [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "packages/tools/src/capture/playthrough-run.lifecycle.test.ts",
+    "packages/tools/src/capture/capture.lifecycle.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--reporter=verbose",
+    "--reporter=json",
+    "--outputFile.json=/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/author-results.json"
+  ]
+}

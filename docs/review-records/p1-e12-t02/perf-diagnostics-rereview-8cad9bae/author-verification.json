@@ -1,0 +1,94 @@
+{
+  "head": "8cad9bae11740fb607aa90da221256babe92bf62",
+  "recoveryCommit": "f4556abc5dca002569b367475dd61084738ebfd8",
+  "base": "991ffe3c080d3e7b1224a1bff53168f8acfe3d7b",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+  "branch": "t3/02adc2f8",
+  "referenceHead": "2a0c740fbc4d0b900451ba0d506575868590c83a",
+  "referenceClean": true,
+  "worktreeClean": true,
+  "node": "v26.12.1",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "tests": {
+    "after-adversarial.tap": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "after-index.tap": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "after-regressions.tap": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "before-adversarial.tap": {
+      "tests": 13,
+      "pass": 9,
+      "fail": 4,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "before-index.tap": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "before-regressions.tap": {
+      "tests": 10,
+      "pass": 0,
+      "fail": 10,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "testTimeoutSecondsPerSuite": 30,
+  "checks": {
+    "nodeSyntax": "passed all four mjs files",
+    "eslint": "passed all four mjs files with repository config and structuredClone/setImmediate globals",
+    "diffCheck": "passed",
+    "scopeCheck": "passed"
+  },
+  "changedPaths": [
+    "packages/tools/src/diagnostics/review-performance/README.md",
+    "packages/tools/src/diagnostics/review-performance/adversarial.test.mjs",
+    "packages/tools/src/diagnostics/review-performance/index.mjs",
+    "packages/tools/src/diagnostics/review-performance/index.test.mjs",
+    "packages/tools/src/diagnostics/review-performance/regressions.test.mjs"
+  ],
+  "sha256": {
+    "packages/tools/src/diagnostics/review-performance/README.md": "12140aeaa932c2a0aa114dcfb586db71d9474a740b2eb9ac27c99dee4951e868",
+    "packages/tools/src/diagnostics/review-performance/adversarial.test.mjs": "e7ca87128020d6339777670fd48e32c3308cc55a1322500ecc7a4f54dbb8138a",
+    "packages/tools/src/diagnostics/review-performance/index.mjs": "f1aa8537013e87d25fdb97f05fe7b859735653e35810b90074f03b6fe098f5d7",
+    "packages/tools/src/diagnostics/review-performance/index.test.mjs": "cd40edaa518f3fcfbaa2118aae6d97722a245159835970c57274f595e2277747",
+    "packages/tools/src/diagnostics/review-performance/regressions.test.mjs": "e76a521f9283c2c27bd97737db820baf995708cf4069a0d1c99cd8f0124777e3",
+    "/tmp/review-performance-2a0c740-independent-1cym8r0z/report.md": "ff9066d477fe7f076e69e565ecb5fe4da32b7ba811792377e65d5309bd0a02ed",
+    "/tmp/review-performance-2a0c740-independent-1cym8r0z/adversarial.test.mjs": "0f50f2e8e66d309dd6a95f94e9acaff6fdad6b7bb03dbf6f3585ce3beb1e4fce",
+    "/private/tmp/lark-performance-source-analysis-hysamapc/report.md": "79196ba329c6e61063226330f9cef59984007b41d3f0fc866ddf58211e53bfe2"
+  },
+  "limitations": [
+    "Fake-runtime Node tests only; independent rereview pending.",
+    "No runtime admission, browser/native/GPU execution or hardware/query proof.",
+    "No comparability gate or verified loaded-runtime identities; external configuration records remain required.",
+    "Pass timers/global query lease/raw/pending/lost samples and resolution/MSAA/material/LOD adapters remain pending.",
+    "No causal attribution, performance fix or scene-budget compliance established.",
+    "A failing restore callback can still leave state unrestored; errors are retained and remaining cleanup is attempted."
+  ]
+}

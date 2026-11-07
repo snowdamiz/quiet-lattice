@@ -1,0 +1,86 @@
+[
+  {
+    "suite": "supplied",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/index.test.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+    "exitCode": 0,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  {
+    "suite": "retained-adversarial",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+    "exitCode": 0,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  {
+    "suite": "author-regressions",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/regressions.test.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+    "exitCode": 0,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  {
+    "suite": "original-adversarial",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/tmp/review-performance-8cad9bae-independent-YzSq0S/original-adversarial.test.mjs"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+    "exitCode": 0,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  }
+]

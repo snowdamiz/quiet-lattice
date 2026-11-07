@@ -1,0 +1,53 @@
+{
+  "id": 7,
+  "name": "candidate dock output",
+  "argv": [
+    "pnpm",
+    "--filter",
+    "@astra/tools",
+    "exec",
+    "tsx",
+    "--import",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/preload.mjs",
+    "src/capture/playthrough-run.ts",
+    "leave",
+    "dock"
+  ],
+  "scenario": {},
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 0,
+  "stdout": "[leave] (0s) leave ok\n[dock] (0s) dock ok\n  dock state: {\"mode\":\"docked\",\"pads\":[\"player\",\"npc\",\"free\"],\"hud\":\"Docked\"}\n",
+  "stderr": "",
+  "meta": {
+    "code": 0,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+      "leave",
+      "dock"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "phase:dock",
+      "dockState",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

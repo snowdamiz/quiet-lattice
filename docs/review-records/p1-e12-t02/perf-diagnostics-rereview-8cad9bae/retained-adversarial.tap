@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: async perf rejection restores initial root/control, preserves failure, and releases lease
+ok 1 - async perf rejection restores initial root/control, preserves failure, and releases lease
+  ---
+  duration_ms: 10.956875
+  type: 'test'
+  ...
+# Subtest: async apply rejection restores partial mutation and releases lease
+ok 2 - async apply rejection restores partial mutation and releases lease
+  ---
+  duration_ms: 2.136708
+  type: 'test'
+  ...
+# Subtest: async restore rejection retains its failure, restores root, and releases lease
+ok 3 - async restore rejection retains its failure, restores root, and releases lease
+  ---
+  duration_ms: 0.818417
+  type: 'test'
+  ...
+# Subtest: BUG R1: preserve BOTH errors when async perf and final restoration reject
+ok 4 - BUG R1: preserve BOTH errors when async perf and final restoration reject
+  ---
+  duration_ms: 2.593625
+  type: 'test'
+  ...
+# Subtest: BUG R2: initialization failure must not poison future runs on the same review
+ok 5 - BUG R2: initialization failure must not poison future runs on the same review
+  ---
+  duration_ms: 0.78225
+  type: 'test'
+  ...
+# Subtest: BUG R2 variant: uncloneable input must not leave the matrix lease active
+ok 6 - BUG R2 variant: uncloneable input must not leave the matrix lease active
+  ---
+  duration_ms: 0.488541
+  type: 'test'
+  ...
+# Subtest: BUG R3: capture records the available atmosphere march branch instead of cloning its method
+ok 7 - BUG R3: capture records the available atmosphere march branch instead of cloning its method
+  ---
+  duration_ms: 0.268708
+  type: 'test'
+  ...
+# Subtest: concurrent matrices are rejected and a successful run releases its lease
+ok 8 - concurrent matrices are rejected and a successful run releases its lease
+  ---
+  duration_ms: 0.932875
+  type: 'test'
+  ...
+# Subtest: no-op and persistent runtime reversal of toggle are rejected
+ok 9 - no-op and persistent runtime reversal of toggle are rejected
+  ---
+  duration_ms: 3.178375
+  type: 'test'
+  ...
+# Subtest: restoration that silently fails is detected
+ok 10 - restoration that silently fails is detected
+  ---
+  duration_ms: 1.556583
+  type: 'test'
+  ...
+# Subtest: five default repetitions really execute 5 baseline and 10 alternating intervention calls
+ok 11 - five default repetitions really execute 5 baseline and 10 alternating intervention calls
+  ---
+  duration_ms: 3.327667
+  type: 'test'
+  ...
+# Subtest: captured supported config is detached; missing hardware/query evidence stays unknown
+ok 12 - captured supported config is detached; missing hardware/query evidence stays unknown
+  ---
+  duration_ms: 0.253542
+  type: 'test'
+  ...
+# Subtest: documented limitation: camera/clock/inventory drift is absent from captured snapshots and does not stop the runner
+ok 13 - documented limitation: camera/clock/inventory drift is absent from captured snapshots and does not stop the runner
+  ---
+  duration_ms: 0.829875
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85.89375

@@ -1,0 +1,166 @@
+{
+  "verdict": "REVISE",
+  "head": "8cad9bae11740fb607aa90da221256babe92bf62",
+  "worktree": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+  "status": "",
+  "unchangedSinceStart": true,
+  "sourceMatchesPinnedCommit": true,
+  "node": "v22.23.3",
+  "nodeBinary": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "sealedUtc": "2026-11-07T19:59:04.909268+00:00",
+  "sourceSha256": {
+    "packages/tools/src/diagnostics/review-performance/README.md": "12140aeaa932c2a0aa114dcfb586db71d9474a740b2eb9ac27c99dee4951e868",
+    "packages/tools/src/diagnostics/review-performance/adversarial.test.mjs": "e7ca87128020d6339777670fd48e32c3308cc55a1322500ecc7a4f54dbb8138a",
+    "packages/tools/src/diagnostics/review-performance/index.mjs": "f1aa8537013e87d25fdb97f05fe7b859735653e35810b90074f03b6fe098f5d7",
+    "packages/tools/src/diagnostics/review-performance/index.test.mjs": "cd40edaa518f3fcfbaa2118aae6d97722a245159835970c57274f595e2277747",
+    "packages/tools/src/diagnostics/review-performance/regressions.test.mjs": "e76a521f9283c2c27bd97737db820baf995708cf4069a0d1c99cd8f0124777e3"
+  },
+  "focusedTests": [
+    {
+      "suite": "supplied",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/index.test.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+      "exitCode": 0,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "suite": "retained-adversarial",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/adversarial.test.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+      "exitCode": 0,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "suite": "author-regressions",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8/packages/tools/src/diagnostics/review-performance/regressions.test.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+      "exitCode": 0,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {
+        "tests": 10,
+        "pass": 10,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "suite": "original-adversarial",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "/tmp/review-performance-8cad9bae-independent-YzSq0S/original-adversarial.test.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-02adc2f8",
+      "exitCode": 0,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  ],
+  "independentTests": {
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs"
+    ],
+    "exitCode": 1,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 28,
+      "pass": 25,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "confirmation": [
+    {
+      "name": "r1-confirmation",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=R1 raw",
+        "/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs"
+      ],
+      "exitCode": 1,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {
+        "tests": 3,
+        "pass": 0,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "raw-errors-repro",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+        "/tmp/review-performance-8cad9bae-independent-YzSq0S/raw-errors-repro.mjs"
+      ],
+      "exitCode": 0,
+      "timeoutSeconds": 30,
+      "timedOut": false,
+      "counts": {}
+    }
+  ],
+  "closure": {
+    "R1": "original reproductions fixed; raw-error formatting failure unresolved",
+    "R2": "closed within preparation scope",
+    "R3": "closed within preparation scope"
+  },
+  "scope": "read-only index.mjs/README/tests; bounded fake-runtime Node tests only",
+  "runtimeAdmitted": false,
+  "performanceApproved": false
+}

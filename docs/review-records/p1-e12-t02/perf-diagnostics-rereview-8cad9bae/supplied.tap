@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: reproduces baseline, alternates and records configs; restores initial state
+ok 1 - reproduces baseline, alternates and records configs; restores initial state
+  ---
+  duration_ms: 4.353542
+  type: 'test'
+  ...
+# Subtest: no-op rejected and restoration attempted
+ok 2 - no-op rejected and restoration attempted
+  ---
+  duration_ms: 0.965791
+  type: 'test'
+  ...
+# Subtest: throw under B restores state and retains error receipt
+ok 3 - throw under B restores state and retains error receipt
+  ---
+  duration_ms: 1.8105
+  type: 'test'
+  ...
+# Subtest: missing, invalid and fallback timing never establish performance
+ok 4 - missing, invalid and fallback timing never establish performance
+  ---
+  duration_ms: 0.137208
+  type: 'test'
+  ...
+# Subtest: runtime undoing intervention is detected
+ok 5 - runtime undoing intervention is detected
+  ---
+  duration_ms: 1.062917
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.691167

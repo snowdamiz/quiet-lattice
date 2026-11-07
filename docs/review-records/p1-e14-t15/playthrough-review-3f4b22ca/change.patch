@@ -1,0 +1,363 @@
+diff --git a/packages/tools/src/capture/playthrough-run.lifecycle.test.ts b/packages/tools/src/capture/playthrough-run.lifecycle.test.ts
+new file mode 100644
+index 000000000..563b3e108
+--- /dev/null
++++ b/packages/tools/src/capture/playthrough-run.lifecycle.test.ts
+@@ -0,0 +1,225 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
++import { runPlaythrough } from './playthrough-run.ts';
++
++const ports = vi.hoisted(() => ({ startVite: vi.fn(), glArgs: vi.fn(), launch: vi.fn() }));
++vi.mock('./capture.ts', () => ({ startVite: ports.startVite, glArgs: ports.glArgs }));
++vi.mock('@playwright/test', () => ({ chromium: { launch: ports.launch } }));
++
++const rawFailures = [undefined, null, false, 0, '', Object.freeze({ reason: 'failure' }), new Error('failure')];
++const defaults = ['leave', 'descend', 'land', 'disembark', 'mine', 'analyze', 'board', 'climb', 'dock'];
++const dockState = { mode: 'docked', pads: ['player', 'npc', 'free'], hud: 'Docked' };
++const trace: string[] = [];
++const faults = new Map<string, unknown>();
++const close = vi.fn();
++const stop = vi.fn();
++const newPage = vi.fn();
++const goto = vi.fn();
++const waitForFunction = vi.fn();
++const evaluate = vi.fn();
++const on = vi.fn();
++
++function visit(stage: string) {
++  trace.push(stage);
++  if (faults.has(stage)) throw faults.get(stage);
++}
++
++async function rejected(promise: Promise<unknown>): Promise<unknown> {
++  const outcome = await promise.then(
++    () => ({ kind: 'success' as const }),
++    (error: unknown) => ({ kind: 'failure' as const, error }),
++  );
++  expect(outcome.kind).toBe('failure');
++  if (outcome.kind !== 'failure') throw new Error('playthrough unexpectedly succeeded');
++  return outcome.error;
++}
++
++function expectAggregate(error: unknown, expected: unknown[]) {
++  expect(error).toBeInstanceOf(AggregateError);
++  if (!(error instanceof AggregateError)) throw new Error('missing AggregateError');
++  expect(Object.hasOwn(error, 'cause')).toBe(true);
++  expect(error.cause).toBe(expected[0]);
++  expect(error.errors).toHaveLength(expected.length);
++  expected.forEach((value, index) => expect(error.errors[index]).toBe(value));
++}
++
++beforeEach(() => {
++  vi.resetAllMocks();
++  trace.length = 0;
++  faults.clear();
++  ports.startVite.mockImplementation(async () => {
++    visit('startVite');
++    return { url: 'http://fake-vite.invalid', stop };
++  });
++  ports.glArgs.mockImplementation(() => {
++    visit('glArgs');
++    return { args: ['--fake-gl'] };
++  });
++  ports.launch.mockImplementation(async () => {
++    visit('launch');
++    return { newPage, close };
++  });
++  newPage.mockImplementation(async () => {
++    visit('newPage');
++    return { on, goto, waitForFunction, evaluate };
++  });
++  goto.mockImplementation(async () => visit('goto'));
++  waitForFunction.mockImplementation(async () => visit('waitForFunction'));
++  evaluate.mockImplementationOnce(async () => visit('initialize'));
++  evaluate.mockImplementation(async (_fn: unknown, phase?: string) => {
++    visit(phase ? `phase:${phase}` : 'dockState');
++    return phase ? `${phase} ok` : dockState;
++  });
++  close.mockImplementation(async () => visit('close'));
++  stop.mockImplementation(async () => visit('stop'));
++  vi.spyOn(Date, 'now').mockReturnValue(0);
++  vi.spyOn(console, 'log').mockImplementation(() => {});
++  vi.spyOn(process, 'exit').mockImplementation(() => {
++    throw new Error('must return or reject after cleanup, never process.exit');
++  });
++});
++
++afterEach(() => vi.restoreAllMocks());
++
++describe('playthrough resource ownership', () => {
++  it.each(rawFailures)('does not clean up resources that were never acquired %#', async (original) => {
++    faults.set('startVite', original);
++    expect(await rejected(runPlaythrough(['leave']))).toBe(original);
++    expect(trace).toEqual(['startVite']);
++    expect(close).not.toHaveBeenCalled();
++    expect(stop).not.toHaveBeenCalled();
++  });
++
++  describe.each(['glArgs', 'launch'])('%s before browser acquisition', (stage) => {
++    it.each(rawFailures)('retains raw failure and stops Vite exactly once %#', async (original) => {
++      faults.set(stage, original);
++      expect(await rejected(runPlaythrough(['leave']))).toBe(original);
++      expect(close).not.toHaveBeenCalled();
++      expect(stop).toHaveBeenCalledExactlyOnceWith();
++      expect(trace.at(-1)).toBe('stop');
++      if (stage === 'glArgs') expect(ports.launch).not.toHaveBeenCalled();
++    });
++
++    it.each(rawFailures)('retains raw setup failure before stop failure %#', async (original) => {
++      const cleanup = new Error('stop');
++      faults.set(stage, original);
++      faults.set('stop', cleanup);
++      expectAggregate(await rejected(runPlaythrough(['leave'])), [original, cleanup]);
++      expect(close).not.toHaveBeenCalled();
++      expect(stop).toHaveBeenCalledExactlyOnceWith();
++    });
++  });
++
++  describe.each(['goto', 'close', 'stop'])('%s after browser acquisition', (stage) => {
++    it.each(rawFailures)('retains a single raw failure and attempts every cleanup once %#', async (original) => {
++      faults.set(stage, original);
++      expect(await rejected(runPlaythrough(['leave']))).toBe(original);
++      expect(close).toHaveBeenCalledExactlyOnceWith();
++      expect(stop).toHaveBeenCalledExactlyOnceWith();
++      expect(trace.slice(-2)).toEqual(['close', 'stop']);
++    });
++  });
++
++  it.each(['newPage', 'waitForFunction', 'initialize', 'phase:leave', 'dockState'])('cleans up after %s fails', async (stage) => {
++    const original = new Error(stage);
++    faults.set(stage, original);
++    expect(await rejected(runPlaythrough(['leave', 'dock']))).toBe(original);
++    expect(close).toHaveBeenCalledExactlyOnceWith();
++    expect(stop).toHaveBeenCalledExactlyOnceWith();
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++  });
++
++  it.each(rawFailures)('retains raw work failure before both cleanup failures %#', async (original) => {
++    const browserFailure = new Error('close');
++    const viteFailure = new Error('stop');
++    faults.set('goto', original);
++    faults.set('close', browserFailure);
++    faults.set('stop', viteFailure);
++    expectAggregate(await rejected(runPlaythrough(['leave'])), [original, browserFailure, viteFailure]);
++    expect(close).toHaveBeenCalledExactlyOnceWith();
++    expect(stop).toHaveBeenCalledExactlyOnceWith();
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++  });
++
++  it.each(['close', 'stop'])('retains work failure before the sole %s failure', async (stage) => {
++    const original = new Error('work');
++    faults.set('goto', original);
++    faults.set(stage, false);
++    expectAggregate(await rejected(runPlaythrough(['leave'])), [original, false]);
++    expect(close).toHaveBeenCalledExactlyOnceWith();
++    expect(stop).toHaveBeenCalledExactlyOnceWith();
++  });
++
++  it.each(rawFailures)('retains raw cleanup failures after successful work %#', async (original) => {
++    faults.set('close', original);
++    faults.set('stop', false);
++    expectAggregate(await rejected(runPlaythrough(['leave'])), [original, false]);
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++    expect(close).toHaveBeenCalledExactlyOnceWith();
++    expect(stop).toHaveBeenCalledExactlyOnceWith();
++  });
++
++  it('retains simultaneous falsy work, close, and stop failures', async () => {
++    faults.set('goto', undefined);
++    faults.set('close', null);
++    faults.set('stop', 0);
++    expectAggregate(await rejected(runPlaythrough(['leave'])), [undefined, null, 0]);
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++  });
++});
++
++describe('playthrough protocol', () => {
++  it('preserves default phases, viewport, readiness, printed results, and dock state', async () => {
++    expect(await runPlaythrough([])).toBe(0);
++    expect(trace).toEqual([
++      'startVite',
++      'glArgs',
++      'launch',
++      'newPage',
++      'goto',
++      'waitForFunction',
++      'initialize',
++      ...defaults.map((phase) => `phase:${phase}`),
++      'dockState',
++      'close',
++      'stop',
++    ]);
++    expect(ports.launch).toHaveBeenCalledExactlyOnceWith({ args: ['--fake-gl'] });
++    expect(newPage).toHaveBeenCalledExactlyOnceWith({ viewport: { width: 640, height: 360 } });
++    expect(goto).toHaveBeenCalledExactlyOnceWith('http://fake-vite.invalid/');
++    expect(waitForFunction).toHaveBeenCalledExactlyOnceWith(expect.any(Function), null, { timeout: 120_000 });
++    expect(console.log).toHaveBeenCalledTimes(defaults.length + 1);
++    defaults.forEach((phase, index) => expect(console.log).toHaveBeenNthCalledWith(index + 1, `[${phase}] (0s) ${phase} ok`));
++    expect(console.log).toHaveBeenLastCalledWith('  dock state:', JSON.stringify(dockState));
++    expect(close).toHaveBeenCalledExactlyOnceWith();
++    expect(stop).toHaveBeenCalledExactlyOnceWith();
++    expect(process.exit).not.toHaveBeenCalled();
++  });
++
++  it('preserves requested phase order and ignores argument separators', async () => {
++    expect(await runPlaythrough(['--', 'mine', '--', 'board'])).toBe(0);
++    expect(trace.filter((step) => step.startsWith('phase:'))).toEqual(['phase:mine', 'phase:board']);
++    expect(trace).not.toContain('dockState');
++  });
++
++  it.each(['THREW boom', 'fail', 'timed out', 'stuck'])('returns failure status for %s after completing phases and cleanup', async (result) => {
++    evaluate.mockImplementation(async (_fn: unknown, phase?: string) => (phase === 'leave' ? result : 'ok'));
++    expect(await runPlaythrough(['leave', 'mine'])).toBe(1);
++    expect(console.log).toHaveBeenCalledWith(`[leave] (0s) ${result}`);
++    expect(console.log).toHaveBeenCalledWith('[mine] (0s) ok');
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++    expect(process.exit).not.toHaveBeenCalled();
++  });
++
++  it('prints page and console errors and returns failure after cleanup', async () => {
++    on.mockImplementation((event: string, listener: (value: unknown) => void) => {
++      if (event === 'pageerror') listener(new Error('page broke'));
++      if (event === 'console') {
++        listener({ type: () => 'warning', text: () => 'ignored' });
++        listener({ type: () => 'error', text: () => 'console broke' });
++      }
++    });
++    expect(await runPlaythrough(['leave'])).toBe(1);
++    expect(console.log).toHaveBeenCalledWith('errors:', 'page broke\nconsole broke');
++    expect(trace.slice(-2)).toEqual(['close', 'stop']);
++  });
++});
+diff --git a/packages/tools/src/capture/playthrough-run.ts b/packages/tools/src/capture/playthrough-run.ts
+index 4c5874438..ee4d9011f 100644
+--- a/packages/tools/src/capture/playthrough-run.ts
++++ b/packages/tools/src/capture/playthrough-run.ts
+@@ -1,57 +1,80 @@
+ // Runs the client's scripted playthrough (packages/client/src/dev/playthrough.js) headless and prints each phase's
+ // result: `pnpm --filter @astra/tools exec tsx src/capture/playthrough-run.ts [phase …]`.
++import { pathToFileURL } from 'node:url';
+ import { chromium } from '@playwright/test';
+ import { glArgs, startVite } from './capture.ts';
+ 
+-const phases = process.argv.slice(2).filter((a) => a !== '--');
+-const run = phases.length ? phases : ['leave', 'descend', 'land', 'disembark', 'mine', 'analyze', 'board', 'climb', 'dock'];
+-const vite = await startVite();
+-const browser = await chromium.launch({ args: glArgs().args });
+-let failed = false;
+-try {
+-  const page = await browser.newPage({ viewport: { width: 640, height: 360 } });
+-  const errors: string[] = [];
+-  page.on('pageerror', (e) => errors.push(e.message));
+-  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+-  await page.goto(`${vite.url}/`);
+-  await page.waitForFunction(() => 'dev' in window && 'step' in window, null, { timeout: 120_000 });
+-  await page.evaluate(async () => {
+-    const w = window as unknown as { dev: { boot(): Promise<void> }; step(n: number): Promise<void>; __pt: unknown };
+-    await w.dev.boot();
+-    await w.step(60);
+-    // a page-side module path (served by Vite), held in a variable so TypeScript does not try to resolve it
+-    const url = '/src/dev/playthrough.js';
+-    w.__pt = (await import(/* @vite-ignore */ url)).playthrough();
+-  });
+-  for (const ph of run) {
+-    const t0 = Date.now();
+-    const r = await page.evaluate(async (ph) => {
++export async function runPlaythrough(args = process.argv.slice(2)) {
++  const phases = args.filter((a) => a !== '--');
++  const run = phases.length ? phases : ['leave', 'descend', 'land', 'disembark', 'mine', 'analyze', 'board', 'climb', 'dock'];
++  let failed = false;
++  let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
++  const failures: unknown[] = [];
++  const vite = await startVite();
++  try {
++    browser = await chromium.launch({ args: glArgs().args });
++    const page = await browser.newPage({ viewport: { width: 640, height: 360 } });
++    const errors: string[] = [];
++    page.on('pageerror', (e) => errors.push(e.message));
++    page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
++    await page.goto(`${vite.url}/`);
++    await page.waitForFunction(() => 'dev' in window && 'step' in window, null, { timeout: 120_000 });
++    await page.evaluate(async () => {
++      const w = window as unknown as { dev: { boot(): Promise<void> }; step(n: number): Promise<void>; __pt: unknown };
++      await w.dev.boot();
++      await w.step(60);
++      // a page-side module path (served by Vite), held in a variable so TypeScript does not try to resolve it
++      const url = '/src/dev/playthrough.js';
++      w.__pt = (await import(/* @vite-ignore */ url)).playthrough();
++    });
++    for (const ph of run) {
++      const t0 = Date.now();
++      const r = await page.evaluate(async (ph) => {
++        try {
++          return String(await (window as unknown as { __pt: Record<string, () => Promise<unknown>> }).__pt[ph]());
++        } catch (e) {
++          return `THREW ${(e as Error).message}`;
++        }
++      }, ph);
++      console.log(`[${ph}] (${Math.round((Date.now() - t0) / 1000)}s) ${r}`);
++      if (ph === 'dock') {
++        const pads = await page.evaluate(() => {
++          const g = (window as unknown as { game: { station: { pads: { occupied: unknown }[] }; ship: { mode: string }; hud: { root: HTMLElement } } }).game;
++          return {
++            mode: g.ship.mode,
++            pads: g.station.pads.map((p) => (p.occupied ? (p.occupied === (g.ship as unknown) ? 'player' : 'npc') : 'free')),
++            hud: g.hud.root.innerText.slice(0, 160),
++          };
++        });
++        console.log('  dock state:', JSON.stringify(pads));
++      }
++      if (/THREW|fail|timed out|stuck/i.test(r)) failed = true;
++    }
++    if (errors.length) {
++      failed = true;
++      console.log('errors:', errors.join('\n'));
++    }
++  } catch (error) {
++    failures.push(error);
++  } finally {
++    if (browser) {
+       try {
+-        return String(await (window as unknown as { __pt: Record<string, () => Promise<unknown>> }).__pt[ph]());
+-      } catch (e) {
+-        return `THREW ${(e as Error).message}`;
++        await browser.close();
++      } catch (error) {
++        failures.push(error);
+       }
+-    }, ph);
+-    console.log(`[${ph}] (${Math.round((Date.now() - t0) / 1000)}s) ${r}`);
+-    if (ph === 'dock') {
+-      const pads = await page.evaluate(() => {
+-        const g = (window as unknown as { game: { station: { pads: { occupied: unknown }[] }; ship: { mode: string }; hud: { root: HTMLElement } } }).game;
+-        return {
+-          mode: g.ship.mode,
+-          pads: g.station.pads.map((p) => (p.occupied ? (p.occupied === (g.ship as unknown) ? 'player' : 'npc') : 'free')),
+-          hud: g.hud.root.innerText.slice(0, 160),
+-        };
+-      });
+-      console.log('  dock state:', JSON.stringify(pads));
+     }
+-    if (/THREW|fail|timed out|stuck/i.test(r)) failed = true;
+-  }
+-  if (errors.length) {
+-    failed = true;
+-    console.log('errors:', errors.join('\n'));
++    try {
++      await vite.stop();
++    } catch (error) {
++      failures.push(error);
++    }
+   }
+-} finally {
+-  await browser.close();
+-  await vite.stop();
++  if (failures.length === 1) throw failures[0];
++  if (failures.length > 1) throw new AggregateError(failures, 'Playthrough and/or cleanup failed', { cause: failures[0] });
++  return failed ? 1 : 0;
++}
++
++if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
++  process.exitCode = await runPlaythrough();
+ }
+-process.exit(failed ? 1 : 0);

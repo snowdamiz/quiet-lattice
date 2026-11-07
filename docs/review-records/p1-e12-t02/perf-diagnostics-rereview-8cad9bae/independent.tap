@@ -1,0 +1,217 @@
+TAP version 13
+# Subtest: async perf rejects undefined; single raw rejection is retained
+ok 1 - async perf rejects undefined; single raw rejection is retained
+  ---
+  duration_ms: 6.202458
+  type: 'test'
+  ...
+# Subtest: async perf rejects undefined; falsy cleanup is aggregated
+ok 2 - async perf rejects undefined; falsy cleanup is aggregated
+  ---
+  duration_ms: 2.568792
+  type: 'test'
+  ...
+# Subtest: async perf rejects null; single raw rejection is retained
+ok 3 - async perf rejects null; single raw rejection is retained
+  ---
+  duration_ms: 1.411083
+  type: 'test'
+  ...
+# Subtest: async perf rejects null; falsy cleanup is aggregated
+ok 4 - async perf rejects null; falsy cleanup is aggregated
+  ---
+  duration_ms: 1.637208
+  type: 'test'
+  ...
+# Subtest: async perf rejects false; single raw rejection is retained
+ok 5 - async perf rejects false; single raw rejection is retained
+  ---
+  duration_ms: 2.157875
+  type: 'test'
+  ...
+# Subtest: async perf rejects false; falsy cleanup is aggregated
+ok 6 - async perf rejects false; falsy cleanup is aggregated
+  ---
+  duration_ms: 2.650417
+  type: 'test'
+  ...
+# Subtest: async perf rejects zero; single raw rejection is retained
+ok 7 - async perf rejects zero; single raw rejection is retained
+  ---
+  duration_ms: 1.993625
+  type: 'test'
+  ...
+# Subtest: async perf rejects zero; falsy cleanup is aggregated
+ok 8 - async perf rejects zero; falsy cleanup is aggregated
+  ---
+  duration_ms: 1.898667
+  type: 'test'
+  ...
+# Subtest: async perf rejects NaN; single raw rejection is retained
+ok 9 - async perf rejects NaN; single raw rejection is retained
+  ---
+  duration_ms: 2.298292
+  type: 'test'
+  ...
+# Subtest: async perf rejects NaN; falsy cleanup is aggregated
+ok 10 - async perf rejects NaN; falsy cleanup is aggregated
+  ---
+  duration_ms: 2.560208
+  type: 'test'
+  ...
+# Subtest: async perf rejects empty; single raw rejection is retained
+ok 11 - async perf rejects empty; single raw rejection is retained
+  ---
+  duration_ms: 1.5495
+  type: 'test'
+  ...
+# Subtest: async perf rejects empty; falsy cleanup is aggregated
+ok 12 - async perf rejects empty; falsy cleanup is aggregated
+  ---
+  duration_ms: 1.418333
+  type: 'test'
+  ...
+# Subtest: async apply raw string survives restoration by identity and in phase context
+ok 13 - async apply raw string survives restoration by identity and in phase context
+  ---
+  duration_ms: 1.455041
+  type: 'test'
+  ...
+# Subtest: async apply raw object survives restoration by identity and in phase context
+ok 14 - async apply raw object survives restoration by identity and in phase context
+  ---
+  duration_ms: 1.611042
+  type: 'test'
+  ...
+# Subtest: async apply raw symbol survives restoration by identity and in phase context
+ok 15 - async apply raw symbol survives restoration by identity and in phase context
+  ---
+  duration_ms: 1.350916
+  type: 'test'
+  ...
+# Subtest: async apply raw bigint survives restoration by identity and in phase context
+ok 16 - async apply raw bigint survives restoration by identity and in phase context
+  ---
+  duration_ms: 1.222166
+  type: 'test'
+  ...
+# Subtest: error summaries survive cleanup mutating and rethrowing the original Error object
+ok 17 - error summaries survive cleanup mutating and rethrowing the original Error object
+  ---
+  duration_ms: 1.632625
+  type: 'test'
+  ...
+# Subtest: async cleanup restores state then rejects; verification and root restoration still run
+ok 18 - async cleanup restores state then rejects; verification and root restoration still run
+  ---
+  duration_ms: 1.464917
+  type: 'test'
+  ...
+# Subtest: root setter mutates then rejects and still gets independently verified
+ok 19 - root setter mutates then rejects and still gets independently verified
+  ---
+  duration_ms: 1.171541
+  type: 'test'
+  ...
+# Subtest: frozen errors array during cleanup preserves the primary and write failure in the throw
+ok 20 - frozen errors array during cleanup preserves the primary and write failure in the throw
+  ---
+  duration_ms: 1.741208
+  type: 'test'
+  ...
+# Subtest: falsy setup failure is contextual and releases the guard
+ok 21 - falsy setup failure is contextual and releases the guard
+  ---
+  duration_ms: 0.677875
+  type: 'test'
+  ...
+# Subtest: falsy save failure is contextual and releases the guard
+ok 22 - falsy save failure is contextual and releases the guard
+  ---
+  duration_ms: 0.56175
+  type: 'test'
+  ...
+# Subtest: successful default multi-intervention flow awaits async mutations, restores both controls and detaches raw data
+ok 23 - successful default multi-intervention flow awaits async mutations, restores both controls and detaches raw data
+  ---
+  duration_ms: 8.7715
+  type: 'test'
+  ...
+# Subtest: march selection is called with receiver; absent and failing adapters stay distinct in reasons
+ok 24 - march selection is called with receiver; absent and failing adapters stay distinct in reasons
+  ---
+  duration_ms: 0.67075
+  type: 'test'
+  ...
+# Subtest: unavailable hardware remains unknown and valid aggregate timings never admit runtime or a performance result
+ok 25 - unavailable hardware remains unknown and valid aggregate timings never admit runtime or a performance result
+  ---
+  duration_ms: 0.259292
+  type: 'test'
+  ...
+# Subtest: R1 raw primary without toString remains in the serializable failure receipt
+not ok 26 - R1 raw primary without toString remains in the serializable failure receipt
+  ---
+  duration_ms: 2.273875
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:166:1'
+  failureType: 'testCodeFailure'
+  error: '[{"id":"bloom","repetition":0,"arm":"B","phase":"perf","error":"TypeError: Cannot convert object to primitive value"},{"id":"bloom","repetition":0,"arm":"B","phase":"restore","error":"Error: cleanup cause"}]'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:175:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R1 raw restore failure cannot skip restoration verification
+not ok 27 - R1 raw restore failure cannot skip restoration verification
+  ---
+  duration_ms: 2.722292
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:178:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    raw cleanup error prevented the separate verify-restoration step
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:189:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R1 raw root-cleanup failure cannot prevent receipt persistence and root verification
+not ok 28 - R1 raw root-cleanup failure cannot prevent receipt persistence and root verification
+  ---
+  duration_ms: 1.373667
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:192:1'
+  failureType: 'testCodeFailure'
+  error: 'receipt failure summary missing: {"errors":[],"thrown":"TypeError: Cannot convert object to primitive value"}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:200:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 25
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 108.894667

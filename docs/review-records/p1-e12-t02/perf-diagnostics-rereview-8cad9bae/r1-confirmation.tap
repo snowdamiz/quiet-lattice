@@ -1,0 +1,67 @@
+TAP version 13
+# Subtest: R1 raw primary without toString remains in the serializable failure receipt
+not ok 1 - R1 raw primary without toString remains in the serializable failure receipt
+  ---
+  duration_ms: 8.709625
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:166:1'
+  failureType: 'testCodeFailure'
+  error: '[{"id":"bloom","repetition":0,"arm":"B","phase":"perf","error":"TypeError: Cannot convert object to primitive value"},{"id":"bloom","repetition":0,"arm":"B","phase":"restore","error":"Error: cleanup cause"}]'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:175:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: R1 raw restore failure cannot skip restoration verification
+not ok 2 - R1 raw restore failure cannot skip restoration verification
+  ---
+  duration_ms: 4.831042
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:178:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    raw cleanup error prevented the separate verify-restoration step
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:189:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: R1 raw root-cleanup failure cannot prevent receipt persistence and root verification
+not ok 3 - R1 raw root-cleanup failure cannot prevent receipt persistence and root verification
+  ---
+  duration_ms: 2.499042
+  type: 'test'
+  location: '/private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:192:1'
+  failureType: 'testCodeFailure'
+  error: 'receipt failure summary missing: {"errors":[],"thrown":"TypeError: Cannot convert object to primitive value"}'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs:200:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66.7675

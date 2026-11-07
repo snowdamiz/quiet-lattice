@@ -1,0 +1,34 @@
+[
+  {
+    "name": "r1-confirmation",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--test",
+      "--test-reporter=tap",
+      "--test-name-pattern=R1 raw",
+      "/tmp/review-performance-8cad9bae-independent-YzSq0S/independent.test.mjs"
+    ],
+    "exitCode": 1,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {
+      "tests": 3,
+      "pass": 0,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  {
+    "name": "raw-errors-repro",
+    "command": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/tmp/review-performance-8cad9bae-independent-YzSq0S/raw-errors-repro.mjs"
+    ],
+    "exitCode": 0,
+    "timeoutSeconds": 30,
+    "timedOut": false,
+    "counts": {}
+  }
+]

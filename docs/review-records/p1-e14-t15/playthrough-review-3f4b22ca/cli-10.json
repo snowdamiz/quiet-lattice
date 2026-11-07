@@ -1,0 +1,51 @@
+{
+  "id": 10,
+  "name": "baseline page and console errors",
+  "argv": [
+    "pnpm",
+    "--filter",
+    "@astra/tools",
+    "exec",
+    "tsx",
+    "--import",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/preload.mjs",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts",
+    "leave"
+  ],
+  "scenario": {
+    "pageErrors": true
+  },
+  "source": "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts",
+  "exitCode": 1,
+  "stdout": "[leave] (0s) leave ok\nerrors: page broke\nconsole broke\n",
+  "stderr": "Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL\n\n  \u00d7 \"pnpm recursive exec\" failed in /Users/andreyyurlov/.t3/worktrees/space/\n  \u2502 t3-a8fe2570/packages/tools\n\n",
+  "meta": {
+    "code": 1,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

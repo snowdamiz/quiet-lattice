@@ -1,0 +1,41 @@
+{
+  "id": 19,
+  "name": "failure glArgs/false",
+  "argv": [
+    "pnpm",
+    "--filter",
+    "@astra/tools",
+    "exec",
+    "tsx",
+    "--import",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/preload.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+    "leave"
+  ],
+  "scenario": {
+    "faults": {
+      "glArgs": "false"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "\nnode:internal/modules/run_main:111\n    triggerUncaughtException(\n    ^\nfalse\n(Use `node --trace-uncaught ...` to show where the exception was thrown)\n\nNode.js v26.12.1\nError: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL\n\n  \u00d7 \"pnpm recursive exec\" failed in /Users/andreyyurlov/.t3/worktrees/space/\n  \u2502 t3-a8fe2570/packages/tools\n\n",
+  "meta": {
+    "code": 1,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "stop",
+      "stop:done"
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: perf rejection survives reject restoration failure with arm and phase
+ok 1 - perf rejection survives reject restoration failure with arm and phase
+  ---
+  duration_ms: 6.782667
+  type: 'test'
+  ...
+# Subtest: perf rejection survives silent restoration failure with arm and phase
+ok 2 - perf rejection survives silent restoration failure with arm and phase
+  ---
+  duration_ms: 2.287417
+  type: 'test'
+  ...
+# Subtest: apply rejection survives reject restoration failure with arm and phase
+ok 3 - apply rejection survives reject restoration failure with arm and phase
+  ---
+  duration_ms: 1.875125
+  type: 'test'
+  ...
+# Subtest: apply rejection survives silent restoration failure with arm and phase
+ok 4 - apply rejection survives silent restoration failure with arm and phase
+  ---
+  duration_ms: 1.509583
+  type: 'test'
+  ...
+# Subtest: failed post-measurement capture and readback cannot mask perf or skip restore verification
+ok 5 - failed post-measurement capture and readback cannot mask perf or skip restore verification
+  ---
+  duration_ms: 2.114625
+  type: 'test'
+  ...
+# Subtest: root reject failure retains the primary cause and still releases the guard
+ok 6 - root reject failure retains the primary cause and still releases the guard
+  ---
+  duration_ms: 0.745417
+  type: 'test'
+  ...
+# Subtest: root silent failure retains the primary cause and still releases the guard
+ok 7 - root silent failure retains the primary cause and still releases the guard
+  ---
+  duration_ms: 0.744959
+  type: 'test'
+  ...
+# Subtest: a throwing initial root read does not hold the active guard
+ok 8 - a throwing initial root read does not hold the active guard
+  ---
+  duration_ms: 0.4515
+  type: 'test'
+  ...
+# Subtest: uncloneable perf options do not hold the active guard
+ok 9 - uncloneable perf options do not hold the active guard
+  ---
+  duration_ms: 0.653
+  type: 'test'
+  ...
+# Subtest: march selector keeps its receiver and describes selection even when disabled with stale uniforms
+ok 10 - march selector keeps its receiver and describes selection even when disabled with stale uniforms
+  ---
+  duration_ms: 0.534584
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.462625

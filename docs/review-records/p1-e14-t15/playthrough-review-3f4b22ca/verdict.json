@@ -1,0 +1,35 @@
+{
+  "verdict": "REVISE",
+  "commit": "3f4b22cad3917a967b27e28e99442f1fbb18314b",
+  "tree": "5e061c6d954b1ec60de993c132eed3f325f53e02",
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "P2",
+      "path": "packages/tools/src/capture/playthrough-run.ts",
+      "line": 78,
+      "title": "Symlinked CLI entry silently exits successfully without running",
+      "evidence": [
+        "cli-43.json",
+        "cli-44.json",
+        "node22-cli-confirmation.json"
+      ]
+    }
+  ],
+  "authorTests": {
+    "passed": 185,
+    "failed": 0
+  },
+  "independentFlowTests": {
+    "passed": 131,
+    "failed": 0
+  },
+  "cliChecks": {
+    "passed": 37,
+    "failed": 1,
+    "runs": 44
+  },
+  "runtimeAcceptance": "PENDING",
+  "sourceModified": false,
+  "captureBlob": "555c71d140a36004200ac04ff66609eeb4458136"
+}

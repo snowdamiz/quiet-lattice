@@ -1,0 +1,276 @@
+{
+  "passed": 37,
+  "failed": 1,
+  "checks": [
+    {
+      "name": "module import is inert and exports runPlaythrough",
+      "status": "PASS",
+      "runs": [
+        1
+      ]
+    },
+    {
+      "name": "CLI compatibility: default",
+      "status": "PASS",
+      "runs": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "CLI compatibility: custom phases and separators",
+      "status": "PASS",
+      "runs": [
+        4,
+        5
+      ]
+    },
+    {
+      "name": "CLI compatibility: dock output",
+      "status": "PASS",
+      "runs": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "CLI compatibility: failed phase",
+      "status": "PASS",
+      "runs": [
+        8,
+        9
+      ]
+    },
+    {
+      "name": "CLI compatibility: page and console errors",
+      "status": "PASS",
+      "runs": [
+        10,
+        11
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: startVite/undefined",
+      "status": "PASS",
+      "runs": [
+        12
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: startVite/null",
+      "status": "PASS",
+      "runs": [
+        13
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: startVite/false",
+      "status": "PASS",
+      "runs": [
+        14
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: startVite/zero",
+      "status": "PASS",
+      "runs": [
+        15
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: startVite/abort",
+      "status": "PASS",
+      "runs": [
+        16
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: glArgs/undefined",
+      "status": "PASS",
+      "runs": [
+        17
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: glArgs/null",
+      "status": "PASS",
+      "runs": [
+        18
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: glArgs/false",
+      "status": "PASS",
+      "runs": [
+        19
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: glArgs/zero",
+      "status": "PASS",
+      "runs": [
+        20
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: glArgs/abort",
+      "status": "PASS",
+      "runs": [
+        21
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: launch/undefined",
+      "status": "PASS",
+      "runs": [
+        22
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: launch/null",
+      "status": "PASS",
+      "runs": [
+        23
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: launch/false",
+      "status": "PASS",
+      "runs": [
+        24
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: launch/zero",
+      "status": "PASS",
+      "runs": [
+        25
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: launch/abort",
+      "status": "PASS",
+      "runs": [
+        26
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: goto/undefined",
+      "status": "PASS",
+      "runs": [
+        27
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: goto/null",
+      "status": "PASS",
+      "runs": [
+        28
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: goto/false",
+      "status": "PASS",
+      "runs": [
+        29
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: goto/zero",
+      "status": "PASS",
+      "runs": [
+        30
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: goto/abort",
+      "status": "PASS",
+      "runs": [
+        31
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: close/undefined",
+      "status": "PASS",
+      "runs": [
+        32
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: close/null",
+      "status": "PASS",
+      "runs": [
+        33
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: close/false",
+      "status": "PASS",
+      "runs": [
+        34
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: close/zero",
+      "status": "PASS",
+      "runs": [
+        35
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: close/abort",
+      "status": "PASS",
+      "runs": [
+        36
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: stop/undefined",
+      "status": "PASS",
+      "runs": [
+        37
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: stop/null",
+      "status": "PASS",
+      "runs": [
+        38
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: stop/false",
+      "status": "PASS",
+      "runs": [
+        39
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: stop/zero",
+      "status": "PASS",
+      "runs": [
+        40
+      ]
+    },
+    {
+      "name": "CLI nonzero with cleanup: stop/abort",
+      "status": "PASS",
+      "runs": [
+        41
+      ]
+    },
+    {
+      "name": "CLI retains aggregate diagnostics after cleanup",
+      "status": "PASS",
+      "runs": [
+        42
+      ]
+    },
+    {
+      "name": "symlink CLI entry executes phases instead of silently succeeding",
+      "status": "FAIL",
+      "error": "{'baseline_run': 43, 'candidate_run': 44, 'expected_stdout': '[leave] (0s) leave ok\\n', 'actual_stdout': '', 'actual_exitCode': 0, 'actual_loaded': ['file:///Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts'], 'actual_argv': ['/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node', '/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/entry-alias.ts', 'leave'], 'actual_trace': []}"
+    }
+  ],
+  "subprocess_runs": 44
+}

@@ -1,0 +1,40 @@
+PASS: module import is inert and exports runPlaythrough
+PASS: CLI compatibility: default
+PASS: CLI compatibility: custom phases and separators
+PASS: CLI compatibility: dock output
+PASS: CLI compatibility: failed phase
+PASS: CLI compatibility: page and console errors
+PASS: CLI nonzero with cleanup: startVite/undefined
+PASS: CLI nonzero with cleanup: startVite/null
+PASS: CLI nonzero with cleanup: startVite/false
+PASS: CLI nonzero with cleanup: startVite/zero
+PASS: CLI nonzero with cleanup: startVite/abort
+PASS: CLI nonzero with cleanup: glArgs/undefined
+PASS: CLI nonzero with cleanup: glArgs/null
+PASS: CLI nonzero with cleanup: glArgs/false
+PASS: CLI nonzero with cleanup: glArgs/zero
+PASS: CLI nonzero with cleanup: glArgs/abort
+PASS: CLI nonzero with cleanup: launch/undefined
+PASS: CLI nonzero with cleanup: launch/null
+PASS: CLI nonzero with cleanup: launch/false
+PASS: CLI nonzero with cleanup: launch/zero
+PASS: CLI nonzero with cleanup: launch/abort
+PASS: CLI nonzero with cleanup: goto/undefined
+PASS: CLI nonzero with cleanup: goto/null
+PASS: CLI nonzero with cleanup: goto/false
+PASS: CLI nonzero with cleanup: goto/zero
+PASS: CLI nonzero with cleanup: goto/abort
+PASS: CLI nonzero with cleanup: close/undefined
+PASS: CLI nonzero with cleanup: close/null
+PASS: CLI nonzero with cleanup: close/false
+PASS: CLI nonzero with cleanup: close/zero
+PASS: CLI nonzero with cleanup: close/abort
+PASS: CLI nonzero with cleanup: stop/undefined
+PASS: CLI nonzero with cleanup: stop/null
+PASS: CLI nonzero with cleanup: stop/false
+PASS: CLI nonzero with cleanup: stop/zero
+PASS: CLI nonzero with cleanup: stop/abort
+PASS: CLI retains aggregate diagnostics after cleanup
+FAIL: symlink CLI entry executes phases instead of silently succeeding
+{'baseline_run': 43, 'candidate_run': 44, 'expected_stdout': '[leave] (0s) leave ok\n', 'actual_stdout': '', 'actual_exitCode': 0, 'actual_loaded': ['file:///Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts'], 'actual_argv': ['/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node', '/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/entry-alias.ts', 'leave'], 'actual_trace': []}
+{"passed": 37, "failed": 1, "subprocess_runs": 44}

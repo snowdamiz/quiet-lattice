@@ -1,0 +1,50 @@
+{
+  "id": 42,
+  "name": "triple failure",
+  "argv": [
+    "pnpm",
+    "--filter",
+    "@astra/tools",
+    "exec",
+    "tsx",
+    "--import",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/preload.mjs",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+    "leave"
+  ],
+  "scenario": {
+    "faults": {
+      "goto": "undefined",
+      "close": "null",
+      "stop": "zero"
+    }
+  },
+  "source": "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts:74\n  if (failures.length > 1) throw new AggregateError(failures, 'Playthrough and/or cleanup failed', { cause: failures[0] });\n                                 ^\n\nAggregateError: Playthrough and/or cleanup failed\n    at runPlaythrough (/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts:74:34)\n    at async <anonymous> (/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts:79:22) {\n  [cause]: undefined,\n  [errors]: [ undefined, null, 0 ]\n}\n\nNode.js v26.12.1\nError: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL\n\n  \u00d7 \"pnpm recursive exec\" failed in /Users/andreyyurlov/.t3/worktrees/space/\n  \u2502 t3-a8fe2570/packages/tools\n\n",
+  "meta": {
+    "code": 1,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts",
+      "leave"
+    ],
+    "loaded": [
+      "file:///Users/andreyyurlov/.t3/worktrees/space/t3-a8fe2570/packages/tools/src/capture/playthrough-run.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "close",
+      "stop"
+    ]
+  }
+}

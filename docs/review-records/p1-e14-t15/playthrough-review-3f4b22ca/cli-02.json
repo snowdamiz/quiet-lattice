@@ -1,0 +1,56 @@
+{
+  "id": 2,
+  "name": "baseline default",
+  "argv": [
+    "pnpm",
+    "--filter",
+    "@astra/tools",
+    "exec",
+    "tsx",
+    "--import",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/preload.mjs",
+    "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts"
+  ],
+  "scenario": {},
+  "source": "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts",
+  "exitCode": 0,
+  "stdout": "[leave] (0s) leave ok\n[descend] (0s) descend ok\n[land] (0s) land ok\n[disembark] (0s) disembark ok\n[mine] (0s) mine ok\n[analyze] (0s) analyze ok\n[board] (0s) board ok\n[climb] (0s) climb ok\n[dock] (0s) dock ok\n  dock state: {\"mode\":\"docked\",\"pads\":[\"player\",\"npc\",\"free\"],\"hud\":\"Docked\"}\n",
+  "stderr": "",
+  "meta": {
+    "code": 0,
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "/private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts"
+    ],
+    "loaded": [
+      "file:///private/tmp/space-playthrough-review-20261107-3f4b22c-fbou77d6/baseline.ts"
+    ],
+    "trace": [
+      "startVite",
+      "glArgs",
+      "glArgs.args",
+      "launch",
+      "newPage",
+      "on:pageerror",
+      "on:console",
+      "url",
+      "goto",
+      "ready",
+      "initialize",
+      "phase:leave",
+      "phase:descend",
+      "phase:land",
+      "phase:disembark",
+      "phase:mine",
+      "phase:analyze",
+      "phase:board",
+      "phase:climb",
+      "phase:dock",
+      "dockState",
+      "close",
+      "close:done",
+      "stop",
+      "stop:done"
+    ]
+  }
+}
