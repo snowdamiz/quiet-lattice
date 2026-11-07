@@ -1,0 +1,68 @@
+{
+  "failedCheck": {
+    "name": "report-whitespace-final",
+    "argv": [
+      "git",
+      "-C",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "pid": 66474,
+    "exit": 2,
+    "seconds": 0.02422189712524414,
+    "timeout": false,
+    "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/report-whitespace-final.log"
+  },
+  "rawOutput": "docs/review-records/p1-e07-t07-t09-r7-capture-endpoints/commands.txt:204: trailing whitespace.\n++ \ndocs/review-records/p1-e07-t07-t09-r7-capture-endpoints/commands.txt:206: trailing whitespace.\n++ \n",
+  "firstReportCommit": {
+    "name": "report-commit",
+    "argv": [
+      "git",
+      "-C",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-m",
+      "docs: record R7 capture interval red-green and timing limits"
+    ],
+    "cwd": "/private/tmp/symbiotic-r7-fix-4z__e8gq",
+    "env": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/usr/bin:/bin",
+      "TMPDIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "TMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "TEMP": "/private/tmp/symbiotic-r7-fix-4z__e8gq/tmp",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-r7-fix-4z__e8gq/cache",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-r7-fix-4z__e8gq/boundary.mjs",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+      "PWTEST_CACHE_DIR": "/private/tmp/symbiotic-r7-fix-4z__e8gq/pw-cache",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "pid": 66478,
+    "exit": 0,
+    "seconds": 0.08247876167297363,
+    "timeout": false,
+    "output": "/private/tmp/symbiotic-r7-fix-4z__e8gq/logs/report-commit.log"
+  },
+  "correction": "Strip trailing spaces from rendered commands summary only; preserve raw output and initial report commit. Source unchanged. Final check will be observed before corrective report commit."
+}
