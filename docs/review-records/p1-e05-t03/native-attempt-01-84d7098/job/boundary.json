@@ -1,0 +1,311 @@
+{
+  "scope": "CPU_CANDIDATE_BOUNDARY",
+  "exits": {
+    "caffeinate": -15,
+    "capture": 143
+  },
+  "errors": [
+    "AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+  ],
+  "signals": [
+    {
+      "pid": 55005,
+      "birth": [
+        1794046928,
+        112755
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54994,
+      "birth": [
+        1794046927,
+        934671
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54739,
+      "birth": [
+        1794046927,
+        494036
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54625,
+      "birth": [
+        1794046926,
+        198890
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54624,
+      "birth": [
+        1794046926,
+        142512
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54623,
+      "birth": [
+        1794046926,
+        138804
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54622,
+      "birth": [
+        1794046926,
+        76263
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54620,
+      "birth": [
+        1794046925,
+        733428
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54610,
+      "birth": [
+        1794046925,
+        396086
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 54609,
+      "birth": [
+        1794046925,
+        391349
+      ],
+      "signal": "SIGTERM"
+    }
+  ],
+  "drained": true,
+  "clean": false,
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 3,
+    "exited": 2,
+    "live": 1
+  },
+  "profiles": [
+    "/private/tmp/sbr-cv6mlx1j/playwright_chromiumdev_profile-BJVUNH"
+  ],
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 23,
+    "exited": 22,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.3973010830231942,
+  "target": "gui/501/local.stations.round4.9070356035ca42778cfcd822257778cc",
+  "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-mc4rhv9e",
+  "root": {
+    "pid": 54608,
+    "ppid": 1,
+    "pgid": 54608,
+    "birth": [
+      1794046925,
+      254462
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 42831,
+  "identities": {
+    "54608": {
+      "pid": 54608,
+      "ppid": 1,
+      "pgid": 54608,
+      "birth": [
+        1794046925,
+        254462
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54610": {
+      "pid": 54610,
+      "ppid": 54608,
+      "pgid": 54610,
+      "birth": [
+        1794046925,
+        396086
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54609": {
+      "pid": 54609,
+      "ppid": 54608,
+      "pgid": 54609,
+      "birth": [
+        1794046925,
+        391349
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54616": {
+      "pid": 54616,
+      "ppid": 54609,
+      "pgid": 54609,
+      "birth": [
+        1794046925,
+        428654
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54620": {
+      "pid": 54620,
+      "ppid": 54609,
+      "pgid": 54609,
+      "birth": [
+        1794046925,
+        733428
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54622": {
+      "pid": 54622,
+      "ppid": 54609,
+      "pgid": 54622,
+      "birth": [
+        1794046926,
+        76263
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54625": {
+      "pid": 54625,
+      "ppid": 54622,
+      "pgid": 54622,
+      "birth": [
+        1794046926,
+        198890
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54624": {
+      "pid": 54624,
+      "ppid": 54622,
+      "pgid": 54622,
+      "birth": [
+        1794046926,
+        142512
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54623": {
+      "pid": 54623,
+      "ppid": 54622,
+      "pgid": 54622,
+      "birth": [
+        1794046926,
+        138804
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54739": {
+      "pid": 54739,
+      "ppid": 54622,
+      "pgid": 54622,
+      "birth": [
+        1794046927,
+        494036
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "54994": {
+      "pid": 54994,
+      "ppid": 1,
+      "pgid": 54994,
+      "birth": [
+        1794046927,
+        934671
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    },
+    "55005": {
+      "pid": 55005,
+      "ppid": 1,
+      "pgid": 55005,
+      "birth": [
+        1794046928,
+        112755
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        42831,
+        42832
+      ]
+    }
+  }
+}

@@ -1,0 +1,358 @@
+{
+  "kind": "SCHEMA_AND_EXAMPLE_DATA_ONLY_NOT_GRANT_NOT_REVIEW_RECEIPT",
+  "source": {
+    "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+    "tree": "bf40490eea5ea19a61e885420642f480e41e9e79",
+    "clean": true
+  },
+  "readiness": {
+    "path": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json",
+    "sha256": "8cc52e23293773f38253414e74ba136719d017154cee7d7742c66a1f7851782d"
+  },
+  "independentReceiptSchema": {
+    "type": "object",
+    "required": [
+      "verdict",
+      "scope",
+      "source"
+    ],
+    "properties": {
+      "verdict": {
+        "const": "PASS"
+      },
+      "scope": {
+        "const": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW"
+      },
+      "source": {
+        "const": {
+          "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+          "tree": "bf40490eea5ea19a61e885420642f480e41e9e79",
+          "clean": true
+        }
+      }
+    }
+  },
+  "independentReceiptExampleData": {
+    "verdict": "PASS",
+    "scope": "INDEPENDENT_EFFECTS_PILOT_CALLER_REVIEW",
+    "source": {
+      "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+      "tree": "bf40490eea5ea19a61e885420642f480e41e9e79",
+      "clean": true
+    }
+  },
+  "parentGrantSchema": {
+    "type": "object",
+    "required": [
+      "purpose",
+      "oneUse",
+      "nativeReservesAccepted",
+      "authorizationId",
+      "readinessSha256",
+      "pilot",
+      "source",
+      "assetHead",
+      "expiresAt",
+      "callerReview"
+    ],
+    "properties": {
+      "purpose": {
+        "const": "EFFECTS_GRAVITIC_PULL_SINGLE_DISABLED_PILOT"
+      },
+      "oneUse": {
+        "const": true
+      },
+      "nativeReservesAccepted": {
+        "const": true
+      },
+      "authorizationId": {
+        "const": "effects-a2002dbc58854694880dd505416ac34d"
+      },
+      "readinessSha256": {
+        "const": "8cc52e23293773f38253414e74ba136719d017154cee7d7742c66a1f7851782d"
+      },
+      "pilot": {
+        "const": {
+          "asset": "gravitic_pull",
+          "attemptId": "a2002dbc58854694880dd505416ac34d",
+          "authorizationId": "effects-a2002dbc58854694880dd505416ac34d",
+          "consumption": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
+          "evidence": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d",
+          "file": "effects/gravitic",
+          "files": [
+            "gravitic_pull/noon-lush_lod0.png",
+            "gravitic_pull/noon-lush_lod2.png",
+            "gravitic_pull/wireframe_lod0.png",
+            "gravitic_pull/wireframe_lod2.png",
+            "gravitic_pull/overlay.png",
+            "gravitic_pull/far_lod2.png",
+            "gravitic_pull/night-exotic_lod0.png",
+            "gravitic_pull/night-exotic_lod2.png",
+            "gravitic_pull/open-space_lod0.png",
+            "gravitic_pull/open-space_lod2.png",
+            "gravitic_pull/perf.json",
+            "gravitic_pull/sheet.png"
+          ],
+          "gl": "metal",
+          "grant": "/private/tmp/egg-a2002dbc58854694880dd505416ac34d.json",
+          "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d",
+          "viewport": [
+            1920,
+            1080
+          ]
+        }
+      },
+      "source": {
+        "const": {
+          "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+          "tree": "bf40490eea5ea19a61e885420642f480e41e9e79",
+          "clean": true
+        }
+      },
+      "assetHead": {
+        "const": "2643aca9d8b85a45498d85eb637d20260ebf06d1"
+      },
+      "expiresAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Parent-issued future timezone-aware expiry, validated by caller at actual admission"
+      },
+      "callerReview": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Actual independent activation receipt path for this exact enabled pin"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "parentGrantExampleData": {
+    "purpose": "EFFECTS_GRAVITIC_PULL_SINGLE_DISABLED_PILOT",
+    "oneUse": true,
+    "nativeReservesAccepted": true,
+    "authorizationId": "effects-a2002dbc58854694880dd505416ac34d",
+    "readinessSha256": "8cc52e23293773f38253414e74ba136719d017154cee7d7742c66a1f7851782d",
+    "pilot": {
+      "asset": "gravitic_pull",
+      "attemptId": "a2002dbc58854694880dd505416ac34d",
+      "authorizationId": "effects-a2002dbc58854694880dd505416ac34d",
+      "consumption": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
+      "evidence": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d",
+      "file": "effects/gravitic",
+      "files": [
+        "gravitic_pull/noon-lush_lod0.png",
+        "gravitic_pull/noon-lush_lod2.png",
+        "gravitic_pull/wireframe_lod0.png",
+        "gravitic_pull/wireframe_lod2.png",
+        "gravitic_pull/overlay.png",
+        "gravitic_pull/far_lod2.png",
+        "gravitic_pull/night-exotic_lod0.png",
+        "gravitic_pull/night-exotic_lod2.png",
+        "gravitic_pull/open-space_lod0.png",
+        "gravitic_pull/open-space_lod2.png",
+        "gravitic_pull/perf.json",
+        "gravitic_pull/sheet.png"
+      ],
+      "gl": "metal",
+      "grant": "/private/tmp/egg-a2002dbc58854694880dd505416ac34d.json",
+      "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d",
+      "viewport": [
+        1920,
+        1080
+      ]
+    },
+    "source": {
+      "head": "d16b7e41b1c662cc4005a9322f60a8d3522dd219",
+      "tree": "bf40490eea5ea19a61e885420642f480e41e9e79",
+      "clean": true
+    },
+    "assetHead": "2643aca9d8b85a45498d85eb637d20260ebf06d1",
+    "expiresAt": "<PARENT_FUTURE_TIMESTAMP_WITH_TIMEZONE>",
+    "callerReview": {
+      "path": "<ACTUAL_INDEPENDENT_ENABLED_PIN_RECEIPT_PATH>",
+      "sha256": "<ACTUAL_RECEIPT_BYTES_SHA256>"
+    }
+  },
+  "futureExistingCallerOnly": {
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects",
+    "argv": [
+      "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/caller.py"
+    ],
+    "environment": {
+      "HOME": "/Users/andreyyurlov",
+      "USER": "andreyyurlov",
+      "LOGNAME": "andreyyurlov",
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONOPTIMIZE": "0",
+      "EFFECTS_AUTHORIZATION": "effects-a2002dbc58854694880dd505416ac34d"
+    },
+    "clearInheritedEnvironment": true,
+    "adjacentReadinessIsFixedDefault": true,
+    "newParentLauncherCodeRequired": false
+  },
+  "actualNodeChildOnlyViaStationJob": {
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/entry.mjs",
+      "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/packages/tools/src/capture/effects_packet/readiness.json"
+    ],
+    "environment": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "SMOKE_GL": "metal",
+      "EFFECTS_READY_SHA256": "8cc52e23293773f38253414e74ba136719d017154cee7d7742c66a1f7851782d",
+      "EFFECTS_AUTHORIZATION": "effects-a2002dbc58854694880dd505416ac34d",
+      "TMPDIR": "<FUTURE_CALLER_OWNED_NAMESPACE>",
+      "TMP": "<SAME_NAMESPACE>",
+      "TEMP": "<SAME_NAMESPACE>",
+      "DEBUG": "pw:browser",
+      "PYTHONOPTIMIZE": "0",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    }
+  },
+  "expectedFutureAcceptanceOnly": {
+    "parentObservedOsExit": 0,
+    "outerResultPath": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d/result.json",
+    "consumptionPath": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
+    "hashInputs": [
+      "result_sha256",
+      "consumption_sha256"
+    ],
+    "existingAPI": "caller.parent_acceptance",
+    "reader": "evidence.capture_snapshot validates every part from the same bounded snapshot; outer hash binds manifest and every part",
+    "diskAccepted": false,
+    "checksPassed": true,
+    "publication": "AWAITING_PARENT_OS_EXIT_AND_HASHES",
+    "errors": [],
+    "releaseReleased": true,
+    "inspectionValid": true
+  },
+  "runtimeOutputFiles": [
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/noon-lush_lod0.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/noon-lush_lod2.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/wireframe_lod0.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/wireframe_lod2.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/overlay.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/far_lod2.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/night-exotic_lod0.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/night-exotic_lod2.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/open-space_lod0.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/open-space_lod2.png",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/perf.json",
+    "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d/gravitic_pull/sheet.png"
+  ],
+  "budget": {
+    "admissionBytes": 5402312704,
+    "imageArchiveCopyBytes": 0,
+    "imageStagingBytes": 0,
+    "nativeOSQuotas": false,
+    "outputCapBytes": 184565760,
+    "rows": [
+      {
+        "bytes": 184565760,
+        "semantics": "11 controlled PNG writes plus perf.json; failed partials stay in the fresh output root",
+        "writer": "capture_outputs"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later Git LFS adoption; this pilot performs no git add or LFS write",
+        "writer": "future_lfs_copy"
+      },
+      {
+        "bytes": 184565760,
+        "semantics": "Reserved for later parent hydration; this pilot makes no main-worktree copy",
+        "writer": "future_main_hydration"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "32 MiB each for Node and Python, all attempted writes/copies charged; Python terminal JSON parts stay inside its allowance with 64 KiB reserved for failure stderr",
+        "writer": "controlled_metadata"
+      },
+      {
+        "bytes": 67108864,
+        "semantics": "One bounded pre-run cache copy, including a failed partial; 30 seconds; originals retained",
+        "writer": "cache_snapshot"
+      },
+      {
+        "bytes": 2147483648,
+        "semantics": "StationJob.archive copytree before removal: 1 GiB observed source threshold plus 1 GiB archive",
+        "writer": "profile_work_and_archive"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "preserve_private_tmp copies before removal: 512 MiB source plus 512 MiB archive, excluding profiles",
+        "writer": "private_tmp_work_and_archive"
+      },
+      {
+        "bytes": 134217728,
+        "semantics": "StationJob scratch and archived log/receipt copies, 64 MiB observed source threshold; includes constructor/failed job",
+        "writer": "helper_logs_work_and_archive"
+      },
+      {
+        "bytes": 268435456,
+        "semantics": "Observed additional Vite cache growth; original cache bytes already reduce free space",
+        "writer": "generated_cache_growth"
+      },
+      {
+        "bytes": 16777216,
+        "semantics": "Directory and filesystem overhead reserve",
+        "writer": "filesystem_metadata"
+      },
+      {
+        "bytes": 1073741824,
+        "semantics": "Fresh disk safety reserve, checked at admission and while observing",
+        "writer": "safety"
+      }
+    ],
+    "scope": "One pilot only; native thresholds are observations and can overshoot, not OS quotas."
+  },
+  "deadlines": {
+    "cacheCopy": 30,
+    "capture": 600,
+    "cleanup": 60,
+    "decode": 45
+  },
+  "prospectivePathsCurrentlyAbsent": {
+    "grant": "/private/tmp/egg-a2002dbc58854694880dd505416ac34d.json",
+    "consumption": "/private/tmp/egc-a2002dbc58854694880dd505416ac34d.json",
+    "evidence": "/private/tmp/egp-a2002dbc58854694880dd505416ac34d",
+    "output": "/Users/andreyyurlov/.t3/worktrees/space/P1-E07-T14-effects/assets/renders/effects-pilot-a2002dbc58854694880dd505416ac34d"
+  },
+  "crosslaneFinding": "Exact known T13 SetStoreUpdateService member is unbound and refused by unchanged effects observer; no claim of future effects ownership, no binding correction in this unit. Parent disposition remains separate.",
+  "spentNeverReuse": "effects-b61233fdf3564205bd01d9566f306430",
+  "issuedGrant": false,
+  "issuedIndependentReviewReceipt": false,
+  "nativeLaunched": false,
+  "liveMeasurement": {
+    "scope": "active generated caches only",
+    "attempts": 3,
+    "monotonicAcceptanceWindowSeconds": 2,
+    "metadataEntryCapPerAttempt": 8192,
+    "atomicSnapshot": false,
+    "immutableAcquisitionAndArchiveUnchanged": true,
+    "unknownIncompleteSampleAccepts": false,
+    "nativeQualification": false
+  },
+  "historicalActivationPass": {
+    "source": {
+      "head": "b151c82427a541754cec0d5143c7942271eed2b8",
+      "tree": "442f1b7a8990bf06a719f10488c230f32aabcb50"
+    },
+    "receipt": "/private/tmp/p1-e07-t14-c2-fresh-DydebqJb/INDEPENDENT-RECEIPT.json",
+    "sha256": "47949700e7b5c09a5c9ae0d720c77f1f3b897123898ed7f0b5d2662d6a33f67c",
+    "applicableToNewPin": false
+  },
+  "liveCorrectionReviewPending": true
+}

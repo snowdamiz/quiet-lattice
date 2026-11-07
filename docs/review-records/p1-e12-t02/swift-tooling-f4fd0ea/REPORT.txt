@@ -1,0 +1,268 @@
+TASK: P1.E12.T02/swift ROUND4 independent-source REVISE response
+STATUS: BLOCKED (density asset correction awaits explicit parent heavy release; the two tooling corrections below are implemented and proven locally)
+SUMMARY: Established an independent command owner before producer dispatch, with an fsynced supervisor record and a pipe handshake; the supervisor owns wall/RSS/output enforcement and termination/reaping on runner loss. Promotion now requires all four actual successful terminal receipts, matching launch/source inputs, normal empty-group guardian evidence, and both stock and identity candidate SHA pins before touching the destination. New-format promotion also requires the parent-observed supervisor exit, hashed guardian receipt and durable dispatch identity. Density is still 60.5–79.6 px/m against approximately 512; source/GLB bytes are unchanged. No Blender, bake, render, codec, export or full suite was launched in this revision.
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+Branch: task/P1-E12-T02-swift-r4
+Original base: 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+Separate recovery: 82c3d50ff79a60b9dac38f0bdfbe421381c8dd73; tree ea744377e186a0ee48bdf40b48e891b1d7db78a2
+Reviewed revision / tooling parent: 7415bfa5ec9f2115c6304cdfa70c36129702f593; tree 140a35f31eacfa8ef1825646b20c5be3b7fbffba
+This tooling commit HEAD/tree are supplied in the final handoff after committing; no self-referential SHA is embedded.
+Canonical source unchanged: 42959316 bytes; SHA256 7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480
+Canonical GLB unchanged: 24721524 bytes; SHA256 5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d
+Independent report: /private/tmp/swift-r4-review-v69_mmzw/REPORT.txt; SHA256 2a825605f69475ac6ead7380f70cda5ec27d7041a044a047e35133ed4297f9d6
+FILES CHANGED:
+  packages/tools/blender/hulls/swift-round4/lane.py
+  packages/tools/blender/hulls/swift-round4/promote.py
+  packages/tools/blender/hulls/swift-round4/supervise.py
+  packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py
+  packages/tools/blender/hulls/swift-round4/HEAVY_HOLD.json
+  packages/tools/blender/hulls/swift-round4/DENSITY_PLAN.md
+  assets/renders/hulls/swift-round4-current/87-source-review-tooling/ (exact file/size/hash inventory in inventory.json; fixture assets are isolated exact copies, never canonical writes)
+VERIFY:
+  OLD RED uses byte-identical copies from reviewed commit7415bfa5; hashes in protection.json. Reviewer originals are unchanged.
+  Dispatch-loss real runner PID 9916 exit -9; child PID/PGID 9919 survived with no guardian. Exact test group manually terminated; cleanupGroupEmpty=True. Stale fixture ownership retained as evidence.
+  Old promotion: upstream actual terminal exit 23; old promote exit 0; destination inode replaced=True. No invented receipt.
+  CURRENT GREEN: 24 recorded lightweight boundary results. All three runner-loss points have commandGroupEmpty=true, supervisor exited, and no dead-runner success receipt. Normal cancellation/exclusive ownership and established-supervisor loss helpers are byte-identical to reviewed helpers. Wall and RSS caps terminate actual sleeping producers.
+  Current promotion rejects each of four real terminal exit-23 stages, a still-live producer with no terminal receipt, cancelled publication, and an emitted wrong stock candidate pin; every rejected destination inode/hash stays unchanged. Four genuinely successful producer runs permit the real private-destination promotion. Payload publication reuses exact existing validated outputs for the test; it does not pretend to rerun Blender validation.
+  The unchanged real 70/71/66/67 terminal chain also passes the new gate read-only; no canonical promotion is performed. Historical format has no guardianExit field, but the original runner computed childGroupEmpty only after guardian.wait()==0; full original normal-completion, owner/command-group and launch/source records remain mandatory. No failed or missing receipt is exempted.
+  Current proof harness cancellation: actual PID 52771 exit -2 after SIGTERM during an ignoring grandchild; inner lane exit1; group empty; no live fixture process. Root light ownership recovered only after actual exit/empty proof.
+  Parent hold admission test: actual root lane exit1 before producer dispatch, with no attempted stage directory/log. Heavy hold remains installed.
+  git diff --check exit0; all task-local Python AST parse exit0; protected SHA/size checks exit0.
+  COMMANDS AND EXPECTED FAILURE TAILS:
+    /opt/homebrew/bin/python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/old-red/lifecycle_repros.py -> exit 0; 11.827s
+    /opt/homebrew/bin/python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/old-red/promotion_repro.py -> exit 0; 0.916s
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/before-handshake/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;print("producer alive",flush=True);time.sleep(30)' -> injected runner exit -9; {"parentPid": 30546, "supervisorPid": 30559, "commandPid": null, "case": "before-handshake", "ownershipRecordExists": null}; guardian runner disappeared; empty group true
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/before-dispatch/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;print("producer alive",flush=True);time.sleep(30)' -> injected runner exit -9; {"parentPid": 30562, "supervisorPid": 30565, "commandPid": null, "case": "before-dispatch", "ownershipRecordExists": true}; guardian runner disappeared; empty group true
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/after-dispatch/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;print("producer alive",flush=True);time.sleep(30)' -> injected runner exit -9; {"parentPid": 30891, "supervisorPid": 30911, "commandPid": 30912, "case": "after-dispatch", "ownershipRecordExists": true}; guardian runner disappeared; empty group true
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/packages/tools/blender/hulls/swift-round4/check_lane.py cancellation -> exit 0; 5.757s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/check_lane.py.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/packages/tools/blender/hulls/swift-round4/check_guardian.py runner-loss -> exit 0; 5.824s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/check_guardian.py.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/packages/tools/blender/hulls/swift-round4/lane.py --label wall --timeout 1 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;time.sleep(30)' -> exit 1; 6.548s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/wall.log
+      Last 20 lines:
+      {"exit": 1, "reason": "wall limit", "seconds": 6.47, "peakRssKiB": 14624, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/packages/tools/blender/hulls/swift-round4/lane.py --label rss --timeout 15 --rss-mib 1 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;time.sleep(30)' -> exit 1; 5.462s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/rss.log
+      Last 20 lines:
+      {"exit": 1, "reason": "RSS limit", "seconds": 5.37, "peakRssKiB": 5920, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label stock-success --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock success -> exit 0; 0.368s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/stock-success.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label identity-success --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity identity success -> exit 0; 0.35s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/identity-success.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label audit-success --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit success -> exit 0; 0.346s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/audit-success.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label fit-success --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/67-final-display-fit fit success -> exit 0; 0.358s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/fit-success.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label stock-failed --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock failed -> exit 23; 0.368s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/stock-failed.log
+      Last 20 lines:
+      {"exit": 23, "reason": null, "seconds": 0.28, "peakRssKiB": 5920, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-failed identity-success audit-success fit-success -> exit 1; 0.077s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-stock-terminal-23/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+          require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  f'{stage.name}: terminal exit must be zero')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: stock-failed: terminal exit must be zero
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label identity-failed --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity identity failed -> exit 23; 0.365s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/identity-failed.log
+      Last 20 lines:
+      {"exit": 23, "reason": null, "seconds": 0.27, "peakRssKiB": 5904, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-success identity-failed audit-success fit-success -> exit 1; 0.075s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-identity-terminal-23/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+          require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  f'{stage.name}: terminal exit must be zero')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: identity-failed: terminal exit must be zero
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label audit-failed --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit failed -> exit 23; 0.368s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/audit-failed.log
+      Last 20 lines:
+      {"exit": 23, "reason": null, "seconds": 0.3, "peakRssKiB": 5920, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-success identity-success audit-failed fit-success -> exit 1; 0.085s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-audit-terminal-23/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+          require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  f'{stage.name}: terminal exit must be zero')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: audit-failed: terminal exit must be zero
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label fit-failed --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/67-final-display-fit fit failed -> exit 23; 0.36s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/fit-failed.log
+      Last 20 lines:
+      {"exit": 23, "reason": null, "seconds": 0.27, "peakRssKiB": 5920, "childGroupEmpty": true}
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-success identity-success audit-success fit-failed -> exit 1; 0.087s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-fit-terminal-23/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+          require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  f'{stage.name}: terminal exit must be zero')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: fit-failed: terminal exit must be zero
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/lane.py --label stock-bad-pin --timeout 20 --rss-mib 512 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock bad-pin -> exit 0; 0.356s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/stock-bad-pin.log
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-bad-pin identity-success audit-success fit-success -> exit 1; 0.087s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-stock-pin/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 83, in validate
+          require(identity.get('glbSha256') == pin.get('glbSha256') == new, 'stock/identity candidate hash mismatch')
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: stock/identity candidate hash mismatch
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-live identity-success audit-success fit-success -> exit 1; 0.083s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-live-missing-terminal/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 31, in terminal
+          receipt = read(stage / 'receipt.json')
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 26, in read
+          require(path.is_file(), f'missing completed-stage evidence: {path}')
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: missing completed-stage evidence: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/stock-live/receipt.json
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-live identity-success audit-success fit-success -> exit 1; 0.048s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/reject-cancelled-publication/process.log
+      Last 20 lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 109, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 91, in main
+          candidate, source_pin, new, receipts = validate(jobs)
+                                                 ~~~~~~~~^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 73, in validate
+          receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                                  ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+          require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                  f'{stage.name}: terminal exit must be zero')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+          raise RuntimeError(message)
+      RuntimeError: stock-live: terminal exit must be zero
+    /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/packages/tools/blender/hulls/swift-round4/promote.py stock-success identity-success audit-success fit-success -> exit 0; 0.084s; log assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/accept-real-terminal-success/process.log
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-cancel/established/assets/renders/hulls/swift-round4-current/cancellation/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)' -> exit 1; reason cancelled signal 15; childGroupEmpty True
+      Last 20 producer log lines:
+      grandchild started
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/assets/renders/hulls/swift-round4-current/cancellation/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)' -> exit 1; reason cancelled signal 15; childGroupEmpty True
+      Last 20 producer log lines:
+      grandchild started
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/assets/renders/hulls/swift-round4-current/rss/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;time.sleep(30)' -> exit 1; reason RSS limit; childGroupEmpty True
+      Last 20 producer log lines:
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/established/assets/renders/hulls/swift-round4-current/wall/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import time;time.sleep(30)' -> exit 1; reason wall limit; childGroupEmpty True
+      Last 20 producer log lines:
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/audit-failed/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit failed -> exit 23; reason None; childGroupEmpty True
+      Last 20 producer log lines:
+      Published exact existing payloads (not a new Blender validation); mode=failed
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/fit-failed/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/67-final-display-fit fit failed -> exit 23; reason None; childGroupEmpty True
+      Last 20 producer log lines:
+      Published exact existing payloads (not a new Blender validation); mode=failed
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/identity-failed/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity identity failed -> exit 23; reason None; childGroupEmpty True
+      Last 20 producer log lines:
+      Published exact existing payloads (not a new Blender validation); mode=failed
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/stock-failed/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock failed -> exit 23; reason None; childGroupEmpty True
+      Last 20 producer log lines:
+      Published exact existing payloads (not a new Blender validation); mode=failed
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/assets/renders/hulls/swift-round4-current/stock-live/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/current-green/promotion/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock live -> exit 1; reason cancelled signal 15; childGroupEmpty True
+      Last 20 producer log lines:
+      Published exact existing payloads (not a new Blender validation); mode=live
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/old-red/lifecycle/assets/renders/hulls/swift-round4-current/cancellation/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -c 'import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'"'"'-c'"'"','"'"'import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(120)'"'"']); print('"'"'grandchild started'"'"',flush=True); time.sleep(120)' -> exit 1; reason cancelled signal 15; childGroupEmpty True
+      Last 20 producer log lines:
+      grandchild started
+    Real producer assets/renders/hulls/swift-round4-current/87-source-review-tooling/old-red/promotion-fixture/assets/renders/hulls/swift-round4-current/stock-terminal-failed/receipt.json: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling/old-red/publish_then_fail.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation -> exit 23; reason None; childGroupEmpty True
+      Last 20 producer log lines:
+      Preserved exact existing validation payloads; injected terminal process failure after publication
+    python3 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py current-cancel -> expected cancellation exit -2
+      Last 20 harness cancellation lines:
+      Traceback (most recent call last):
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py", line 239, in <module>
+          main()
+          ~~~~^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py", line 211, in main
+          run([sys.executable, '-B', str(code / script), label], root, root / (script + '.log'))
+          ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py", line 55, in run
+          result = p.wait(timeout=timeout)
+        File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1279, in wait
+          return self._wait(timeout=timeout)
+                 ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+        File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2078, in _wait
+          time.sleep(delay)
+          ~~~~~~~~~~^^^^^^^
+        File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/prove_review_boundaries.py", line 198, in cancel
+          raise KeyboardInterrupt(f'proof cancelled by signal {sig}')
+      KeyboardInterrupt: proof cancelled by signal 15
+DECISIONS:
+  Runner dispatch ownership? -> supervisor receives the parent-liveness pipe and persists its ownership before Popen(command); runner itself dispatches no producer -> closes the demonstrated pre-watchdog gap, including loss during startup.
+  Terminal acceptance? -> require actual zero exit, no failure reason, proven empty group, matched owner/input identities and stock GLB pin before destination creation -> published payloads alone are not successful stages.
+  Original helpers/history? -> leave guardian.py, check_lane.py, check_guardian.py and all original evidence/reviewer files byte-identical -> successful existing records remain historical evidence, failures remain visible.
+  Density? -> retain independent measured deficiency and plan material-specific 512 px/m layouts with compatible trim/mirror reuse and explicitly budgeted unique regions -> source acceptance cannot be inferred from 4K labels or generic stock validation.
+  Heavy scheduling? -> install HEAVY_HOLD.json and perform only real sleeping/publishing Python fixture processes, metadata reads and hashes -> parent T13 retains heavy admission; no automatic restart or release.
+  Existing final report86? -> preserve it as a historical snapshot and supersede its source-quality conclusion with this open density finding -> full Swift R4 is not fixed or accepted.
+OUT OF SCOPE FOUND:
+  Density remains UNFIXED. Heavy asset authoring/baking/export awaits explicit parent release. T13 owns controlled whole-scene GPU diagnosis; no Swift geometry reduction is justified by that timing.
+  Shared artlib/families/export/validation/runtime/capture/orchestration and other hulls were not changed. No install, screenshot cleanup, GPU/browser/native capture, push, PR or merge.
+ARTIFACTS:
+  REPORT.txt, inventory.json, baseline.json, protection.json, verification.json, density-plan.json under /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/87-source-review-tooling
+  old-red/ contains exact old scripts, real failed boundaries and manual-empty-group proof; current-green/ contains actual terminal receipts and private promotion outcomes; current-cancel/ plus current-cancel-result.json preserve cancellation proof.
+  The complete 24-case successful test driver is archived at current-green/proof-source.py. The current driver adds fresh output labels and PID-based failure cleanup, exercised by the real current-cancel run. Core lane/promote/supervisor code hashes are identical across successful fixtures and this commit.
+  CPU images viewed in this tooling revision: zero; images created/copied/deleted: zero. Prior 34 PNGs plus two interrupted EXR buffers remain byte-identical, total 68708456 bytes (36 files of original 48/512MiB cap). Original report86 lists the 31 previously viewed scene images.
+  Protected baseline files 491; original reviewer files 58; SHA/size mismatches zero. No live owned process; canonical lane lock absent; heavy hold remains active.
+NEXT HEAVY / GPU INVENTORY AND REMAINING GATES:
+  After explicit writer release: execute DENSITY_PLAN.md on saved source; real source and independently decoded export density must reach the nominal hull target with distributions reported. Re-bake changed UV-dependent maps; repeat actual topology/UV/normal identity and stock checks within original budgets.
+  Parent: final native three-light LOD0/2 (18 PNG), wire LOD0/2 (6), far100/200 (6), overlays (3), plus three review sheets; integrated cockpit four poses/boarding/two hardpoints/three liveries/lineup and temporal LOD/clearance behavior.
+  Parent: integrated full smoke, nine reliable identified-device whole-scene performance cases/16.67ms requirement, fresh independent source review and blind visual grade (each criterion >=4; mean >=4.5). No whole-task, full-source, independent-visual or performance PASS is claimed.

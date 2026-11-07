@@ -1,0 +1,255 @@
+{
+  "utc": "2026-11-07T10:22:08.264465+00:00",
+  "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+  "launch": {
+    "pid": 54622,
+    "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+    "profile": "/private/tmp/sbr-cv6mlx1j/playwright_chromiumdev_profile-BJVUNH",
+    "angle_metal_requested": true
+  },
+  "processes": [
+    {
+      "kernel": {
+        "pid": 54610,
+        "ppid": 54608,
+        "pgid": 54610,
+        "birth": [
+          1794046925,
+          396086
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/usr/bin/caffeinate",
+      "role": "owned-launch-helper",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+    },
+    {
+      "kernel": {
+        "pid": 54609,
+        "ppid": 54608,
+        "pgid": 54609,
+        "birth": [
+          1794046925,
+          391349
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+      "role": "owned-launch-helper",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b"
+    },
+    {
+      "kernel": {
+        "pid": 54608,
+        "ppid": 1,
+        "pgid": 54608,
+        "birth": [
+          1794046925,
+          254462
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+      "role": "owned-launch-helper",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "b3e2d3162eb789101425bbe76810fc5eb0d412d7cd5867d27568dd180ccf5a22"
+    },
+    {
+      "kernel": {
+        "pid": 54620,
+        "ppid": 54609,
+        "pgid": 54609,
+        "birth": [
+          1794046925,
+          733428
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/node_modules/.pnpm/@esbuild+darwin-arm64@0.28.2/node_modules/@esbuild/darwin-arm64/bin/esbuild",
+      "role": "owned-launch-helper",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "10b6243df618d374bb2d5c9cfbe7052e1405f6aa4e53a6164f11a91b9f2e1384"
+    },
+    {
+      "kernel": {
+        "pid": 54625,
+        "ppid": 54622,
+        "pgid": 54622,
+        "birth": [
+          1794046926,
+          198890
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "role": "renderer",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "kernel": {
+        "pid": 54624,
+        "ppid": 54622,
+        "pgid": 54622,
+        "birth": [
+          1794046926,
+          142512
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "role": "utility",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "kernel": {
+        "pid": 54623,
+        "ppid": 54622,
+        "pgid": 54622,
+        "birth": [
+          1794046926,
+          138804
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "role": "gpu-process",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "kernel": {
+        "pid": 54622,
+        "ppid": 54609,
+        "pgid": 54622,
+        "birth": [
+          1794046926,
+          76263
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "role": "browser",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "kernel": {
+        "pid": 54739,
+        "ppid": 54622,
+        "pgid": 54622,
+        "birth": [
+          1794046927,
+          494036
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "role": "utility",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634"
+    },
+    {
+      "kernel": {
+        "pid": 54994,
+        "ppid": 1,
+        "pgid": 54994,
+        "birth": [
+          1794046927,
+          934671
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "role": "apple-video-encoder-xpc",
+      "command_observed": true,
+      "admitted": true,
+      "prelaunch_sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+    },
+    {
+      "kernel": {
+        "pid": 55005,
+        "ppid": 1,
+        "pgid": 55005,
+        "birth": [
+          1794046928,
+          112755
+        ],
+        "status": 2,
+        "uid": 501
+      },
+      "coalition": [
+        42831,
+        42832
+      ],
+      "binary": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "role": "owned-launch-helper",
+      "command_observed": true,
+      "admitted": false
+    }
+  ],
+  "all_ever_lived_processes_observed": false,
+  "external_native_XPC_ownership": "UNQUALIFIED"
+}
