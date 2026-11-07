@@ -26,16 +26,16 @@ def plan():
 def prepare():
     inventory = plan()
     root = bindings.ROOT
-    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-r4-bpmhg9qg')
+    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-r5-rdtnxbus')
     ready_path = str(evidence.with_name(evidence.name + '-readiness.json'))
     paths = {}
     for spec in inventory['units']:
         unit = spec['id']
         paths[unit] = {'ready': ready_path, 'grant': str(evidence.with_name(evidence.name + '-' + unit + '.grant.json')),
             'consumption': str(evidence.with_name(evidence.name + '-' + unit + '.consumed.json')),
-            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg' / unit)}
+            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus' / unit)}
     canonical(evidence, absent=True)
-    canonical(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg', absent=True)
+    canonical(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus', absent=True)
     for row in paths.values():
         for path in row.values():
             canonical(path, absent=True)
@@ -43,7 +43,7 @@ def prepare():
     return {'version': 1, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': inventory['entryEnabled'],
             'executionStatus': 'ENABLED_AWAITING_PARENT_GRANT', 'nativeQualified': False,
             'inventorySha256': json_snapshot(HERE / 'inventory.json')[1], 'paths': paths,
-            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg')},
+            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-r5-rdtnxbus')},
             'bindings': pinned, 'cacheOwnerFreezeObservation': bindings.cache_owners(),
             'pythonSelfObservation': {'scope': 'CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(),
                                       'launcher': pinned['python'], 'kernelExecutable': pinned['pythonKernel']},

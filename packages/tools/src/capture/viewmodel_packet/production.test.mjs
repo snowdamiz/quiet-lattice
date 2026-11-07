@@ -4,9 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { registerHooks, stripTypeScriptTypes, syncBuiltinESMExports } from 'node:module';
+import { createRequire, registerHooks, stripTypeScriptTypes, syncBuiltinESMExports } from 'node:module';
 import { pathToFileURL, URL } from 'node:url';
 import cp from 'node:child_process';
+import netPorts from 'node:net';
 
 const packet = process.env.VM_PACKET_UNDER_TEST ?? import.meta.dirname;
 const ready = JSON.parse(fs.readFileSync(path.join(packet, 'readiness.json')));
@@ -14,7 +15,8 @@ const plan = JSON.parse(fs.readFileSync(path.join(packet, 'inventory.json')));
 const trace = [];
 let failingOperation, cleanupFails, primary;
 const secondary = new Error('SECONDARY_BROWSER_CLOSE');
-const chromium = {
+let chromium, originalLaunch;
+const inertChromium = {
   launch: async () => {
     trace.push('inert-launch-port');
     let initCalls = 0;
@@ -62,18 +64,16 @@ const net = () => ({
   },
 });
 
-// Private references avoid importing a real launcher, bundler, server or codec.
-globalThis.__viewmodelInertPorts = { chromium, vite, net };
+// Actual installed Playwright is imported; only launch, Vite and network ports are inert.
+globalThis.__viewmodelInertPorts = { vite, net };
 const hooks = registerHooks({
   resolve(spec, context, next) {
-    if (spec === '@playwright/test') return { url: 'inert:pw', shortCircuit: true };
+    if (spec === '@playwright/test') return { url: pathToFileURL(ready.bindings.playwright.replace(/index\.js$/, 'index.mjs')).href, shortCircuit: true };
     if (spec === 'vite') return { url: 'inert:vite', shortCircuit: true };
     if (spec === 'node:net' && context.parentURL?.endsWith('/capture.ts')) return { url: 'inert:net', shortCircuit: true };
     return next(spec, context);
   },
   load(url, context, next) {
-    if (url === 'inert:pw' || url === pathToFileURL(ready.bindings.playwright).href)
-      return { format: 'module', source: 'export const chromium=globalThis.__viewmodelInertPorts.chromium;', shortCircuit: true };
     if (url === 'inert:vite')
       return { format: 'module', source: 'export const createServer=async()=>globalThis.__viewmodelInertPorts.vite;', shortCircuit: true };
     if (url === 'inert:net') return { format: 'module', source: 'export const createServer=globalThis.__viewmodelInertPorts.net;', shortCircuit: true };
@@ -101,8 +101,19 @@ test('actual productionCapture / captureReview preserve operation errors across 
     };
   }
   syncBuiltinESMExports();
+  const network = [netPorts.Socket.prototype.connect, netPorts.Server.prototype.listen];
+  netPorts.Socket.prototype.connect = netPorts.Server.prototype.listen = () => assert.fail('NO_NETWORK');
   const rows = [];
   try {
+    const imported = await import(pathToFileURL(ready.bindings.playwright).href);
+    const required = createRequire(import.meta.url)(ready.bindings.playwright);
+    const esm = await import(pathToFileURL(ready.bindings.playwright.replace(/index\.js$/, 'index.mjs')).href);
+    assert.equal(imported.default, required);
+    assert.equal(required.chromium, esm.chromium);
+    assert.equal(typeof required.chromium.launch, 'function');
+    chromium = required.chromium;
+    originalLaunch = chromium.launch;
+    chromium.launch = inertChromium.launch;
     for (const operation of ['newPage', 'on', 'addInitScript', 'goto', 'waitForFunction', 'evaluate']) {
       for (const withCloseFailure of [false, true]) {
         failingOperation = operation;
@@ -135,6 +146,8 @@ test('actual productionCapture / captureReview preserve operation errors across 
     }
     if (process.env.VM_ENTRY_EVIDENCE) fs.writeFileSync(process.env.VM_ENTRY_EVIDENCE, JSON.stringify(rows, null, 2), { flag: 'wx' });
   } finally {
+    if (chromium) chromium.launch = originalLaunch;
+    [netPorts.Socket.prototype.connect, netPorts.Server.prototype.listen] = network;
     for (const [name, original] of saved) cp[name] = original;
     syncBuiltinESMExports();
     hooks.deregister();

@@ -294,18 +294,25 @@ def timeline(entry, previous):
     duration = entry["elapsed"] - (previous["elapsed"] if previous else 0)
     updates = entry["frame"] - (previous["frame"] if previous else 0)
     dt = entry["dt"]
+    zero_updates = int(dt == 0)
     if previous is None:
         # installPageFixture starts its clock before captureView's zero update
         # and 24 setup steps. The first ordinary pose then cools for >=120 steps.
         setup_steps = 24 if entry["loaderPending"] else 144
+        zero_updates = 1 + int(entry["loaderPending"] or dt == 0)
         require(duration + 1e-8 >= setup_steps / 60 and
-                updates >= setup_steps + 1 + int(entry["loaderPending"]),
+                updates >= setup_steps + zero_updates,
                 f"{filename}: initial fixture settle requires setup and pose updates")
     # Every fixture update is zero or 1/60; zero updates consume frames, not time.
     steps = round(duration * 60)
+    minimum_updates = steps + zero_updates
+    if previous is not None and entry["visible"] and entry["raise"] < previous["raise"]:
+        # A hidden update resets raise, then a distinct visible update observes it.
+        # The hidden update can consume elapsed time; at zero time both need frames.
+        minimum_updates = max(minimum_updates, 2)
     require(abs(duration * 60 - steps) <= 1e-6 and
             (dt == 0 or abs(dt - 1 / 60) <= 1e-10) and
-            updates >= steps + int(dt == 0),
+            updates >= minimum_updates,
             f"{filename}: inconsistent fixed-step elapsed/frame/last dt")
     if previous is None:
         return

@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import math
 import os
 from pathlib import Path
 import struct
@@ -803,6 +804,65 @@ class InspectorTests(unittest.TestCase):
                         fixture.write(value)
                         self.assert_cli_refused(fixture, value, "")
 
+    def test_cli_visible_raise_reset_requires_hidden_and_visible_updates(self):
+        for people in ("thalune", "ixari", "ulgani"):
+            with packet(f"view-{people}") as fixture:
+                for aspect in ("16x9", "21x9"):
+                    index = next(i for i, f in enumerate(fixture.value["frames"]) if f["file"] == f"{aspect}-raise-0.png")
+                    for updates in (0, 1):
+                        for dt in (0, 1 / 60):
+                            with self.subTest(people=people, aspect=aspect, updates=updates, dt=dt):
+                                value = copy.deepcopy(fixture.value)
+                                previous = value["frames"][index - 1]
+                                self.assertEqual(previous["raise"], 1)
+                                self.assertIs(previous["visible"], True)
+                                value["frames"][index]["sway"] = [s * math.exp(-9 * dt) for s in previous["sway"]]
+                                retime(value, index, updates, dt, dt)
+                                value["unknownRaw"] = {"visibleReset": [aspect, updates, dt]}
+                                fixture.write(value)
+                                self.assert_cli_refused(fixture, value, "")
+
+    def test_cli_initial_budget_adds_required_zero_updates_to_elapsed_steps(self):
+        for unit in ("view-thalune", "view-ixari", "view-ulgani", "return-thalune"):
+            with packet(unit) as fixture:
+                minimum = 24 if fixture.spec["fromPeople"] else 144
+                for steps in (minimum, minimum + 240):
+                    for dt in ((0,) if fixture.spec["fromPeople"] else (0, 1 / 60)):
+                        # Setup's zero step precedes positive time; the switch
+                        # gap or a final zero observation consumes another frame.
+                        required_zeros = 1 + int(bool(fixture.spec["fromPeople"]) or dt == 0)
+                        for zeros in (required_zeros - 1, required_zeros, required_zeros + 2):
+                            with self.subTest(unit=unit, steps=steps, dt=dt, zeros=zeros):
+                                value = copy.deepcopy(fixture.value)
+                                retime(value, 0, steps + zeros, steps / 60, dt)
+                                value["unknownRaw"] = {"initialBudget": [steps, dt, zeros]}
+                                fixture.write(value)
+                                if zeros < required_zeros:
+                                    self.assert_cli_refused(fixture, value, "")
+                                else:
+                                    result = fixture.run_cli()
+                                    self.assertEqual(result.returncode, 0, result.stderr)
+                                    self.assertEqual(json.loads(result.stdout)["observations"], value)
+
+    def test_cli_reset_budget_accepts_reachable_hidden_and_visible_steps(self):
+        for people in ("thalune", "ixari", "ulgani"):
+            with packet(f"view-{people}") as fixture:
+                for aspect in ("16x9", "21x9"):
+                    index = next(i for i, f in enumerate(fixture.value["frames"]) if f["file"] == f"{aspect}-raise-0.png")
+                    for steps in (0, 1, 120):
+                        with self.subTest(people=people, aspect=aspect, steps=steps):
+                            value = copy.deepcopy(fixture.value)
+                            # A hidden positive step can supply the reset; with
+                            # no elapsed time both hidden/visible updates are zero.
+                            duration = steps / 60
+                            value["frames"][index]["sway"] = [s * math.exp(-9 * duration) for s in value["frames"][index - 1]["sway"]]
+                            retime(value, index, max(2, steps + 1), duration, 0)
+                            value["unknownRaw"] = {"reachableReset": [aspect, steps]}
+                            fixture.write(value)
+                            result = fixture.run_cli()
+                            self.assertEqual(result.returncode, 0, result.stderr)
+                            self.assertEqual(json.loads(result.stdout)["observations"], value)
+
     def test_cli_zero_time_resets_settled_observations_and_extra_updates_remain_valid(self):
         for people in ("thalune", "ixari", "ulgani"):
             with packet(f"view-{people}") as fixture:
@@ -810,10 +870,10 @@ class InspectorTests(unittest.TestCase):
                     with self.subTest(people=people, file=filename):
                         value = copy.deepcopy(fixture.value)
                         index = next(i for i, f in enumerate(value["frames"]) if f["file"] == filename)
-                        # A zero update can change input/visibility and reset raise,
-                        # but the runtime's sway is unchanged at that boundary.
+                        # A visible raise reset needs hidden then visible updates;
+                        # a hidden reset or settled observation needs only one.
                         value["frames"][index]["sway"] = value["frames"][index - 1]["sway"][:]
-                        retime(value, index, 1, 0, 0)
+                        retime(value, index, 2 if filename == "16x9-raise-0.png" else 1, 0, 0)
                         value["unknownRaw"] = {"zeroObservation": filename}
                         fixture.write(value)
                         result = fixture.run_cli()

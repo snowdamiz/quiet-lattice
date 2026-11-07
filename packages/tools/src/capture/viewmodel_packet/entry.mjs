@@ -273,7 +273,7 @@ export async function productionCapture(context, record, cleanups) {
   const { register } = createRequire(import.meta.url)(ready.bindings.tsxApi);
   const unregister = register();
   cleanups.push(unregister);
-  const { chromium } = await import(pathToFileURL(ready.bindings.playwright).href);
+  const { chromium } = (await import(pathToFileURL(ready.bindings.playwright).href)).default;
   const fixture = await import('./fixture.mjs');
   const launch = chromium.launch;
   let launches = 0;

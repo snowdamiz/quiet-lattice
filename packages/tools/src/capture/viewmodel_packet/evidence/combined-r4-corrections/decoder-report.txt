@@ -1,0 +1,111 @@
+TASK: R4-2 frame-budget implementation lane, SOURCE/CPU only.
+STATUS: COMPLETE. No commit. Parent owns final readiness, unrelated packet files, independent review and clean commit.
+
+PIN / OWNERSHIP
+Worktree /Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8
+Branch task/P1-E05-T03
+Base/current HEAD af301db512343f2d578e68b8cfdbe7f72bfe794d
+Committed tree 70fa16f7484cf5af0e9d150b49e7c3269fe675e2
+Only implementation edits by this lane:
+  packages/tools/src/capture/viewmodel_packet/inspect_packet.py (+9/-2)
+  packages/tools/src/capture/viewmodel_packet/test_inspect.py (+63/-3)
+All new evidence is under /private/tmp/vm-r4-fix-rdtnxbus/decoder.
+Other dirty packet files in git-status.txt belong to concurrent parent work; this lane did not edit them.
+
+CHANGE
+The common timeline budget now adds mandatory zero-time setup updates to the elapsed positive-step count. An initial ordinary endpoint needs the compulsory setup zero plus any final zero observation; a switch-gap start also reserves its gap zero. Thus 384 positive steps with a positive last dt require at least frame385, and 264 positive steps at an initial switch gap require at least frame266. The short setup/settle checks remain.
+
+A visible drop in raise requires at least two updates: hidden reset then visible observation. The hidden update may consume one of the elapsed positive steps, so the minimum is the larger of the clock's positive-plus-zero budget and two updates. At zero elapsed time both updates need frames. This rejects the actual one-update defect without rejecting a reachable positive hidden reset followed by visible dt0. Named raise-0 still requires last dt0; a positive visible update actually produces raise2.6/60, not zero.
+
+The old positive test now uses two zero updates for visible raise-0, while retaining one update for hidden underwater reset and settled fire observation. Three new focused methods cover both aspect endpoints for every people, zero/one frame deltas, zero/positive last-dt variants, initial short/long elapsed budgets, minimum/extra zeros, and reachable mixed positive/zero resets. Thirty of the original31 test methods are AST-identical. Only the incorrect positive method changed; all prior R3 upward raise and sway methods remain unchanged. Runtime, fixture, assets, bindings, readiness, helper/T15 source and docs were not changed by this lane.
+
+EXACT-BASE RED, BEFORE INSPECTOR EDIT
+prepare copied inspect_packet.py, test_inspect.py and inventory.json bytes from the supplied Git base and asserted equality with the working files before any edit. Copied inspector SHA256:
+  eccaf8fc817681e8442d4f25bfe9dbc6d80a01bac53cab6371bc0d8ae0ef1f0e
+Copied test SHA256:
+  8a77ba1d427417e7b50d884da1fab7614765244c0d2deed93e679cd32236fad3
+
+red-replay: seven actual full authenticated CLI calls against copied inspector bytes, all exit0. This exactly replays unchanged reviewer packets: three impossible one-zero-update visible resets, one omitted-initial-zero packet, and three valid two-update controls. Originals were read directly, not renamed or rewritten.
+
+red-tests-v2 (final regression source): three methods,72 actual CLI calls,50 exit0/22 exit1; test process exit1 with12 failing subtests and0 errors. Six failures are one-update visible resets across three peoples and both aspects. Six are missing mandatory initial zeros, including frame384 at elapsed384/60. Exact failure form:
+  AssertionError: 0 != 1 : {"valid":true,"status":"PASS", ...}
+  Ran 3 tests in 8.313s
+  FAILED (failures=12)
+Full failure payloads/stdout/stderr and every authenticated input/manifest are retained.
+
+Earlier draft red-tests also remains: three methods,90 CLI calls,65 exit0/25 exit1,15 failed subtests,0 errors, inner exit1. Before fixing production, initial switch-gap test variants were narrowed to the unchanged producer's last dt0; the earlier additional switch-gap positive-last-dt cases are not used as final controls. red-tests-source-v1.py preserves that exact draft. Final RED and GREEN use identical final test bytes. No failing run or counterexample was erased.
+
+GREEN / FOCUSED VALIDATION
+green-tests:11 focused methods,270 full authenticated inspector CLI calls,74 exit0 accepted controls and196 expected exit1 refusals; suite exit0,0 failures/0 errors,18.293s. Includes the three new methods; corrected zero-time positives; prior initial clock, underwater upward raise, both-axis sway, every-endpoint fixed clock, named raise0.4, switch-settled timing, and extra-cooling/reset controls. No broad full suite was run.
+
+green-replay: same seven original reviewer packet paths/bytes, now three valid controls exit0 and all four counterexamples exit1. All four fail with the common fixed-step budget diagnostic:
+  16x9-raise-0.png: inconsistent fixed-step elapsed/frame/last dt
+  16x9-neutral.png: inconsistent fixed-step elapsed/frame/last dt
+Failure observations retain the entire authenticated source readout.
+
+REAL RUNTIME / PRODUCER PARITY
+Three serial pinned-Node processes, all exit0:
+1. Retained complete runtime oracle, with only scratch destination changed:14 timelines,224 endpoints,57 transition cases. Fresh runtime-facts-v4.json structurally equals the retained reviewer result, including source hashes. All14 unchanged authenticated oracle packets pass the edited CLI; every recorded runtime field matches the newly executed facts.
+2. Retained frame-budget oracle, with only scratch destination changed: unchanged one-visible-zero, hidden-zero, two-zero-visible and first-frame controls reproduce identically. All three peoples require two zero steps for visible raise1->0, while the hidden reset takes one.
+3. Additional oracle using the identical retained loader/setup prefix:12 transition controls and10 full timelines/167 endpoints. Actual update proves zero/one/120-positive-step hidden resets and positive-visible-dt nonzero raise for all peoples. Six complete mixed-reset packets and four long-initial minimum-budget packets all pass the actual authenticated CLI. Actual first endpoints are frame385/384 positive steps for ordinary Thalune, and frame266/264 positive steps for initial switch gaps. No formula-only claim substitutes for these runtime executions.
+
+The oracle executes the complete frozen Multitool.js update/loader callback methods, unchanged installPageFixture/step/pose, and real Three/meter rules. Constructor allocation is bypassed; loader/disposal/environment ports and model resources are inert CPU objects. No rendering, native launch, real asset loading or visual qualification. The fixture capture timeline is reproduced through its actual step/pose methods, not a browser captureView run; parent owns the Playwright import/launcher boundary.
+
+Counts without double counting:
+  Final GREEN:301 actual inspector CLIs =270 focused +7 original replays +14 retained oracle +10 extra oracle.
+  Final GREEN exits:101 success,200 expected refusals; all assertions passed.
+  All retained execution including both RED drafts:470 inspector CLIs,223 exit0/247 exit1.
+  Runtime Node calls:3, all exit0. No unexpected harness/process failure or timeout.
+  Successful Node stderr contains only the experimental VM Modules warning; full stderr retained.
+
+COMMANDS / ENVIRONMENT / EXITS
+commands.json contains476 actual command records:470 inspector CLIs,3 suite wrappers,3 Node runtime calls. Every record has exact argv/cwd/environment/exit and stdout/stderr byte hashes. Test CLI inputs and manifests are copied before each subsequent mutation. Direct replay/oracle records point to immutable original inputs; those originals are covered by before/preservation hashes.
+
+Outer runner commands used this exact executable and script, with each mode invoked serially (outer exit0 in every case):
+  /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -B /private/tmp/vm-r4-fix-rdtnxbus/decoder/run.py prepare
+  [same executable/script] runtime
+  [same executable/script] red-replay
+  [same executable/script] red-tests
+  [same executable/script] red-tests-v2
+  [same executable/script] green-replay
+  [same executable/script] green-tests
+  [same executable/script] oracle
+  [same executable/script] runtime-extra
+  [same executable/script] oracle-extra
+  /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10 -B /private/tmp/vm-r4-fix-rdtnxbus/decoder/finish.py
+RED outer exit0 means the runner asserted the intended inner exit1, not successful product validation. Inner RED exits and failure tails remain separately recorded.
+
+Actual CLI command shape:
+  /usr/bin/sandbox-exec -f /private/tmp/vm-r4-fix-rdtnxbus/decoder/readonly.sb <pinned Python> -B <exact inspector path> --inventory /private/tmp/vm-r4-fix-rdtnxbus/decoder/base/inventory.json --unit <unit> --output <packet>/output --manifest <packet>/manifest.json
+The focused tests invoke the CLI within the already sandboxed Python test process and use inventory.json at base/HERE as recorded. The baseline inventory unit specifications remain unchanged. The sandbox denies network and writes outside the new decoder directory except /dev/null. Direct Node commands use:
+  /usr/bin/sandbox-exec -f /private/tmp/vm-r4-fix-rdtnxbus/decoder/readonly.sb /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --experimental-vm-modules <decoder>/runtime[|-frame-budget|-extra].mjs
+
+Actual subprocess environment.json (complete environment, not a credential-bearing inherited shell dump):
+  PATH=/usr/bin:/bin; LANG=C; GIT_OPTIONAL_LOCKS=0
+  PYTHONDONTWRITEBYTECODE=1; NODE_DISABLE_COMPILE_CACHE=1
+  PYTHONPATH=/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages
+  TMP=TEMP=TMPDIR=VM_REVISION_TMP=/private/tmp/vm-r4-fix-rdtnxbus/decoder/tmp
+  XDG_CACHE_HOME=/private/tmp/vm-r4-fix-rdtnxbus/decoder/cache
+  OMP_NUM_THREADS=OPENBLAS_NUM_THREADS=MKL_NUM_THREADS=VECLIB_MAXIMUM_THREADS=NUMEXPR_NUM_THREADS=1
+All Python invocations use -B; all actual verification subprocesses receive that exact private environment. Serial lane only; no nested agents.
+
+PROVENANCE / PRESERVATION
+Full binary/full-index owned.diff SHA256:
+  524613c74a08c73849b04f0db077662cd4cbf6226394a199010ea297915050ba
+Final inspect_packet.py SHA256:
+  862a50a99f822a95bdf6dfd67da272ad3a544dbbf78884e752cddc38ff278461
+Final test_inspect.py SHA256:
+  ad1d56f77dee018cca260210c0bac2c0b0ed9be37a3be316401a0859edc92342
+Frozen Multitool.js SHA256:
+  0ec69a4552687445d0787a29a73f8a33512591b12d0866c88d8ca17969f9e2ab
+Frozen fixture.mjs SHA256:
+  856dd81a1238f19f9c1dcc103ce7a2ae5ccddfd9327f1e9ba5eef182d6f6e5a6
+Pinned Node SHA256:
+  06eb3f5762c2b6890e99d03f931bf01d9b20fd341dec1a8c1ef5c1809e66102b
+Real Three module/core, meter rules, Python and TypeScript dependency hashes are in before.json/runtime-parity.json. The complete protected snapshot of20,587 files, including all prior author/reviewer decoder evidence and referenced runtime/dependency bytes, rehashes unchanged in preservation.json. HEAD/tree unchanged. git diff --check on both owned files exits0. Parent retains whole-worktree/readiness audit ownership.
+
+BOUNDARY
+This is implementation SOURCE/CPU proof, not independent review, native/GPU/browser acceptance, a real grant, deployment or complete task readiness. No real grant/native/GPU/browser/codec/Blender/service/DB/install/full-suite/build/cleanup actions, runtime/fixture/asset/helper/T15 changes, nested agents, commit, push, PR or merge were performed.
+
+ARTIFACTS
+REPORT.txt; SUMMARY.json; owned.diff; final-inspect_packet.py; final-test_inspect.py; base/; before.json; preservation.json; commands.json; environment.json; failure-tails.json; red-tests*/ summaries/logs/authenticated inputs; red-replay/ and green-replay/; green-tests/; runtime*.mjs/facts/parity; oracle/; oracle-extra/ and oracle-extra-packets/; git-status.txt; ARTIFACT-INDEX.json.
