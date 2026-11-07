@@ -1,0 +1,124 @@
+TASK: P1.E08.T09 — fresh independent R8 six-unit disabled-caller SOURCE/CPU review; Appendix C.2/C.4.
+STATUS: DONE — VERDICT: REVISE (one new reproduced P2). All six R7 findings are FIXED. This completes the independent review, not whole T09/native/visual acceptance.
+
+SUMMARY: Exact pinned source and complete caller/native-adapter paths were independently inspected, with fresh red replays of all six R7 findings on 7dbc3eeb and corrected replays on 4da893bef. Descriptor-anchored destinations, producer-fact/primary retention, exact T15 capture cleanup adoption, PNG palette validation and bounded same-byte decoding pass. The newly supplied effects pilot exposes one concrete remaining fauna freezer/binding omission: the same Chromium executable's observed owned Apple encoder is absent from fauna's process allowlist. Actual fauna observer/wait/main replay rejects that record. Fauna preserves and publishes the original failure; the effects pilot's missing final-publication symptom was not reproduced. No source was edited and no native runtime was launched.
+
+PINS:
+- Reviewed worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-06487465
+- Branch: task/P1-E08-T09-current-base; initially and finally clean.
+- HEAD: 4da893bef385312284531a8cd254b6c8b16e5065
+- Tree: 89d333ae43e8a04626681980b881dbfba389b7bf
+- Base: 7dbc3eeb832dbfcfdc92ada434913f75edd9aa75; tree d7f022e45d87e752c8b07389e7b3b68a561c7ed5.
+- Full binary diff SHA256: 1f1f15fd02d6d7814a9f013fa595a8b56a5a3b1652670d19cc248a59f5c46dc5.
+- Readiness SHA256: 05e3bce954aef45decdf6ee7a256a61e82cc48ea31a41d3a5a3caa0f9258d619.
+- Product d688579adf31c2a8ee9836495ba6b32708b99ccd bindings unchanged except the expressly reviewed capture.ts adoption.
+- Separate T15 commit c360967ab2bdba096bd2949c70fe679e8b7d68b3 has exactly capture.ts and capture.lifecycle.test.ts and parent 7dbc3eeb. Its full patch bytes, preimages (including absent new test) and final two blobs match original 38b6c4b58db43146df20cd760808d1461d7a667b and staged-parent commit 21eab1f74110c8f7120013ebc4e119f4cc45a824. All three stable patch IDs are 8e90cd71186b236a00402a6bd9b985256e9b5ec7; all three exact patch SHA256 values are febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345. Verification includes each commit's actual parent, not an assumed relationship between the original and staged commits.
+- Shared final hashes: capture.ts 42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d; capture.lifecycle.test.ts ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18.
+
+FILES CHANGED: None in the reviewed checkout, parent checkout, existing evidence or memory. New review scripts, exact source copies, synthetic Git/grant/process/image fixtures and receipts exist only under this fresh review directory. Candidate diff is exactly the eight fauna packet files caller.py, file_io.py, entry.mjs, inspect.py, freeze.py, readiness.json, controls.py and capture_controls.mjs, plus the separately adopted two T15 files. Both runtime flags remain false. No actual prospective identity was created.
+
+FINDING R8-1 — P2 — Bind the known owned Apple encoder before declaring this native caller ready.
+
+Location: packages/tools/src/capture/fauna_packet/freeze.py:119-122 and :182; emitted readiness.json:2742-2749. Actual consumer: caller.py:573-594 → unchanged run_round4_remaining8.py:307-335 (the assertion is :334).
+
+The freezer's native list contains Python launcher/runtime, Node, caffeinate, Chromium and esbuild, but omits /System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService. This same list produces process_binary_sha256. The actual StageReceipts._observe accepts only currently identity/coalition-checked members and then requires every observed executable to be present in that map. The existing explicit apple-video-encoder-xpc role does not exempt it.
+
+Reachability is supported by the supplied parent's actual pilot at effects HEAD 6f4a2baeb96fb82fd4347e26b927c8e02b95a6a8: observed_execution.json records that encoder as owned member PID91794, birth [1794040260,209486], coalition [41959,41960], admitted:false; boundary.json reports the exact Unbound owned executable assertion. The pilot and fauna select the identical chrome-headless-shell path and SHA256 77d8278b1ac9d0687fad4e817ea83023ede09b1deef36e1864b49ba194ac9634. Fauna calls the same ordinary chromium.launch/Metal route through captureUi, without a recording request. “No explicit encoder/recorder route” does not establish absence of an OS service that this exact browser has now started. This finding concerns an observed owned cohort member, not hypothetical external XPC ownership.
+
+Fresh actual-code reproduction: green/native-pilot-boundary.py replays that retained kernel/executable observation at inert OS producer ports into the exact StageReceipts class/current_commands, exact StationJob.wait/save and actual fauna main/consume/run_unit, following a real successful predecessor CPU process. It keeps fauna's final process map unchanged. All three cases return main1 with primaryFailure “Unbound owned executable: <exact path>”; no decoder dispatch occurs. The returned observation contains the original process/kernel/coalition/binary facts. This is an independently executed source/CPU replay using historical native observations, not a new native capture.
+
+Impact: whenever this already observed owned service appears, a future otherwise correctly granted fauna run is terminated before its required capture can complete, consumes its one-use identity and refuses successors. CPU --check still passes because it validates declared bindings rather than completeness. This is a concrete native-route readiness defect; no claim is made that every future fauna launch necessarily spawns that service or that CPU testing can establish native success.
+
+Correction: add this known Apple-owned executable through the existing task-local freeze/binding mechanism (canonical verified identity and content, with the existing supported Apple verification contract where applicable), include it in both frozen file bindings and process_binary_sha256, and retain a real-adapter regression that checks the owned encoder observation against the frozen map. Keep the immutable helper's kernel ownership predicates, fail-closed handling of unknown binaries, and independent native qualification. Do not copy the effects caller or build a general XPC framework. This correction belongs to fauna's own bindings; the effects author still owns the effects publication/cleanup fix.
+
+Rule/contract: the requested exact final native/executable binding audit and the task's existing standard capture route must cover the concrete known owned process boundary. Plan0.9.5's five global mandatory conditions were also checked; none creates an additional finding in this caller-only delta.
+
+RELATED PILOT PUBLICATION CHECK — NO NEW FAUNA FINDING:
+- Replaying the pilot's drained:true/clean:false result retains the observer primary and an explicit terminal-audit cleanup failure; it does not claim successful terminal proof for a failed capture.
+- With ordinary sinks, result.json durably contains the original failure and observed process facts.
+- With result.json refused, failed-result.json durably contains them.
+- With both final receipts and stderr refused, returned result has UNABLE_TO_PERSIST_COMPLETE_RESULT, retained primary/raw facts and explicit persistence failures. It makes no durability claim.
+- Therefore the effects pilot's absent result/terminal/error output is not automatically attributed to fauna. Native process/GPU release and whole capture remain outside this source review.
+
+PRIOR DISPOSITIONS:
+- R7-1 destination ancestor traversal: FIXED. Old source writes 20 admitted bytes into a foreign scratch directory before refusing. Current openat-based destination acquisition refuses after the real ancestor replacement with zero foreign payload and a retained zero-byte leaf in the pinned original directory. Full main stops before helper/decoder dispatch. Source-growth and unreadable-cache controls also pass.
+- R7-2 observer raw facts/primary precedence: FIXED. Current actual observer/wait callbacks retain TimeoutExpired output/stdout/stderr, NUL/non-UTF8 bytes and unknown attributes. One-shot resource enumeration errors retain their original position too; helper save failure is secondary. KeyboardInterrupt remains primary and unwinds. Old loss/precedence assertions reproduce on base.
+- R7-3 bootstrap producer output loss: FIXED. Both bootstrap exit0 and17 with receipt-write failure retain full raw producer return/unknown bytes plus registration uncertainty. Nonzero producer failure remains primary; no retry/decoder runs. Stock controls additionally cover producer exceptions and all sinks failing.
+- R7-4 actual capture navigation/cleanup: FIXED. Exact base entry + captureUi reproduces raw loss and replacement by browser/Vite close. Exact adopted captureUi plus current entry preserves original navigation bytes/unknown fields, attempts both cleanups, and records secondary errors. The 11-case default-entry controls also cover combined cleanup, frozen/falsy failures and all sinks failing.
+- R7-5 empty/duplicate PLTE acceptance: FIXED. Real frozen caller3.14 → real decoder3.10 subprocess accepts the complete valid82-file/81-image packet, and refuses both complete malformed packets after matching manifest/journal hashes. Base actually decodes and accepts both invalid palettes. Stock software tests also exercise legal optional palettes and other critical-container/stream cases. These are synthetic CPU images, not screenshots of the game.
+- R7-6 over-admitted decoder read: FIXED. Base grows an8,594-byte PNG to33,554,439 bytes and reads all of it before rejecting. Current exact decoder reads only8,595 bytes then refuses, closing the descriptor. Nine real decoder-child boundary cases cover growth, FIFO, symlink, regular replacement, parent replacement, close failure, journal and readout growth; unsafe acquisitions read zero payload. Hashing/PNG validation/Pillow consume the same admitted bytes.
+- R1-F1 original Node receipt masking: FIXED; current seven Node controls and11 actual default-consumer cases pass.
+- R1-F2 release raw-fact loss: FIXED; exact archive/terminal paths retain command outcomes and failed predicates. R1-F3 contradictory clocks/incomplete broad feed journal: FIXED; original adverse full-inspector controls and complete correction/broad software fixtures pass. No pixel grade follows.
+- R2-A swallowed cleanup cancellation/deadline: FIXED;38 real SIGALRM/KeyboardInterrupt cases at19 receipt boundaries preserve immediate phase unwind and prevent later decoder dispatch. R2-B final-publication successor admission: FIXED; eight publication cases, seven reference mutations and six fresh two-process cases preserve the gate. First process exits [0,1,7,0,0,0], successor exits [0,2,2,2,2,2]. R2-C raw exception/allocation ownership: FIXED; six producer/all-sink cases and exact32MiB receipt accounting pass.
+- R3 historical SOURCE_PASS remains historical; it is not a native/whole-task guarantee.
+- R4-1 split authentication/semantic reads: FIXED; coherent snapshots and admitted manifests survive/refuse the relevant swaps. R4-2 pre-cap metadata reads: FIXED;29 cases/242 observed snapshots pass. R5 metadata FIFO/ancestor races: FIXED;14 schedules pass without a harness alarm.
+- R6 artifact FIFO/cache source/pre-cap/after boundaries: FIXED at their reported sites. Seven real artifact-successor schedules produce refused second exits [2,2,1,2,2,2,1];23 real cache-main cases pass. R7's distinct destination and decoder gaps are now fixed separately. R6 exact-base historical red evidence remains preserved, not relabeled.
+- Worker follow-up secondaryFailures successor gate: FIXED; authenticated secondary-failure result refuses before any consumption/output/evidence/helper dispatch. The other26 admission mutations also pass.
+- Same-HEAD six-unit sequencing: PRESERVED; six real inert caller children each exit0 at scratch HEAD d78c83698a115d7ea7a9e78d2bec8d9a2c38e7a8, with82+82+82+82+220+220=768 files and predecessor hashes unchanged. Their decoder is inert; this proves sequencing, not image/native validity.
+
+VERIFY:
+All validation commands have exact argv, cwd, explicit environment overrides, observed raw exits, durations and full stdout/stderr in COMMANDS.md and commands.jsonl. Read-only discovery/source-reading commands and initial evidence setup are also retained in the review transcript. Review scripts and exact red/green source copies are included; source-copy hashes were checked against Git blobs after execution. No test command uses pnpm/npx/uv installation, implicit node_modules writes or more than two concurrent CPU test cases.
+
+Fresh executions include:
+- Ten cross-boundary cases on exact base and candidate; three actual entry/default captureUi cases on each; three full PNG caller/decoder cases on each; base growth and nine current decoder acquisition cases.
+-45 Python controls PASS;7 Node controls PASS;11 actual default-entry cases PASS (one Node harness file, not11 separate node:test declarations).
+- Six actual caller process sequence;26 admission mutations plus one authenticated secondaryFailure refusal;7 artifact process schedules;23 cache cases;29 metadata cases/242 snapshots;14 R5 schedules;8 publication cases/38 interruption cases/7 reference mutations;6 raw-fact cases;6 publication successor pairs; original R1 full-inspector mutations and correction/broad software positive controls.
+- Three retained native-observation replays PASS as tests of the expected rejection/publication behavior; these substantiate R8-1 rather than native acceptance.
+- Supplied check-readiness.py inspected before execution, then run with the pinned Python launcher. It only calls actual caller --check with frozen PATH, flags false. It performs read-only hashing/cache-owner/launchctl-getenv checks; no helper/job/browser/codec launch or grant consumption. Exit0,440 bindings, CPU_BINDINGS_ONLY, allSixQualified:false; free bytes observed33,146,818,560. Capacity is time-local and must be refreshed at any authorized future unit.
+- No-bytecode Python compile and git diff --check PASS. The worker's146 shared-tool tests and broad static checks remain reported evidence, not falsely claimed as independently rerun. The exact shared patch and its actual fauna consumer were independently verified here; no native smoke was executed.
+
+Retained nonzero review-harness runs:
+1. green-capture-cross exit1: the copied worker script still asserted the old R7 raw-field-loss outcome. Current entry retained the fields, causing the old negative assertion to fail. Original script is preserved as green/capture-cross-r7-assertions.mjs, with original full log. Scratch assertions were changed to require primary/raw preservation and both cleanup attempts; retained-capture-cross exits0. Product source was never changed.
+2. final-preservation exit1: the initial verifier tried git show on capture.lifecycle.test.ts in the adoption parent, although this is an added file and correctly absent there. Git exited128. Original verify-initial.py and full log remain. Corrected verifier compares ls-tree preimages, including absence, for all three commits; final-preservation-corrected exits0. This is a verifier correction, not a product defect.
+COMMANDS.md includes the last20 stderr lines for both failures. Existing R7/worker failed iterations and evidence are fingerprint-unchanged. Red test exit0 means the stated old defect reproduced, not source/capture acceptance.
+
+PROTECTION:
+-12,736 tracked file hashes unchanged during review; candidate remains clean at exact HEAD/tree.
+-65,154 files/symlinks across the original R7 and R8 worker evidence roots preserve content, device/inode, mode, size, mtime and symlink targets as applicable.
+-37 existing own-cache files fingerprint-unchanged; the frozen dependency routes/content and440 executable/source bindings pass actual --check. No ignored mutation was detected in these checked routes. This is not a host-wide filesystem audit.
+- Four immutable helper hashes match protected-helpers.json; all assets/history/product pins and the legacy440-file Git/LFS binding remain unchanged; no hydration.
+- All192 historical/intermediate/current prospective output/evidence/grant/consumption identities remain absent. Old task branch stays bb5a7096a9c42bfda89e0ad3ac4cbf8248efdad9.
+- Final preservation free-space observation31,339,610,112 bytes is recorded, not a future runtime guarantee.
+- Inventories/budgets/order unchanged: four82-file correction units then two220-file broad units;768 files/762 images. Per-unit admission8,925,528,064 /15,871,295,488 bytes; image16MiB/readout16KiB; controlled metadata64MiB/cache snapshot64MiB; capture600s/cleanup60s/decoder45s/cache30s. Native reserves remain observed thresholds, not hard quotas. No all-six-fit claim.
+
+DECISIONS:
+- Full caller review → traced admission, source cache/destination, allocation/start/observer, release/terminal, entry/default captureUi, actual decoder and final successor publication; did not stop at modified helper functions.
+- New pilot evidence → replay only its concretely recorded owned process fact, with the exact current fauna consumer. Same browser bytes plus actual observer failure justify the binding finding; no speculation about arbitrary system services or guarantee of future native success.
+- Native publication → distinguish terminal-audit failure from lost final failure publication. Fauna makes the former explicit and preserves the latter; effects-specific implementation work remains with its author.
+- Tests → real filesystem descriptors, actual isolated Git/caller OS processes and software decoder children; only native/browser/network producer ports replaced. No live process ownership/drain is inferred from inert replay.
+- Plan0.3/0.9.5 → no changed authority/demo/product-budget behavior or untested new product system; no style blockers. No visual/native acceptance inferred from SOURCE/CPU results.
+
+OUT OF SCOPE FOUND / LIMITS:
+Current-source native capture, actual XPC ownership/lifecycle qualification, Metal smoke, pixel grading, two-client/DB/live-QA and merged verification were not run. Historical visual/live-QA/source passes retain their original scope and failures. No actual caller was executed against real grant paths; runtime remained disabled. No source edits, Blender/browser/GPU/native/codec/server/DB launch, installs, dependency hydration, push/PR/queue/merge, parent document edits or old-file cleanup occurred. Screenshot cleanup remains STOPPED. The effects author owns its observed missing-final-publication/retained-namespace fix; no effects code was imported or modified.
+
+ARTIFACTS:
+This immutable REPORT.md and identical APPENDIX-C2.md; COMMANDS.md/commands.jsonl; pins.json/source-diff.patch; before.json/verification.json; inputs/ (exact task, prior reports and supplied native-pilot records plus source hashes); red/green scripts, exact source copies, real-process logs, boundary JSON and retained synthetic fixtures; evidence-manifest.json.
+
+COMMAND EXIT INDEX (raw process outcomes; interpret red/refusal probes as described above):
+- red-cross: exit 0; 4.137s.
+- green-cross: exit 0; 4.244s.
+- green-capture-cross: exit 1; 0.06s.
+- red-capture-cross: exit 0; 0.064s.
+- green-png-cross-from-template: exit 0; 1.064s.
+- red-png-cross-from-template: exit 0; 1.43s.
+- red-inspector-read-cross: exit 0; 0.354s.
+- green-inspector-read-cross: exit 0; 2.864s.
+- retained-capture-cross: exit 0; 0.073s.
+- retained-sequence-independent: exit 0; 2.128s.
+- retained-secondary-admission: exit 0; 0.365s.
+- retained-artifact-process-green: exit 0; 3.009s.
+- retained-cache-main-green: exit 0; 10.24s.
+- stock-python: exit 0; 21.385s.
+- retained-retain-metadata-controls-final: exit 0; 6.503s.
+- retained-fresh-boundaries-green: exit 0; 4.481s.
+- retained-independent-boundaries: exit 0; 3.315s.
+- retained-retained-facts: exit 0; 0.23s.
+- stock-controls: exit 0; 0.529s.
+- stock-capture_controls: exit 0; 0.123s.
+- native-pilot-boundary: exit 0; 1.396s.
+- readiness-check: exit 0; 3.291s.
+- original-r1-full-inspector: exit 0; 7.344s.
+- final-admission-many: exit 0; 10.717s.
+- final-publication-process: exit 0; 2.904s.
+- final-preservation: exit 1; 13.639s.
+- final-preservation-corrected: exit 0; 19.932s.

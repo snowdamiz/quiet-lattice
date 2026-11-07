@@ -1,0 +1,83 @@
+TASK: P1.E07.T07 / P1.E08.T09 companion QA fixture — independent bounded R4 SOURCE/CPU review
+STATUS: DONE — SOURCE PASS
+SUMMARY: No blocking source finding remains in the exact input correction. The R3 P2 is fixed at both clients' F call sites and the owner's later S call site. Actual UI handlers and the production input consumer pass the CPU controls; the complete live scenario's authoritative assertions are preserved. This verdict qualifies source only, not browser gestures, rendering, live gameplay, server/DB transport or native teardown.
+
+PIN / INDEPENDENCE
+Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch: t3/P1-E07-T07-T09-live-qa
+HEAD: 9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb
+Tree: 6c474cf3e7568a4b331340ad1cc37a3cc6860953
+Source commit: 613bf7274eff4bfc35f8d85b2ccb3eb3c2e7be11
+Source tree: 0d27b06cb5968fbb3bf7c6107bacc4146c122800
+Compared with R3: 63b61308ed6a64fdc35994fdfaf782bbb79752a2
+R3 tree: 3b9184014f7e95f530af84e1773e0d04edb79caa
+Fresh reviewer context with only the task brief and evidence, no worker transcript or nested agent. Read IMPLEMENTATION_PLAN §0.3, §0.9.5, C.2/C.4, supplied R3 review, worker input-fix C.2, exact future-qa-final-pin, source diff and relevant real consumers. No mandatory §0.9.5 REVISE condition found.
+
+FILES CHANGED: None in the checkout, linked dependencies or prior packets. This report and replay artifacts exist only in the new scratch directory. Reviewed delta: symbiotic-online.spec.ts adds acquireInput and two call-site changes (the F call is inside the each-client loop); symbiotic-private.test.ts preserves all 44 old test bodies and appends seven input cases. The remaining 39 changed paths are the new report directory. No product patch changed.
+
+PRIOR DISPOSITIONS / SOURCE FINDINGS
+R3 F1 (P2, previously spec:335): FIXED for source/CPU. acquireInput at spec:41-51 brings the requested page forward; bounded wait requires document focus, joined net, playing mode and no overlay. If unlocked, its real Playwright locator clicks the existing Resume button. Menus.buildPause (Menus.js:356) calls Input.lock. The real pointerlockchange handler derives locked; Game.frame (Game.js:783-785) derives enabled. A second bounded wait requires focus, locked, enabled and no visible pause menu before a fresh key edge. No live-fixture assignment to locked/enabled/mode/pose, direct exitShip call, or parked-state injection was added. Input.lock's existing production fallback remains unchanged; CPU PASS must not be described as proof of native pointer-lock capture.
+The each-client loop calls acquireInput immediately before F (spec:346); F's existing try/finally releases the key on success and failed foot wait. The owner later calls it again before S (spec:397), after observer activity; the existing movement wait and finally key-up remain. If focus, click or admission fails, the key is not sent. CPU controls execute actual helper/until/key-block source, full Input event handlers, exact Game frame gate, Game.handleInteractions/exitShip, Player.spawn/up, actual Resume menu callback/visibility/root creation. DOM focus and browser lock grants are explicit ports. They are not a rewritten acceptance predicate and are not native proof.
+R1 retirement vacuity, fixed in R2: PRESERVED/FRESH PASS. A dead/missing target, dead/missing/wrong observer, stale snapshot or retained owner/companion representation cannot satisfy retirement. Source still requires the living observer identity/frame, living enemy, newer tick, and disappearance from authoritative store/remotes/instances/targets/picking.
+R1 masked primary/secondary stop errors, fixed in R2: PRESERVED/FRESH PASS. startOnline keeps original startup failure first and retains all cleanup failures; synchronous Vite close cannot skip server cleanup or attempted owned-DB cleanup. Borrowed claimed DB is never dropped by this function. Timeout controls retain TERM/KILL/close errors.
+R1 failed Vite listen loses owned handle, fixed in R2: PRESERVED/FRESH PASS. vite is assigned before v.listen; failed listen reaches close, retaining original failure identity when cleanup succeeds and all failures otherwise.
+Prior actual board_range setup defect: FIXED/PRESERVED. Six permanent setup controls remain intact and pass. The original invalid persisted foot override is still rejected. Current placement moves each client's owned ship docked then landed, real F exits it, and authoritative foot/ID/frame/positive-HP/grounding/camera assertions remain. The 13 R3 controls independently replay real selected system31/body7 terrain and real Game exit geometry through MovementAuthority for owner and observer, including missing/wrong ownership, illegal height and distant exit negatives.
+No new source finding. Style is nonblocking under §0.9.5; no unrelated style change requested.
+
+FULL TWO-CLIENT PATH / ASSERTION INTEGRITY
+Inspected the live sequence beyond the helper: server skill unlock/buy/equip; both clients' canonical owned-ship arrival and living authoritative foot states; unanalysed cast refusal; analyze response then successful Bond cast; both pages' wire owner/frame/species, real remote/instance transform and picking; owner's S movement measured from the server store, companion proximity plus displacement/tick growth on both clients; real source-attributed combat events plus positive reduced target HP; frozen living enemy/companion controls before closing owner; thaw then a newer identified living observer snapshot proving retirement. JSON/pixel capture, console/page error checks and teardown remain. This is a source trace, not a claim that the complete sequence ran on CPU or native.
+Removing only acquireInput's declaration/F call and restoring the old owner bringToFront line reproduces the ENTIRE R3 spec exactly. Base/normalized SHA256: 76819434207d047ff6d71fa786891f22431f837e0d44c102ddb907006394c35a.
+Current spec SHA256: 71490dd311bac1f4e80f5fc5014de09ec282eaa73e2eb1fdaeda2906b738a24c.
+All previous private test body bytes after imports remain identical; SHA256 (trimmed at appended boundary): d2afe4cfb04ffe9d112494703373651e9cfe9fefaad4fe51e332bb712bf62ca3.
+
+VERIFY
+Exact argv/cwd/environment/deadlines/actual exits/timings: commands.txt and commands.json. Initial/final audits each exit0; every Git argv/exit is retained in their audit JSON. Pinned Node observed v22.23.3, direct installed Vitest5.0.5, tool hashes recorded. All verification children used the pre-import network/service denial boundary, cleared application routing, private temp/compile/Vite/Vitest caches, maxWorkers2, no file parallelism and no cache. CPU runs were sequential. Each child had a120s outer deadline and observed exit; no timeout occurred.
+- r3-red: exit1 EXPECTED; one intended positive fails,13 deliberately filtered. Exact original R3 repro, with only output and saved-base read paths rebound, reproduces the disabled-input loss against git-show exact R3 bytes. No repository rollback. See failure tail below.
+- independent: exit0;13/13 original reviewer controls. Only output path changed. Includes original unlocked negative, locked positive, consumed-edge requiring fresh key, selected-world authority controls. The isolated F extraction intentionally excludes acquireInput; its unlocked refusal remains a valid negative control, not a failure of the corrected full call site.
+- focused: exit0;51/51 in actual symbiotic-private.test.ts, zero pending/todo. Includes all38 route/lifecycle/predicate controls, six owned-ship controls, seven new real-source UI cases. Two-client CPU sequence: owner F -> observer F -> owner reacquires -> S reaches actual Input.down. The adapter then deliberately rejects missing authoritative movement and verifies key-up; it does not invent a successful server follow result.
+- direct tools tsc -p packages/tools: exit0; noEmit is configured.
+- direct ESLint on the two changed source files: exit0.
+- direct Prettier --check on the two changed source files: exit0.
+- node --version: exit0. git diff --check base..HEAD: exit0.
+Counts:51 freshly executed repository cases +345 unchanged prior cases =396 qualified inventory; NOT a fresh396-case execution. All389 prior identities are retained and exactly7 added. Reuse requires exact source hashes and preserved prior result JSON, recorded in inventory-reuse.json. All17 reused test files are byte-identical to R3; product/config dependencies are unchanged by the complete scoped diff. The13 supplemental controls and expected RED are not added to396. No full suite or new Playwright discovery was needed. No tooling failure occurred in this R4 verification.
+
+BEFORE / AFTER PROTECTION
+Initial and final fresh audits both verify all5 original/integrated stable patch-ID pairs; all55 reviewed product blobs and20 protected objects match integration, R3, source and final HEAD. Includes authority/persistence/skills/exosuit, Engine/render/model, assets/public/Blender, manifests/lockfile and orchestration documents. No hydration.
+All151 old report files,2151 prior failed-live/R2/R3 packet files and38 current report checksum entries verified. All4293 tracked file SHA256 values are identical before/after. All15530 inventoried dependency directory/file/symlink metadata entries are unchanged. This is metadata protection for the inventoried dependency paths, not an asserted full-content hash of every dependency target. No dependency-manager invocation or linked cache write was requested; all configured caches are private. Final branch/HEAD/tree pinned and git status empty. Exact patch IDs and protected counts/paths/commands are retained in the audit and worker manifest.
+
+DECISIONS
+Scope of PASS -> source admission and preserved CPU/authority assertions only -> native user activation/focus, actual two-client HTTP/WebSocket/persistence/render/pixel/gameplay behavior require a separate authorized run.
+Reuse unchanged proofs ->51 fresh +345 hash-qualified prior cases -> bounded review focuses on the actual correction instead of repeating the full suite.
+No live retry -> user explicitly prohibits browser/GPU/server/DB/native work here -> no ticket/claim created or consumed, no native authorization inferred.
+
+OUT OF SCOPE FOUND / LIMITS
+The original Corepack harness failure remains COULD NOT RUN with0 tests. The later actual d3985b2 native attempt remains FAIL at board_range before Bond work; this review does not retroactively pass it or requalify its teardown. Real Resume/canvas activation and pointer-lock/focus across the two pages are NOT RUN here. SOURCE PASS grants no visual/native/release readiness.
+Two historical unknown-URL DNS errors remain unresolved by this review and unfiltered in the fixture. The separate parent harness may fetch exact public Google font bytes, route the original URLs and record URL failures under its own scope; this R4 neither executes nor certifies that harness. No product network/UI change and no ignored console error is authorized by this report.
+No browser/GPU/server/DB/service inspection, network fetch, asset hydration, native run, screenshot cleanup, install, source/doc edit, commit, push, PR or merge. Parent owns any NEW ticket/claim and serial GPU assignment bound to9848d00486bd5e8fbaaf00cc7afc9a476fb7edcb/tree6c474cf3e7568a4b331340ad1cc37a3cc6860953. Do not reuse the consumed earlier ticket/claim.
+
+EXPECTED RED FAILURE — LAST20 LINES
+ ❯ Object.waitForFunction ../../../../../../private/tmp/symbiotic-r4-9848d00-eyve7rhp/base-input.test.ts:80:9
+     78|  const page={keyboard:{down:async()=>key('keydown'),up:async()=>key('k…
+     79|   for(let i=0;i<4;i++)if(fn(source))return;
+     80|   throw Error('CPU bounded wait: predicate never became true');
+       |         ^
+     81|  }};
+     82|  return {g,input,page,calls};
+ ❯ until ../../../../../../private/tmp/symbiotic-r4-9848d00-eyve7rhp/base-input.test.ts:28:9
+ ❯ eval ../../../../../../private/tmp/symbiotic-r4-9848d00-eyve7rhp/base-input.test.ts:88:16
+ ❯ ../../../../../../private/tmp/symbiotic-r4-9848d00-eyve7rhp/base-input.test.ts:133:42
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  03:43:32
+   Duration  1.45s (transform 62%, import 36%, tests 2%)
+
+JSON report written to /private/tmp/symbiotic-r4-9848d00-eyve7rhp/r3-red.json
+
+ARTIFACTS
+/private/tmp/symbiotic-r4-9848d00-eyve7rhp
+Appendix-C.2.txt; commands.txt/json; verification-summary.json; initial/final-audit.json; initial-tracked.json; initial-dependencies.json; inventory-reuse.json; replay-adaptations.json; tool-hashes.json; audit.py/run.py/boundary.mjs; private configs; exact base spec/reviewer replay sources; per-command JSON/logs/reporter JSON; selected arena and exit-range evidence; SHA256SUMS.
+The report and top-level evidence are read-only and SHA256-sealed on completion. Disposable cache/tmp trees are retained outside the top-level checksum inventory; nothing was cleaned.

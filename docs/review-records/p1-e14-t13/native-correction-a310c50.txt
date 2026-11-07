@@ -1,0 +1,96 @@
+Appendix C.2 — P1.E14.T13 native R2 implementation response
+
+Implemented the three reported boundary corrections and committed one scoped correction. This report records implementation and CPU evidence, not an independent source grade or native qualification. Runtime readiness remains false. The next independent round is parent-owned.
+
+Exact pins
+
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-e8c6f9e8
+Branch: codex/task/P1-E14-T13-trace-observer
+Base: 18060ace356e5f39ab69b4ad6dd299d36bb1fbe6
+Base tree: a567cec8018cd7ab7136f778cd68f51f2699c98f
+Correction HEAD: a310c5050d18c5f8c562cd2764186ce5a1f0492d
+Correction tree: 6c285200f613715b04984f2f09f20e5b3f869e01
+Commit: P1.E14.T13: Close retained-read and mandatory-drain boundary gaps
+Status: clean before freeze, after disabled probes and at final reporting.
+
+Scope is exactly five task-owned files: README.md, controller_controls.py, launch.py, metadata.py and new retained_reads.py. Their hashes are in source-hashes.json. No new recovery or shared-helper edit occurred. The four helper bytes still equal ca7d91e378e9d2f3f0ce8f0651475dcb843875d9 via existing recovery732a502a7ce5da3acdf1de147671b326bf3d499a. Shared T15 adoption686c70425a39ef6e7e3698bc08e5b20796416325 remains exact patch-id8e90cd71186b236a00402a6bd9b985256e9b5ec7 from reviewed38b6c4b58db43146df20cd760808d1461d7a667b. Current capture.ts, lifecycle tests and exported four-argument openReview/asset route are byte-identical to this R2 base. No Engine/Atmosphere/Review/renderer/protocol/report/asset/fauna/animation/playback/orchestration-doc changes. Protected hashes and reconstruction proof are retained separately.
+
+Review and RED
+
+Read the complete immutable /private/tmp/p1-e14-t13-native-r2.Ii9msTKW/report.md, its R1/prior-protocol/T15 dispositions, delivery, and both actual new reproducer bodies before production edits. Their hashes are pinned in input-evidence-hashes.json; the sealed report/review hashes still match delivery.json. The earlier R1 review and frozen bundles were retained.
+
+Both exact reviewer scripts ran unchanged on the clean base, with only their supported external-output argument pointing into this new report root. They exited0 because they assert defects:
+- helper-ancestor.py: real receipt open traversed a raced ancestor, read610 bytes with the symlink present, and returned candidate:true through inert retained controller bodies.
+- controller-neighbors.py: actual StationJob.start TimeoutExpired and UnicodeDecodeError controls recorded bootstrap only, no bootout; pre-drain atomic fsync observed product timer(0,0) and required the explicitly reviewer-only50ms watchdog.
+These are RED, never candidate successes. Full argv/hash/exits/raw JSON/stdout/stderr are under red/. A desired-behavior bootstrap check then exited1 because bootstrapProducer was None. All originals remain unchanged.
+
+R2-F1: protected retained reads
+
+metadata.content_descriptor now supplies the existing anchored regular-file acquisition/reconciliation to both ordinary readers and the retained helper adapter. retained_reads.py temporarily binds only the three retained modules' read ports; it does not mutate global os/pathlib or helper source. StageReceipts' unchanged _structured_claim gets a real held fd, actual fstat, one read of the admitted size<=65536 and the exact bytes it later hashes/parses/validates. Every ancestor is acquired no-follow; descriptor/path identity is reconciled before use and on closure. No helper full-path reopen remains in that route. The raw bytes, hash, descriptor facts, partial failure and close secondary are journaled before helper persistence/schema assertions. An abandoned read closes before observation returns. The module bindings restore on success/failure.
+
+Retained helper Path.read_bytes/read_text and StageReceipts binary hashing use the same anchored content readers, covering the neighboring worker/log/source and executable consumers rather than merely prechecking the structured path. The existing metadata/log/binary caps apply. Binary reads preserve the existing explicit current-UID/root-owner domain; metadata and source reads remain current-UID. No generic orchestration framework or validation-body copy was added.
+
+The actual whole-controller ancestor control now races at either the old absolute open or the new descriptor-relative leaf open. It refuses before any receipt payload read; all captured fds are closed, and admitted_ever remains false. This is the same actual helper consumer with the adversary adapted to the new syscall shape. A neighboring one-byte interruption plus close failure retains exact raw byte b'{', the unknown non-UTF8 field, original read error and closing error, then fails closed. All6 positive process-schema observations still pass with the Python bridge ownership role.
+
+R2-F2: attempted bootstrap registration
+
+producer_commands marks attempted:true, completion:unknown, registeredMayExist:true before crossing the bootstrap producer. Only an observed return settles completion; returned exit0 and unknown/noninteger outcomes keep potential registration. No producer crossing means no attempted registration. Exceptions after crossing, including timeout and decode failure, cannot establish a pre-dispatch refusal. They preserve original raw/cause/unknown fields and receive one bounded exact-target bootout attempt. A bootout timeout remains secondary with its partial raw output and UNKNOWN release facts. No bootstrap retry occurs; physical settlement stays UNPROVED pending canonical audit. Existing returned exit17 and returned exit0/write-failure controls keep their prior behavior.
+
+The new actual StationJob.start controls cover timeout, decode failure and bootout timeout. They assert exactly one bootout to the recorded target, original primary bytes, secondary cleanup bytes, candidate:false and durable terminal failure evidence. Native command ports are inert; no launchctl command or registration was executed.
+
+R2-F3: evidence cannot block mandatory drain indefinitely
+
+Before-drain fact construction and evidence persistence now run inside a product I/O deadline of at most2s, within the unchanged terminal envelope and reserving32s for final inventory/publication/emission. Drain computes its remaining allowed interval after this attempt; capture/drain/terminal upper bounds are unchanged. Snapshot fields are detached incrementally, with an explicit complete flag; the owned read journal survives even if snapshot preparation times out. The flag describes fact preparation, not durable publication. An exception or timer expiry is retained as secondary and always proceeds to independent mandatory drain. No evidence write is required to succeed before cleanup can begin.
+
+The GREEN control reaches actual Evidence.put -> atomic -> fsync and waits for the product handler itself. It observes an active1.999735s timer in the final replay, uses no reviewer-only timer, and records IODeadline. An actual harmless Python child is held on a stdin barrier, remains live at the fsync boundary, then is closed/waited/reaped with observed exit0 when the retained drain path runs. The result is candidate:false, carries complete detached pre-drain facts plus the publication failure, and publishes terminal evidence. The returned DRAINED_ARCHIVED_AUDITED label applies to the inert native ports only; the separate CPU child exit is an actual wait observation. Native birth/UID/coalition settlement remains unobserved.
+
+Verification and attempts
+
+- 632 tests/18 files, exit0: all prior519, thirteen Node regressions, and all100 reviewed T15 lifecycle tests. Node22.23.3; maxWorkers2, no file parallelism. Native Playwright/Vite ports remain inert; no application server/browser/GPU starts.
+- All64 retained actual-dispatcher cases, unexpected:[], exit0. Only output paths changed. Historical490 is not counted again as fresh tests.
+- Original16 Python groups and seven filesystem groups, exit0.
+- Eighteen actual retained-controller cases, exit0: original12 plus six focused R2 cases. New observations include descriptor identities/payload counts, active pre-drain timer and actual waited CPU-child PID/argv/exit. See controllers-final/controller-results.json and controller_controls.py. Temporary module bindings are asserted restored.
+- Tools/client typecheck, scoped ESLint, scoped Prettier/README and final base..HEAD diff check, exit0. Python modules were executed through their actual boundaries with the pinned3.14.8 launcher. The harmless child sys.executable spells the Homebrew opt alias; its realpath is the already-bound Cellar launcher, as in R2 review. No new toolchain/dependency install or repair.
+- One early GREEN control attempt exited1 because a closed fd number was reused for later different-file reads. The test now keys reads by fd+device+inode. This was fixture bookkeeping; the product had already refused the raced path. The failed log is retained. Subsequent controller runs and final suite pass. No failure was erased.
+- Exact commands/exits/cwd/env and individual logs: commands.json/md, checks-final/commands.json, red/commands.json, prior64/command.json, final-freeze-command.json and disabled-commands.json. Expected nonzero RED/disabled outcomes are labeled. failure-tails.md preserves both new nonzero attempts.
+
+All previous R1 fixes remain covered by the retained suites: aggregate charged stamps, preadmitted bounded copy, fatal incomplete enumeration, producer raw evidence, observer-first exception, worker navigation/cleanup cause preservation and terminal all-sink fallback. The earlier protocol-only R3 PASS is preserved; no threshold, cancellation/shape/history rule or late detached result behavior changed. Shared T15 parity/openReview interface remain exact.
+
+Fresh disabled freeze and next launch
+
+One new final copy after checks/commit: /private/tmp/p1-e14-t13-native-r2-fix.2wx_5qt2/frozen-a310c5050
+Readiness: /private/tmp/p1-e14-t13-native-r2-fix.2wx_5qt2/frozen-a310c5050/readiness.json
+SHA256: 8729a8b3812b468e0b8277d704bfeab588751879c17998f84aacb50eb980d646
+Metadata bytes: 7884290 (<16MiB)
+runtimeAuthorized:false at readiness and local binding.
+Source/resource records: 513, bytes:47553591.
+Dependencies: 13222 records, 243636268 regular bytes.
+Binary/bundle pins: 544, all unchanged; binding SHA25636e9d3c333c3126efa355ef0487f1509932be757aeb496eede85563c28a1de81.
+Actual freezer exit0,20.45s. Production verify_freeze passed before and after disabled probes, including exact source/dependency/hash/inventory checks. Final verification and live capacity observations are in frozen-verification.json. The old frozen readiness still hashes to cadcea741f2d6341c8783b7d1ebff11dc5257860aa484f2d61b91a5aae256b51. No old frozen/spent payload or report was deleted/changed.
+
+Disabled checks: frozen Python launcher exit2 before grant/native imports/allocation; frozen worker --run exit1; actual frozen worker --owned reads disabled readiness through the bounded CPU Python bridge then exits1 before native imports; proposal --proposal exit0 and --run exit1. NEXT_LAUNCH.sh passed /bin/sh -n only and was not executed. All prospective paths remain absent.
+
+Parent next action is a fresh independent source round. After that review and in the parent's separately authorized runtime unit, use exactly:
+
+  /private/tmp/p1-e14-t13-native-r2-fix.2wx_5qt2/NEXT_LAUNCH.sh <parent-enabled-readiness-sha256> <fresh-grant-sha256>
+
+The complete path/budget/grant/controlled-load/physical-settlement specification is /private/tmp/p1-e14-t13-native-r2-fix.2wx_5qt2/NEXT_LAUNCH.json. This shell only execs the pinned frozen launcher; it does not create a grant or enable readiness. Exact paths:
+- enabled readiness: /private/tmp/t13-observer-enabled-readiness-7b836b7a.json
+- new one-use grant: /private/tmp/t13-observer-grant-7b836b7a.json
+- output: /private/tmp/t13-observer-native-7b836b7a
+- fallback: /private/tmp/t13-observer-fallback-7b836b7a
+- spent consumption claim: /private/tmp/t13-observer-consumed-7b836b7a
+- Python launcher: /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14
+- observed kernel expectation: /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python
+- Node: /Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node
+- browser: /Users/andreyyurlov/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing
+
+The grant binds purpose/head/tree/readiness/plan/output/consumption, future expiry<=3600s, the parent's GPU reservation identity, ourHeavyCpuJobsQuiesced:true, maxLoad[7.5,10,15], externalContenders:unknown-not-excluded. Same bounded authenticated snapshot is parsed and semantically validated for readiness/grant/consumption/result. Failed claims stay spent. No successor/retry is implemented.
+
+The future runtime must observe the actual backend/device and full host/load before and after every step; Metal/Apple M5 Pro and15 logical cores are explicit expectations, not observed diagnostic results. Parent must reserve the GPU and quiesce our heavy CPU jobs, retain unknown/external contenders honestly, observe direct launcher OS exit0, and verify all terminal/output hashes. Controller candidate/provisional/accepted disk fields cannot substitute. Actual birth/UID/coalition, child drain, profile/TMP/archive and terminal settlement remain required and unobserved here.
+
+Closed protocol bounds remain12 preparations<=7200warmups,10 measured frames,48 dependent passes,36 preflight fences,24 control fences,6 on segments,64MiB/250000events/1024reads,0 PNG/timer queries. Standard1920x1080 Thalune suit2/noon-lush reference/history/render work unchanged. Off has zero tracing calls; on covers full prep/control. Every same-sign gap must strictly exceed max(arm ranges)+5ms; mixed signs/long-empty/unstable/incomplete evidence remains inconclusive, stable zeros neutral only for similarity. No result qualifies16.67ms. Cloud03 stays FAILED, accepted:false; offline reclassification is not fresh performance.
+
+Capture/drain/terminal maxima1009100/306100/1315200ms remain unchanged. Pre-drain evidence<=2s comes from remaining time; final inventory<=28s, publication<=2s, stderr<=2s remain reserved. Source6000/256MiB, dependencies30000/512MiB, frozen40000/768MiB, output/profile each20000/512MiB, log256MiB, metadata16MiB, evidence1200/128MiB limits remain enforced observations/read/copy ceilings, not OS quotas. Retained read journaling is bounded by1200 records/16MiB. Latest next-launch capacity observation: 34821849088 free bytes versus8589934592 minimum; admission must read it again. No cleanup was used to establish capacity.
+
+No real native/launchctl/browser/GPU/server/DB/Blender/capture/codec job, grant/enablement, install, asset hydration, screenshot cleanup, push/PR/merge or orchestration-doc edit occurred. Only test-owned CPU processes were stopped/reaped; prior failed artifacts remain. No unresolved concrete implementation blocker is reported; fresh independent review and native execution remain parent-owned.
