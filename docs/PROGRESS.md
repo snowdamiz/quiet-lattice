@@ -665,3 +665,6 @@ T16 is complete locally. The optional Firefox cross-engine check could not start
 
 
 - P1.E14.T05 non-tree flora enters CPU authoring in another isolated worker, advancing the dependency of new resource formations. The full bush/fern/plant/grass/rock/boulder/crystal/deposit/sodium/oxygen scope is retained. Local admission observes 65% memory free, load1 6.58 and 105,171,648 KiB available; no Blender process is active at that snapshot. These are scheduling observations, not capture admission or a performance claim. The worker is limited to one Blender process and two CPU threads, compact previews and task-owned flora files. Trees and the shared exporter core remain unassigned.
+
+
+- Two read-only Grok assessments are preparing later work without competing for runtime ownership: one checks the retained station, hull and pilot-marker checkpoints for concrete next units; the other checks whether current review/capture tools can execute the first-person and effect artifact inventories, including their actual view-pass and named-root requirements. They may propose task-owned source additions but cannot edit assets, launch captures or regrade preserved fifth-round components. Fauna's six-unit visual packet remains first in the GPU queue, pending caller review.
