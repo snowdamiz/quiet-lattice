@@ -68,6 +68,7 @@ export interface PhaseZone {
   toWorld(frame: FrameId, pos: Readonly<Vec3>): Vec3;
   spawn(init: EntityInit): number;
   despawn(id: number): boolean;
+  phaseChanged?(id: number): void;
 }
 
 /** Why a member left: it asked to, went to another phase, stayed outside the volume past the grace, or left the zone. */
@@ -228,7 +229,7 @@ export class PhaseManager {
 
     if (current) this.detach(id, current, 'moved');
     chosen.members.add(id);
-    this.placed.set(id, { phase: chosen, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
+    this.place(id, { phase: chosen, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
     this.log?.debug({ zone: this.zone.id, phase: chosen.id, kind, location: location.key, entity: id, members: chosen.members.size }, 'phase member joined');
     return chosen;
   }
@@ -274,7 +275,7 @@ export class PhaseManager {
     if (current) this.detach(id, current, 'moved');
     const outsideSince = hold?.phase === phase ? hold.outsideSince : null;
     phase.members.add(id);
-    this.placed.set(id, { phase, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
+    this.place(id, { phase, member: true, party: partyId, character, inside: outsideSince === null, outsideSince });
     this.log?.debug(
       { zone: this.zone.id, phase: phase.id, kind: phase.kind, location: phase.location.key, entity: id, members: phase.members.size, via: 'enter' },
       'phase member joined',
@@ -318,7 +319,7 @@ export class PhaseManager {
     if (!p?.member || p.character === null) return;
     const { phase, character } = p;
     const party = this.partyOf(id!, p);
-    this.placed.delete(id!);
+    this.unplace(id!);
     phase.members.delete(id!);
     if (this.held.has(character)) this.dropHold(character, 'moved');
     this.held.set(character, { phase, party, since: this.zone.time, outsideSince: p.outsideSince });
@@ -335,7 +336,7 @@ export class PhaseManager {
     if (!phase) throw new Error(`no open phase ${phaseId} in zone ${this.zone.id}`);
     const id = this.zone.spawn(init);
     phase.entities.add(id);
-    this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null });
+    this.place(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null });
     return id;
   }
 
@@ -353,7 +354,7 @@ export class PhaseManager {
     if (e.fields.kind === 'player') throw new Error(`entity ${id} is a player: players are placed, never adopted`);
     if (this.placed.has(id)) throw new Error(`entity ${id} is in phase ${this.placed.get(id)!.phase.id} already`);
     phase.entities.add(id);
-    this.placed.set(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null, despawn });
+    this.place(id, { phase, member: false, party: undefined, character: null, inside: true, outsideSince: null, despawn });
   }
 
   /**
@@ -439,6 +440,15 @@ export class PhaseManager {
     if (p) this.detach(id, p, 'despawned');
   }
 
+  private place(id: number, placement: Placement): void {
+    this.placed.set(id, placement);
+    this.zone.phaseChanged?.(id);
+  }
+
+  private unplace(id: number): void {
+    if (this.placed.delete(id)) this.zone.phaseChanged?.(id);
+  }
+
   // ---------- inside ----------
 
   /** The visibility rule (see the header), for a viewer placed at `v` (undefined: the shared world). */
@@ -507,7 +517,7 @@ export class PhaseManager {
 
   /** Takes an entity out of its phase; a phase left with no members and no kept places closes. */
   private detach(id: number, p: Placement, reason: LeaveReason): void {
-    this.placed.delete(id);
+    this.unplace(id);
     const { phase } = p;
     if (!p.member) {
       phase.entities.delete(id);
@@ -538,9 +548,9 @@ export class PhaseManager {
     const held = phase.held.size;
     const own = [...phase.entities];
     const despawns = own.map((id) => this.placed.get(id)?.despawn);
-    for (const id of phase.members) this.placed.delete(id);
+    for (const id of phase.members) this.unplace(id);
     for (const character of phase.held) this.held.delete(character);
-    for (const id of own) this.placed.delete(id);
+    for (const id of own) this.unplace(id);
     phase.members.clear();
     phase.held.clear();
     phase.entities.clear();

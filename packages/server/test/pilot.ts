@@ -84,6 +84,8 @@ export class Pilot {
     opts: {
       stamps?: boolean;
       clock?: ManualClock;
+      /** Stepped simulations may acknowledge less often to avoid a wall-clock transport flood. Default: every snapshot. */
+      ackEvery?: number;
       /** runs with the new character's id before it joins (a level to set) */
       before?: (characterId: string) => Promise<void>;
       /** joins this earlier pilot's character again (once it has left) instead of making a new one */
@@ -102,7 +104,7 @@ export class Pilot {
       try {
         const snap = client.receive(new Uint8Array(data as Buffer));
         handled.seq = Math.max(handled.seq, snap.ack);
-        sock.send({ t: 'ack', tick: snap.tick });
+        if (snap.tick % (opts.ackEvery ?? 1) === 0) sock.send({ t: 'ack', tick: snap.tick });
       } catch (err) {
         errors.push(err);
       }

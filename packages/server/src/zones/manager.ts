@@ -209,6 +209,7 @@ export class ZoneManager {
     if (!slot) {
       const tier = this.world ? this.world.tierOf(systemIndex) : tierOfGalaxySystem(systemIndex);
       const zone = new Zone({
+        time: this.clock.now(),
         id,
         systemIndex,
         system: this.describe(systemIndex),

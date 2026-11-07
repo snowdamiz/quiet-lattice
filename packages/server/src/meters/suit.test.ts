@@ -361,6 +361,13 @@ describe('the build', () => {
     expect(t.view().lifeSupport).toBeCloseTo(100 - 20 * 0.245, 3);
   });
 
+  it('Thick Hide: hazard protection drains 30% slower', () => {
+    expect(hazardLost({ owned: ['thick_hide'] })).toBeCloseTo(4.2, 3);
+  });
+  it('Thick Hide multiplies Hazard Weave instead of replacing it', () => {
+    expect(hazardLost({ owned: ['thick_hide', 'hazard_weave'] })).toBeCloseTo(6 * 0.7 * 0.6, 3);
+  });
+
   it('Deep Diver: a crushing world’s hazard ÷3', () => {
     expect(hazardLost({ owned: ['deep_diver'], type: 'crushing', hazard: { kind: 'pressure', dps: 5 } })).toBeCloseTo((10 * 0.6 * 6) / 3, 3);
   });

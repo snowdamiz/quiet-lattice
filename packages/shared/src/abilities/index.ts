@@ -6,9 +6,11 @@ import { getSkillNode, SKILL_NODES, type SkillNode } from '../data/index.ts';
 import { GROUND_SLOTS, SHIP_SLOTS, type Bar } from '../skills/index.ts';
 import { RESONANCE_ABILITIES } from './resonance.ts';
 import { THERMAL_ABILITIES } from './thermal.ts';
+import { SYMBIOTIC_ABILITIES } from './symbiotic.ts';
 
 export * from './resonance.ts';
 export * from './thermal.ts';
+export * from './symbiotic.ts';
 
 /**
  * What a cast names besides its slot and aim:
@@ -32,10 +34,14 @@ export interface Ability {
   /** On with one cast (paid, and its cooldown starts) and off with the next (free); off too when its caster leaves the
    * bar's mode, goes down or leaves play (Lance on the beam). */
   readonly toggle?: boolean;
+  /** An entity cast may use the caster when no target was named (Regrow). */
+  readonly selfWhenUntargeted?: boolean;
 }
 
 /** The abilities this build casts, by node. Each branch's task adds its own list here (P1.E07.T04–T10). */
-export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>([...THERMAL_ABILITIES, ...RESONANCE_ABILITIES].map((a) => [a.node, a]));
+export const ABILITIES: ReadonlyMap<string, Ability> = new Map<string, Ability>(
+  [...THERMAL_ABILITIES, ...RESONANCE_ABILITIES, ...SYMBIOTIC_ABILITIES].map((a) => [a.node, a]),
+);
 
 /** Seconds a slotted active's cooldown lasts, and the node whose clock it runs on (a shared cooldown is the other node's:
  * Crush's is Well's); null for a node with none. Once-a-world and once-a-day cooldowns (Attune, Unremembered: Tier III and

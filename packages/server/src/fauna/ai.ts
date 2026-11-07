@@ -18,8 +18,9 @@
 // stun ends; a calmed one (Harmonic: its threat table's `calmUntil`) neither hunts nor flees until its calm ends or it is
 // hurt; a veiled player is not noticed by anyone (`Actor.veiled`).
 //
-// Attacks are only an approach and an attack phase here (0 → 1 over ATTACK_S, repeated while in reach); their damage
-// and their animations are P1.E08.T02. Server-only arithmetic (Math is fine: nothing here is compared with a client).
+// Attacks approach and advance a phase (0 → 1 over ATTACK_S, repeated while in reach). The sim resolves completed
+// companion fights through combat; ordinary attacks on players and their animations remain P1.E08.T02.
+// Server-only arithmetic (Math is fine: nothing here is compared with a client).
 import { addThreat, currentTarget, dropThreat, emptyThreat, threatOf, type ThreatTable } from '@astra/shared/combat';
 import { AGGRO, TEMPERAMENTS } from '@astra/shared/data';
 import type { FaunaSpecies, Random } from '@astra/shared/world';
@@ -170,6 +171,8 @@ export interface Ctx {
   readonly players: ReadonlyMap<number, Actor>;
   /** every creature being simulated on this world, by id */
   readonly creatures: ReadonlyMap<number, Creature>;
+  /** Completed strikes; the sim currently resolves companion combat, never player damage. */
+  readonly strike?: (creature: Creature, target: number) => void;
 }
 
 // ---------- vectors ----------
@@ -353,6 +356,7 @@ function strike(c: Creature, ctx: Ctx): boolean {
   c.attack = (c.attack ?? 0) + ctx.dt / AI.attackS;
   if (c.attack < 1) return false;
   c.attack = 0;
+  if (c.target !== null) ctx.strike?.(c, c.target);
   return true;
 }
 
@@ -769,14 +773,14 @@ function circleTo(c: Creature, at: Readonly<Vec3>): Vec3 {
 }
 
 /** Moves a creature one tick along its heading and onto the ground (walkers) or at its height above it (flyers). */
-export function move(c: Creature, ctx: Ctx): void {
+export function move(c: Creature, ctx: Ctx, directed?: { to: Vec3; speed: number; altitude?: number }): void {
   if (stunned(c, ctx.now)) {
     c.speed = 0;
     return;
   }
   const { dt, ground } = ctx;
   const up = norm(c.pos);
-  const g = goal(c, ctx);
+  const g = directed ?? goal(c, ctx);
   const stopping = g.speed < c.speed && (c.state === 'attack' || c.state === 'alert' || c.state === 'lurk');
   c.speed += (g.speed - c.speed) * (1 - Math.exp(-(stopping ? AI.brake : AI.ease) * dt));
   if (c.speed < 1e-3 && g.speed === 0) c.speed = 0;
@@ -786,7 +790,9 @@ export function move(c: Creature, ctx: Ctx): void {
   c.heading = norm(flat(c.heading, up));
 
   if (flyer) {
-    if (c.state === 'circle') c.alt = Math.max(AI.circleLowM, c.alt - AI.descendPerS * dt);
+    if (directed?.altitude !== undefined)
+      c.alt += Math.sign(directed.altitude - c.alt) * Math.min(Math.abs(directed.altitude - c.alt), AI.descendPerS * 3 * dt);
+    else if (c.state === 'circle') c.alt = Math.max(AI.circleLowM, c.alt - AI.descendPerS * dt);
     else if (c.state === 'dive') c.alt = Math.max(1, c.alt - Math.max(AI.descendPerS * 3, c.alt) * dt);
     else if (c.state !== 'attack') c.alt = Math.min(c.cruiseAlt, c.alt + AI.climbPerS * dt);
   }

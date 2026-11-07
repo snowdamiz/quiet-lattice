@@ -27,6 +27,8 @@ export interface ShipInputs {
 export const SHIP_BASELINE = {
   /** The fastest a ship may be moving to begin a landing, m/s (DESIGN 9.7, Soft Landing: "today 160"). */
   landingSpeedMax: 160,
+  shieldRegenPerS: 5,
+  shieldRegenDelayS: 6,
 } as const;
 
 export interface HardpointStats {
@@ -54,6 +56,7 @@ export interface ShipStats {
   boost: number;
   hullMax: number;
   shieldMax: number;
+  shieldRegenPerS: number;
   /** Charge capacity (today's pulse fuel, DESIGN 9.1), or 'count' for the Husk, which draws its Charge from the Count. */
   charge: number | 'count';
   /** Cargo pod bays: how many pods the ship can carry (`ship.cargo_pods`: Pack Mule adds one). */
@@ -169,6 +172,7 @@ export function shipStats(loadout: ShipLoadout, inputs: ShipInputs = {}): ShipSt
     boost: hull.boost,
     hullMax: mod('ship.hull_max', hull.hull),
     shieldMax: mod('ship.shield_max', hull.shield),
+    shieldRegenPerS: mod('ship.shield_regen', SHIP_BASELINE.shieldRegenPerS),
     charge: hull.charge,
     cargoPods: cargoCapacity(hull.id, mods),
     signature: { base: hull.signature.base, vsHollow: hull.signature.vsHollow ?? hull.signature.base },
