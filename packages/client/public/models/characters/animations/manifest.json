@@ -1,0 +1,632 @@
+{
+  "schema": 1,
+  "library": "shared_motion.glb",
+  "librarySha256": "e7a88b2ad39104344e4c3612f2cd9015597389084bb67540777bf6301e926117",
+  "authoredSource": "assets/blend/characters/animations/shared_motion.blend",
+  "authoredSourceSha256": "36cd27d53ef6e10bc141bae1de2759519c625881c7c79d4f0b7607d78fb7b846",
+  "sourceBindManifest": "source-bind.json",
+  "sourceBindManifestSha256": "23f5567bd769ce1555ad60b1b650595619d421dd659395b697045973c989dbf8",
+  "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+  "fps": 60,
+  "blendMode": "normal",
+  "interpolation": "LINEAR",
+  "locomotionPolicy": "in-place; root translation anchored; caller owns world travel, orientation extraction and speed matching",
+  "contactPolicy": "stance ankles stay at source bind ground height and move opposite virtual travel; adaptation preserves local bind offsets, not species-specific IK",
+  "recallPolicy": "body poses only; glyph ignition, dissolve/flash and anchor placement belong to E07.T14/E06.T03/T04",
+  "clips": [
+    {
+      "name": "cast_gravitic",
+      "family": "cast",
+      "duration": 1.2,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "gather low",
+        "lift mass with both palms",
+        "release"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "cast_resonance",
+      "family": "cast",
+      "duration": 1.5,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "listen at brow",
+        "hold resonance",
+        "radial open hand pulse"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "cast_thermal",
+      "family": "cast",
+      "duration": 0.8,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "coil",
+        "single arm lance",
+        "recoil"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_agree",
+      "family": "emote",
+      "duration": 1.4,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_celebrate",
+      "family": "emote",
+      "duration": 2.4,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_disagree",
+      "family": "emote",
+      "duration": 1.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_point",
+      "family": "emote",
+      "duration": 2,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_rest",
+      "family": "emote",
+      "duration": 3,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "emote_wave",
+      "family": "emote",
+      "duration": 2.2,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "hit_back",
+      "family": "hit",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "hit_front",
+      "family": "hit",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "hit_left",
+      "family": "hit",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "hit_right",
+      "family": "hit",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "idle_alert",
+      "family": "idle",
+      "duration": 3,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "idle_breathe",
+      "family": "idle",
+      "duration": 4,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jet_brake",
+      "family": "jet",
+      "duration": 0.7,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jet_forward",
+      "family": "jet",
+      "duration": 1.2,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jet_hover",
+      "family": "jet",
+      "duration": 1.6,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jet_ignite",
+      "family": "jet",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jet_land",
+      "family": "jet",
+      "duration": 0.8,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jump_air",
+      "family": "jump",
+      "duration": 0.8,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jump_land",
+      "family": "jump",
+      "duration": 0.7,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "contact",
+        "absorb",
+        "recover"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "jump_takeoff",
+      "family": "jump",
+      "duration": 0.5,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "anticipation",
+        "compression",
+        "push",
+        "release"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "mine_end",
+      "family": "mine",
+      "duration": 0.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "mine_loop",
+      "family": "mine",
+      "duration": 1,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "mine_start",
+      "family": "mine",
+      "duration": 0.7,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "recall_dissolve",
+      "family": "recall",
+      "duration": 1.4,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "glyph ignition",
+        "body opens to light",
+        "held silhouette for dissolve; VFX external"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "recall_reform",
+      "family": "recall",
+      "duration": 2.6,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "wake kneeling at anchor",
+        "orient",
+        "rise",
+        "recover"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "run_backward",
+      "family": "locomotion",
+      "duration": 1,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "run_forward",
+      "family": "locomotion",
+      "duration": 0.8,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        0,
+        0,
+        1
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "sprint_forward",
+      "family": "locomotion",
+      "duration": 0.6,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        0,
+        0,
+        1
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "swim_dive",
+      "family": "swim",
+      "duration": 1,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "swim_fast",
+      "family": "swim",
+      "duration": 1,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "swim_forward",
+      "family": "swim",
+      "duration": 1.8,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "swim_idle",
+      "family": "swim",
+      "duration": 2.4,
+      "loop": true,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "swim_surface",
+      "family": "swim",
+      "duration": 1.2,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "turn_left",
+      "family": "locomotion",
+      "duration": 0.8,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "look",
+        "lead foot",
+        "plant",
+        "face new heading"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "turn_right",
+      "family": "locomotion",
+      "duration": 0.8,
+      "loop": false,
+      "contacts": {},
+      "direction": null,
+      "beats": [
+        "look",
+        "lead foot",
+        "plant",
+        "face new heading"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "walk_backward",
+      "family": "locomotion",
+      "duration": 1.4,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        0,
+        0,
+        -1
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "walk_forward",
+      "family": "locomotion",
+      "duration": 1.2,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        0,
+        0,
+        1
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "walk_left",
+      "family": "locomotion",
+      "duration": 1.4,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        1,
+        0,
+        0
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    },
+    {
+      "name": "walk_right",
+      "family": "locomotion",
+      "duration": 1.4,
+      "loop": true,
+      "contacts": {
+        "L": [
+          [
+            0,
+            0.5
+          ]
+        ],
+        "R": [
+          [
+            0.5,
+            1
+          ]
+        ]
+      },
+      "direction": [
+        -1,
+        0,
+        0
+      ],
+      "beats": [
+        "contact L",
+        "passing R",
+        "contact R",
+        "passing L"
+      ],
+      "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27"
+    }
+  ]
+}

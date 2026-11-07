@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "scope": "CPU-only saved source action validation; not a visual grade",
+  "source": "assets/blend/characters/animations/shared_motion.blend",
+  "sourceSha256": "36cd27d53ef6e10bc141bae1de2759519c625881c7c79d4f0b7607d78fb7b846",
+  "sourceProfileId": "characters/thalune@dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27",
+  "savedActions": 42,
+  "authoredBones": 69,
+  "canonicalProfileBones": 70,
+  "fps": 60,
+  "restHierarchyAndAxesMatchCanonicalProfile": true,
+  "onlySupportedFiniteBoneCurves": true,
+  "authoredChannelCoverage": "69 bones \u00d7 location[0:3] and rotation_quaternion[0:4]; exported clips may omit unchanged tracks",
+  "exportBoundaryRejectsInvalidComponentsBeforeWriting": true,
+  "componentControlObservations": [
+    {
+      "property": "location",
+      "requestedIndex": 3,
+      "storedIndex": 3,
+      "rejection": "invalid component index: pose.bones[\"head\"].location[3]"
+    },
+    {
+      "property": "location",
+      "requestedIndex": -1,
+      "storedIndex": 0,
+      "rejection": "duplicate channel: pose.bones[\"head\"].location[0]"
+    },
+    {
+      "property": "rotation_quaternion",
+      "requestedIndex": 9,
+      "storedIndex": 9,
+      "rejection": "invalid component index: pose.bones[\"head\"].rotation_quaternion[9]"
+    },
+    {
+      "property": "rotation_quaternion",
+      "requestedIndex": -1,
+      "storedIndex": 0,
+      "rejection": "duplicate channel: pose.bones[\"head\"].rotation_quaternion[0]"
+    }
+  ],
+  "sourceUnchanged": true,
+  "negativeControls": [
+    "object channel rejected",
+    "unknown source identity rejected",
+    "location index 3 assignment rejected",
+    "location index -1 assignment rejected",
+    "missing location component rejected",
+    "duplicate location component rejected",
+    "rotation_quaternion index 9 assignment rejected",
+    "rotation_quaternion index -1 assignment rejected",
+    "missing rotation_quaternion component rejected",
+    "duplicate rotation_quaternion component rejected"
+  ],
+  "rendered": false,
+  "baked": false
+}
