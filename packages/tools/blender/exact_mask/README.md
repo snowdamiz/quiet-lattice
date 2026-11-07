@@ -29,6 +29,20 @@ point is skipped; Accessor, BinaryData and packing code are real installed modul
 These tests prove packing, restoration, family scope and JSON format validation.
 They do not prove source mesh extraction, material/loop mapping or compression.
 
+The fixture's Node resolver has a separate pure CPU import regression:
+
+```sh
+EXACT_MASK_DEPS=/absolute/existing/dependency-checkout \
+  /absolute/pinned/node packages/tools/blender/exact_mask/dependencies.test.mjs
+```
+
+This imports the actual shared `sites.ts` module that contains parameter
+properties. Node 26.12.1 cannot execute those in strip-only mode. The resolver
+transpiles TypeScript in memory with the explicitly selected checkout's installed
+compiler; it writes no compiled files or dependency cache. The test does not load
+the consumer, Blender or meshopt. An optional positional loader path lets the
+same test demonstrate the old resolver's failure.
+
 ## Deferred real boundary (requires parent resource assignment)
 
 ```sh
@@ -43,6 +57,9 @@ The dependency resolver uses the task checkout's source and an explicit existing
 checkout's dependencies without creating `node_modules` links. Run serially in
 the assigned lane (Blender at two threads, NumPy at one), with <=256 MiB scratch.
 Snapshot dependency/ignored state before and after execution, as for CPU checks.
+The shell script does not own supervision: the parent must supply an independent
+bounded supervisor before dispatch and hold the lane until all children are
+proven terminated. A failed native attempt requires a new capacity assignment.
 
 `fixture.py export` saves and reopens a small real `.blend`, records every saved
 Float32 triangle corner, then retains the unadapted raw RED and runs stock
@@ -68,6 +85,15 @@ No native/consumer PASS exists until this launcher actually succeeds. Existing
 independent review and parent integration remain separate gates. KTX2/baking,
 full production-class geometry, skinned/morph export and visual equivalence are
 outside the tiny fixture; the existing pipeline regressions cover those paths.
+
+The first admitted attempt at source `75cf76f` completed the saved-source exports
+and five format negatives for both exact families, then failed at Node's
+parameter-property import before compression or GLTFLoader ran. Read-only raw
+GLB analysis matched each exact family's 488 triangles (5,856 RGBA channel values)
+to the reopened source across both variants, four LODs and two materials. Props
+and the unadapted RED retained normalized UINT16. The resolver correction passes
+the pure CPU regression above; the actual consumer remains pending a new grant.
+See `native-attempt1.json` for the retained evidence and resource-release record.
 
 ## Retained asset adoption
 
