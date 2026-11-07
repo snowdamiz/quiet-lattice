@@ -1,0 +1,19 @@
+{
+  "red": {
+    "sourceSha256": "3f95b7bf75c3c25819a9b7d7f94276afb9340f3a6fa9e41d4310817a585f7fdc",
+    "cases": 72,
+    "failedCases": 54,
+    "exit": 1
+  },
+  "green": {
+    "sourceSha256": "42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d",
+    "cases": 72,
+    "failedCases": 0,
+    "exit": 0
+  },
+  "actualBoundary": "execute -> productionCapture -> actual captureReview -> ordered AggregateError -> actual receipt/fallback/all-sinks logic",
+  "nativePorts": "inert only; child-process APIs forbidden during cases",
+  "rawFactsRetained": true,
+  "aggregateRepeatedPrimary": "Existing errorFacts represents the repeated errors[0] reference as [cycle]; full primary facts remain in aggregate.cause and record.primaryFailure. Browser/Vite facts remain in ordered errors entries.",
+  "existingPacketFallbackBrowserClose": "Recorded separately after shared browser then Vite cleanup; unchanged from checkpoint."
+}

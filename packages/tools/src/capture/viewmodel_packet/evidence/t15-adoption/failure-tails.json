@@ -1,0 +1,35 @@
+{
+  "combined-old-shared-red": {
+    "exit": 1,
+    "sha256": "ecb8b9799b76dc211138b653151774e4f4c533fccdc365f42f4f8ab864cbba45",
+    "last20lines": [
+      "  ",
+      "  0 !== 1",
+      "  ",
+      "  Expected values to be strictly equal:",
+      "  ",
+      "  0 !== 1",
+      "  ",
+      "  ",
+      "  54 !== 0",
+      "  ",
+      "      at TestContext.<anonymous> (file:///private/tmp/vm-t15-adopt-9p6j5wtk/combined-probe.mjs:142:10)",
+      "      at async Test.run (node:internal/test_runner/test:1409:7)",
+      "      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {",
+      "    generatedMessage: false,",
+      "    code: 'ERR_ASSERTION',",
+      "    actual: 54,",
+      "    expected: 0,",
+      "    operator: 'strictEqual',",
+      "    diff: 'simple'",
+      "  }"
+    ]
+  },
+  "staged-verbatim-report-diff": {
+    "exit": 2,
+    "sha256": "e860c87daa73037f13be1e70456a652f70590d68ad8aff2b77f30756a389895a",
+    "last20lines": [
+      "packages/tools/src/capture/viewmodel_packet/evidence/t15-adoption/T15-independent-SOURCE-PASS.txt:185: new blank line at EOF."
+    ]
+  }
+}

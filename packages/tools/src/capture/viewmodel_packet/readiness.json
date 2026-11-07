@@ -220,7 +220,7 @@
         "exists": true
       }
     ],
-    "sourceDigest": "95303b16dc1256f91b8df979fdf4915a6d5bfae780a0f95bbdab952ea5ee7d8b",
+    "sourceDigest": "cfd22c5cf2d6736cce266f26f39b1c0bd76e04f1eb292915aed12791fa40d0d4",
     "python": {
       "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
       "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
@@ -270,7 +270,7 @@
   },
   "pythonSelfObservation": {
     "scope": "CPU_SELF_PROCESS_ONLY",
-    "pid": 72235,
+    "pid": 38381,
     "uid": 501,
     "launcher": {
       "path": "/opt/homebrew/opt/python@3.14/bin/python3.14",
@@ -286,5 +286,20 @@
     }
   },
   "limitsAreOSQuotas": false,
-  "allUnitsQualified": false
+  "allUnitsQualified": false,
+  "sourceProvenance": {
+    "priorPacketCheckpoint": "58ae819f2e9d2a8d221e90f0fe808fde2683b010",
+    "sharedCaptureReviewedCommit": "38b6c4b58db43146df20cd760808d1461d7a667b",
+    "sharedCaptureAdoptionCommit": "dea07963a32227cc3eaecad86d128026350b9082",
+    "sharedCaptureAdoptionTree": "5e5edd95140c2154adaf3db571d32d249c60f3c7",
+    "sharedCaptureReviewSha256": "944f849660b40540f253612159f49f02c31083a83b178cbabee5171326591af9",
+    "sharedCapturePatchSha256": "febb2614fabfd09894a46fa927b98c9201e8b9b2cc24899a683625e22eac2345",
+    "sharedCaptureFiles": {
+      "packages/tools/src/capture/capture.ts": "42e34e0d310366b001fc6cd2951ff08ec7a52db7fbd33428757440a34b9a630d",
+      "packages/tools/src/capture/capture.lifecycle.test.ts": "ca2453418de6c36ca88904410cd81be099cc8101c1d9d4f470ec782b73bf2b18"
+    },
+    "sourceDigestIncludesSharedLifecycleTest": true,
+    "legacyReviewedSourceScope": "accepted runtime/art SOURCE R3 anchor; combined packet R2 remains pending",
+    "finalHeadBinding": "final combined metadata commit is recorded by the post-commit handoff and must be bound by a future external grant"
+  }
 }
