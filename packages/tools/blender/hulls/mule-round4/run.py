@@ -172,6 +172,8 @@ def main(controller_fd=None):
             if cancelled:raise RuntimeError('cancelled before launch '+str(cancelled))
             env = dict(os.environ, OMP_NUM_THREADS='2', OPENBLAS_NUM_THREADS='2', MKL_NUM_THREADS='2', VECLIB_MAXIMUM_THREADS='2', NUMEXPR_NUM_THREADS='2', BLIS_NUM_THREADS='2', TBB_NUM_THREADS='2', RAYON_NUM_THREADS='2', UV_THREADPOOL_SIZE='2', BLENDER_THREADS='2', ART_KTX_JOBS='1', ART_KTX_THREADS='2', TMPDIR=str(temp), MULE_ATTEMPT=str(out), PYTHONDONTWRITEBYTECODE='1')
             with (out / 'output.log').open('x') as log:
+                # A child can execute before Popen returns; publish immutable limits first.
+                (out / 'launch-limits.json').write_text(json.dumps(receipt['limits'], indent=2))
                 proc = subprocess.Popen(command, cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
                 receipt['pid'] = receipt['pgid'] = proc.pid
                 receipt['status'] = 'RUNNING'

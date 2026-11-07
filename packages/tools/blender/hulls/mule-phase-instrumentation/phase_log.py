@@ -1,10 +1,11 @@
-"""Per-channel bake phase log. Nothing in the stock export imports this module."""
+"""Mule channel observations; disk visibility is not publication acknowledgement."""
 
 import json
 import os
 import time
 import uuid
 from contextvars import ContextVar
+from contextlib import contextmanager
 
 _FRAME = ContextVar("mule_bake_frame", default=None)
 _IDENTITY = ("material", "variant", "channel", "resolution", "object_count", "triangle_count")
@@ -13,6 +14,21 @@ _TERMINAL = ("success", "error", "interrupt")
 
 class PhaseError(Exception):
     pass
+
+
+@contextmanager
+def _closing(fd):
+    """A second close failure must not replace the original write/sync failure."""
+    try:
+        yield fd
+    except BaseException:
+        try:
+            os.close(fd)
+        except BaseException:
+            pass
+        raise
+    else:
+        os.close(fd)
 
 
 class _Frame:
@@ -64,6 +80,7 @@ class PhaseLog:
         self.path = os.fspath(path)
         self._clock = clock or time.monotonic
         self._open = {}
+        self._acknowledged = set()
         self._dir_synced = False
         parent = os.path.dirname(self.path)
         if parent:
@@ -105,6 +122,7 @@ class PhaseLog:
         if error is not None:
             record["error"] = error
         self._append(record)
+        self._acknowledged.add(phase_id)
         del self._open[phase_id]
 
     def invoke(self, identity, resources, fn):
@@ -123,28 +141,33 @@ class PhaseLog:
 
     def phases(self):
         phases, _truncated = load(self.path)
+        for phase in phases:
+            if phase["phase_id"] in self._acknowledged:
+                phase["publication"] = "acknowledged"
+                phase["status"] = phase["observed_outcome"]
         return phases
 
     def _append(self, record):
         line = json.dumps(record, sort_keys=True, separators=(",", ":")).encode() + b"\n"
-        fd = os.open(self.path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o644)
-        try:
+        with _closing(os.open(self.path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o644)) as fd:
             written = os.write(fd, line)
             if written != len(line):
                 raise PhaseError("short phase-log write")
             os.fsync(fd)
-        finally:
-            os.close(fd)
         if not self._dir_synced:
-            dir_fd = os.open(os.path.dirname(self.path) or ".", os.O_RDONLY)
-            try:
+            with _closing(os.open(os.path.dirname(self.path) or ".", os.O_RDONLY)) as dir_fd:
                 os.fsync(dir_fd)
-            finally:
-                os.close(dir_fd)
             self._dir_synced = True
 
 
 def load(path):
+    """Read observations, never infer that the writer acknowledged publication.
+
+    Even a complete terminal line can precede a failed fsync/close. All disk-only
+    phases therefore remain unfinished; observed_outcome describes execution.
+    Only the original live writer's phases() can report acknowledged terminals.
+    Neither view qualifies the whole export.
+    """
     path = os.fspath(path)
     if not os.path.exists(path):
         return [], None
@@ -200,7 +223,9 @@ def _closed(start, terminal):
         started_monotonic_s=start["monotonic_s"],
         ended_monotonic_s=None if terminal is None else terminal["monotonic_s"],
         error=None if terminal is None else terminal.get("error"),
-        status="unfinished" if terminal is None else terminal["event"],
+        observed_outcome=None if terminal is None else terminal["event"],
+        publication="unconfirmed",
+        status="unfinished",
     )
     return phase
 

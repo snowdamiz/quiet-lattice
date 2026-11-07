@@ -41,6 +41,40 @@ for module,name,label in [(export,'_write','write GLB'),(ktx,'compress','encode 
         return _original(*args,**kwargs)
     setattr(module,name,bounded)
 out=Path(os.environ['MULE_ATTEMPT'])
+
+sys.path.insert(0, str(ROOT / "packages/tools/blender/hulls/mule-phase-instrumentation"))
+from phase_log import PhaseLog, install
+
+def mesh_counts(objects):
+    triangles = 0
+    for obj in objects:
+        mesh = obj.data
+        mesh.calc_loop_triangles()
+        triangles += len(mesh.loop_triangles)
+    return (len(objects), triangles)
+
+def resource_snapshot():
+    # run.py publishes these limits before Popen. Missing/invalid input fails
+    # immediately; no polling, fallback limits, or export retry.
+    limits = json.loads((out / "launch-limits.json").read_text())
+    # Same measurement checkpoint.check already uses. Do not call check() here.
+    from run import resources
+    state = resources()
+    own = [row for row in state.pop("processes") if row[2] == os.getpgrp()]
+    state["group_rss_kib"] = sum(row[3] for row in own)
+    state["wall_limit_s"] = limits["wall_seconds"]
+    state["rss_limit_kib"] = limits["rss_mib"] * 1024
+    return state
+
+phase_log = PhaseLog(out / "bake-phases.jsonl")
+install(
+    bake,
+    phase_log,
+    resources_of=resource_snapshot,
+    counts_of=mesh_counts,
+    variant_ids=("mule_husked", "mule_damaged", "mule"),
+)
+
 (out/'identity-controls.json').write_text(json.dumps({'rejected':negative_controls()},indent=2))
 original_load=core.load
 candidate=None
