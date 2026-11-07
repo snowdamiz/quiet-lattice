@@ -498,8 +498,11 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     expect(release.enemy.mode).not.toBe('dead');
     evidence.release = release;
     // Close the owner while combat is frozen, then require a newer live observer snapshot after thaw.
-    await a.page.evaluate(() => window.game.net.close());
-    await until(a.page, '!window.game.net || window.game.net.state === "closed"', 10_000);
+    await pixels(info, [a.page], 'before-disconnect');
+    // Net.close() reloads this dev-login URL. Destroy the page so the owner cannot rejoin.
+    await a.page.close({ runBeforeUnload: false });
+    expect(a.page.isClosed()).toBe(true);
+    evidence.ownerPageClosed = true;
     await online.clock.thaw();
     await until(
       b.page,
@@ -537,12 +540,12 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     expect(retired.enemy.mode).not.toBe('dead');
     expect(retired.picked).not.toBe(companion);
     evidence.retired = retired;
-    await pixels(info, pages, 'disconnect');
+    await info.attach('disconnect-observer', { body: await b.page.screenshot({ timeout: 15_000 }), contentType: 'image/png' });
     expect(errors, `${errors.join('\n')}\n${online.serverOutput()}`).toEqual([]);
   } finally {
     await info.attach('symbiotic-evidence', { body: Buffer.from(JSON.stringify({ ...evidence, errors }, null, 2)), contentType: 'application/json' });
     await info.attach('server-output', { body: Buffer.from(online.serverOutput()), contentType: 'text/plain' });
     // The imported hang guard bounds closure of both manually created contexts, including failure paths.
-    await Promise.all(pages.map((page) => page.evaluate(() => window.game.net?.close()).catch(() => {})));
+    await Promise.all(pages.filter((page) => !page.isClosed()).map((page) => page.evaluate(() => window.game.net?.close()).catch(() => {})));
   }
 });
