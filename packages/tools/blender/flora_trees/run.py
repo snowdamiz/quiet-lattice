@@ -57,6 +57,38 @@ def sha(path):
     return read_bound(path)[0]['sha256']
 
 
+def prepare_publication(run, kind, source_binding):
+    """Bind completed stock validation to exact private bytes; detach for publishing."""
+    private = run/'producer'
+    ready_binding, ready_bytes = read_bound(private/'ready.json')
+    ready = json.loads(ready_bytes)
+    if (ready.get('schema') != 1 or ready.get('attempt') != str(run.resolve())
+            or ready.get('kind') != kind or ready.get('source') != source_binding):
+        raise ValueError('prepared export belongs to a different source or attempt')
+    paths = {'output': private/f'tree_{kind}_t04.glb',
+             'validation': private/'final-stock-validation.json',
+             'stock': private/'stock/flora'/f'tree_{kind}_t04.glb',
+             'precision': private/'precision.json'}
+    data = {}
+    for key, path in paths.items():
+        if path.resolve(strict=True) != path.absolute() or path.stat().st_nlink != 1:
+            raise ValueError(f'prepared {key} must be a private regular file')
+        binding, data[key] = read_bound(path)
+        if binding != ready.get(key):
+            raise ValueError(f'prepared {key} changed after validation')
+    if json.loads(data['validation']).get('status') != 'PASS':
+        raise ValueError('stock validation did not pass')
+    # Never link mutable producer storage directly into the public namespace.
+    staged = run/'supervisor-publication.glb'
+    with staged.open('xb') as stream:
+        stream.write(data['output'])
+        stream.flush()
+        os.fsync(stream.fileno())
+    if sha(staged) != ready['output']['sha256']:
+        raise RuntimeError('supervisor publication copy changed')
+    return staged, {'ready': ready_binding, 'validated': ready, 'sha256': sha(staged), 'promoted': False}
+
+
 def archive_outputs(paths, run, phase):
     """Move every removable name before reading any payload; detach readable bytes.
 
@@ -196,6 +228,13 @@ def attempt(args, run, lock, blocked, interrupted):
         receipt['archives'].append({'phase': phase, 'entries': rows})
         if any(row['errors'] or not row['invalidated'] for row in rows):
             fail('output preservation failed', RuntimeError(f'see {phase} archive entries'))
+    def source_after():
+        receipt['source_after'] = None
+        receipt['source_unchanged'] = False
+        after = read_bound(source)[0]
+        receipt['source_after'] = after['sha256']
+        receipt['source_unchanged'] = before == after
+        return after
     try:
         # Nothing reads source/output content until every current name is retired.
         if args.action in WRITERS:
@@ -234,8 +273,15 @@ def attempt(args, run, lock, blocked, interrupted):
         env.update(ART_KTX_JOBS='1', PYTHONDONTWRITEBYTECODE='1', CUDA_VISIBLE_DEVICES='', KTX=str(HERE/'ktx_one.py'),
                    T04_CODEC_LOCK=str(EVIDENCE/'.codec.lock'),
                    T04_KTX_REAL='/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx')
+        if args.action == 'export':
+            temporary = run/'producer/tmp'
+            temporary.mkdir(parents=True)
+            env['TMPDIR'] = str(temporary)
+            receipt['producer_directory'] = str(temporary.parent.relative_to(run))
         receipt.update(command=cmd, tool_hashes={str(p.relative_to(ROOT)): sha(p) for p in HERE.iterdir() if p.suffix in ('.py', '.mjs')},
                        environment={k: env[k] for k in (*keys, 'ART_KTX_JOBS', 'PYTHONDONTWRITEBYTECODE', 'CUDA_VISIBLE_DEVICES', 'KTX', 'T04_KTX_REAL', 'T04_CODEC_LOCK')}, codec_threads=1)
+        if args.action == 'export':
+            receipt['environment']['TMPDIR'] = env['TMPDIR']
         if interrupted:
             fail('interrupted', code=128+interrupted[0])
         if rc == 0:
@@ -281,9 +327,7 @@ def attempt(args, run, lock, blocked, interrupted):
                 except Exception as guard_error:
                     fail('cleanup guard', guard_error, code=125)
         try:
-            after, _ = read_bound(source)
-            receipt['source_after'] = after['sha256']
-            receipt['source_unchanged'] = before == after
+            after = source_after()
             if args.action not in ('author', 'seal') and before != after:
                 receipt['source_mutation'] = True
                 fail('source mutation', RuntimeError('source binding changed after producer exit'))
@@ -295,24 +339,82 @@ def attempt(args, run, lock, blocked, interrupted):
         # Finish source/cleanup validation before publishing a success receipt.
         if rc == 0 and args.action == 'export':
             try:
-                receipt['export_sha256'] = sha(export)
+                if not receipt['cleanup']['terminal'] or receipt['child_exit'] != 0:
+                    raise RuntimeError('publication requires a successful terminal producer group')
+                staged, publication = prepare_publication(run, args.kind, before)
+                receipt['publication'] = publication
+                if source_after() != before:
+                    receipt['source_mutation'] = True
+                    raise RuntimeError('source changed before canonical publication')
+                if interrupted:
+                    fail('interrupted', code=128+interrupted[0])
+                else:
+                    # Exclusive canonical creation, after the producer is terminal.
+                    os.link(staged, export)
+                    publication['promoted'] = True
+                    staged.unlink()
+                    receipt['export_sha256'] = sha(export)
+                    if receipt['export_sha256'] != publication['sha256']:
+                        raise RuntimeError('canonical publication bytes changed')
+                    if source_after() != before:
+                        receipt['source_mutation'] = True
+                        raise RuntimeError('source changed during canonical publication')
             except Exception as error:
                 fail('export after', error)
+        if interrupted:
+            fail('interrupted', code=128+interrupted[0])
+        if args.action == 'export':
+            # A live/unknown producer may still finish in this private directory;
+            # its later writes cannot become current outputs or alter this receipt.
+            receipt['producer_terminal'] = bool(receipt.get('cleanup', {}).get('terminal'))
+            history = {'sealed': not receipt['child_started'] or receipt['producer_terminal'], 'files': []}
+            receipt['producer_history'] = history
+            if history['sealed']:
+                paths = []
+                try:
+                    paths = sorted((run/'producer').rglob('*'))
+                except Exception as error:
+                    history['error'] = error_fact(error)
+                    fail('producer history', error)
+                for path in paths:
+                    row = {'path': str(path.relative_to(run))}
+                    try:
+                        if path.is_dir() and not path.is_symlink():
+                            continue
+                        if path.resolve(strict=True) != path.absolute():
+                            raise ValueError('producer history is an alias')
+                        row['binding'] = read_bound(path)[0]
+                    except Exception as error:
+                        row['error'] = error_fact(error)
+                        fail('producer history', error)
+                    history['files'].append(row)
+            staged = run/'supervisor-publication.glb'
+            if os.path.lexists(staged):
+                receipt['unpublished_supervisor_copy'] = {'path': str(staged.relative_to(run))}
+                try:
+                    receipt['unpublished_supervisor_copy']['binding'] = read_bound(staged)[0]
+                except Exception as error:
+                    receipt['unpublished_supervisor_copy']['error'] = error_fact(error)
+                    fail('publication copy history', error)
+        if rc == 0 and (args.action == 'export' or os.path.lexists(export)):
+            try:
+                receipt['export_sha256'] = sha(export)
+                if args.action == 'export':
+                    if receipt['export_sha256'] != receipt['publication']['sha256']:
+                        raise RuntimeError('canonical bytes changed before receipt commit')
+                    if source_after() != before:
+                        receipt['source_mutation'] = True
+                        raise RuntimeError('source changed before receipt commit')
+            except Exception as error:
+                fail('export after', error)
+        if interrupted:
+            fail('interrupted', code=128+interrupted[0])
         if rc != 0:
             try:
                 archive('failed')
             except Exception as error:
                 fail('failed output quarantine', error)
             receipt['export_sha256'] = None
-        elif os.path.lexists(export):
-            try:
-                receipt['export_sha256'] = sha(export)
-            except Exception as error:
-                fail('export after', error)
-                try:
-                    archive('failed')
-                except Exception as archive_error:
-                    fail('failed output quarantine', archive_error)
         receipt.update(exit=rc, reason=reason, elapsed_s=round(time.monotonic()-start, 3), peak_group_rss_kib=peak,
                        signals=interrupted, status='PASS' if rc == 0 else 'FAIL')
         try:

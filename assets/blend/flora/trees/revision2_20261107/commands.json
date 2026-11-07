@@ -1,0 +1,106 @@
+[
+  {
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/t04-r2-fix-red-20261107/exporter_boundary.py"
+    ],
+    "exit": 1,
+    "meaning": "Expected RED: exact reviewed exporter publishes canonical GLB after failed supervisor returns; barrier and unchanged receipt prove F-E."
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-regression1-20261107",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--expect",
+      "green"
+    ],
+    "exit": 0,
+    "meaning": "Historical intermediate GREEN, retained; superseded by selected final checks."
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_publication.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-publication1-20261107"
+    ],
+    "exit": 0,
+    "meaning": "Historical intermediate GREEN, retained; superseded by selected final checks."
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_publication.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-publication2-20261107"
+    ],
+    "exit": 0,
+    "meaning": "Historical intermediate GREEN, retained; superseded by selected final checks."
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_publication.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-publication-final-20261107"
+    ],
+    "exit": 0,
+    "meaning": "Historical intermediate GREEN, retained; superseded by selected final checks."
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_publication.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-final-20261107/publication"
+    ],
+    "exit": 0,
+    "elapsed_s": 25.64330729196081,
+    "log": "/tmp/t04-r2-fix-final-20261107/0.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "packages/tools/blender/flora_trees/test_runner.py",
+      "--reviewer",
+      "assets/blend/flora/trees/revision1_20261107/reviewer/lifecycle.py",
+      "--evidence",
+      "/tmp/t04-r2-fix-final-20261107/regression",
+      "--expect",
+      "green"
+    ],
+    "exit": 0,
+    "elapsed_s": 25.236476332996972,
+    "log": "/tmp/t04-r2-fix-final-20261107/1.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-B",
+      "assets/blend/flora/trees/revision2_20261107/verify_preserved.py",
+      "--out",
+      "assets/blend/flora/trees/revision2_20261107/verification.json"
+    ],
+    "exit": 0,
+    "meaning": "2632 exact protections, 3 authorized tooling changes; all art/shared/prior evidence exact; 12 Python files compile."
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0
+  }
+]

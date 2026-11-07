@@ -175,6 +175,22 @@ class Harness:
             root=self.life.make_root(name)
             src,dst,cand=self.life.place_pair(root,b'ORIGINAL-SOURCE',b'CURRENT-GLB',{'status':'PASS'})
             prefix="import os,sys,time,subprocess\nfrom pathlib import Path\nr=Path(__file__).resolve().parents[4]\n(r/'child.pid').write_text(str(os.getpid()))\ndst=r/'packages/client/public/models/flora/tree_round_t04.glb'\nsrc=r/'assets/blend/flora/tree_round_t04.blend'\nprint('child-ready',flush=True)\n"
+            if name in {'normal-success','exited-leader','receipt-write-failure','receipt-fsync-failure','reused-attempt'}:
+                # These harmless success fixtures implement the new private producer
+                # protocol. Negative fixtures still exercise rejection/retirement of
+                # unauthorized canonical writes. Exact exporter coverage is separate.
+                prefix += '''import atexit,hashlib,json
+attempt=Path(sys.argv[-1]); private=attempt/'producer'; dst=private/'tree_round_t04.glb'
+def binding(p):
+ data=p.read_bytes()
+ return {'path':str(p),'resolved_path':str(p.resolve()),'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)}
+def ready():
+ raw=private/'stock/flora/tree_round_t04.glb';raw.parent.mkdir(parents=True);raw.write_bytes(dst.read_bytes())
+ report=private/'final-stock-validation.json';report.write_text('{"status":"PASS","fixture":true}')
+ precision=private/'precision.json';precision.write_text('fixture')
+ (private/'ready.json').write_text(json.dumps({'schema':1,'attempt':str(attempt.resolve()),'kind':'round','source':binding(src),'output':binding(dst),'validation':binding(report),'stock':binding(raw),'precision':binding(precision)}))
+atexit.register(ready)
+'''
             (root/'packages/tools/blender/flora_trees/export_saved.py').write_text(prefix+script)
             return root,src,dst,cand
         def execute(root,**kw):

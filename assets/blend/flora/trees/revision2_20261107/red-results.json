@@ -1,0 +1,256 @@
+{
+  "runner_sha256": "6f8e0088d3b5db9d5e46c0cddd30257d1b41ad94b8acb26b693148352ec7aa1c",
+  "exporter_sha256": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5",
+  "exporter_exact": true,
+  "before": {
+    "current_absent": true,
+    "receipt_sha256": "122a68284d011ca3f011c3b548540a28da19dac9f27029c18830a0d6dbd2e03d",
+    "blocked": true
+  },
+  "after": {
+    "current_exists": true,
+    "bytes": "LATE-EXACT-EXPORTER-GLB",
+    "receipt_sha256": "122a68284d011ca3f011c3b548540a28da19dac9f27029c18830a0d6dbd2e03d",
+    "blocked": true,
+    "active_group": [],
+    "producer_log": "child-ready\nT04_FINAL /private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb 401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776\n"
+  },
+  "first": {
+    "exit": 130,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/boot.py",
+      "export",
+      "round",
+      "--deadline",
+      "3"
+    ],
+    "elapsed_s": 5.678,
+    "log": "{\"receipt\": \"assets/blend/flora/trees/evidence/20261107T034103_export_round_efb7c47a/receipt.json\", \"exit\": 130, \"reason\": \"interrupted\", \"peak_rss_mib\": 19.8}\n",
+    "survivors": [
+      "85053 85053 Ss"
+    ],
+    "pid": 85041
+  },
+  "receipt": {
+    "schema": 2,
+    "action": "export",
+    "kind": "round",
+    "cwd": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication",
+    "source": "assets/blend/flora/tree_round_t04.blend",
+    "output": "packages/client/public/models/flora/tree_round_t04.glb",
+    "deadline_s": 3,
+    "rss_limit_mib": 6144,
+    "log_limit_mib": 32,
+    "source_before": "a50cb312f529ffc8b25200af4dda9a0da314e48d8ca28452a1e1903e86fbb2c0",
+    "source_after": "a50cb312f529ffc8b25200af4dda9a0da314e48d8ca28452a1e1903e86fbb2c0",
+    "export_sha256": null,
+    "errors": [
+      {
+        "stage": "cleanup",
+        "type": "RuntimeError",
+        "errno": null,
+        "message": "see cleanup facts"
+      }
+    ],
+    "archives": [
+      {
+        "phase": "previous",
+        "entries": [
+          {
+            "path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/candidate.json",
+            "archive": "previous-candidate.json",
+            "invalidated": true,
+            "errors": [],
+            "entry": {
+              "mode": 33188,
+              "links": 1
+            },
+            "quarantine": "previous-quarantine/candidate.json",
+            "payload": {
+              "sha256": "cc272982687daa127c5a8010b804b69603fcbc32a40f3ea63649eeb36ad474fa",
+              "bytes": 19
+            },
+            "quarantine_retained": false
+          },
+          {
+            "path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb",
+            "archive": "previous-historical.glb",
+            "invalidated": true,
+            "errors": [],
+            "entry": {
+              "mode": 33188,
+              "links": 1
+            },
+            "quarantine": "previous-quarantine/tree_round_t04.glb",
+            "payload": {
+              "sha256": "73d098d1144654c110d7c2736c2fb1aa46edfd2b57daf130dc3385cd5bd031ca",
+              "bytes": 11
+            },
+            "quarantine_retained": false
+          }
+        ]
+      },
+      {
+        "phase": "failed",
+        "entries": [
+          {
+            "path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/candidate.json",
+            "archive": "failed-candidate.json",
+            "invalidated": true,
+            "errors": [],
+            "absent": true
+          },
+          {
+            "path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb",
+            "archive": "failed-historical.glb",
+            "invalidated": true,
+            "errors": [],
+            "absent": true
+          }
+        ]
+      }
+    ],
+    "child_exit": null,
+    "remaining_owned_children": [
+      {
+        "pid": 85053,
+        "rss_kib": 20272,
+        "state": "Ss"
+      }
+    ],
+    "child_reaped": false,
+    "child_started": true,
+    "source_binding": {
+      "path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/tree_round_t04.blend",
+      "resolved_path": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/tree_round_t04.blend",
+      "sha256": "a50cb312f529ffc8b25200af4dda9a0da314e48d8ca28452a1e1903e86fbb2c0",
+      "bytes": 15
+    },
+    "resources": {
+      "load": [
+        7.34423828125,
+        7.5732421875,
+        7.81689453125
+      ],
+      "free_disk": 33193795584,
+      "memory": "System-wide memory free percentage: 83%",
+      "processes": [
+        "47530 114.5 6444896 /Applications/Blender.app/Contents/MacOS/Blender",
+        "85018  75.6  80448 /Users/andreyyurlov/.t3/worktrees/space/t3-6f0e842d/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+        "75123  18.4 931232 /Users/andreyyurlov/.t3/runtime/versions/0.2.41/t3",
+        "84936  15.4  37136 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "85041  11.7  24800 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "85008  10.3  23328 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+        "  340   5.9  16448 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/Support/fseventsd",
+        "84251   5.8 917168 /Applications/Blender.app/Contents/MacOS/Blender",
+        "75104   5.6 645008 /Users/andreyyurlov/Applications/Acid.app/Contents/Frameworks/Acid (Beta) Helper (Renderer).app/Contents/MacOS/Acid (Beta) Helper (Renderer)",
+        "13901   3.0 1625232 codex",
+        "  365   2.1  26656 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds",
+        "  377   2.1  12416 /usr/libexec/opendirectoryd",
+        "81753   1.6 1162368 /System/Library/Frameworks/Virtualization.framework/Versions/A/XPCServices/com.apple.Virtualization.VirtualMachine.xpc/Contents/MacOS/com.apple.Virtualization.VirtualMachine",
+        "  529   1.5 100416 /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Support/mds_stores",
+        "85019   1.5  19552 /opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python"
+      ]
+    },
+    "head": "947baf9d8e975af68005e3317150ca4de3136c1f",
+    "command": [
+      "/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/producer",
+      "-b",
+      "--factory-startup",
+      "-t",
+      "2",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/tools/blender/flora_trees/export_saved.py",
+      "--",
+      "round",
+      "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/evidence/20261107T034103_export_round_efb7c47a"
+    ],
+    "tool_hashes": {
+      "packages/tools/blender/flora_trees/run.py": "6f8e0088d3b5db9d5e46c0cddd30257d1b41ad94b8acb26b693148352ec7aa1c",
+      "packages/tools/blender/flora_trees/export_saved.py": "491324d81b4d83be8332fbc014aeb7b5a096feffb272926ba5e9360417ebf0e5"
+    },
+    "environment": {
+      "OMP_NUM_THREADS": "2",
+      "OPENBLAS_NUM_THREADS": "2",
+      "MKL_NUM_THREADS": "2",
+      "NUMEXPR_NUM_THREADS": "2",
+      "VECLIB_MAXIMUM_THREADS": "2",
+      "ART_KTX_JOBS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "CUDA_VISIBLE_DEVICES": "",
+      "KTX": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/tools/blender/flora_trees/ktx_one.py",
+      "T04_KTX_REAL": "/Users/andreyyurlov/Documents/dev/space/node_modules/.cache/ktx-software-4.4.2/bin/ktx",
+      "T04_CODEC_LOCK": "/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/evidence/.codec.lock"
+    },
+    "codec_threads": 1,
+    "pid": 85053,
+    "cleanup": {
+      "errors": [
+        {
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg denial",
+          "signal": 15
+        },
+        {
+          "type": "PermissionError",
+          "errno": 1,
+          "message": "[Errno 1] controlled killpg denial",
+          "signal": 9
+        },
+        {
+          "type": "TimeoutExpired",
+          "errno": null,
+          "message": "Command '['/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/producer', '-b', '--factory-startup', '-t', '2', '--python-exit-code', '1', '--python', '/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/tools/blender/flora_trees/export_saved.py', '--', 'round', '/private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/evidence/20261107T034103_export_round_efb7c47a']' timed out after 1 seconds"
+        }
+      ],
+      "observed_group": [
+        {
+          "pid": 85053,
+          "rss_kib": 20272,
+          "state": "Ss"
+        }
+      ],
+      "remaining_owned_children": [
+        {
+          "pid": 85053,
+          "rss_kib": 20272,
+          "state": "Ss"
+        }
+      ],
+      "child_exit": null,
+      "child_reaped": false,
+      "terminal": false
+    },
+    "source_unchanged": true,
+    "exit": 130,
+    "reason": "interrupted",
+    "elapsed_s": 5.55,
+    "peak_group_rss_kib": 20240,
+    "signals": [
+      2
+    ],
+    "status": "FAIL"
+  },
+  "retry": {
+    "exit": 75,
+    "command": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "-B",
+      "/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/boot.py",
+      "export",
+      "round",
+      "--deadline",
+      "3"
+    ],
+    "elapsed_s": 0.067,
+    "log": "T04 lane requires cleanup inspection: /private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/assets/blend/flora/trees/evidence/.lane.blocked.json\n",
+    "survivors": [],
+    "pid": 85526
+  },
+  "defect_reproduced": true
+}

@@ -1,0 +1,18 @@
+Expected baseline RED, exit 1; no later test failures.
+{
+  "defect_reproduced": true,
+  "exporter_exact": true,
+  "before": {
+    "current_absent": true,
+    "receipt_sha256": "122a68284d011ca3f011c3b548540a28da19dac9f27029c18830a0d6dbd2e03d",
+    "blocked": true
+  },
+  "after": {
+    "current_exists": true,
+    "bytes": "LATE-EXACT-EXPORTER-GLB",
+    "receipt_sha256": "122a68284d011ca3f011c3b548540a28da19dac9f27029c18830a0d6dbd2e03d",
+    "blocked": true,
+    "active_group": [],
+    "producer_log": "child-ready\nT04_FINAL /private/tmp/t04-r2-fix-red-20261107/exporter-boundary/scratch/exact-exporter-late-publication/packages/client/public/models/flora/tree_round_t04.glb 401155db001948a67992d447d27ef6f2c207f48824dfa3a5db4a81559678d776\n"
+  }
+}
