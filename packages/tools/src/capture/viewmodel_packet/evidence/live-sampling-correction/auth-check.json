@@ -1,0 +1,99 @@
+{
+  "commands": [
+    {
+      "name": "caller",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "review-thalune"
+      ],
+      "exit": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "d7ab84929ac2ef10436a2255d349bc724974e8b6baecda9e253d0afe0372c829"
+    },
+    {
+      "name": "entry",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "name": "check",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--check",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json"
+      ],
+      "exit": 0,
+      "stdoutSha256": "d9f4e349933e3b283e5a25b0df212fb0cf7b01a95e7b916f765d5f7aeed8c980",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "path": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/14428_1794032435263/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin",
+  "absent": [
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/return-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/review-ixari",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/review-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/review-ulgani",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/view-ixari",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/view-thalune",
+    "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/assets/renders/review/viewmodel-packet-live-qsu7czb1/view-ulgani",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-readiness.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-return-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-return-thalune.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-return-thalune.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-return-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ixari.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ixari.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ixari.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ixari.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ulgani.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ulgani.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ulgani.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-review-ulgani.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ixari.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ixari.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ixari.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ixari.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-thalune.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-thalune.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-thalune.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-thalune.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ulgani.consumed.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ulgani.consumed.json.failure-summary.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ulgani.consumed.json.fallback.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1-view-ulgani.grant.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/return-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/return-thalune/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-ixari",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-ixari/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-thalune/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-ulgani",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/review-ulgani/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-ixari",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-ixari/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-thalune",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-thalune/result.json",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-ulgani",
+    "/private/tmp/p1-e05-t03-viewmodel-packet-live-qsu7czb1/view-ulgani/result.json"
+  ],
+  "runtimeEnabled": true,
+  "entryEnabled": true
+}

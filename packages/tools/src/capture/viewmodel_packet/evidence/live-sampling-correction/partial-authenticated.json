@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "resultSha256": "9d43902fde5906357044c2959784788de1470b3002c9788f4059d541c28f5eaf",
+  "consumptionSha256": "ae163a3c6a568e53212d489f6089f6959702ca79f8963d832b2ee0c589ed7e5b",
+  "resultBytes": 107337,
+  "successorAdmittedWithoutDispatch": true,
+  "partialCoverage": "partial",
+  "rawLossFacts": [
+    {
+      "path": "/private/tmp/vm-live-sampling-qsu7czb1/tmp/vm-protocol-ldjifj4z/sbr-_o_c7u0e/playwright_chromiumdev_profile-inert/Default/Shared Dictionary/deleted-live.bin",
+      "operation": "stat",
+      "error": {
+        "type": "FileNotFoundError",
+        "attributes": {},
+        "message": "[Errno 2] No such file or directory: 'deleted-live.bin'"
+      },
+      "errno": 2,
+      "filename": "deleted-live.bin",
+      "filename2": null
+    }
+  ],
+  "samplingLastAliasPreserved": true,
+  "unknownCyclePreserved": true,
+  "nativeLaunched": false
+}

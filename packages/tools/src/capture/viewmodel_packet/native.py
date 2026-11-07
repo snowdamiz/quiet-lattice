@@ -3,8 +3,10 @@ from contextlib import contextmanager
 import copy
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
+import time
 
 from boundary import MIB, deadline, encoded, raw, require, retain
 from bindings import HELPERS
@@ -23,6 +25,125 @@ def size(path, *, skip_profiles=False):
             require(not p.is_symlink(), f'Unexpected owned symlink: {p}')
         total += sum((Path(base) / n).stat().st_size for n in files)
     return total
+
+
+LIVE_CAPS = {'helperScratch': 64 * MIB, 'job': 16 * MIB,
+             'privateNonprofile': 512 * MIB, 'profiles': 1024 * MIB}
+LIVE_ENTRIES = 100000
+LIVE_LOSSES = 32
+LIVE_PARTIALS = 128
+LIVE_UNKNOWN_SECONDS = 2
+LIVE_FACT_BYTES = 256 * 1024
+
+
+def live_roots(job, private, admission):
+    """Pin the three task-owned directory identities before starting the job."""
+    roots = []
+    for label, path in (('helperScratch', job.scratch), ('job', job.out), ('privateNonprofile', private)):
+        info = os.stat(path, follow_symlinks=False)
+        require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid(), 'Live root owner/type')
+        stamp = [info.st_dev, info.st_ino]
+        if label == 'privateNonprofile':
+            require(stamp == admission['stamp'], 'Live private root differs from admission')
+        roots.append({'label': label, 'path': str(path), 'stamp': stamp})
+    return roots
+
+
+def sample_usage(roots, evidence):
+    """Non-atomic metadata samples, never immutable inventories or release proof."""
+    state = evidence.setdefault('usageSampling', {'samples': 0, 'incomplete': [], 'partialBytes': 0,
+                                                 'unknownSince': None, 'roots': roots})
+    sample = {'observedBytes': dict.fromkeys(LIVE_CAPS, 0), 'entries': 0, 'losses': [],
+              'specialEntries': {'socket': 0, 'fifo': 0}, 'coverage': 'interrupted',
+              'atomic': False, 'settled': False, 'started': time.monotonic()}
+    state['samples'] += 1
+    state['last'] = sample  # Partial facts survive every exception/deadline.
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_NONBLOCK
+    def loss(path, operation, error):
+        # Only ENOENT from a descendant race is tolerable. Root loss, access
+        # failures, wrong types/owners, symlinks and unknown IO failures refuse.
+        if not isinstance(error, FileNotFoundError):
+            raise error
+        sample['losses'].append({'path': str(path), 'operation': operation, 'error': error,
+                                 'errno': error.errno, 'filename': error.filename, 'filename2': error.filename2})
+        require(len(sample['losses']) <= LIVE_LOSSES, 'Live sampling loss ceiling')
+    def walk(fd, path, label, depth=0):
+        require(depth <= 64, 'Live sampling depth ceiling')
+        with os.scandir(fd) as entries:
+            for entry in entries:
+                sample['entries'] += 1
+                require(sample['entries'] <= LIVE_ENTRIES, 'Live sampling entry ceiling')
+                child = path / entry.name
+                try:
+                    info = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                except FileNotFoundError as error:
+                    loss(child, 'stat', error); continue
+                require(not stat.S_ISLNK(info.st_mode), f'Unexpected owned symlink: {child}')
+                require(info.st_uid == os.getuid(), f'Live entry owner differs: {child}')
+                selected = 'profiles' if label == 'privateNonprofile' and depth == 0 and stat.S_ISDIR(info.st_mode) and entry.name.startswith('playwright_chromiumdev_profile-') else label
+                if stat.S_ISDIR(info.st_mode):
+                    try:
+                        nested = os.open(entry.name, flags, dir_fd=fd)
+                    except FileNotFoundError as error:
+                        loss(child, 'open-directory', error); continue
+                    try:
+                        opened = os.fstat(nested)
+                        require(stat.S_ISDIR(opened.st_mode) and opened.st_uid == os.getuid(), 'Live opened directory owner/type')
+                        if (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
+                            sample['losses'].append({'path': str(child), 'operation': 'directory-replaced',
+                                'enumerated': [info.st_dev, info.st_ino], 'opened': [opened.st_dev, opened.st_ino]})
+                            require(len(sample['losses']) <= LIVE_LOSSES, 'Live sampling loss ceiling')
+                        try:
+                            walk(nested, child, selected, depth + 1)
+                        except FileNotFoundError as error:
+                            loss(child, 'enumerate-directory', error)
+                        try:
+                            current = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                        except FileNotFoundError as error:
+                            loss(child, 'recheck-directory', error)
+                        else:
+                            require(not stat.S_ISLNK(current.st_mode), f'Unexpected owned symlink: {child}')
+                            require(stat.S_ISDIR(current.st_mode) and current.st_uid == os.getuid(), 'Live directory route owner/type changed')
+                            if (current.st_dev, current.st_ino) != (opened.st_dev, opened.st_ino):
+                                sample['losses'].append({'path': str(child), 'operation': 'directory-route-changed',
+                                    'opened': [opened.st_dev, opened.st_ino], 'current': [current.st_dev, current.st_ino]})
+                                require(len(sample['losses']) <= LIVE_LOSSES, 'Live sampling loss ceiling')
+                    finally:
+                        os.close(nested)
+                else:
+                    kind = 'socket' if stat.S_ISSOCK(info.st_mode) else 'fifo' if stat.S_ISFIFO(info.st_mode) else None
+                    require(stat.S_ISREG(info.st_mode) or kind is not None, f'Unsupported live entry type: {child}')
+                    if kind: sample['specialEntries'][kind] += 1
+                    sample['observedBytes'][selected] += info.st_size
+                    require(sample['observedBytes'][selected] <= LIVE_CAPS[selected], f'Live {selected} working ceiling')
+    try:
+        with deadline(2):
+            for root in roots:
+                path = Path(root['path'])
+                fd = os.open(path, flags)
+                try:
+                    info = os.fstat(fd)
+                    require(stat.S_ISDIR(info.st_mode) and info.st_uid == os.getuid() and [info.st_dev, info.st_ino] == root['stamp'], 'Live root identity changed')
+                    walk(fd, path, root['label'])
+                    current = os.stat(path, follow_symlinks=False)
+                    require(stat.S_ISDIR(current.st_mode) and current.st_uid == os.getuid() and [current.st_dev, current.st_ino] == root['stamp'], 'Live root changed during sample')
+                finally:
+                    os.close(fd)
+        sample['finished'] = time.monotonic()
+        if sample['losses']:
+            sample['coverage'] = 'partial'
+            state['incomplete'].append(sample)
+            state['partialBytes'] += len(encoded(sample))
+            if state['unknownSince'] is None: state['unknownSince'] = sample['started']
+            require(len(state['incomplete']) <= LIVE_PARTIALS and state['partialBytes'] <= LIVE_FACT_BYTES, 'Live partial evidence ceiling')
+            require(sample['finished'] - state['unknownSince'] <= LIVE_UNKNOWN_SECONDS, 'Live sampling instability deadline')
+        else:
+            sample['coverage'] = 'enumerated'
+            state['unknownSince'] = None
+        return sample['observedBytes']
+    except BaseException as error:
+        sample['failure'] = error
+        raise
 
 
 @contextmanager
@@ -120,13 +241,12 @@ def capture(ready, spec, paths, record):
                 helper_ready = {'resolver': {'selectedExecutable': {'path': ready['bindings']['browserBinary']}},
                                 'process_binary_sha256': ready['bindings']['process_binary_sha256']}
                 observer = stages.StageReceipts(job, helper_ready, private)
+                usage_roots = live_roots(job, private, admission)
                 def observe():
                     nonlocal callback_failure
                     try:
                         # Retain producer exceptions before StationJob.wait normalizes them.
-                        evidence['usage'] = {'helperScratch': size(job.scratch), 'job': size(job.out),
-                                             'privateNonprofile': size(private, skip_profiles=True),
-                                             'profiles': sum(size(p) for p in private.glob('playwright_chromiumdev_profile-*'))}
+                        evidence['usage'] = sample_usage(usage_roots, evidence)
                         require(evidence['usage']['helperScratch'] <= 64 * MIB, 'Helper log working ceiling')
                         require(evidence['usage']['job'] <= 16 * MIB, 'Helper metadata working ceiling')
                         require(evidence['usage']['privateNonprofile'] <= 512 * MIB, 'Private TMP working ceiling')
