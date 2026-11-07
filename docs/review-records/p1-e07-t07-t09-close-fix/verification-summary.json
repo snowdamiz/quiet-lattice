@@ -1,0 +1,42 @@
+{
+  "sourceHead": "313371af2fb25ecd9d821ef9f2c330b2da4afc13",
+  "sourceTree": "0c989c39ef81a9f60e27c4eee9527c7d4049c06c",
+  "baseHead": "2b74135bbd5ce91f550821c347798a3a5dacd014",
+  "implementationCpu": "PASS",
+  "independentReview": "PENDING",
+  "nativeCorrectedRun": "NOT RUN",
+  "latestActualNative": "FAIL at base2b74135 owner-close wait; retirement NOT REACHED",
+  "fresh": {
+    "tests": 91,
+    "files": 3,
+    "passed": 91,
+    "failed": 0,
+    "pending": 0,
+    "retained": 55,
+    "newFixtureControls": 7,
+    "existingNetTests": 29
+  },
+  "unchangedReused": 345,
+  "totalCatalogIdentities": 436,
+  "baseRed": {
+    "failed": 6,
+    "passed": 1,
+    "exit": 1
+  },
+  "finalGreenNewCases": 7,
+  "static": "types/lint/format/whitespace PASS",
+  "discovery": {
+    "tests": 1,
+    "files": 1,
+    "execution": false,
+    "requiredSkipBranches": 0
+  },
+  "preservation": {
+    "patchPairs": 5,
+    "productPaths": 55,
+    "protectedObjects": 20,
+    "oldReportFiles": 234,
+    "priorPacketFiles": 3883
+  },
+  "conclusion": "Fixture closed a session inside a still-live auto-login page. Use terminal owner page closure; no product defect established or product scope expansion."
+}

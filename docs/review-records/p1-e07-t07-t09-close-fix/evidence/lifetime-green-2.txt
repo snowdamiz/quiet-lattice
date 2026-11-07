@@ -1,0 +1,14 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ✓ |@astra/tools| src/smoke/symbiotic-lifetime.test.ts (5 tests) 3520ms
+   ✓ owner disconnect uses terminal page lifetime (5)
+     ✓ dispatches target close before thaw, without executing Net.close or rejoining 885ms
+     ✓ waits for the closed receipt, not just command acceptance 906ms
+     ✓ rejects a failed close without thawing or claiming retirement 861ms
+     ✓ retains a capture failure before closing the owner 862ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  05:03:35
+   Duration  4.07s (tests 88%, import 10%, transform 2%)

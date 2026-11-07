@@ -1,0 +1,18 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ✓ |@astra/client| src/net/Net.test.js (29 tests) 23ms
+ ✓ |@astra/tools| src/smoke/symbiotic-private.test.ts (55 tests) 199ms
+ ✓ |@astra/tools| src/smoke/symbiotic-lifetime.test.ts (7 tests) 3546ms
+   ✓ owner disconnect uses terminal page lifetime (7)
+     ✓ dispatches target close before thaw, without executing Net.close or rejoining 884ms
+     ✓ waits for the closed receipt, not just command acceptance 914ms
+     ✓ rejects a failed close without thawing or claiming retirement 871ms
+     ✓ retains a capture failure before closing the owner 859ms
+
+ Test Files  3 passed (3)
+      Tests  91 passed (91)
+   Start at  05:05:38
+   Duration  5.24s (tests 74%, import 14%, transform 12%)
+
+JSON report written to /private/tmp/symbiotic-close-fix-iugwvq88/focused-cpu.json

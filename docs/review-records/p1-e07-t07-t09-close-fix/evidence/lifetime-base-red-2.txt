@@ -1,0 +1,103 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-lifetime.test.ts (5 tests | 4 failed) 3214ms
+   ❯ owner disconnect uses terminal page lifetime (5)
+     ✓ reproduces Net.close -> Game reload -> missing game -> online dev rejoin 6ms
+     × closes the actual target before thaw, without executing Net.close or rejoining 576ms
+     × waits for the closed receipt, not just command acceptance 1566ms
+     × rejects a failed close without thawing or claiming retirement 535ms
+     × retains a capture failure before closing the owner 530ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > closes the actual target before thaw, without executing Net.close or rejoining
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:156:12
+    154|   const run = new Function('a', 'online', 'until', 'expect', 'pixels',…
+    155|   return run({ page }, { clock: { thaw: async () => calls.push('thaw')…
+    156|     expect(new Function(`return (${predicate})`)()).toBe(true);
+       |            ^
+    157|   }, expect, async (_info: unknown, pages: unknown[], label: string) =…
+    158|     expect(pages).toEqual([page]);
+ ❯ src/smoke/symbiotic-lifetime.test.ts:156:49
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:154:15
+ ❯ src/smoke/symbiotic-lifetime.test.ts:182:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > waits for the closed receipt, not just command acceptance
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:195:50
+    193|     const page = terminalPage(o, { hold: true });
+    194|     const pending = release(page, o.calls);
+    195|     await vi.waitFor(() => expect(page.commands).toHaveLength(1));
+       |                                                  ^
+    196|     expect(page.isClosed()).toBe(false);
+    197|     expect(o.calls).not.toContain('thaw');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > rejects a failed close without thawing or claiming retirement
+AssertionError: expected [Function] to throw error including 'close deadline' but got 'Cannot read properties of undefined (…'
+
+Expected: "close deadline"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:205:41
+    203|     const o = owner();
+    204|     const page = terminalPage(o, { fail: true });
+    205|     await expect(release(page, o.calls)).rejects.toThrow('close deadli…
+       |                                         ^
+    206|     expect(page.commands).toHaveLength(1);
+    207|     expect(page.isClosed()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > retains a capture failure before closing the owner
+AssertionError: expected [Function] to throw error including 'capture failed' but got 'Cannot read properties of undefined (…'
+
+Expected: "capture failed"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:213:47
+    211|     const o = owner();
+    212|     const page = terminalPage(o);
+    213|     await expect(release(page, o.calls, true)).rejects.toThrow('captur…
+       |                                               ^
+    214|     expect(page.commands).toEqual([]);
+    215|     expect(o.calls).not.toContain('thaw');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval packages/tools/src/smoke/symbiotic-lifetime.test.ts:156:12
+ ❯ packages/tools/src/smoke/symbiotic-lifetime.test.ts:156:49
+ ❯ eval packages/tools/src/smoke/symbiotic-lifetime.test.ts:154:15
+ ❯ process.processTicksAndRejections node:internal/process/task_queues:103:5
+
+This error originated in "packages/tools/src/smoke/symbiotic-lifetime.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The last test to run before this error was "waits for the closed receipt, not just command acceptance". This means either:
+- the error was thrown while Vitest was running this test, or
+- the error was thrown after the test completed, and this was the most recent test at that point.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+     Errors  1 error
+   Start at  05:01:07
+   Duration  3.81s (tests 86%, import 11%, transform 3%)

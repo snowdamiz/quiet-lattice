@@ -1,0 +1,595 @@
+[
+  {
+    "label": "evidence-whitespace-after",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.012
+  },
+  {
+    "label": "evidence-whitespace-before",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 2,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.011
+  },
+  {
+    "label": "final-controls-base-red",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--config",
+      "/private/tmp/symbiotic-close-fix-iugwvq88/independent.config.mjs",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/private/tmp/symbiotic-close-fix-iugwvq88/base-red.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 4.241
+  },
+  {
+    "label": "final-provenance",
+    "argv": [
+      "/usr/bin/python3",
+      "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.19
+  },
+  {
+    "label": "final-provenance-python-current",
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 12.262
+  },
+  {
+    "label": "focused-cpu",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-private.test.ts",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "packages/client/src/net/Net.test.js",
+      "--configLoader=runner",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--no-cache",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache",
+      "--reporter=default",
+      "--reporter=json",
+      "--outputFile=/private/tmp/symbiotic-close-fix-iugwvq88/focused-cpu.json"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 5.404
+  },
+  {
+    "label": "format-check",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/prettier/bin/prettier.cjs",
+      "--check",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.287
+  },
+  {
+    "label": "format-write",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/prettier/bin/prettier.cjs",
+      "--write",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.234
+  },
+  {
+    "label": "inventory",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "packages/tools/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "packages/tools/src/smoke/symbiotic.config.ts",
+      "--list"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.832
+  },
+  {
+    "label": "lifetime-base-red-2",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 4.086
+  },
+  {
+    "label": "lifetime-base-red",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 1.001
+  },
+  {
+    "label": "lifetime-base-red-final",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 3.635
+  },
+  {
+    "label": "lifetime-green-2",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 4.305
+  },
+  {
+    "label": "lifetime-green",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts",
+      "--maxWorkers=2",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 1,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 3.199
+  },
+  {
+    "label": "lint",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/eslint/bin/eslint.js",
+      "packages/tools/src/smoke/symbiotic-online.spec.ts",
+      "packages/tools/src/smoke/symbiotic-lifetime.test.ts"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.579
+  },
+  {
+    "label": "node-version",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--version"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.023
+  },
+  {
+    "label": "source-commit",
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "P1.E07.T07/P1.E08.T09: close owner page for terminal retirement QA"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.133
+  },
+  {
+    "label": "types",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/tools"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 2.366
+  },
+  {
+    "label": "types-first",
+    "argv": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "packages/tools"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 2,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 4.003
+  },
+  {
+    "label": "whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521",
+    "environmentOverrides": {
+      "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs",
+      "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp",
+      "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache",
+      "CI": "1",
+      "NO_COLOR": "1",
+      "COREPACK_ENABLE_NETWORK": "0",
+      "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+    },
+    "deadlineSeconds": 120,
+    "exit": 0,
+    "timeout": false,
+    "observedProcessExit": true,
+    "seconds": 0.012
+  }
+]

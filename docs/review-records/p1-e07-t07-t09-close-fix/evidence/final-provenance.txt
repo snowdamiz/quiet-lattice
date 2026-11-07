@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py", line 30, in <module>
+    assert working_hashes(list(entries))==entries,path
+  File "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py", line 14, in working_hashes
+    return dict(zip(files,hashes,strict=True))
+TypeError: zip() takes no keyword arguments

@@ -1,0 +1,26 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-lifetime.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts [ packages/tools/src/smoke/symbiotic-lifetime.test.ts ]
+Error: Cannot find module 'playwright-core/package.json'
+Require stack:
+- /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-lifetime.test.ts
+ ❯ src/smoke/symbiotic-lifetime.test.ts:15:54
+     13| const mainSource = createSourceFile('main.js', readFileSync(client('ma…
+     14| const require = createRequire(import.meta.url);
+     15| const playwright = readFileSync(join(dirname(require.resolve('playwrig…
+       |                                                      ^
+     16| const playwrightSource = createSourceFile('coreBundle.js', playwright,…
+     17|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  05:00:59
+   Duration  666ms (worker 97%, environment 3%)

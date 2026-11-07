@@ -1,0 +1,33 @@
+FUTURE QA AFTER TERMINAL OWNER PAGE CORRECTION — NOT EXECUTED / NOT AUTHORIZED HERE
+Source HEAD 313371af2fb25ecd9d821ef9f2c330b2da4afc13
+Source tree 0c989c39ef81a9f60e27c4eee9527c7d4049c06c
+Bind the final descendant HEAD/tree from final-receipt.json (report-only descendant of this source), not an old ticket or a report's historical source pin. Parent owns fresh independent source review, a NEW one-shot execution ticket and serial GPU admission. Do not reuse spent claim20261107_094753_662e3b70 or its ticket. No autonomous retry. Latest actual run2b74135 failed before retirement after picking34 passed.
+
+Preconditions and finite ownership:
+- Reverify current private Postgres/Redis container identities, healthy status and exact loopback mappings53055->5432 and53058->6379. Historical names space-t16-pg-20261106 and space-t16-redis-20261106 are not current admission. Do not start/reset/stop shared services.
+- Generate a NEW12–32-character lowercase alphanumeric/underscore SYMBIOTIC_QA_CLAIM. Require the exact SQL namespace absent and Redis8 empty with no application clients. Atomically claim Redis8: if redis.call('DBSIZE') ~= 0 then return 0 end; return redis.call('SET',KEYS[1],ARGV[1],'NX') and 1 or 0. KEYS[1]=qa:owner:${SYMBIOTIC_QA_CLAIM}, ARGV[1]=the claim. Require1. CREATE only astra_symbiotic_smoke_${SYMBIOTIC_QA_CLAIM} as astra on53055; save receipts. Conflict stops. No FLUSH or reuse of historical namespaces/markers.
+- Prepare the parent's currently qualified fail-closed route/process guard and supervisor under a NEW mode0700 canonical /private/tmp QA_OUT, with fresh tmp/profile/compiler caches inside it. Clear inherited application routing. Verify exact source/dependency/browser hashes; preserve the qualified exact-byte font policy and unfiltered requests/console/pageerror receipts. No Corepack/network install. This source task does not alter or prepare that external harness.
+- The exact direct-Node command below runs only UNDER that parent supervisor: one worker, retry0, repeat1, maxfailure1; test300s, global420s, outer450s plus20s TERM/KILL and verified-exit drain. The unchanged hang guard bounds all manually created browser contexts with15s grace. Page.close itself has no independent timeout: it is inside those test/guard/outer bounds. Record actual descendant birth identities, listeners and profiles, including processes outside the runner process group.
+
+cd /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+export PATH=/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:$PATH
+: "${SYMBIOTIC_QA_CLAIM:?Fresh claim required before execution}"
+export SYMBIOTIC_QA_CLAIM
+: "${QA_OUT:?Fresh exclusive output directory required}"
+: "${QA_ROUTE_GUARD:?Parent private route guard required}"
+export DATABASE_URL="postgres://astra:astra@127.0.0.1:53055/astra_symbiotic_smoke_${SYMBIOTIC_QA_CLAIM}"
+export REDIS_URL=redis://127.0.0.1:53058/8
+export NODE_OPTIONS="--import \"${QA_ROUTE_GUARD}\""
+export TMPDIR="${QA_OUT}/tmp"
+export PLAYWRIGHT_JSON_OUTPUT_FILE="${QA_OUT}/playwright.json"
+export CI=1 SMOKE_GL=metal DEBUG=pw:browser
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=420000 --trace=off --reporter=list,json --output "${QA_OUT}/results"
+
+
+Expected inventory:1 required test in1 file, no skips. Two actual clients. Maximum8 stage PNGs: bond owner/observer, follow owner/observer, combat owner/observer, before-disconnect OWNER while alive, then disconnect OBSERVER only after authoritative retirement. The closed owner has no post-disconnect pixels; do not label its earlier image as retirement proof. Preserve JSON/server logs plus all partial outputs; no raw-frame sequence/video/trace. ownerPageClosed is a page receipt only. Acceptance still requires joined identified living observer, newer server tick, living identified enemy, and owner/companion absence in actual snapshots/render/target/picking state.
+
+Cleanup on success/failure/timeout:
+Drain every recorded owned application/browser identity and verify exit/no listeners/no SQL or Redis application sessions/no profile. Reverify the fresh SQL namespace and Redis8 owner marker. Drop only that proven-owned SQL namespace. Inventory Redis8 keys, correlate mutations with this run/shard, atomically recheck ownership plus full keyset and DEL only the explicit known-owned list. No FLUSHDB/FLUSHALL/Redis0/7/default routes, unknown-key deletion or shared service restart. If uncertain keep the hold and report it.
+Prove DB absent, Redis8 marker/key cleanup, no owned processes/clients/listeners, original container identities healthy, source/protected hashes unchanged. Remove only this new run's disposable profile/compiler/temp after receipts are archived; preserve every screenshot, JSON, log and old report/failed packet. Parent releases GPU only after those raw checks settle. Do not retry an unclear or failed outcome.
+
+LIMIT: No fresh claim/ticket, DB/Redis/server/network/native/browser/GPU run or cleanup was performed here. Real target destruction, WebSocket server-close delivery, full retirement and new screenshots remain NEXT reviewed authorized native acceptance. CPU controls do not prove them.

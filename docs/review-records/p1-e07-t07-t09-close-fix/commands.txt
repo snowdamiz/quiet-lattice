@@ -1,0 +1,222 @@
+evidence-whitespace-after | exit=0 | seconds=0.012 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+git diff --cached --check
+
+evidence-whitespace-before | exit=2 | seconds=0.011 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+git diff --cached --check
+FAILURE LAST 20 LINES:
+docs/review-records/p1-e07-t07-t09-close-fix/evidence/lifetime-base-red-2.txt:104: new blank line at EOF.
+docs/review-records/p1-e07-t07-t09-close-fix/evidence/lifetime-base-red-final.txt:81: new blank line at EOF.
+docs/review-records/p1-e07-t07-t09-close-fix/evidence/lifetime-base-red.txt:27: new blank line at EOF.
+docs/review-records/p1-e07-t07-t09-close-fix/evidence/lifetime-green-2.txt:15: new blank line at EOF.
+docs/review-records/p1-e07-t07-t09-close-fix/evidence/lifetime-green.txt:77: new blank line at EOF.
+
+final-controls-base-red | exit=1 | seconds=4.241 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run --config /private/tmp/symbiotic-close-fix-iugwvq88/independent.config.mjs --maxWorkers=2 --no-file-parallelism --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-close-fix-iugwvq88/base-red.json
+FAILURE LAST 20 LINES:
+
+Number of calls: 1
+
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:344:38
+    342|     const run = new Function('pages', `return (async () => {${fixtureA…
+    343|     await run([closedOwner, remaining]);
+    344|     expect(closedOwner.evaluate).not.toHaveBeenCalled();
+       |                                      ^
+    345|     expect(remaining.evaluate).toHaveBeenCalledTimes(1);
+    346|     // The fixture still leaves final context closure (including faile…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  05:05:13
+   Duration  3.98s (tests 83%, import 10%, transform 7%)
+
+JSON report written to /private/tmp/symbiotic-close-fix-iugwvq88/base-red.json
+
+final-provenance | exit=1 | seconds=0.19 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/usr/bin/python3 /private/tmp/symbiotic-close-fix-iugwvq88/audit.py
+FAILURE LAST 20 LINES:
+Traceback (most recent call last):
+  File "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py", line 30, in <module>
+    assert working_hashes(list(entries))==entries,path
+  File "/private/tmp/symbiotic-close-fix-iugwvq88/audit.py", line 14, in working_hashes
+    return dict(zip(files,hashes,strict=True))
+TypeError: zip() takes no keyword arguments
+
+final-provenance-python-current | exit=0 | seconds=12.262 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/opt/homebrew/bin/python3 /private/tmp/symbiotic-close-fix-iugwvq88/audit.py
+
+focused-cpu | exit=0 | seconds=5.404 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-private.test.ts packages/tools/src/smoke/symbiotic-lifetime.test.ts packages/client/src/net/Net.test.js --configLoader=runner --maxWorkers=2 --no-file-parallelism --no-cache --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache --reporter=default --reporter=json --outputFile=/private/tmp/symbiotic-close-fix-iugwvq88/focused-cpu.json
+
+format-check | exit=0 | seconds=0.287 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --check packages/tools/src/smoke/symbiotic-online.spec.ts packages/tools/src/smoke/symbiotic-lifetime.test.ts
+
+format-write | exit=0 | seconds=0.234 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/prettier/bin/prettier.cjs --write packages/tools/src/smoke/symbiotic-online.spec.ts packages/tools/src/smoke/symbiotic-lifetime.test.ts
+
+inventory | exit=0 | seconds=0.832 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node packages/tools/node_modules/@playwright/test/cli.js test --config packages/tools/src/smoke/symbiotic.config.ts --list
+
+lifetime-base-red-2 | exit=1 | seconds=4.086 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-lifetime.test.ts --maxWorkers=2 --no-file-parallelism --cache=false --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache
+FAILURE LAST 20 LINES:
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval packages/tools/src/smoke/symbiotic-lifetime.test.ts:156:12
+ ❯ packages/tools/src/smoke/symbiotic-lifetime.test.ts:156:49
+ ❯ eval packages/tools/src/smoke/symbiotic-lifetime.test.ts:154:15
+ ❯ process.processTicksAndRejections node:internal/process/task_queues:103:5
+
+This error originated in "packages/tools/src/smoke/symbiotic-lifetime.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The last test to run before this error was "waits for the closed receipt, not just command acceptance". This means either:
+- the error was thrown while Vitest was running this test, or
+- the error was thrown after the test completed, and this was the most recent test at that point.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+     Errors  1 error
+   Start at  05:01:07
+   Duration  3.81s (tests 86%, import 11%, transform 3%)
+
+
+lifetime-base-red | exit=1 | seconds=1.001 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-lifetime.test.ts --maxWorkers=2 --no-file-parallelism --cache=false --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache
+FAILURE LAST 20 LINES:
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts [ packages/tools/src/smoke/symbiotic-lifetime.test.ts ]
+Error: Cannot find module 'playwright-core/package.json'
+Require stack:
+- /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-lifetime.test.ts
+ ❯ src/smoke/symbiotic-lifetime.test.ts:15:54
+     13| const mainSource = createSourceFile('main.js', readFileSync(client('ma…
+     14| const require = createRequire(import.meta.url);
+     15| const playwright = readFileSync(join(dirname(require.resolve('playwrig…
+       |                                                      ^
+     16| const playwrightSource = createSourceFile('coreBundle.js', playwright,…
+     17|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  05:00:59
+   Duration  666ms (worker 97%, environment 3%)
+
+
+lifetime-base-red-final | exit=1 | seconds=3.635 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-lifetime.test.ts --maxWorkers=2 --no-file-parallelism --cache=false --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache
+FAILURE LAST 20 LINES:
+
+Expected: "capture failed"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:211:47
+    209|     const o = owner();
+    210|     const page = terminalPage(o);
+    211|     await expect(release(page, o.calls, true)).rejects.toThrow('captur…
+       |                                               ^
+    212|     expect(page.commands).toEqual([]);
+    213|     expect(o.calls).not.toContain('thaw');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  05:01:49
+   Duration  3.31s (tests 76%, import 19%, transform 5%)
+
+
+lifetime-green-2 | exit=0 | seconds=4.305 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-lifetime.test.ts --maxWorkers=2 --no-file-parallelism --cache=false --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache
+
+lifetime-green | exit=1 | seconds=3.199 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/vitest/vitest.mjs run packages/tools/src/smoke/symbiotic-lifetime.test.ts --maxWorkers=2 --no-file-parallelism --cache=false --fsModuleCachePath=/private/tmp/symbiotic-close-fix-iugwvq88/vitest-cache
+FAILURE LAST 20 LINES:
+
++ Received:
+undefined
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:205:29
+    203|     await expect(release(page, o.calls)).rejects.toThrow('close deadli…
+    204|     expect(page.commands).toHaveLength(1);
+    205|     expect(page.isClosed()).toBe(false);
+       |                             ^
+    206|     expect(o.calls).not.toContain('thaw');
+    207|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  05:02:10
+   Duration  2.93s (tests 81%, import 16%, transform 3%)
+
+
+lint | exit=0 | seconds=0.579 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/eslint/bin/eslint.js packages/tools/src/smoke/symbiotic-online.spec.ts packages/tools/src/smoke/symbiotic-lifetime.test.ts
+
+node-version | exit=0 | seconds=0.023 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node --version
+
+source-commit | exit=0 | seconds=0.133 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+git commit -m 'P1.E07.T07/P1.E08.T09: close owner page for terminal retirement QA'
+
+types | exit=0 | seconds=2.366 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+
+types-first | exit=2 | seconds=4.003 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node node_modules/typescript/bin/tsc -p packages/tools
+FAILURE LAST 20 LINES:
+packages/tools/src/smoke/symbiotic-lifetime.test.ts(75,52): error TS2345: Argument of type '{ readonly t: "welcome"; readonly accountId: "a1"; readonly character: { readonly id: "c1"; readonly name: "Tess Arlo"; readonly people: "thalune"; readonly look: { readonly palette: 0; readonly pattern: 0; readonly head: 0; readonly suit: 0; }; readonly level: 1; readonly homeSystem: 0; }; ... 4 more ...; readonly ...' is not assignable to parameter of type '{ t: "mine"; seq: number; frame: string; result: "refused" | "hit" | "depleted"; node?: string | undefined; flora?: string | undefined; hp?: number | undefined; reason?: "heat" | "unknown" | ... 10 more ... | undefined; item?: string | undefined; count?: number | undefined; added?: number | undefined; } | ... 30 mor...'.
+  Type '{ readonly t: "welcome"; readonly accountId: "a1"; readonly character: { readonly id: "c1"; readonly name: "Tess Arlo"; readonly people: "thalune"; readonly look: { readonly palette: 0; readonly pattern: 0; readonly head: 0; readonly suit: 0; }; readonly level: 1; readonly homeSystem: 0; }; ... 4 more ...; readonly ...' is not assignable to type '{ t: "welcome"; accountId: string; character: { id: string; name: string; people: "thalune" | "ixari" | "ulgani"; look: { palette: number; pattern: number; head: number; suit: number; }; level: number; homeSystem: number; }; ... 4 more ...; mode: "docked" | ... 3 more ... | "landed"; }'.
+    The types of 'pose.pos' are incompatible between these types.
+      The type 'readonly [30, 2.4, 22]' is 'readonly' and cannot be assigned to the mutable type '[number, number, number]'.
+
+whitespace | exit=0 | seconds=0.012 | timeout=False
+cwd=/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+env={"CI": "1", "COREPACK_ENABLE_NETWORK": "0", "NODE_COMPILE_CACHE": "/private/tmp/symbiotic-close-fix-iugwvq88/cache", "NODE_OPTIONS": "--import /private/tmp/symbiotic-close-fix-iugwvq88/boundary.mjs", "NO_COLOR": "1", "PATH": "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1", "TEMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMP": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "TMPDIR": "/private/tmp/symbiotic-close-fix-iugwvq88/tmp", "XDG_CACHE_HOME": "/private/tmp/symbiotic-close-fix-iugwvq88/cache"}
+git diff --check

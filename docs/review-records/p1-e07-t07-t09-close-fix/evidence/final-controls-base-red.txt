@@ -1,0 +1,121 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts (7 tests | 6 failed) 3271ms
+   ❯ owner disconnect uses terminal page lifetime (7)
+     ✓ reproduces Net.close -> Game reload -> missing game -> online dev rejoin 5ms
+     × dispatches target close before thaw, without executing Net.close or rejoining 836ms
+     × waits for the closed receipt, not just command acceptance 808ms
+     × rejects a failed close without thawing or claiming retirement 807ms
+     × retains a capture failure before closing the owner 803ms
+     × captures post-retirement pixels from the surviving observer only 5ms
+     × does not evaluate the closed owner again during existing final cleanup 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > dispatches target close before thaw, without executing Net.close or rejoining
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:243:14
+    241|     { clock: { thaw: async () => calls.push('thaw') } },
+    242|     async (_page: unknown, predicate: string) => {
+    243|       expect(new Function(`return (${predicate})`)()).toBe(true);
+       |              ^
+    244|     },
+    245|     expect,
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:243:51
+ ❯ eval ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:238:15
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:286:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > waits for the closed receipt, not just command acceptance
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:243:14
+    241|     { clock: { thaw: async () => calls.push('thaw') } },
+    242|     async (_page: unknown, predicate: string) => {
+    243|       expect(new Function(`return (${predicate})`)()).toBe(true);
+       |              ^
+    244|     },
+    245|     expect,
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:243:51
+ ❯ eval ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:238:15
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:299:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > rejects a failed close without thawing or claiming retirement
+AssertionError: expected [Function] to throw error including 'close deadline' but got 'Cannot read properties of undefined (…'
+
+Expected: "close deadline"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:309:41
+    307|     const o = owner();
+    308|     const page = terminalPage(o, { fail: true });
+    309|     await expect(release(page, o.calls)).rejects.toThrow('close deadli…
+       |                                         ^
+    310|     expect(page.commands).toHaveLength(1);
+    311|     expect(page.isClosed()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > retains a capture failure before closing the owner
+AssertionError: expected [Function] to throw error including 'capture failed' but got 'Cannot read properties of undefined (…'
+
+Expected: "capture failed"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:317:47
+    315|     const o = owner();
+    316|     const page = terminalPage(o);
+    317|     await expect(release(page, o.calls, true)).rejects.toThrow('captur…
+       |                                               ^
+    318|     expect(page.commands).toEqual([]);
+    319|     expect(o.calls).not.toContain('thaw');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > captures post-retirement pixels from the surviving observer only
+Error: Missing fixture await info.attach('disconnect-observer'
+ ❯ fixtureAwait ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:264:21
+    262|   };
+    263|   visit(source);
+    264|   if (!found) throw new Error(`Missing fixture await ${fragment}`);
+       |                     ^
+    265|   return transpileModule(found, { compilerOptions: { target: ScriptTar…
+    266| }
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:324:67
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts > owner disconnect uses terminal page lifetime > does not evaluate the closed owner again during existing final cleanup
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      [Function anonymous],
+    ]
+
+
+Number of calls: 1
+
+ ❯ ../../../../../../private/tmp/symbiotic-close-fix-iugwvq88/close-boundary.test.ts:344:38
+    342|     const run = new Function('pages', `return (async () => {${fixtureA…
+    343|     await run([closedOwner, remaining]);
+    344|     expect(closedOwner.evaluate).not.toHaveBeenCalled();
+       |                                      ^
+    345|     expect(remaining.evaluate).toHaveBeenCalledTimes(1);
+    346|     // The fixture still leaves final context closure (including faile…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  05:05:13
+   Duration  3.98s (tests 83%, import 10%, transform 7%)
+
+JSON report written to /private/tmp/symbiotic-close-fix-iugwvq88/base-red.json

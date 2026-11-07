@@ -1,0 +1,80 @@
+
+ RUN  v5.0.5 /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+
+ ❯ |@astra/tools| src/smoke/symbiotic-lifetime.test.ts (5 tests | 4 failed) 2438ms
+   ❯ owner disconnect uses terminal page lifetime (5)
+     ✓ reproduces Net.close -> Game reload -> missing game -> online dev rejoin 10ms
+     × closes the actual target before thaw, without executing Net.close or rejoining 690ms
+     × waits for the closed receipt, not just command acceptance 612ms
+     × rejects a failed close without thawing or claiming retirement 568ms
+     × retains a capture failure before closing the owner 556ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > closes the actual target before thaw, without executing Net.close or rejoining
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:154:12
+    152|   const run = new Function('a', 'online', 'until', 'expect', 'pixels',…
+    153|   return run({ page }, { clock: { thaw: async () => calls.push('thaw')…
+    154|     expect(new Function(`return (${predicate})`)()).toBe(true);
+       |            ^
+    155|   }, expect, async (_info: unknown, pages: unknown[], label: string) =…
+    156|     expect(pages).toEqual([page]);
+ ❯ src/smoke/symbiotic-lifetime.test.ts:154:49
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:152:15
+ ❯ src/smoke/symbiotic-lifetime.test.ts:180:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > waits for the closed receipt, not just command acceptance
+TypeError: Cannot read properties of undefined (reading 'net')
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:154:12
+    152|   const run = new Function('a', 'online', 'until', 'expect', 'pixels',…
+    153|   return run({ page }, { clock: { thaw: async () => calls.push('thaw')…
+    154|     expect(new Function(`return (${predicate})`)()).toBe(true);
+       |            ^
+    155|   }, expect, async (_info: unknown, pages: unknown[], label: string) =…
+    156|     expect(pages).toEqual([page]);
+ ❯ src/smoke/symbiotic-lifetime.test.ts:154:49
+ ❯ eval src/smoke/symbiotic-lifetime.test.ts:152:15
+ ❯ src/smoke/symbiotic-lifetime.test.ts:193:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > rejects a failed close without thawing or claiming retirement
+AssertionError: expected [Function] to throw error including 'close deadline' but got 'Cannot read properties of undefined (…'
+
+Expected: "close deadline"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:203:41
+    201|     const o = owner();
+    202|     const page = terminalPage(o, { fail: true });
+    203|     await expect(release(page, o.calls)).rejects.toThrow('close deadli…
+       |                                         ^
+    204|     expect(page.commands).toHaveLength(1);
+    205|     expect(page.isClosed()).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |@astra/tools| src/smoke/symbiotic-lifetime.test.ts > owner disconnect uses terminal page lifetime > retains a capture failure before closing the owner
+AssertionError: expected [Function] to throw error including 'capture failed' but got 'Cannot read properties of undefined (…'
+
+Expected: "capture failed"
+Received: "Cannot read properties of undefined (reading 'net')"
+
+ ❯ src/smoke/symbiotic-lifetime.test.ts:211:47
+    209|     const o = owner();
+    210|     const page = terminalPage(o);
+    211|     await expect(release(page, o.calls, true)).rejects.toThrow('captur…
+       |                                               ^
+    212|     expect(page.commands).toEqual([]);
+    213|     expect(o.calls).not.toContain('thaw');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  05:01:49
+   Duration  3.31s (tests 76%, import 19%, transform 5%)
