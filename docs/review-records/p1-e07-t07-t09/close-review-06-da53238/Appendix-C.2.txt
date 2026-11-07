@@ -1,0 +1,114 @@
+TASK: P1.E07.T07 / P1.E08.T09 two-client live QA fixture — independent R6 SOURCE/CPU review
+STATUS: DONE — PASS (SOURCE_CPU ONLY)
+SUMMARY: No blocking finding in the terminal owner-page correction at the exact final pin. The exact old fixture reproduces Net.close -> Game reload -> undefined.net -> dev-login rejoin through real source. The new fixture awaits installed Playwright's terminal page-close chain before thawing and still rejects absent authoritative leave, invalid living witnesses and retained companion state. Evidence is attached before existing final cleanup. This review grants no native launch authorization, live acceptance or visual grade.
+
+EXACT PINS / CONTRACT
+Worktree: /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521
+Branch: t3/P1-E07-T07-T09-live-qa
+Final HEAD: da5323833471eb3af68e77ffa78fc59598fe2a6d
+Final tree: b48263afd56522f432a042de367e4410120644e1
+Source commit: 313371af2fb25ecd9d821ef9f2c330b2da4afc13
+Source tree: 0c989c39ef81a9f60e27c4eee9527c7d4049c06c
+Base: 2b74135bbd5ce91f550821c347798a3a5dacd014
+Base tree: fb3dfea41c0667caf44bd50cd60d98567a5ef1ee
+Source stable patch ID: 75057da1fc429191628d9a77eace31aa00098b3c (author recorded; source objects independently matched).
+Verified base -> source -> final ancestry; final commit changes only the exclusive close-fix evidence directory. Clean worktree before/after, no special index flags. No nested reviewer or implementation transcript; this fresh reviewer received the task and evidence only. No Potato mode.
+Read IMPLEMENTATION_PLAN 0.3, 0.9.5, C.2/C.4, T07 with its dispatch contract and replicated-fauna T09; DESIGN 9.1/9.5/12.1/12.2/20.3. The brief's T09 denotes P1.E08.T09 (replicated fauna), not P1.E07.T09 (Pilot). Five mandatory review conditions considered: no changed client authority, new untested system, retained demo replacement, perf-budget regression, or unlogged product-spec interpretation was found. The narrow fixture correction changes no product policy.
+
+FILES CHANGED
+Reviewer changed no source, dependency, existing report, packet, image or orchestration document. All new scripts, configs, tests, cache, logs and reports are exclusively under /private/tmp/symbiotic-r6-source-cpu-PPFHAV.
+Reviewed delta from base: packages/tools/src/smoke/symbiotic-online.spec.ts; new symbiotic-lifetime.test.ts; author's new docs/review-records/p1-e07-t07-t09-close-fix evidence directory. No other source delta.
+
+FINDINGS / ACTUAL SOURCE BOUNDARIES
+No mandatory REVISE finding and no substantive advisory.
+Net.js:157 close sets closing and closes the socket; :177 lost emits closed rather than scheduling retry. Game.js:447 binds the closed callback, :453 onNetClosed sends an ever-joined session to :712 leaveWorld, which nulls game.net and invokes location.reload. main.js:36 then runs devLogin again for the same dev query. The independent exact-old-route test compiles the immutable git-show base release statements AND its actual until wrapper, drives an actual joined Net with encoded welcome/snapshot messages, and executes the real Game methods/registration and main bootstrap. It observes the same TypeError reading net, zero thaw calls, old Net closed, then a second joined Net after devLogin:bond-r5. No retry timer is involved. WebSocket transport, location/realm destruction and dev-login transport are inert ports; native navigation scheduling is not measured.
+
+New spec:501-507 takes the before-disconnect owner capture, awaits a.page.close({runBeforeUnload:false}), asserts isClosed and records only ownerPageClosed, THEN thaws. The owner page is created by context.newPage at :70-71, so the actual installed Playwright client Page.close uses channel.close, not an owned-context or beforeunload branch. Real installed method bodies produce server Page._close -> CRPage.closePage(false) -> CRBrowser._closePage -> Target.closeTarget and await closedPromise. Page._didClose and client _onClose establish isClosed. Inspected installed coreBundle.js:24049, 38794, 39926, 23610, 62997 and 63366; dependency SHA256 is recorded below.
+The reviewer reuses the author's source-method extractor and inert owner/Playwright platform adapters, with dependency roots rebound to the pinned checkout. Their exact provenance and limitations are recorded in adapter-provenance.json. Independently written controls execute the entire actual pre-release through finally block, actual drawn/pixels helpers and EntityState parser. Target/session/channel/close-event delivery and observer state are controlled ports, not a browser, server or native transport. owner.destroy assigning closed socket state models platform destruction; it is not network-shutdown evidence.
+
+Twenty-seven independent controls verify: real close dispatch and closed-event ordering; a command ACK held without the close event cannot thaw; protocol close rejection/deadline and a successful-return-but-not-closed page both fail; successful page closure without authoritative owner/companion leave fails; retained snapshot, remote anchor, shown instance, target or pick fails; stale snapshot, disconnected/missing/dead observer, missing/dead/wrong-frame enemy fail; state races after the wait also fail the second snapshot assertions. The positive control supplies a synthetic newer authoritative snapshot solely to prove the assertions can accept their valid input. This is not a new live retirement result.
+At spec:508-540 the unchanged predicate and second snapshot require joined correct observer identity, newer server tick, positive-HP foot observer in frame, living identified enemy in frame/species, and complete owner/companion removal from snapshots plus companion remote/shown/targets/pick removal. Page closure alone is never treated as that proof. Server gateway ws.ts:501-518 independently traces socket close into persistence.leave, zones.leave(disconnected), cast retirement for the current registry holder, and connection/registry removal; that server path was inspected, not run here.
+At :543 the only post-retirement image comes from the surviving observer. Existing six bond/follow/combat images plus one pre-close owner and one post-retirement observer keep the maximum at eight. No old owner image is relabeled retirement evidence. At :546-550 JSON and unfiltered server output attach before best-effort cleanup. Independent injected beforeRelease drawing/HP/pick failures, pre-close/post-retirement capture failures and nonempty error evidence all propagate and retain available evidence before cleanup. Closed owner is never evaluated again; live observer cleanup is still attempted. The unchanged hang guard handles all manual contexts and bounds teardown. Page.close has no separate per-call timeout; existing test300s/global420s, guard15s and prospective parent outer deadline are the bounds, not a new native qualification.
+
+PRIOR FINDING DISPOSITIONS / SCOPE PRESERVATION
+R1 living-enemy/missing-observer false PASS: FIXED and retained. Fresh old predicate negatives and new whole-block controls reject corpses, absent witnesses, wrong identities/frames and stale ticks. Positive live enemy health remains required.
+R1 cleanup masking and failed Vite.listen ownership: FIXED and retained. Fresh 55-case private fixture suite exercises actual online.ts with inert external ports, preserving primary/startup and cleanup errors, failed-listen handle cleanup, bounded TERM/KILL, and owned-versus-borrowed database behavior. No Vite/server/DB was started.
+R2/R3 ship placement and UI input: FIXED and retained. Existing real-source placement/authority, actual UI/Input/Game admission, F key-up and later S reacquisition controls pass unchanged. No native gesture is proved here.
+R5 observer sightline/picking and evidence retention: FIXED and retained. Fresh controls exercise actual camera/remotes/fauna instances/picker with both living creatures; historical occlusion remains reproducible and the corrected observer picks the companion. beforeRelease assignment still precedes its assertions. The actual latest failed native packet now contains beforeRelease.picked34, unlike the earlier missing-evidence run.
+Original product proof remains hash-qualified reuse, not a fresh integration rerun. All five reviewed/integrated stable patch-ID pairs independently recompute equal, including Symbiotic bf09bc72543ed74b7dc7386415471d26a36a4b6d -> 079ee3795e213a308b1e43244500fa4bdf4cc81f and fauna d688579adf31c2a8ee9836495ba6b32708b99ccd -> 74360adf8cfb8e0d5ee7c7e0dbee07de02808904. The 55 product blobs and 20 protected objects match integration/base/source/final. T10/T16, authority, assets, renderer, lockfiles and orchestration documents are unchanged.
+Reversing ONLY owner-close action, capture split and closed-page cleanup filter makes the ENTIRE spec byte-identical to base. Base/normalized SHA256: 8226e92a76414cafd0da14343ceabf39c550931a2a272ac6f722dad70bef79fc. Current SHA256: e0e93db3515ea2362d85a24942ecf3e4b2abebb24ed3e60a78411c114b234ab1. All prior test files remain identical. Thus no previous input, placement, two-client identity/instancing/picking/follow/source-attributed damage, live-HP, retirement, errors or skip/retry policy was weakened.
+
+VERIFY / COMMANDS / EXITS
+Exact argv/cwd/environment, deadline, observed child exit, empty process-group drain and log hashes: commands.json and commands.txt. Direct pinned Node v22.23.3; all CPU work serial, one Vitest worker, no file parallelism or cache in the checkout. All spawned verification commands have a120s deadline plus10s kill/wait, all exited, none timed out, no child process-group survivors. Pre-import TCP/TLS/UDP-listen/fetch denial, cleared app routing, private tmp/compiler/Vite/Vitest caches. No package manager/install.
+- focused:91/91 PASS, exit0 (private fixture55, lifecycle7, Net29); no skipped/todo/pending.
+- independent-v2:27/27 whole-block controls PASS, exit0; no skipped/todo/pending.
+- exact-old-route:1/1 diagnostic PASS, exit0; reproduces historical failure and dev rejoin, not terminal retirement.
+- base-red: immutable old spec against seven current lifecycle controls, expected exit1:6 FAIL /1 PASS, no skips. Four failures expose the old undefined-net route, one is structural absence of the new observer capture, one proves old teardown evaluates an already-closed owner. This is intentionally RED, not a hidden successful baseline.
+- node-version, tools-types, scoped ESLint, format check, discovery, initial/final audit and dependency-content check: PASS exit0. Discovery lists exactly1 required test in1 file; hooks and test body not executed. git diff --check passes in both audits.
+Current-source fresh PASS count118=91 repository+27 supplemental. Additionally1 exact-old-route diagnostic passes. Reuse catalog: all400 prior identities retained;55 rerun,345 hash-qualified prior PASS reused;7 new fixture cases plus29 existing Net cases newly covered ->436 catalog identities. Supplemental reviewer controls do not enlarge the product catalog. This is NOT a fresh436-test/full-suite pass.
+
+HISTORICAL NATIVE INPUT / NO NEW NATIVE CLAIM
+Read original runtime /private/tmp/space-symbiotic-live-2b74135b-6d4de7b8a319a86544a9/playwright.json and independent postrun /private/tmp/symbiotic-postrun-2b74135b-nmif9lgw. Original playwright SHA2562843b2b2da6d01ed2b93a3f8ab3c4cb09fe4cd7fc0dc8365ec713f0690699347; one failed test, retry0. beforeRelease picked34, release tick400, observer2 hp1, enemy35 hp0.7000000000000001; no retired evidence. The original undefined-net pageerror remains unfiltered. Raw server output and exact inputs are recorded in historical-input-check.json. Existing actual two-client Bond/render/pick/follow/attributed-damage observations are historical. They do not establish terminal retirement. No image viewed or graded.
+
+PRESERVATION / HASH LIMITS
+Both audits verify all234 old report hashes and3883 manifest-listed packet hashes;37 author close-fix seal entries,84 prior independent R5 entries and45 postrun seal entries match. Additional supplied-packet before/after hash inventories cover3427 files (overlap with prior sets, not additive). Six original PNGs remain untouched.
+All4376 tracked file hashes match before/after. All20329 worktree metadata entries (including ignored paths) and15554 dependency metadata entries match. A separate final content pass verifies12422 recorded dependency file hashes against the sealed historical postrun inventory. Its original generated-cache exclusions remain exclusions; no claim of exhaustive content hashing of every cache. Executable/installed lifecycle source hashes independently match before/after.
+Node SHA25668f4d07ca49e0500cc135c7e0a445093e228e42e126ac22306d045f0a8c2636b; Playwright1.64.1 coreBundle SHA256829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d. Other tool/source hashes in tool-hashes.json and lifecycle-hashes.json.
+
+DEVIATIONS / RETAINED SCRATCH FAILURE
+First supplemental import failed with Cannot find module 'three', zero tests, exit1: the scratch adapter resolved three from tools, but it is a client dependency. Rebound only that resolution to the actual client package; the unchanged control logic then passed27/27. Initial source, log and JSON are retained. The corrected run emits a retained THREE_CJS_DEPRECATED warning from loading the real installed client math package. No source/install/assertion change.
+Read-only exploration also returned exit1 for absent online-test.ts and a zsh unmatched playwright glob. Corrected source paths were read; neither is an execution result. Details in exploration-errors.txt. No prior packet overwritten or cleanup/hydration performed.
+
+DECISIONS
+Session close versus terminal client departure -> close the owner page -> the existing dev-bootstrap realm must not be allowed to rejoin. This is a fixture lifetime correction under the existing disconnect contract, not a new product-spec choice. CPU PASS is scoped to source/order/failure behavior. No source changes or additional author permission were requested.
+
+OUT OF SCOPE / LIMITS
+Native target destruction, actual WebSocket close delivery to the server, the newer live observer retirement snapshot, GPU draw submission/pixels, native gestures, live cleanup, full smoke/integration and visual acceptance remain UNPROVED on this final source. The latest actual native run remains FAIL. No browser/native/GPU/server/DB/Blender/codec/full suite, cloud, service query, screenshot cleanup, fresh grant/ticket/claim, push/PR/merge was performed. Future native execution requires the parent's separately authorized fresh admission and final-pin binding; no spent claim/ticket is reused. No source/CPU report can mark the combined tasks accepted.
+
+ARTIFACTS
+/private/tmp/symbiotic-r6-source-cpu-PPFHAV/Appendix-C.2.txt
+final-receipt.json (scope SOURCE_CPU, PASS, exact head/tree/report SHA256); verification-summary.json; SHA256SUMS; commands.json/txt; initial/final audits and before inventories; inventory-reuse.json; dependency-content-proof.json; tool/lifecycle hashes; ancestry.json; historical-input-check.json; exact-old-route.json; independent-receipts.json; all control sources/configs, original failure source, JSON/logs/exit receipts. Cache/tmp are private and retained, excluded from the evidence seal. Original author/old-review/runtime files were only read.
+
+BASE-RED — EXACT LAST20 FAILURE LOG LINES
+
+Number of calls: 1
+
+ ❯ ../../../../../../private/tmp/symbiotic-r6-source-cpu-PPFHAV/base-red.test.ts:344:38
+    342|     const run = new Function('pages', `return (async () => {${fixtureA…
+    343|     await run([closedOwner, remaining]);
+    344|     expect(closedOwner.evaluate).not.toHaveBeenCalled();
+       |                                      ^
+    345|     expect(remaining.evaluate).toHaveBeenCalledTimes(1);
+    346|     // The fixture still leaves final context closure (including faile…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  05:22:25
+   Duration  3.89s (tests 87%, import 10%, transform 2%)
+
+JSON report written to /private/tmp/symbiotic-r6-source-cpu-PPFHAV/base-red.json
+
+INDEPENDENT — EXACT LAST20 FAILURE LOG LINES
+Error: Cannot find module 'three'
+Require stack:
+- /Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/symbiotic-lifetime.test.ts
+ ❯ ../../../../../../private/tmp/symbiotic-r6-source-cpu-PPFHAV/independent.test.ts:271:68
+    269| const OUT = '/private/tmp/symbiotic-r6-source-cpu-PPFHAV';
+    270| const saved = JSON.parse(readFileSync('/private/tmp/symbiotic-postrun-…
+    271| const { Vector3, Quaternion } = await import(pathToFileURL(require.res…
+       |                                                                    ^
+    272| const compile = (s: string) => transpileModule(s, { compilerOptions: {…
+    273| const drawn = new Function('expect', 'EntityState', compile(spec.slice…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  05:21:12
+   Duration  799ms (worker 97%, environment 3%)
+
+JSON report written to /private/tmp/symbiotic-r6-source-cpu-PPFHAV/independent.json
