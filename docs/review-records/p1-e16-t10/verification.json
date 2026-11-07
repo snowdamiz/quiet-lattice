@@ -1,7 +1,7 @@
 {
   "task": "P1.E16.T10",
   "date": "2026-11-06",
-  "status": "source review PASS; actual-main verification pending",
+  "status": "complete locally; independent review and actual-main verification PASS",
   "sourceCommit": "ae8447ce13925befe63899452bee9beb162c07ea",
   "workerCommit": "1ac686beaef4c87584d47659718b41d35fac8d62",
   "fixtureBlob": "248c4fffc4f426834fca3e83a7d69bc2379c0995",
@@ -29,7 +29,25 @@
       "negativeControlsDetected": 3
     }
   },
-  "actualMainChecks": "pending",
+  "actualMainChecks": {
+    "sourceCommit": "ae8447ce13925befe63899452bee9beb162c07ea",
+    "tree": "15c0a10a8af46a5b064698ee378961592b9f25c0",
+    "typecheck": {
+      "exit": 0
+    },
+    "unit": {
+      "files": 212,
+      "passed": 2700,
+      "exit": 0
+    },
+    "smoke": {
+      "passed": 38,
+      "skipped": 3,
+      "failed": 0,
+      "exit": 0
+    },
+    "cleanup": "PASS; GPU released 2026-11-07T03:57:15Z"
+  },
   "artifacts": {
     "worker-report.txt": {
       "bytes": 8683,
@@ -90,6 +108,34 @@
     "review-no-rejoin-credit.txt": {
       "bytes": 2113,
       "sha256": "4dd22d8e15b55554d6a847fb323d74dcdf02ea3b0418152fdcc5f209ec441f2f"
+    },
+    "main-qa-report.txt": {
+      "bytes": 11600,
+      "sha256": "d9a80c0d52196afaa215774d0ee97100fdaf7b5a2bd9bc4d1ca299c047546465"
+    },
+    "main-qa-hash-manifest.json": {
+      "bytes": 7534,
+      "sha256": "ff47e553df7e41ce2753ead209783d148cc25fecf08e6f3ee54c503cf581033d"
+    },
+    "main-qa-result.json": {
+      "bytes": 208859,
+      "sha256": "d17b90ac78b332de9b6c056b7eaaea72beb8daf23bd5eb073f842bd74ac23bb1"
+    },
+    "main-qa-cleanup.json": {
+      "bytes": 6275,
+      "sha256": "961700b9d75fc4d130864dc7e9092ff52ba159d3c4187705e67a3a0ecaf4fd7b"
+    },
+    "main-typecheck.txt": {
+      "bytes": 290,
+      "sha256": "6e18dcc35458e0f596ea57e455d9be952d6afa01eacc2fc49aa69d9a3786a3b6"
+    },
+    "main-unit.txt": {
+      "bytes": 412,
+      "sha256": "cafb54e1a3723e371162e85bdc4724b3ce3dc0c3ead467c19b294b7b6a810adb"
+    },
+    "main-smoke.txt": {
+      "bytes": 102141,
+      "sha256": "b8ef6bc7484f60586c9772e0658c90524b1c08103231067de1759de4342aa63c"
     }
   }
 }

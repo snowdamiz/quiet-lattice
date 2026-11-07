@@ -1,0 +1,94 @@
+P1.E16.T10 — actual merged-main QA
+VERDICT: PASS. GPU RELEASED after terminal cleanup at 2026-11-07T03:57:15Z.
+
+Scope and source identity
+Work was executed only from /Users/andreyyurlov/Documents/dev/space. All authored evidence is in /tmp/space-t10-main-qa-s26hljqq.
+Branch before/after: main.
+HEAD before/after: ae8447ce13925befe63899452bee9beb162c07ea
+Tree before/after: 15c0a10a8af46a5b064698ee378961592b9f25c0
+Git index and complete tracked Git tree are identical before/after; final tracked/untracked status is empty. No source, configuration, docs, body payload, commit, branch/ref, push, PR, or merge changes. No nested agents, separate browser/capture/Blender job, or new runtime supervisor was introduced. The ordinary existing smoke harness was used once.
+
+The integrated fixture equals reviewed 1ac686beaef4c87584d47659718b41d35fac8d62:
+  packages/server/test/gatewayPersistence.test.ts
+  Git blob 248c4fffc4f426834fca3e83a7d69bc2379c0995
+  SHA256 687b9a5af653e0da6bd8ae96fb7882c29edccf1bb88f8650543c3a79052cd724
+Diff from 93354b4dc is exactly the fixture plus docs/PROGRESS.md and docs/review-records/p1-e08-t09/source-review-d688579ad.txt. Production runtime/configuration are unchanged. The previous review and worker evidence were inspected as inputs; this report's checks were freshly run on main.
+
+868 source/configuration/runtime-payload entries match byte-for-byte before/after and match their tracked Git blobs or exact hydrated LFS OIDs. All eight hydrated runtime LFS payloads matched their pointer SHA256/size. The three body exports were already hydrated; no installation, hydration or network fetch was needed.
+13,007 installed package code/link entries, 14,747 installed Chromium/Firefox/WebKit payload files, and the actual Node executable match before/after after the generated-output classification below.
+Node v22.23.3; pnpm 12.15.0; Vitest 5.0.5; Playwright 1.64.1; Darwin arm64. Versions and executable hashes are in versions.json.
+
+Exact commands and environment
+Working directory: /Users/andreyyurlov/Documents/dev/space
+  CI=1
+  SMOKE_GL=metal
+  SMOKE_PORT=53138
+  DATABASE_URL=postgres://astra:astra@127.0.0.1:53055/astra
+  REDIS_URL=redis://127.0.0.1:53058
+  TMPDIR=/tmp/space-t10-main-qa-s26hljqq/tmp/
+  PLAYWRIGHT_JSON_OUTPUT_FILE=/tmp/space-t10-main-qa-s26hljqq/playwright.json
+  pnpm typecheck
+  pnpm test
+  pnpm smoke -- --workers=1 --retries=0 --repeat-each=1 --max-failures=1 --global-timeout=900000 --trace=off --reporter=list,json --output /tmp/space-t10-main-qa-s26hljqq/test-results
+For smoke only: DEBUG=pw:browser, to retain native browser launch/backend/warning/exit evidence.
+Literal wrappers: typecheck.sh, test.sh, smoke.sh. They set/check the pin and environment, invoke the existing scripts and record exits; they do not supervise or retry runtime failures.
+The root smoke script delegates to @astra/tools, which invokes src/smoke/run.ts and the unchanged Playwright/hang-aware harness. No file selector was passed, so the complete smoke directory ran. workers=1, retries=0, repeat-each=1, max-failures=1, global timeout=900000 ms, trace=off, fresh port 53138, fresh output and TMPDIR. The existing config's ordinary Vite wildcard bind was retained. No .env or ambient ASTRA_/SMOKE_/PLAYWRIGHT_/VITE_ override was found.
+
+Results
+  pnpm typecheck: PASS, all four package typechecks, exit 0.
+  pnpm test: PASS, 212 files / 2700 tests / 0 failed / 0 skipped, exit 0; Vitest duration 18.28 seconds.
+  pnpm smoke: PASS, 41 total / 38 passed / 3 skipped / 0 failed / 0 flaky, exit 0; Playwright duration 531326.388 ms (8.9 min).
+  typecheck: 2026-11-07T03:46:29Z -> 2026-11-07T03:46:37Z; exit 0
+  test: 2026-11-07T03:46:44Z -> 2026-11-07T03:47:03Z; exit 0
+  smoke: 2026-11-07T03:47:11Z -> 2026-11-07T03:56:03Z; exit 0
+Durations describe these executions only; no performance qualification is claimed. There were no test retries or repair edits.
+
+Skip and warning disposition
+1. Optional Firefox world-generation test: skipped with the exact pre-existing reason 'Firefox cannot start on this machine: Could not find profile folder.' Chromium and WebKit bit-equivalence checks passed.
+2. harness-hang.spec.ts 'a page that never answers': intentionally skipped by the outer suite with 'run by harness.spec.ts'.
+3. harness-hang.spec.ts 'the next test gets a working browser': same intentional outer-suite skip.
+All three parent hang/recovery tests passed, including the 15-second and 1-second close-grace cases and the CI variant. They deliberately run a nested timeout/failure and assert that the next test recovers. Any nested child failure result belongs to that expected harness fixture; it is not a failing outer smoke test.
+Native browser stderr was not warning-free. browser-warning-summary.json preserves counts and exact examples: 182 CVDisplayLink errors; one SetApplicationIsDaemon/paramErr message; 90 Metal library-cache warnings; seven ProduceOverlay/nonexistent-mailbox messages plus seven corresponding invalid-mailbox messages; and one audio socket-buffer/Broken pipe warning. CVDisplayLink/daemon/cache/mailbox categories were already described in the preceding focused QA; this report does not assume every individual warning was pre-existing. The Firefox skip is confirmed against prior T16 smoke. No new test failure or top-level Playwright error occurred.
+The observed Chromium/browser GPU command lines used --use-angle=metal and --enable-gpu; ANGLE stderr identified the Metal library cache. Chromium's default unsafe-SwiftShader permission flag was also present; the selected backend observed here was Metal. The main browser exited normally with exitCode=0, signal=null. No extra GPU probe or visual grading was performed.
+
+Private fixture route proof
+Pre-import docker identity/health/port inspection and direct SQL/Redis diagnostics passed:
+  Postgres space-t16-pg-20261106
+  ID 66c3a97097e4c8f6bd0b6e2547313cbb42aa4f57c34bf7ab58decf56ba15bdfb
+  127.0.0.1:53055 -> 5432, postgres:16, running/healthy.
+  Redis space-t16-redis-20261106
+  ID d06423c2a793f91db1b355ebbf101363be7c16ad3f171152224602ee6a9897a4
+  127.0.0.1:53058 -> 6379, redis:7, running/healthy.
+Before testing there were zero astra_smoke_* databases, no application PostgreSQL/Redis sessions, and Redis DB7 contained only astra:shard:main:world.
+Actual spawned server PID 59998 had cwd packages/server, DATABASE_URL on 53055/astra_smoke_mw5v425g_db66dd and REDIS_URL on 53058/7. Its lsof sockets independently showed both approved endpoints; pg_stat_activity identified postgres.js on that scratch database, Redis CLIENT LIST identified ioredis on DB7, and /health returned HTTP 200, db=ok, redis=ok, protocol=24. Other observed ordinary/stepped server processes also used these private routes; exact PID, environment allowlist, socket and fixture-session evidence is retained in the during snapshots and route-observations.json. The movement spec itself intentionally creates one ordinary and one stepped server under the same single-worker harness; no separate online QA run was started.
+No default 55432/56379 route was used in the configured environment or observed application sockets. No FLUSHDB/FLUSHALL/reset was issued. The standard harness created/dropped its unique scratch databases. Successful server output remains in the unchanged harness's memory; route claims are supported by live process/socket/SQL/Redis/health observations, not an invented successful-server log.
+
+Final comparison and generated-output classification
+The initial raw provenance comparator returned exit 4 because dependencies included generated outputs: exactly 397 newly created node_modules/.vitest-cache transform files and one changed node_modules/.pnpm-workspace-state-v1.json validation record. There was zero source/config/payload, installed-browser or Node drift. No installed package code/link drift remains after excluding these explicitly identified generated outputs (and the predeclared .vite/.vite-temp/.cache/.pnpm-task-run-state-v1 output directories).
+The 397 new transform files were removed only after their current hashes matched the recorded after-run hashes. All 2,123 pre-existing Vitest cache entries were preserved. The generated pnpm workspace validation metadata was retained; its pre-run bytes were not captured, so this report does not claim its change was only a timestamp. Full raw manifests/diff and provenance-adjudicated.json retain the distinction. Existing checkout cache directories were not broadly removed. No test rerun was needed for this classification.
+
+Terminal cleanup: PASS
+All 40 observed owned process IDs are gone, and every logged outer browser launcher PID is gone; no surviving owned process/profile command match remained. All 23 observed application listener ports, including smoke port 53138, have no listeners (lsof exit 1, empty output). The existing harness performed server/browser termination; no manual process kill was needed.
+Zero astra_smoke_* databases remain. PostgreSQL has only the diagnostic psql connection; Redis has only the diagnostic client. No application DB sessions remain. DB7 still has only the expected world-mirror key; its content was updated by normal smoke runtime and retained.
+Both exact private containers remain running and healthy. No container was stopped or removed.
+Only owned temporary profiles/caches/unit fixture directories under this unique TMPDIR and the 397 proven-new Vitest cache files were removed. Three profiles left by deliberate nested hang tests were included. TMPDIR is empty. Five current smoke screenshots and all test-result artifacts are retained under test-results; no current or historical screenshot was deleted.
+GPU released at 2026-11-07T03:57:15Z, after cleanup and final source verification.
+
+Body payloads, before == after
+  packages/client/public/models/characters/thalune.glb: 41128548 bytes; SHA256 dc54adf60dfbb4275fe355695d960de284357336c4e962be82fb960f00741c27
+  packages/client/public/models/characters/ixari.glb: 43870856 bytes; SHA256 1236d2bafed2d8a2c58eeb4ba6cf73501c669fbc7d7eda5d1fb3c260d34d243b
+  packages/client/public/models/characters/ulgani.glb: 47796920 bytes; SHA256 9b956af47acd35440db346fffa971a063b17b963b79457b67b018788bdf27682
+
+Retained evidence
+REPORT.txt: this complete report.
+HASH-MANIFEST.json: compact identities, source/config hashes, stable map digests, payload hashes, result/cleanup status and key evidence hashes.
+evidence-sha256.json: hashes of retained evidence and all screenshots/result artifacts.
+commands-and-exits.json plus *.sh/*.log/*.exit/*-start.txt/*-end.txt: exact invocations, UTC intervals and exits.
+playwright.json, test-results-summary.json, browser-warning-summary.json, test-results/: full smoke results, skip reasons, warnings and screenshots.
+before/after-provenance.json, provenance-comparison.json, provenance-adjudicated.json: per-file identity and precise generated-output classification.
+before/during-*/after-snapshot.json, route-observations.json: container identity, actual process routes, health, database/client state and final fixture state.
+cleanup-final.json, owned-vitest-cache-cleanup.json, terminal-status.json: owned process/profile/cache/listener cleanup and GPU release.
+initial-git-tree.txt, initial-git-index.txt, final-git.json, bodies-before/after.json: unchanged main/objects/index/payload proof.
+
+Boundary
+PASS qualifies the requested fresh local merged-tree typecheck/unit/full-smoke gates at the pinned main commit. It is not CI, release, production, visual acceptance, or whole-plan completion. Parent orchestration continues; no docs or plan status was edited here.

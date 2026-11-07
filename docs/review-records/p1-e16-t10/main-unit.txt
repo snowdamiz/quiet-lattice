@@ -1,0 +1,13 @@
+$ vitest run
+
+ RUN  v5.0.5 /Users/andreyyurlov/Documents/dev/space
+
+
+ Test Files  212 passed (212)
+      Tests  2700 passed (2700)
+   Start at  22:46:44
+   Duration  18.28s (tests 68%, import 23%, transform 8%)
+
+    Isolate  212 workers spawned · ~75ms startup each (spawn + environment, per file)
+             at least ~1.05s faster with isolate: false — reuses workers across files instead of one per file
+
