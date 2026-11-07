@@ -1,0 +1,330 @@
+{
+  "status": "PASS",
+  "exporterSha256": "da384ecd0c2080c29cc940ff831c3f4b7635c25b636f6498a6e16962910c9525",
+  "cases": [
+    {
+      "case": "existing-empty",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/export_saved.py",
+        "--",
+        "--validate-only",
+        "--report-dir",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green/existing-empty"
+      ],
+      "threadLimits": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2"
+      },
+      "exporterExitCode": 2,
+      "checks": {
+        "completedWithinTimeout": true,
+        "nonzeroExit": true,
+        "directoryAndFilesUnchanged": true,
+        "rejectedBeforeSourceLoad": true,
+        "noValidationOrExportSuccess": true
+      },
+      "before": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949358,
+          "mtimeNs": 1794024188359997730,
+          "sha256": null
+        }
+      },
+      "after": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949358,
+          "mtimeNs": 1794024188359997730,
+          "sha256": null
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "existing-nonempty",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/export_saved.py",
+        "--",
+        "--validate-only",
+        "--report-dir",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green/existing-nonempty"
+      ],
+      "threadLimits": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2"
+      },
+      "exporterExitCode": 2,
+      "checks": {
+        "completedWithinTimeout": true,
+        "nonzeroExit": true,
+        "directoryAndFilesUnchanged": true,
+        "rejectedBeforeSourceLoad": true,
+        "noValidationOrExportSuccess": true
+      },
+      "before": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949471,
+          "mtimeNs": 1794024188938727892,
+          "sha256": null
+        },
+        "unrelated.txt": {
+          "mode": 33188,
+          "inode": 475949472,
+          "mtimeNs": 1794024188938762767,
+          "sha256": "8121ff5728e6596a4a4ad9c4fd4f9a3618355e42dcf680dd55a468a6060aa26f"
+        }
+      },
+      "after": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949471,
+          "mtimeNs": 1794024188938727892,
+          "sha256": null
+        },
+        "unrelated.txt": {
+          "mode": 33188,
+          "inode": 475949472,
+          "mtimeNs": 1794024188938762767,
+          "sha256": "8121ff5728e6596a4a4ad9c4fd4f9a3618355e42dcf680dd55a468a6060aa26f"
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "existing-prior-receipts",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/export_saved.py",
+        "--",
+        "--validate-only",
+        "--selftest",
+        "--report-dir",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green/existing-prior-receipts"
+      ],
+      "threadLimits": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2"
+      },
+      "exporterExitCode": 2,
+      "checks": {
+        "completedWithinTimeout": true,
+        "nonzeroExit": true,
+        "directoryAndFilesUnchanged": true,
+        "rejectedBeforeSourceLoad": true,
+        "noValidationOrExportSuccess": true
+      },
+      "before": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949481,
+          "mtimeNs": 1794024189562201685,
+          "sha256": null
+        },
+        "component-validation.json": {
+          "mode": 33188,
+          "inode": 475949483,
+          "mtimeNs": 1794024189562242060,
+          "sha256": "6603c1b9c109c5cf5bf2fc9a3514484bc6dbdd8fd2424f83bb1bf5a4d2f94621"
+        },
+        "source-validation.json": {
+          "mode": 33188,
+          "inode": 475949482,
+          "mtimeNs": 1794024189562160477,
+          "sha256": "fb287bb0d6e257f5a035309de0ca9c1530e714d670b6c55b4a7af8f30e06764a"
+        }
+      },
+      "after": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949481,
+          "mtimeNs": 1794024189562201685,
+          "sha256": null
+        },
+        "component-validation.json": {
+          "mode": 33188,
+          "inode": 475949483,
+          "mtimeNs": 1794024189562242060,
+          "sha256": "6603c1b9c109c5cf5bf2fc9a3514484bc6dbdd8fd2424f83bb1bf5a4d2f94621"
+        },
+        "source-validation.json": {
+          "mode": 33188,
+          "inode": 475949482,
+          "mtimeNs": 1794024189562160477,
+          "sha256": "fb287bb0d6e257f5a035309de0ca9c1530e714d670b6c55b4a7af8f30e06764a"
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "fresh-validate-selftest",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/export_saved.py",
+        "--",
+        "--validate-only",
+        "--selftest",
+        "--report-dir",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green/fresh-receipts"
+      ],
+      "threadLimits": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2"
+      },
+      "exporterExitCode": 0,
+      "checks": {
+        "completedWithinTimeout": true,
+        "zeroExit": true,
+        "onlyTwoReceipts": true,
+        "validationAndTenExportControlsPass": true,
+        "pairedReceiptsAgree": true,
+        "sourceUnchangedNoRenderOrBake": true
+      },
+      "before": null,
+      "after": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949506,
+          "mtimeNs": 1794024206881676739,
+          "sha256": null
+        },
+        "component-validation.json": {
+          "mode": 33188,
+          "inode": 475969800,
+          "mtimeNs": 1794024206881739573,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        },
+        "source-validation.json": {
+          "mode": 33188,
+          "inode": 475969799,
+          "mtimeNs": 1794024206881582114,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        }
+      },
+      "passed": true
+    },
+    {
+      "case": "reuse-fresh-receipts",
+      "command": [
+        "/Applications/Blender.app/Contents/MacOS/Blender",
+        "-b",
+        "-t",
+        "2",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--python-exit-code",
+        "1",
+        "-P",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/export_saved.py",
+        "--",
+        "--validate-only",
+        "--selftest",
+        "--report-dir",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-87bfd7e9/packages/tools/blender/characters/animations/library-current-validation/20261107T040126Z-receipt-ownership/green/fresh-receipts"
+      ],
+      "threadLimits": {
+        "OMP_NUM_THREADS": "2",
+        "OPENBLAS_NUM_THREADS": "2",
+        "MKL_NUM_THREADS": "2",
+        "NUMEXPR_NUM_THREADS": "2",
+        "VECLIB_MAXIMUM_THREADS": "2"
+      },
+      "exporterExitCode": 2,
+      "checks": {
+        "completedWithinTimeout": true,
+        "nonzeroExit": true,
+        "directoryAndFilesUnchanged": true,
+        "rejectedBeforeSourceLoad": true,
+        "noValidationOrExportSuccess": true
+      },
+      "before": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949506,
+          "mtimeNs": 1794024206881676739,
+          "sha256": null
+        },
+        "component-validation.json": {
+          "mode": 33188,
+          "inode": 475969800,
+          "mtimeNs": 1794024206881739573,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        },
+        "source-validation.json": {
+          "mode": 33188,
+          "inode": 475969799,
+          "mtimeNs": 1794024206881582114,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        }
+      },
+      "after": {
+        ".": {
+          "mode": 16877,
+          "inode": 475949506,
+          "mtimeNs": 1794024206881676739,
+          "sha256": null
+        },
+        "component-validation.json": {
+          "mode": 33188,
+          "inode": 475969800,
+          "mtimeNs": 1794024206881739573,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        },
+        "source-validation.json": {
+          "mode": 33188,
+          "inode": 475969799,
+          "mtimeNs": 1794024206881582114,
+          "sha256": "304771cab1b4c51157ee74fadb201955d34bcfc94dc1cea228d9d5f3c834cd32"
+        }
+      },
+      "passed": true
+    }
+  ]
+}
