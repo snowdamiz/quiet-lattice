@@ -1380,3 +1380,9 @@ These choices define the candidate contract; independent source review, live dra
 
 - The initial eligibility audit correctly finds no retained props kit, but treats missing gameplay loaders as a blocker to starting the art task. The orchestrator rejects that premise: T08 is explicitly an art task with T02 complete, section 0.4 supplies the standard Review consumer, and T07 expressly owns later generator/fallback removal after the art tasks. The full source/export inventory may therefore be authored now in disjoint paths.
 - This does not count a CPU preview as an in-engine capture or mark the task complete. T08 retains source review, standard lighting/LOD/wireframe evidence and independent visual grading. Existing city-specific props and T10 runtime files stay unchanged; later gameplay adoption remains explicit in its owning integration tasks.
+
+## P1.E14.T15 — Shared capture lifecycle ownership (2026-11-07)
+
+- T03 and T14 independently reproduce original capture errors being replaced by shutdown failures. Parent source inspection confirms both shared entry points acquire a browser before entering their cleanup block, and sequence browser close before Vite stop without preserving either failure. `startVite` also loses its created handle when listen fails.
+- Correct these decisions in the shared capture implementation and test its actual exported entry points. Task-local observation still owns its receipts and native limits, but does not substitute for correct shared resource ownership. Keep acquisition and cleanup failures separately observable, including falsy rejection values; preserve the successful capture protocol and images.
+- The correction is a separate source branch. Frozen candidate/helper bytes remain unchanged during their reviews. Each adopting caller must consume the reviewed correction and regenerate its bindings before a new actual run; prior evidence continues to name its original source.
