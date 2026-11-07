@@ -1,0 +1,39 @@
+{
+  "status": "MEASUREMENT_COMPLETE_FRAME_EXPOSURE_NOT_QUALIFIED",
+  "base_commit": "8caa7bf405bab394d357dbc62db9ff91882f62a5",
+  "source_unchanged_matches_candidate": true,
+  "export_unchanged_matches_candidate": true,
+  "candidate_validation": "Existing source/export 5/5 receipts retained; no source change or export rerun.",
+  "outer_components": 243,
+  "removed_component_counts": {
+    "99_percent_absent": 52,
+    "90_percent_absent": 71,
+    "50_percent_absent": 93
+  },
+  "convergence_absolute_percentage_points_3_to_48": {
+    "present": 0.0980060089757151,
+    "trim_hit": 0.10766475031937559,
+    "dark_backing": 0.1940740145434383,
+    "other_hit": 0.00471978121198563,
+    "empty": 0.006876963528587316
+  },
+  "area_missing_tolerance_range_percent": [
+    43.917315351607655,
+    42.76881483654202,
+    42.50792476374998
+  ],
+  "resource": {
+    "exit": 0,
+    "peak_rss": 524500992,
+    "seconds": 26.707744874991477
+  },
+  "renders": 0,
+  "source_changes": false,
+  "qualification": "Art bible specifies percentage of outer plates, not whole-hull area or visible pixel coverage. Component-count proxies fall within range at 90/99% absence thresholds; actual structural frame exposure remains unproven. No geometry change justified solely to meet an unsupported area contract.",
+  "evidence": {
+    "whole_shell.py": "26f891f935fc7832c25177971b048031a6541469d3a3f9f324f5bce78f58b0cc",
+    "run_whole_shell.py": "807aa15c215a2fd7565fb0677c1cc373a6d007b53beca4b6f65fe501cc1776b1",
+    "whole-shell-measurement.json": "d6c1e4f4b4aacf3170ccae2db0cdacb429e0bdc4a62da64a65ee10ab0f28df69",
+    "whole-shell-stage.log": "02c2e64555db9af79edbae5b63a5155275bec9a1c99c465d6be73beb314451dd"
+  }
+}
