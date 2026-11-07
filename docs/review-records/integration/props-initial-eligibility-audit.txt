@@ -1,0 +1,59 @@
+# Next-batch audit: no ready unit
+
+Pin `babacb6b3c036ed853bcad9c34c20ddcd359ad5f` (`docs/IMPLEMENTATION_PLAN.md`). During the read the parent branch `t3/continue-implementation-plan-1` advanced to `e07e3924d3d7ace583ea44722f5022f3c2fa5a75` ("Advance viewmodel and Kestrel reviews and record Trunk boundary"). That commit edits three plan notes only (E05.T02/T03 capture, E12.T02 Kestrel, E14.T14 Trunk). The P1.E14.T08 line is unchanged. No LFS hydration. No code, CPU, GPU, or service work.
+
+**Recommendation: dispatch nothing.** P1.E14.T08 is the lowest unfinished art task whose plan deps are met and whose prior batch does not already own the task, and it is not a ready unit. There is no retained props candidate to recover. Do not author a fresh kit, and do not split the done-line into a partial prop set.
+
+## P1.E14.T08 block (exact)
+
+`- [ ] **P1.E14.T08 (art) Props** · deps: T02 · done: cargo and loot pods, terminals, market stalls, ammo, catalyst vials, beacons rebuilt, outposts rebuilt (3), crash-site debris kit. → `[R]``
+
+Deps: P1.E14.T02 is `[x]`. Spec split is DESIGN 19.3, not one family:
+
+- Props and effects: cargo and loot pods, ammo, catalysts, market stalls, terminals, the Recall glyph set, ability effect meshes.
+- Sites: outposts (3), monoliths (3), beacons (2), crash sites (one per hull), dens, vaults, glyph stones.
+
+`packages/tools/blender/families.json` matches that split. `props` class is 2–10k tris, 1k textures, 4 LODs, max axis 0.05–6 m. `sites` class is `building` (8–60k, 2k, 4 LODs, max axis 1–250 m) and requires a `COL_*` mesh plus an `Interact*` empty. Recall glyphs and ability meshes belong to P1.E07.T14, which already has checkouts. Monoliths belong to P1.E10.T08. Dens belong to P1.E14.T10.
+
+## Nothing to recover
+
+- `assets/blend/props/` at the pin is only `.gitkeep`. `assets/blend/sites/` at the pin is only `.gitkeep`.
+- No branch or commit matches `P1.E14.T08` or a props kit. History of those paths is the E14.T01/T02 scaffold (`3bae3c750`, `5477546da`).
+- `task/P1-E14-T10-dens` at `ea58f40198e0d8ad9871075acd42825247a98bc7` adds only `den_*` blends and glbs. Its worktree `t3-7ae666d1` is clean (authors released). That is den work, not a props candidate.
+- Stock callers are real and already wired: `pnpm art:export` → `packages/tools/src/art/cli.ts` (`export_${family}.py`) → `export_props.py` / `export_sites.py` → `artlib.export.main`. They export to `packages/client/public/models/props/` and `models/sites/`. An empty family is not a retained asset.
+
+## Why a fresh author is not a complete unit
+
+The parent draws sites from one legacy library. `packages/client/src/Game.js` loads only `/models/flora.glb`, `/models/creatures.glb`, and `/models/structures.glb`. `Structures.js` `libraryStructure` uses `libraryRootVariants('structures', type)` for outpost, monolith, and beacon. Crash never takes that path: `buildCrash` clones the ship and builds box debris plus a box cargo pod. Nothing loads `models/props` or `models/sites`.
+
+The only newer site consumer is unmerged and still owned as T10 source-complete. On `ea58f401`, `DEN_MODELS` is burrow, nest, roost, and apex only. `loadLibrary('structures')` fetches those seven `/models/sites/${id}.glb` files into a `dens` library. It does not load props, outposts, beacons, or crash debris. Wiring any of those means editing `Structures.js`, `modelLibrary.js`, and the planet/ground files that branch already changed (`Planet.js`, `packages/shared/src/world/ground.ts`). Those files stay with T10 until it lands. Authoring glbs without that wiring leaves the done-line with no in-game consumer.
+
+City kits already own the stall, terminal, and cargo-crate product:
+
+- Thalune `prop_thalune_stall`, `prop_thalune_terminal`, `prop_thalune_crate` in `assets/blend/cities/thalune/manifest.json` on `task/P1-E10-T05-thalune-sarelun` (`83eec91be`), plus `anchor_sarelun`.
+- Ixari `prop_ixari_stall` and `prop_ixari_terminal` on `task/P1-E10-T06-ixari-quavel` (`2d23ecb3c`).
+- Ulgani worktree `t3-6f0e842d` has untracked `ulgani_props.blend` and `ulgani_anchor.blend`.
+
+Ammo and catalysts are item rows (`flak_ammo`, `torpedo`, `frostglass_catalyst`, and three more) in `packages/shared/src/data/items.ts` and recipes. No mesh field. Catalyst buffs are P2.E20.T03, still `[ ]`. Flak and torpedo meshes are P2.E24. Loot pods on death are P1.E06.T03, blocked on P1.E05.T04. A vial or stall mesh would be a second author of a role an active writer already holds, or a mesh with no done consumer.
+
+Blender is not free just because dens is clean. Trees (`t3-9dcc2975`), non-tree flora (`t3-27d13e0f`), three city kits, four hull checkouts, viewmodels, animation, and effects still have worktrees. GPU review stays serial. This audit does not admit a new process.
+
+## Other `[ ]` tasks whose plan deps are already `[x]`
+
+Same rejection: not a whole unit with a done consumer and disjoint files. Owned `[~]` / `[R]` tasks (animation, viewmodels, Symbiotic, fauna HUD, cities, stations, hulls, trees, non-tree flora, dens, T13, T14) are excluded as already in the prior batch.
+
+| Task | Why it is not this batch |
+|---|---|
+| P1.E05.T07–T09 body polish | Deps met. They rewrite frozen fifth-grade body proofs the prior batch already accepted. |
+| P1.E07.T08 Void | Deps T03 and T16 are `[x]`. Fauna attacks, pirates, Hollow actors, and the PvP damage path are not done. Do not pair with Symbiotic. |
+| P1.E08.T08 creatures | `assets/blend/creatures/` and `constructs/` are `.gitkeep` only. No retained branch. Attack poses wait on E08.T02. Drone and Overseer wait on E08.T06. The live loader is still `creatures.glb`. The client fauna renderer is the prior batch's T09. |
+| P1.E09.T10 cutscene cameras | Only `assets/blend/cutscenes/test_cutscene.blend` exists. Prologue and Act I chapters are E09.T07/T08, not done. A full camera set would invent shots. |
+| P1.E10.T08 anchors and monoliths | Anchors overlap the three city kits (`anchor_sarelun`, `ulgani_anchor.blend`). Monoliths are sites and use the same unmerged Structures/modelLibrary consumer as dens. |
+| P2.E18.T02, T04; P2.E20.T03; P2.E21.T04; P2.E22.T04; P2.E25.T01, T08; P2.E29.T03; P2.E31.T02 | Later phase. Each done-line needs cities, station variants, sanctuaries, Tier 2 hulls, boards, asteroid entities, HUD, or creature art that is unfinished or file-owned. |
+| P2.E32.T01 and P3.E34.T01, E35.T01 | Deps of the named predecessors are `[x]`, and they are not the lowest phase. The Phase 1 load task P1.E16.T02 is still blocked on P1.E08.T05. |
+
+P1.E14.T14 is `[~]`, source-reviewed, and waiting on a Trunk landing. This audit does not merge or enqueue it. The parent note at `e07e3924` records local main far ahead of GitHub and no confirmed Trunk queue.
+
+## When T08 could be opened later
+
+Open the whole done-line only after T10 has landed or released `Structures.js`, `modelLibrary.js`, `Planet.js`, and `ground.ts`; city kits have stopped writing `*_props` and anchors; and the consumer that draws outposts, beacons, and crash debris is an explicit owner with a disjoint file list. Until then, recover is impossible and a new author would either collide or ship undrawn meshes.
