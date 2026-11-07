@@ -318,8 +318,13 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   // which is when skills may not swap slots
   const combat = deps.combat ?? new CombatService({ zones: deps.zones, inventory, skills, progress: deps.progress, quests, now: () => deps.clock.now(), log });
   deps.zones.combat = combat.hooks;
+  const reputation = deps.reputation ?? needReputation(persistence);
   const skillHooks = skills.hooks;
-  skills.hooks = { ...skillHooks, inCombat: (characterId) => combat.inCombat(characterId) };
+  skills.hooks = {
+    ...skillHooks,
+    inCombat: (characterId) => combat.inCombat(characterId),
+    meets: (characterId, req) => reputation.meetsRank(characterId, req.faction, req.rank),
+  };
   // (Second Skin's floor holds only out of combat)
   meters.inCombat = (characterId) => combat.inCombat(characterId);
   const codex = deps.codex ?? needCodex(persistence);
@@ -353,7 +358,6 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   if (discovery && !deps.discovery) discovery.start();
   // every analysis made may be the shard's first of its species
   const unsubscribeDiscovery = discovery ? analysis.subscribe((e) => discovery.analyzed(e)) : undefined;
-  const reputation = deps.reputation ?? needReputation(persistence);
   // standing the server moved (a quest's reward, owed reputation settled, an act, the admin CLI) reaches the session
   // holding the character: its rank and title events, then its state
   const unsubscribeReputation = reputation.subscribe((characterId, push) => {
@@ -362,6 +366,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       for (const event of push.events) c.s.send({ t: 'event', event });
       c.s.send({ t: 'reputation', reputation: push.state });
     }
+    if (skills.get(characterId)) skills.refresh(characterId);
   });
   // a season's title and glyph given to a character in play reach its session (as `awards`, everything it holds)
   const awards = deps.awards ?? seasonAwardsIn(persistence.registry);
@@ -390,6 +395,7 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
   const casts = new CastService({
     zones: deps.zones,
     skills,
+    meets: (characterId, req) => skills.hooks.meets(characterId, req),
     meters,
     deposits: {
       burst: (zone, characterId, frame, pos, radiusM, hp, max) => resources.burst(zone, characterId, frame, pos, radiusM, hp, max),
@@ -779,6 +785,8 @@ export function attachWsGateway(server: Server, deps: WsGatewayDeps): WsGateway 
       const last = lastSeason as { award: SeasonAward; winners: Set<string> } | null;
       const given = awards?.grant(row.id, last?.winners.has(s.accountId!.toLowerCase()) ? [...earned, last.award] : earned);
       if (given?.length) log.info({ character: row.id, seasons: given.map((a) => a.season) }, 'season awards given on join');
+      // Skills load before reputation. Judge saved slots only once every component is held, before entering play.
+      skills.refresh(row.id);
       const at = loaded.get<PoseState>(POSE);
       const progress = loaded.get<Progress>(PROGRESS);
       const joined = deps.zones.join(s, { ...row, level: progress.level, homeSystem: progress.homeSystem, ...skills.flight(row.id) }, at);

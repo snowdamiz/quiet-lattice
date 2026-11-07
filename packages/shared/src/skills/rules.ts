@@ -135,6 +135,19 @@ function unmetGate(node: SkillNode, ctx: SkillContext): Requirement | null {
   return node.unlock.allOf.find((r) => !ctx.meets(r)) ?? null;
 }
 
+/** Live standing eligibility, independent of purchases, which survive losing a rank. Unknown nodes are ineligible. */
+export function meetsNodeRequirements(id: string, meets: SkillContext['meets']): boolean {
+  return skillNode(id)?.unlock.allOf.every(meets) ?? false;
+}
+
+/** Drops only ineligible slots, including slots beyond the current hull's bar. Purchases and ledgers are retained. */
+export function clearIneligibleSlots(state: SkillState, meets: SkillContext['meets']): SkillState {
+  const eligible = (id: string | null) => id === null || meetsNodeRequirements(id, meets);
+  if (BARS.every((bar) => state.slots[bar].every(eligible))) return state;
+  const clear = (bar: Bar) => state.slots[bar].map((id) => (eligible(id) ? id : null));
+  return { ...state, slots: { ground: clear('ground'), ship: clear('ship') } };
+}
+
 function gateText(r: Requirement): string {
   return `${r.faction} standing (${r.rank})`;
 }
@@ -318,6 +331,8 @@ export function slotNode(state: SkillState, ctx: SkillContext, bar: Bar, index: 
   const node = skillNode(id);
   if (!node) return fail('unknown_node', `no skill node ${id}`);
   if (!owns(state, id)) return fail('not_owned', `${node.name} is not owned`);
+  const gate = unmetGate(node, ctx);
+  if (gate) return fail('requirement', `${node.name} needs ${gateText(gate)}`);
   if (node.slot === null) return fail('not_slottable', `${node.name} is always on`);
   if (node.slot !== bar) return fail('wrong_bar', `${node.name} goes on the ${node.slot} bar`);
   if (!Number.isInteger(index) || index < 0 || index >= usableSlots(ctx, bar)) return fail('bad_slot', `no ${bar} slot ${index}`);

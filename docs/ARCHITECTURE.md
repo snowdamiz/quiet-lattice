@@ -1156,18 +1156,29 @@ DESIGN 9.1's web, held by the server (P1.E07.T01). The node table (132 nodes, 15
 - **SkillService** (`service.ts`) holds the characters in play (persistence opens, saves and closes them as it does the
   inventory) and answers `request(id, seq, op)` with the shared rule plus what only it knows, through `hooks` that later
   tasks answer: `trainerAtHand` (NPC trainers, P1.E09.T05/P1.E07.T13; none until then), `inCombat` (P1.E06.T02; slots swap
-  only out of combat) and `meets` (Void's flag, P1.E07.T08; reputation in Phase 2). A buy or respec that changes the
+  only out of combat) and `meets` (live faction rank from reputation, P1.E07.T16). A buy or respec that changes the
   inventory's layout (Pack Mule: `suit.stack_max` 15000 and one more cargo bay, which takes a pod aboard the ship or gives
   back only a pod the ship no longer has a bay for) re-lays the inventory out through `InventoryService.setLoadout` and
   sets the ship's `cargoPods`. The layout and a respec's charge are one transaction: both are tried on the inventory as it
   stands with the shared `applyLayout` and `spendUnits`, and made only when both pass, so `no_room` (as a hull change
   is) and `units` change nothing. Server-side calls: `grantPoints`, `setPoints` (the CLI's "set skill points": never below what levels give less
   what is spent), `grantFragments` (P1.E07.T11 decides the count: Listener, Uncounted), `unlock(id, node, source)`,
-  `buy`, `respec`, and `refresh` when the level or the hull changes. `owned(id)` is what `shipStats`, movement authority's
+  `buy`, `respec`, and `refresh` when the level, hull or reputation changes. `owned(id)` is what `shipStats`, movement authority's
   profile, abilities and meters read; `shipSlots(id)` the flown hull's working ship slots (what the ability service asks every
   step), and `flight(id)` the ship and the owned nodes together (what the gateway re-tunes movement and combat to, §28);
   `subscribe` hears every change (`request` or `server`), and the gateway pushes the
   `server` ones.
+- **Live eligibility** (P1.E07.T16): the gateway supplies `meets` from `ReputationService.meetsRank` using the node's
+  existing `faction_rank` requirement: Free Reaches Deckhand at 200, including higher ranks. Earned titles do not prove
+  current rank. Unlocks (except the existing developer route), purchases and slotting require standing now. `refresh`
+  clears gated slots on both bars, including slots beyond the flown hull's capacity, before the normal skill change
+  notification. This also stops active toggles through `CastService.skillsChanged`, even in combat. Purchases,
+  unlocks, spent fragments and their `paid` record remain intact; recovery permits slotting again without repurchasing.
+  Cast admission and toggle lifetime also read current requirements directly, so even a slot awaiting refresh cannot
+  authorize a cast (`not_slotted`, before any payment or cooldown). An ability runtime without a standing reader
+  refuses gated nodes; ungated fixture books still work.
+  `eligible(id, node)` checks ownership and current requirements for future gated consumers. T08 must apply it to its
+  passive and effect implementations; this prerequisite implements no Void effects or missing actors.
 - **Wiring**: `coreRegistry` makes the service over the same inventory, ship and progress holders unless one is given, and
   registers its component after `progress` and before `ship`; the gateway takes the one in persistence's registry
   (`skillServiceIn`) unless given one, and exposes it as `ws.skills`.
@@ -2016,14 +2027,16 @@ changes it; no client message does.
   client hears the change), out of play by `setStanding` on the stored value through `persistence.edit`, both earning the
   titles of the ranks risen through. Not yet: the convoy run's acts (P2.E21.T05), PvP kills' rep (DESIGN 14.9,
   P2.E17.T01–T02), world events' participation rep (P2.E21.T01), the Count's other counted actions (anchors and the wall:
-  P2.E28, P3.E34), the faction chains (P2.E18.T02–T05) and the gates
-  that read ranks (trainers P2.E18.T06, hulls P2.E24.T05, the Void branch's standing gate through the skill service's
-  `meets` hook, P2.E18.T03). Kills on main are fauna's (§20), whose tags name no faction.
+  P2.E28, P3.E34), the faction chains (P2.E18.T02–T05) and the trainer and hull gates
+  that read ranks (P2.E18.T06, P2.E24.T05). The Void branch's standing gate through the skill service's
+  `meets` hook is connected by P1.E07.T16 (§14). Kills on main are fauna's (§20), whose tags name no faction.
 - **Reading ranks at load.** The `skills` component loads (and reconciles) long before the `reputation` component, so
   while a character's components load the reputation service does not hold it yet and `rankOf` and `meetsRank` answer
-  as for no standing. A standing gate must not be read then: P2.E18.T03's Void gate (the skill service's `meets`) reads
-  reputation only once the character is in play, never from the skills component's `reconcile`, `check` or `load`, or a
-  join would judge every Free Reaches Deckhand as having no standing.
+  as for no standing. The gateway refreshes skill eligibility after `persistence.join` has loaded every component and
+  before entering the zone or sending the first skill view. The skills component never clears slots in `reconcile`,
+  `check` or `load`: that would strip a saved Deckhand's slots before its standing loaded. Reputation changes send
+  rank/title events and reputation state first, then refresh skills through the same pathway; owed quest reputation
+  settled after welcome also triggers that refresh. Reconnect and restart use the same ordering.
 - **Exactly once.** Nothing in the service is idempotent by itself; each source pays once by its own record, written in
   the same row update as the standing it paid: the reputation component is written with the quest log or not at all
   (`writtenWith`, §8). A quest's step rewards and answers are recorded in its `paid` record and a completion in `done`,

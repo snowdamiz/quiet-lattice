@@ -20,9 +20,11 @@ import { LoadoutError, shipStats, type ShipLoadout } from '@astra/shared/ships';
 import {
   applySkillOp,
   buyNode,
+  clearIneligibleSlots,
   fail,
   grantFragments,
   grantPoints,
+  meetsNodeRequirements,
   paidProblems,
   parseSkillOp,
   parseSkillState,
@@ -69,8 +71,7 @@ export interface SkillHooks {
   trainerAtHand(characterId: string, trainer: string): boolean;
   /** Whether the character is in combat: slots swap only out of combat. Combat (P1.E06.T02) answers; until then, never. */
   inCombat(characterId: string): boolean;
-  /** Whether the character meets a standing gate (Void's Free Reaches rank). Void's flag comes with P1.E07.T08 and ranks
-   * with reputation (Phase 2); until then, none is met. */
+  /** Whether the character meets a standing gate. The gateway supplies live reputation; isolated tests may supply a hook. */
   meets(characterId: string, req: Requirement): boolean;
 }
 
@@ -172,6 +173,11 @@ export class SkillService {
   /** The nodes the character owns, in the order bought: what `shipStats`, the inventory's layout, abilities and meters read. */
   owned(characterId: string): readonly string[] {
     return this.entry(characterId).state.bought;
+  }
+
+  /** An owned node whose standing gates hold now. Future gated passive/effect consumers must read this, not ownership alone. */
+  eligible(characterId: string, node: string): boolean {
+    return this.owned(characterId).includes(node) && meetsNodeRequirements(node, (req) => this.hooks.meets(characterId, req));
   }
 
   /** Ship actives the hull it flies can slot (`view`'s `shipSlots` without the rest of the view). What the ability service asks
@@ -287,9 +293,10 @@ export class SkillService {
     return this.server(characterId, e, this.respecFor(characterId, e, nodes));
   }
 
-  /** Something the view reads changed (the level rose, another hull is flown): pushes the view. */
+  /** Refreshes live requirements and clears ineligible slots before notifying. On join, call only after all components load. */
   refresh(characterId: string): void {
     const e = this.entry(characterId);
+    e.state = clearIneligibleSlots(e.state, (req) => this.hooks.meets(characterId, req));
     this.notify(characterId, this.reply(characterId, e), 'server');
   }
 
