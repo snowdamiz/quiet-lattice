@@ -106,7 +106,7 @@ export async function startOnline(opts: { stepped?: boolean; claimedDatabaseUrl?
   const name = `astra_smoke_${Date.now().toString(36)}_${randomBytes(3).toString('hex')}`;
   if (!SCRATCH.test(name)) throw new Error(`not a scratch database name: ${name}`);
   // An externally claimed database stays with its caller, including cleanup. Ordinary smoke still owns its scratch DB.
-  if (!opts.claimedDatabaseUrl) adminSql(`CREATE DATABASE "${name}"`);
+  let ownsDatabase = false;
   const dbUrl = opts.claimedDatabaseUrl ?? databaseUrl(name);
   let server: ChildProcess | null = null;
   let vite: { close(): Promise<void> } | null = null;
@@ -146,19 +146,37 @@ export async function startOnline(opts: { stepped?: boolean; claimedDatabaseUrl?
     s.kill('SIGTERM');
     try {
       await within(exited, 10_000, 'server SIGTERM');
-    } catch {
-      s.kill('SIGKILL');
-      await within(exited, 5000, 'server SIGKILL');
+    } catch (termError) {
+      try {
+        s.kill('SIGKILL');
+        await within(exited, 5000, 'server SIGKILL');
+      } catch (killError) {
+        throw new AggregateError([termError, killError], 'Server termination failed', { cause: killError });
+      }
+      out += `\nServer required SIGKILL: ${String(termError)}\n`;
     }
   };
   const stop = async () => {
-    const closed = await Promise.allSettled([within(vite?.close() ?? Promise.resolve(), 10_000, 'Vite close'), stopServer()]);
-    for (const result of closed) if (result.status === 'rejected') throw result.reason;
-    // (only ever the scratch database this run made)
-    if (!opts.claimedDatabaseUrl && SCRATCH.test(name)) adminSql(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+    // Defer close so a synchronous throw cannot prevent the other owned cleanup from starting.
+    const closed = await Promise.allSettled([Promise.resolve().then(() => within(vite?.close() ?? Promise.resolve(), 10_000, 'Vite close')), stopServer()]);
+    const errors: unknown[] = closed.flatMap((result) => (result.status === 'rejected' ? [result.reason] : []));
+    if (ownsDatabase) {
+      try {
+        adminSql(`DROP DATABASE IF EXISTS "${name}" WITH (FORCE)`);
+        ownsDatabase = false;
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+    if (errors.length === 1) throw errors[0];
+    if (errors.length > 1) throw new AggregateError(errors, 'Online cleanup failed');
   };
 
   try {
+    if (!opts.claimedDatabaseUrl) {
+      adminSql(`CREATE DATABASE "${name}"`);
+      ownsDatabase = true;
+    }
     const migrated = spawnSync(process.execPath, ['--import', 'tsx', 'src/db/migrate.ts'], {
       cwd: SERVER_DIR,
       env,
@@ -188,8 +206,8 @@ export async function startOnline(opts: { stepped?: boolean; claimedDatabaseUrl?
       customLogger: logger,
       server: { port: vitePort, strictPort: true, host: '127.0.0.1', hmr: false, watch: null },
     });
-    await v.listen();
     vite = v;
+    await v.listen();
     const restartServer = async (downMs = 1000) => {
       await stopServer();
       await new Promise((r) => setTimeout(r, downMs));
@@ -214,7 +232,11 @@ export async function startOnline(opts: { stepped?: boolean; claimedDatabaseUrl?
     const sql = (statement: string) => adminSql(statement, dbUrl);
     return { url: `http://127.0.0.1:${vitePort}`, serverUrl, serverOutput: () => out, clock, restartServer, sql, admin, stop };
   } catch (err) {
-    await stop();
+    try {
+      await stop();
+    } catch (cleanupError) {
+      throw new AggregateError([err, cleanupError], 'Online startup and cleanup failed', { cause: cleanupError });
+    }
     throw err;
   }
 }

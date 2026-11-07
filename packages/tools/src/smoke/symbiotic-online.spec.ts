@@ -409,17 +409,21 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     for (const [i, page] of pages.entries())
       await until(
         page,
-        `window.symbioticQa.messages.some(m => m.t === 'event' && m.event.kind === 'combat' && m.event.source === ${companion} && m.event.target === ${enemy} && m.event.amount > 0) && window.game.net.store.entities.get(${enemy})?.hp < ${beforeHp[i]}`,
+        `window.symbioticQa.messages.some(m => m.t === 'event' && m.event.kind === 'combat' && m.event.source === ${companion} && m.event.target === ${enemy} && m.event.amount > 0) && window.game.net.store.entities.get(${enemy})?.hp > 0 && window.game.net.store.entities.get(${enemy})?.hp < ${beforeHp[i]}`,
         20_000,
       );
     await online.clock.freeze();
     const combat = [];
-    for (const page of pages) {
+    for (const [i, page] of pages.entries()) {
       await aim(page, enemy);
       const result = await inspect(page, enemy);
       drawn(result, arena, enemy, arena.enemy.index);
+      expect(result.wire.hp).toBeGreaterThan(0);
+      expect(result.wire.hp).toBeLessThan(beforeHp[i]!);
+      expect(result.wire.mode).not.toBe('dead');
       const companionView = await inspect(page, companion);
       drawn(companionView, arena, companion, arena.companion.index, owner);
+      expect(companionView.wire.hp).toBeGreaterThan(0);
       combat.push({
         target: result,
         companion: companionView,
@@ -436,23 +440,62 @@ test('Bond is eligible, rendered, picked, follows, damages and retires on two re
     await aim(b.page, companion);
     const beforeRelease = await inspect(b.page, companion);
     drawn(beforeRelease, arena, companion, arena.companion.index, owner);
+    expect(beforeRelease.wire.hp).toBeGreaterThan(0);
     expect(beforeRelease.picked).toBe(companion);
     evidence.beforeRelease = beforeRelease;
-    await online.clock.thaw();
+    const release = await b.page.evaluate(
+      ({ observer, enemy }) => ({
+        tick: window.game.net.store.tick,
+        observer: window.game.net.store.entities.get(observer),
+        enemy: window.game.net.store.entities.get(enemy),
+      }),
+      { observer, enemy },
+    );
+    expect(EntityState.parse(release.observer)).toMatchObject({ id: observer, kind: 'player', frame: arena.frame, mode: 'foot' });
+    expect(release.observer.hp).toBeGreaterThan(0);
+    expect(EntityState.parse(release.enemy)).toMatchObject({ id: enemy, kind: 'mob', species: arena.enemy.index, frame: arena.frame });
+    expect(release.enemy.hp).toBeGreaterThan(0);
+    expect(release.enemy.hp).toBeLessThan(beforeHp[1]!);
+    expect(release.enemy.mode).not.toBe('dead');
+    evidence.release = release;
+    // Close the owner while combat is frozen, then require a newer live observer snapshot after thaw.
     await a.page.evaluate(() => window.game.net.close());
+    await until(a.page, '!window.game.net || window.game.net.state === "closed"', 10_000);
+    await online.clock.thaw();
     await until(
       b.page,
-      `window.game.net.joined && window.game.net.store.entities.has(${enemy}) && !window.game.net.store.entities.has(${owner}) && !window.game.net.store.entities.has(${companion}) && !window.game.remotes.get(${companion}) && !window.game.fauna.shown.some(r => r.id === ${companion})`,
+      `window.game.net.joined && window.game.net.entityId === ${observer} && window.game.net.store.tick > ${release.tick} && (() => {
+        const witness = window.game.net.store.entities.get(${observer});
+        const target = window.game.net.store.entities.get(${enemy});
+        return witness?.id === ${observer} && witness.kind === 'player' && witness.frame === '${arena.frame}' && witness.mode === 'foot' && witness.hp > 0
+          && target?.id === ${enemy} && target.kind === 'mob' && target.species === ${arena.enemy.index} && target.frame === '${arena.frame}' && target.hp > 0 && target.mode !== 'dead';
+      })() && !window.game.net.store.entities.has(${owner}) && !window.game.net.store.entities.has(${companion}) && !window.game.remotes.get(${companion}) && !window.game.fauna.shown.some(r => r.id === ${companion})`,
     );
-    const retired = await b.page.evaluate((companion) => {
-      const g = window.game;
-      const ray = g.cam.pos.clone().set(0, 0, -1).applyQuaternion(g.cam.quat);
-      return {
-        targetGone: !g.fauna.targets(g.cam.frame).some((t: { id: number }) => t.id === companion),
-        picked: g.fauna.pick(g.cam.frame, g.cam.pos, ray, 70)?.id ?? null,
-      };
-    }, companion);
-    expect(retired.targetGone).toBe(true);
+    const retired = await b.page.evaluate(
+      ({ companion, observer, enemy, owner }) => {
+        const g = window.game;
+        const ray = g.cam.pos.clone().set(0, 0, -1).applyQuaternion(g.cam.quat);
+        return {
+          joined: g.net.joined,
+          entityId: g.net.entityId,
+          tick: g.net.store.tick,
+          observer: g.net.store.entities.get(observer),
+          enemy: g.net.store.entities.get(enemy),
+          ownerGone: !g.net.store.entities.has(owner),
+          companionGone: !g.net.store.entities.has(companion) && !g.remotes.get(companion) && !g.fauna.shown.some((r: { id: number }) => r.id === companion),
+          targetGone: !g.fauna.targets(g.cam.frame).some((t: { id: number }) => t.id === companion),
+          picked: g.fauna.pick(g.cam.frame, g.cam.pos, ray, 70)?.id ?? null,
+        };
+      },
+      { companion, observer, enemy, owner },
+    );
+    expect(retired).toMatchObject({ joined: true, entityId: observer, ownerGone: true, companionGone: true, targetGone: true });
+    expect(retired.tick).toBeGreaterThan(release.tick);
+    expect(EntityState.parse(retired.observer)).toMatchObject({ id: observer, kind: 'player', frame: arena.frame, mode: 'foot' });
+    expect(retired.observer.hp).toBeGreaterThan(0);
+    expect(EntityState.parse(retired.enemy)).toMatchObject({ id: enemy, kind: 'mob', species: arena.enemy.index, frame: arena.frame });
+    expect(retired.enemy.hp).toBeGreaterThan(0);
+    expect(retired.enemy.mode).not.toBe('dead');
     expect(retired.picked).not.toBe(companion);
     evidence.retired = retired;
     await pixels(info, pages, 'disconnect');
