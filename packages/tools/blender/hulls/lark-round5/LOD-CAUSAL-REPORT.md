@@ -1,0 +1,9 @@
+# LOD2 investigation — incomplete implementation
+
+Canonical source remains e6e7d8c4cf73bfe22cdb18c0c5b7eb85c4b1baab46a2133a1fd304a68bf7c129. No visual PASS.
+
+Identical camera, light and CPU settings in lod_compare.py reproduce triangular breakup with neutral material and with original materials disconnected from normal maps. Full-size neutral and no-normal LOD0/2 images were inspected. Clearing saved custom normals reduces harsh contrast but leaves triangular surface ridges: the defect is not solely a normal-map or saved-normal defect. Probe records actual mesh topology and UV layer; LOD2 has 627 non-boundary non-manifold edges compared with zero at LOD0. This supports a geometric contribution; it does not identify the original author operation conclusively.
+
+Boundary-preserving limited dissolve from actual LOD0 surfaces removes the broad ridges in the inspected repaired-LOD2 neutral image. However, candidate LOD2 totals rise to 59,884/65,702/68,488 triangles. This exceeds a moderate increase from the existing reduction, so it was NOT installed in canonical source. Selective connected-panel replacement trials left artifacts and were rejected. lod_repair.py reproduces the intact-surface candidate in scratch/repaired.blend; lod_finalize.py verifies 69 protected meshes unchanged, including glazing, and four decreasing LODs with LOD3 below 5%. The candidate still needs optimization, matching material previews, UV-density validation and final source installation. No source fix is claimed.
+
+The baseline GLB remains intentionally stale. No GPU, browser, runtime, services, delegation, push, PR or merge. All Blender stages used run_stage.py with two CPU threads and GPU denoise disabled for renders. stage-receipt.json is the runner's last-stage receipt only, not an aggregate peak. Preview inventory is in lod-unit-inventory.json. No inherited files were deleted.
