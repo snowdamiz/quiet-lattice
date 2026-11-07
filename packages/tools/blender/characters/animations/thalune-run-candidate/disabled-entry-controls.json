@@ -1,0 +1,38 @@
+{
+  "status": "PASS_SOURCE_ENTRY_REFUSALS",
+  "runtimeJobs": 0,
+  "controls": [
+    {
+      "control": "caller execute",
+      "status": "PASS_EXPECTED_REFUSAL",
+      "exitCode": 1,
+      "expected": "SOURCE_ONLY_RUNTIME_DISABLED",
+      "outputNamespaceAbsent": true,
+      "consumedAttemptAbsent": true
+    },
+    {
+      "control": "optimized caller",
+      "status": "PASS_EXPECTED_REFUSAL",
+      "exitCode": 1,
+      "expected": "T02_ASSERTIONS_REQUIRED",
+      "outputNamespaceAbsent": true,
+      "consumedAttemptAbsent": true
+    },
+    {
+      "control": "node entry",
+      "status": "PASS_EXPECTED_REFUSAL",
+      "exitCode": 1,
+      "expected": "runtime disabled",
+      "outputNamespaceAbsent": true,
+      "consumedAttemptAbsent": true
+    },
+    {
+      "control": "worker CLI",
+      "status": "PASS_EXPECTED_REFUSAL",
+      "exitCode": 1,
+      "expected": "SOURCE_ONLY_RUNTIME_DISABLED",
+      "outputNamespaceAbsent": true,
+      "consumedAttemptAbsent": true
+    }
+  ]
+}
