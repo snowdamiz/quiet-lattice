@@ -1,0 +1,159 @@
+{
+  "executable": {
+    "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "realpath": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "bytes": 167280,
+    "sha256": "a3af9d8f1d6423de4d6303c323f5132122181e01367155d325fc9bde3ed872b5"
+  },
+  "codesign": {
+    "path": "/usr/bin/codesign",
+    "realpath": "/usr/bin/codesign",
+    "bytes": 973408,
+    "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+  },
+  "protectedRoute": [
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+      "device": 16777232,
+      "inode": 1152921500312213518,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS",
+      "device": 16777232,
+      "inode": 1152921500312213517,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents",
+      "device": 16777232,
+      "inode": 1152921500312213514,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc",
+      "device": 16777232,
+      "inode": 1152921500312213513,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices",
+      "device": 16777232,
+      "inode": 1152921500312213484,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A",
+      "device": 16777232,
+      "inode": 1152921500312213469,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework/Versions",
+      "device": 16777232,
+      "inode": 1152921500312213468,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks/VideoToolbox.framework",
+      "device": 16777232,
+      "inode": 1152921500312213466,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library/Frameworks",
+      "device": 16777232,
+      "inode": 1152921500312149173,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System/Library",
+      "device": 16777232,
+      "inode": 1152921500311918287,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/System",
+      "device": 16777232,
+      "inode": 1152921500311879703,
+      "uid": 0,
+      "mode": 493
+    },
+    {
+      "path": "/",
+      "device": 16777232,
+      "inode": 2,
+      "uid": 0,
+      "mode": 493
+    }
+  ],
+  "requirement": "identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+  "signature": {
+    "designated ": "> identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+    "Executable": "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService",
+    "Identifier": "com.apple.coremedia.videoencoder",
+    "Format": "bundle with Mach-O universal (x86_64 arm64e arm64e.x1)",
+    "CodeDirectory v": "20400 size=441 flags=0x0(none) hashes=3+7 location=embedded",
+    "Platform identifier": "26",
+    "VersionPlatform": "1",
+    "VersionMin": "1769472",
+    "VersionSDK": "1769472",
+    "Hash type": "sha256 size=32",
+    "CandidateCDHash sha256": "1a44901103cc99a0b15b19f81156f25748c3a0d9",
+    "CandidateCDHashFull sha256": "1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f",
+    "Hash choices": "sha256",
+    "CMSDigest": "1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f",
+    "CMSDigestType": "2",
+    "Executable Segment base": "0",
+    "Executable Segment limit": "16384",
+    "Executable Segment flags": "0x1",
+    "Page size": "16384",
+    "CDHash": "1a44901103cc99a0b15b19f81156f25748c3a0d9",
+    "Signature size": "4202",
+    "Authority": "Apple Root CA",
+    "Signed Time": "Aug 8, 2026 at 7:25:11\u202fPM",
+    "Info.plist entries": "22",
+    "TeamIdentifier": "not set",
+    "Sealed Resources version": "2 rules=2 files=0",
+    "Total signatures": "1",
+    "Chosen signature": "1"
+  },
+  "observations": [
+    {
+      "argv": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--strict",
+        "-R",
+        "=identifier \"com.apple.coremedia.videoencoder\" and anchor apple",
+        "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/bin/codesign",
+        "-d",
+        "--verbose=4",
+        "-r-",
+        "/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService"
+      ],
+      "exit": 0,
+      "stdout": "designated => identifier \"com.apple.coremedia.videoencoder\" and anchor apple\n",
+      "stderr": "Executable=/System/Library/Frameworks/VideoToolbox.framework/Versions/A/XPCServices/VTEncoderXPCService.xpc/Contents/MacOS/VTEncoderXPCService\nIdentifier=com.apple.coremedia.videoencoder\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=441 flags=0x0(none) hashes=3+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9\nCandidateCDHashFull sha256=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nHash choices=sha256\nCMSDigest=1a44901103cc99a0b15b19f81156f25748c3a0d9d2676ed9f311355e9ffd7c7f\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=16384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=1a44901103cc99a0b15b19f81156f25748c3a0d9\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 8, 2026 at 7:25:11\u202fPM\nInfo.plist entries=22\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n"
+    }
+  ],
+  "scope": "Exact owned-cohort executable only; current UID/birth/coalition/executable checks remain mandatory. External XPC ownership unqualified."
+}

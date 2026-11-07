@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -10,12 +11,12 @@ import { admit, execute, errorFacts, metadata } from './entry.mjs';
 const here = import.meta.dirname;
 const plan = JSON.parse(fs.readFileSync(path.join(here, 'inventory.json')));
 for (const unit of plan.units)
-  test(`disabled entry ${unit.id} refuses without allocation`, () => {
+  test(`enabled entry ${unit.id} refuses missing auth without allocation`, () => {
     const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'vm-disabled-'));
     try {
       const result = spawnSync(process.execPath, [path.join(here, 'entry.mjs')], { cwd: scratch, env: { VIEWMODEL_UNIT: unit.id }, timeout: 5000 });
       assert.equal(result.status, 1);
-      assert.match(String(result.stderr), /entry disabled/);
+      assert.match(String(result.stderr), /Missing consumed parent grant/);
       assert.deepEqual(fs.readdirSync(scratch), []);
     } finally {
       fs.rmSync(scratch, { recursive: true });
@@ -210,4 +211,35 @@ test('undefined cleanup and receipt failures remain explicit facts', async () =>
   for (const failure of result.record.secondaryFailures) assert.deepEqual(failure.error, { type: 'undefined' });
   assert.equal(result.code, 1);
   assert.equal(result.durable, false);
+});
+
+test('explicit disabled gate and actual enabled CLI malformed auth refuse before effects', () => {
+  assert.throws(() => admit({}, false), /entry disabled/);
+  for (const kind of ['bad-hash', 'wrong-schema', 'wrong-claim']) {
+    const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'vm-auth-'));
+    const consumption = path.join(scratch, 'consumption.json');
+    const value = {
+      schema: kind === 'wrong-schema' ? 'other/1' : 'viewmodel-consumption/1',
+      entryToken: 'wrong',
+      unit: 'review-thalune',
+      sourceHead: '0'.repeat(40),
+    };
+    const data = Buffer.from(JSON.stringify(value));
+    fs.writeFileSync(consumption, data);
+    const env = {
+      VIEWMODEL_READY: path.join(scratch, 'absent-ready.json'),
+      VIEWMODEL_CONSUMPTION: consumption,
+      VIEWMODEL_ENTRY_TOKEN: 'expected',
+      VIEWMODEL_UNIT: 'review-thalune',
+      VIEWMODEL_SOURCE_HEAD: '0'.repeat(40),
+      VIEWMODEL_CONSUMPTION_SHA256: kind === 'bad-hash' ? '0'.repeat(64) : createHash('sha256').update(data).digest('hex'),
+    };
+    const p = spawnSync(process.execPath, [path.join(here, 'entry.mjs')], { cwd: scratch, env, timeout: 5000 });
+    assert.equal(p.status, 1);
+    assert.match(
+      String(p.stderr),
+      kind === 'bad-hash' ? /Metadata authentication/ : kind === 'wrong-schema' ? /Wrong consumption schema/ : /Wrong entry claim/,
+    );
+    assert.deepEqual(fs.readdirSync(scratch), ['consumption.json']);
+  }
 });

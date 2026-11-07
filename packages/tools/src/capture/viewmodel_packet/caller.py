@@ -1,4 +1,4 @@
-"""One disabled, separately granted viewmodel unit. No retries or automatic chaining."""
+"""One separately granted viewmodel unit. No retries or automatic chaining."""
 import argparse
 import hashlib
 import json
@@ -11,12 +11,12 @@ import shutil
 import subprocess
 import sys
 
-from boundary import (MIB, canonical, deadline, encoded, exclusive_json, git, json_snapshot,
+from boundary import (CONSUMPTION_SCHEMA, RESULT_SCHEMA, MIB, canonical, deadline, encoded, exclusive_json, git, json_snapshot,
                       output_manifest, persist, raw, require, retain, snapshot, validate_inventory, verify_worktree)
 import bindings
 
 HERE = Path(__file__).resolve().parent
-RUNTIME_ENABLED = False
+RUNTIME_ENABLED = True
 
 
 def plan():
@@ -26,23 +26,24 @@ def plan():
 def prepare():
     inventory = plan()
     root = bindings.ROOT
-    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-v1')
+    evidence = Path('/private/tmp/p1-e05-t03-viewmodel-packet-r4-bpmhg9qg')
     ready_path = str(evidence.with_name(evidence.name + '-readiness.json'))
     paths = {}
     for spec in inventory['units']:
         unit = spec['id']
         paths[unit] = {'ready': ready_path, 'grant': str(evidence.with_name(evidence.name + '-' + unit + '.grant.json')),
             'consumption': str(evidence.with_name(evidence.name + '-' + unit + '.consumed.json')),
-            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-v1' / unit)}
+            'evidence': str(evidence / unit), 'output': str(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg' / unit)}
     canonical(evidence, absent=True)
-    canonical(root / 'assets/renders/review/viewmodel-packet-v1', absent=True)
+    canonical(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg', absent=True)
     for row in paths.values():
         for path in row.values():
             canonical(path, absent=True)
     pinned = bindings.discover()
-    return {'version': 1, 'runtimeEnabled': False, 'entryEnabled': False,
+    return {'version': 1, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': inventory['entryEnabled'],
+            'executionStatus': 'ENABLED_AWAITING_PARENT_GRANT', 'nativeQualified': False,
             'inventorySha256': json_snapshot(HERE / 'inventory.json')[1], 'paths': paths,
-            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-v1')},
+            'containers': {'evidence': str(evidence), 'output': str(root / 'assets/renders/review/viewmodel-packet-r4-bpmhg9qg')},
             'bindings': pinned, 'cacheOwnerFreezeObservation': bindings.cache_owners(),
             'pythonSelfObservation': {'scope': 'CPU_SELF_PROCESS_ONLY', 'pid': os.getpid(), 'uid': os.getuid(),
                                       'launcher': pinned['python'], 'kernelExecutable': pinned['pythonKernel']},
@@ -79,9 +80,10 @@ def admit(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bin
         old_paths = ready['paths'][ref['unit']]
         result, _ = json_snapshot(Path(old_paths['evidence']) / 'result.json', cap=20 * MIB, expected=ref['resultSha256'])
         consumed, _ = json_snapshot(old_paths['consumption'], expected=ref['consumptionSha256'])
-        # Hash, parse, success, identity and manifest use this single bounded snapshot.
+        # Hash, parse, schema, success, identity and manifest use this single bounded snapshot.
+        require(result.get('schema') == RESULT_SCHEMA and consumed.get('schema') == CONSUMPTION_SCHEMA, 'Predecessor receipt schema')
         require(result.get('accepted') is False and result.get('checksPassed') is True and result.get('status') == 'AWAITING_CALLER_COMPLETION', 'Predecessor failed/provisional contract')
-        require(result.get('primaryFailure') is None and result.get('secondaryFailures') == [] and result.get('released') is True, 'Failed predecessor')
+        require(result.get('primaryFailure') is None and result.get('secondaryFailures') == [] and result.get('persistenceErrors') == [] and result.get('released') is True, 'Failed predecessor')
         for obj in (result, consumed):
             require(obj.get('unit') == ref['unit'] and obj.get('sourceHead') == grant['authorizedHead'] and obj.get('readySha256') == ready_hash, 'Predecessor identity/pin')
         require(result['authorizationId'] == consumed['authorizationId'] and result['consumptionSha256'] == ref['consumptionSha256'], 'Predecessor consumption mismatch')
@@ -106,7 +108,7 @@ def admit(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bin
     owners = verifier(ready)
     free = shutil.disk_usage(root).free
     require(free >= spec['admission'], 'Observed free space below unit admission')
-    return ready, spec, paths, {'authorizationId': grant['authorizationId'], 'unit': unit,
+    return ready, spec, paths, {'schema': CONSUMPTION_SCHEMA, 'authorizationId': grant['authorizationId'], 'unit': unit,
         'sourceHead': grant['authorizedHead'], 'readySha256': ready_hash, 'grantSha256': grant_hash,
         'grantPath': str(grant_path), 'entryToken': secrets.token_hex(32), 'freeBytesAtAdmission': free,
         'admission': spec['admission'], 'cacheOwners': owners,
@@ -285,7 +287,7 @@ def main(ready_path, unit, grant_path, *, enabled=RUNTIME_ENABLED, verifier=bind
             return writer(path, value, cap=20 * MIB)
         return writer(path, value)
     consumption_hash = metadata_write(Path(paths['consumption']), consumed)
-    record = {**consumed, 'consumptionSha256': consumption_hash, 'accepted': False, 'checksPassed': False,
+    record = {**consumed, 'schema': RESULT_SCHEMA, 'consumptionSha256': consumption_hash, 'accepted': False, 'checksPassed': False,
               'status': 'FAILED_OR_INTERRUPTED', 'primaryFailure': None, 'secondaryFailures': [],
               'released': False, 'output': paths['output']}
     try:
@@ -317,7 +319,10 @@ if __name__ == '__main__':
             for row in ready['paths'].values():
                 for key, path in row.items():
                     if str(args.check) != path: canonical(path, absent=True)
-            print(json.dumps({'status': 'CPU_BINDINGS_ONLY', 'runtimeEnabled': RUNTIME_ENABLED, 'allUnitsQualified': False}))
+            inventory = plan()
+            require(ready['runtimeEnabled'] is RUNTIME_ENABLED and ready['entryEnabled'] is inventory['entryEnabled'], 'Gate/readiness mismatch')
+            status = 'ENABLED_AWAITING_PARENT_GRANT' if RUNTIME_ENABLED and ready['entryEnabled'] else 'DISABLED_CPU_BINDINGS_ONLY'
+            print(json.dumps({'status': status, 'runtimeEnabled': RUNTIME_ENABLED, 'entryEnabled': ready['entryEnabled'], 'allUnitsQualified': False, 'nativeQualified': False}))
         else:
             code, result = main(args.ready, args.unit, args.grant, emit=lambda data: sys.stderr.buffer.write(data))
             print(json.dumps({'exit': code, 'durable': result['durable'], 'accepted': False}))

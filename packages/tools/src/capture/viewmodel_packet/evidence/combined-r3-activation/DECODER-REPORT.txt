@@ -1,0 +1,57 @@
+TASK: P1-E05-T03 R3 decoder implementation lane only.
+RESULT: source/CPU implementation complete; no R4 independent/native/visual acceptance.
+Owned source: inspect_packet.py and test_inspect.py only. No commit, readiness refresh, inventory edit, protocol edit, activation, asset/helper/shared-T15 edit, dependency write, service, browser, GPU, codec, screenshot or external action by this lane.
+Scratch: /private/tmp/vm-r3-fix-bpmhg9qg/decoder
+Base HEAD 80d348154d1fc9497d6989bf3f3544859e7b0477 / tree e26072bb4d628922fe3720ccfd60f848e1627215. HEAD remains unchanged. Original copied decoder/test bytes verified against git show at that SHA before RED. Parent-owned concurrent changes are excluded from this lane's patch and provenance claims.
+
+CHANGE
+A common timeline(entry, previous) validator now runs for every saved view endpoint. It validates the fixed 0/1/60 clock and frame budget from fixture-install clock zero; first observation requires the existing 24 setup steps, plus >=120 ordinary-pose steps when no initial switch-gap exists. It bounds positive raise progress by previousRaise + 2.6 * elapsed (1e-6 endpoint tolerance) and sway by the exponential reachable interval using exp(-9 * elapsed), clamped input targets 0.035/0.03 and 1e-8 tolerance. Visibility can immediately lower raise, so downward resets remain valid. It does not assume a synthetic initial raise of zero: product update defaults undefined raise to 1, and page setup has already run the runtime before controlled capture. Existing stricter named raise/switch 24-step and last-dt checks remain intact. No awaits or producer logic changed.
+The bounds are conservative reachability checks over observed endpoints, not proof of every unobserved input or a new heat/projection/visual qualification.
+
+RED
+Actual copied-base CLI accepted all 9 retained impossible underwater->neutral packets (0/1/23 updates across all 3 peoples), plus the retained zero-time sway reversal. Four matching producer controls pass. red-replay.json and per-case invocation/stdout/stderr/result files retain all 14 calls.
+Five new regression methods against that exact copied base: 140 actual CLI calls, 129 exit0 and 11 exit1; unittest exit1 with 105 assertion failures, zero harness errors. Those include invalid accepted initial-clock, raise, sway and fixed-step packets; the expected-valid controls are also retained. Full failure text, not truncated summaries, is red-tests/stderr; each complete authenticated input and raw process result is red-tests/cli/*.
+
+GREEN
+31 methods pass (26 old method ASTs unchanged plus 5 new methods); unittest exit0, zero failures/errors. 261 actual CLI calls: 55 exit0, 206 expected exit1. Unknown observations compare equal on successes and failures. Covers both sway axes/all three peoples, 0/1/23/24/120-step underwater recovery, initial setup, every endpoint clock, immediate downward reset, settled zero-dt input observation, extra cooling and zero updates, all old PNG/authentication/boundary tests and switch/raise timing controls.
+Retained R3 replay: 14 calls, 4 valid controls exit0 and all 10 counterexamples exit1; no previous input/report was edited.
+Frozen real runtime oracle v3: 4 complete unit timelines, 57 endpoints, 57 independent transition scenarios, process exit0. Actual complete Multitool module is evaluated with real Three and real meter rules; fixture installPageFixture/step/pose run unchanged. Only constructor allocation and loader/disposal/environment import ports are inert. Synthetic CPU scene/material resources satisfy the actual syncViewModel callback; no real model asset loading or rendering. The real source contains all update/watchServer/syncViewModel/tickMeter/stepHeat methods, unchanged.
+Those full runtime endpoint facts were inserted verbatim into authenticated synthetic PNG packets and run through the actual CLI: oracle-packets.json, 53 calls, exits {'0': 16, '1': 37}. Includes all three full views and return, initial-zero refusals, 0/1/23 refusals and 24/120 controls for switch/underwater, and each zero-time sway reversal.
+Final v4 oracle: 14 real timelines / 224 endpoints and 57 transition scenarios, exit0. In addition to full unchanged producer timelines, real update controls perform zero-dt raise resets, already-settled zero-dt firing, and extra cooling/zero updates. All 14 complete authenticated packets pass actual CLI (oracle-controls.json). Every standalone switch scenario now uses its actual source/target people pair. runtime-facts-v4.json is the authoritative final oracle; v3 is retained.
+
+HARNESS FAILURES / EXTRA EXECUTION, ALL RETAINED
+1. runtime (exit1): Node's strip-only TypeScript loader rejected LoadoutError's parameter property in the real meter dependency closure: ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX. Complete stderr retained; runtime-v1.mjs is that harness source.
+2. runtime-v2 (exit1): Node 26 stripTypeScriptTypes supports only mode='strip', rejecting requested 'transform' with ERR_INVALID_ARG_VALUE. Complete stderr retained; runtime-v2.mjs is that harness source. Corrected in-memory loading with the already-installed TypeScript transpileModule API; no build, install, cache or source output is written. runtime-v3 then passed.
+3. First direct `run.py oracle-packets` invocation exited1 before creating packets: pinned decoder Python lacked its PYTHONPATH on that outer harness invocation, raising ModuleNotFoundError: No module named 'PIL' at test_inspect.py:18. The full traceback is retained in oracle-first-failure.txt. Corrected by running the entire packet harness through the existing exact environment/sandbox wrapper.
+4. The initial oracle wrapper's `oracle-packets-inner` mode accidentally matched the test-suite dispatch. It ran all 31 methods again and passed (261 CLI calls, 55/206). This unintended duplicate is retained as oracle-run/* and oracle-packets/summary.json plus oracle-packets/cli/*. It is not counted as runtime-packet proof. Dispatch was narrowed before oracle-runtime-run successfully executed the intended 53 cases.
+5. v3 standalone switch scenarios mislabeled the ulgani case while targeting ixari. Complete full-unit timelines were correct. v4 fixes the scratch setup map and tests all actual people transitions; no product/source correction was needed.
+No failed run is silently represented as passing, and the duplicate suite run is explicitly separated.
+
+EXACT EXECUTION / PROVENANCE
+Every successful/negative CLI and wrapped runtime/test invocation includes argv, cwd, exact environment, exit, full stdout/stderr and their hashes in commands.json and per-case invocation/result files. Child CLI test calls inherit the outer sandbox, use the pinned Python -B and execute inspect_packet.py directly. Every full packet input is retained before mutation. No inspection/CLI result is mocked.
+Common exact environment:
+{
+  "GIT_OPTIONAL_LOCKS": "0",
+  "LANG": "C",
+  "MKL_NUM_THREADS": "1",
+  "NODE_DISABLE_COMPILE_CACHE": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "PATH": "/usr/bin:/bin",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "PYTHONPATH": "/Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages",
+  "TMPDIR": "/private/tmp/vm-r3-fix-bpmhg9qg/decoder/tmp",
+  "VECLIB_MAXIMUM_THREADS": "1"
+}
+Python: /Users/andreyyurlov/.cache/uv/archive-v0/a88MR2jSm399x3XK/lib/python3.10/site-packages (PYTHONPATH); executable /Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10
+Node direct: /Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node --experimental-vm-modules /private/tmp/vm-r3-fix-bpmhg9qg/decoder/runtime.mjs
+Wrapper: /usr/bin/sandbox-exec -f /private/tmp/vm-r3-fix-bpmhg9qg/decoder/readonly.sb
+Canonical successful suite argv: pinned-python -B /private/tmp/vm-r3-fix-bpmhg9qg/decoder/run.py green-tests-inner (module imported unchanged; stdlib unittest runner, serial; subprocess.run only records and calls the original real function).
+Exact metadata and source hashes are SUMMARY.json, runtime-facts-v4.json and commands.json. Final owned source copies are final-inspect_packet.py and final-test_inspect.py; owned.diff contains only the two authorized files.
+Current inspector SHA256 eccaf8fc817681e8442d4f25bfe9dbc6d80a01bac53cab6371bc0d8ae0ef1f0e (28201 bytes).
+Current tests SHA256 8a77ba1d427417e7b50d884da1fab7614765244c0d2deed93e679cd32236fad3 (53110 bytes).
+Frozen fixture SHA256 856dd81a1238f19f9c1dcc103ce7a2ae5ccddfd9327f1e9ba5eef182d6f6e5a6.
+Frozen Multitool SHA256 0ec69a4552687445d0787a29a73f8a33512591b12d0866c88d8ca17969f9e2ab.
+Original decoder SHA256 467600ce62d0bd3e208216759cf8d1a89552b4a2b26f34d8eebf8810eadae2d9.
+Original tests SHA256 eda7df3f810cb7356d30003d60e89db5bb80884e0a219b905bf94c83427f48d4.
+Diff whitespace check exit0; 26 old test methods AST-identical. Scoped before/final rehash confirms original copied decoder/tests, fixture, product runtime, required R3 reports and retained review runtime are unchanged. The parent owns the final whole-worktree/protected-asset/readiness audit; no lane-wide claim replaces it.

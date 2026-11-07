@@ -6,7 +6,7 @@ import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-export const ENTRY_ENABLED = false;
+export const ENTRY_ENABLED = true;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const need = (condition, message) => {
@@ -173,6 +173,7 @@ export function admit(env = process.env, enabled = ENTRY_ENABLED) {
     'Missing consumed parent grant',
   );
   const { value: consumption } = metadata(env.VIEWMODEL_CONSUMPTION, env.VIEWMODEL_CONSUMPTION_SHA256);
+  need(consumption.schema === 'viewmodel-consumption/1', 'Wrong consumption schema');
   need(
     consumption.entryToken === env.VIEWMODEL_ENTRY_TOKEN && consumption.unit === env.VIEWMODEL_UNIT && consumption.sourceHead === env.VIEWMODEL_SOURCE_HEAD,
     'Wrong entry claim',

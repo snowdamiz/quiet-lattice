@@ -107,7 +107,7 @@ class BoundaryTests(unittest.TestCase):
         for spec in caller.plan()['units']:
             with self.subTest(unit=spec['id']), patch.object(caller, 'plan', side_effect=AssertionError('read')), patch.object(caller, 'run_unit', side_effect=AssertionError('dispatch')):
                 with self.assertRaisesRegex(ValueError, 'disabled'):
-                    caller.main(None, spec['id'], None)
+                    caller.main(None, spec['id'], None, enabled=False)
         with patch.object(caller, 'plan', side_effect=AssertionError('read')):
             with self.assertRaisesRegex(ValueError, 'Missing parent grant'): caller.admit(None, 'x', None, enabled=True)
 
@@ -117,7 +117,7 @@ class BoundaryTests(unittest.TestCase):
             with self.subTest(unit=spec['id']), tempfile.TemporaryDirectory() as tmp:
                 result = subprocess.run([sys.executable, '-B', '-c', script, str(HERE), spec['id']], cwd=tmp, capture_output=True, timeout=5)
                 self.assertEqual(result.returncode, 1)
-                self.assertIn(b'caller disabled', result.stderr)
+                self.assertIn(b'Missing parent grant', result.stderr)
                 self.assertEqual(json.loads(result.stdout), {'helpers': []})
                 self.assertEqual(list(Path(tmp).iterdir()), [])
 
@@ -130,7 +130,7 @@ class BoundaryTests(unittest.TestCase):
                 paths = repo.ready['paths'][spec['id']]
                 receipt = json.loads((Path(paths['evidence']) / 'result.json').read_text())
                 self.assertFalse(receipt['accepted'])
-                self.assertEqual(receipt['ports'], ['capture', 'release', 'decode'])
+                self.assertEqual(receipt['observations']['ports'], ['capture', 'release', 'decode'])
                 self.assertEqual(len(receipt['outputManifest']), len(spec['files']))
                 self.assertEqual(boundary.git(repo.root, 'rev-parse', 'HEAD').decode().strip(), repo.head)
             self.assertEqual(len(repo.previous), 7)

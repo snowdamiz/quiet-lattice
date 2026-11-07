@@ -107,6 +107,17 @@ def raw_perf(spec):
                            for name in spec["files"] if name.endswith(".png") and name != "sheet.png"]}}
 
 
+def retime(value, index, updates, duration, dt):
+    previous = value["frames"][index - 1] if index else {"frame": 0, "elapsed": 0}
+    current = value["frames"][index]
+    frame_delta = previous["frame"] + updates - current["frame"]
+    elapsed_delta = previous["elapsed"] + duration - current["elapsed"]
+    for entry in value["frames"][index:]:
+        entry["frame"] += frame_delta
+        entry["elapsed"] += elapsed_delta
+    current["dt"] = dt
+
+
 class Packet:
     def __init__(self, root, unit):
         self.root = root
@@ -727,6 +738,98 @@ class InspectorTests(unittest.TestCase):
                     decoded = json.loads(result.stdout)
                     self.assertEqual(decoded["status"], "PASS")
                     self.assertEqual(decoded[fixture.readout[:-5]], value)
+
+    def test_cli_initial_clock_requires_setup_and_first_pose_settle(self):
+        for unit in ("view-thalune", "view-ixari", "view-ulgani", "return-thalune"):
+            with packet(unit) as fixture:
+                steps = [0, 1, 23] + ([24, 143] if unit == "view-thalune" else [])
+                for count in steps:
+                    with self.subTest(unit=unit, steps=count):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"initialSteps": count}
+                        dt = 0 if fixture.spec["fromPeople"] or count == 0 else 1 / 60
+                        retime(value, 0, count + 2, count / 60, dt)
+                        fixture.write(value)
+                        self.assert_cli_refused(fixture, value, "initial fixture settle")
+
+    def test_cli_underwater_recovery_uses_runtime_raise_bound_for_every_people(self):
+        for people in ("thalune", "ixari", "ulgani"):
+            with packet(f"view-{people}") as fixture:
+                index = next(i for i, f in enumerate(fixture.value["frames"]) if f["file"] == "21x9-neutral.png")
+                for steps in (0, 1, 23, 24, 120):
+                    with self.subTest(people=people, steps=steps):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"underwaterRecovery": steps}
+                        retime(value, index, max(1, steps), steps / 60, 1 / 60 if steps else 0)
+                        fixture.write(value)
+                        if steps < 24:
+                            self.assert_cli_refused(fixture, value, "raise progress exceeds elapsed")
+                        else:
+                            result = fixture.run_cli()
+                            self.assertEqual(result.returncode, 0, result.stderr)
+                            self.assertEqual(json.loads(result.stdout)["observations"], value)
+
+    def test_cli_sway_reachability_covers_both_axes_and_every_people(self):
+        for people in ("thalune", "ixari", "ulgani"):
+            with packet(f"view-{people}") as fixture:
+                for filename in ("16x9-sway-left.png", "16x9-sway-right.png", "16x9-sway-up.png", "16x9-sway-down.png"):
+                    index = next(i for i, f in enumerate(fixture.value["frames"]) if f["file"] == filename)
+                    for steps in (0, 1, 23):
+                        with self.subTest(people=people, file=filename, steps=steps):
+                            value = copy.deepcopy(fixture.value)
+                            value["unknownRaw"] = {"swaySteps": steps}
+                            retime(value, index, max(1, steps), steps / 60, 1 / 60 if steps else 0)
+                            fixture.write(value)
+                            self.assert_cli_refused(fixture, value, "sway progress exceeds elapsed")
+
+    def test_cli_every_endpoint_reconciles_fixed_step_clock(self):
+        with packet("view-ixari") as fixture:
+            for index, frame in enumerate(fixture.value["frames"]):
+                for kind in ("fractional-time", "insufficient-updates", "wrong-dt"):
+                    with self.subTest(file=frame["file"], kind=kind):
+                        value = copy.deepcopy(fixture.value)
+                        value["unknownRaw"] = {"clock": [frame["file"], kind]}
+                        previous = value["frames"][index - 1] if index else {"frame": 0, "elapsed": 0}
+                        duration = frame["elapsed"] - previous["elapsed"]
+                        updates = frame["frame"] - previous["frame"]
+                        dt = frame["dt"]
+                        if kind == "fractional-time":
+                            duration += 0.001
+                        elif kind == "insufficient-updates":
+                            updates = max(1, round(duration * 60) - 1)
+                        else:
+                            dt = 1 / 30
+                        retime(value, index, updates, duration, dt)
+                        fixture.write(value)
+                        self.assert_cli_refused(fixture, value, "")
+
+    def test_cli_zero_time_resets_settled_observations_and_extra_updates_remain_valid(self):
+        for people in ("thalune", "ixari", "ulgani"):
+            with packet(f"view-{people}") as fixture:
+                for filename in ("16x9-raise-0.png", "16x9-underwater.png", "16x9-fire.png"):
+                    with self.subTest(people=people, file=filename):
+                        value = copy.deepcopy(fixture.value)
+                        index = next(i for i, f in enumerate(value["frames"]) if f["file"] == filename)
+                        # A zero update can change input/visibility and reset raise,
+                        # but the runtime's sway is unchanged at that boundary.
+                        value["frames"][index]["sway"] = value["frames"][index - 1]["sway"][:]
+                        retime(value, index, 1, 0, 0)
+                        value["unknownRaw"] = {"zeroObservation": filename}
+                        fixture.write(value)
+                        result = fixture.run_cli()
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                        self.assertEqual(json.loads(result.stdout)["observations"], value)
+                for extra_steps, zero_steps in ((240, 0), (0, 2), (240, 2)):
+                    with self.subTest(people=people, extra=extra_steps, zero=zero_steps):
+                        value = copy.deepcopy(fixture.value)
+                        for index, frame in enumerate(value["frames"]):
+                            frame["frame"] += (index + 1) * (extra_steps + zero_steps)
+                            frame["elapsed"] += (index + 1) * extra_steps / 60
+                        value["unknownRaw"] = {"extra": [extra_steps, zero_steps]}
+                        fixture.write(value)
+                        result = fixture.run_cli()
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                        self.assertEqual(json.loads(result.stdout)["observations"], value)
 
     def test_cli_png_requires_complete_single_zlib_stream_and_critical_order(self):
         def chunk(kind, data):

@@ -182,8 +182,48 @@ def retain(evidence, destination, key, value, *, encoder=raw):
         return False
 
 
+CONSUMPTION_SCHEMA = 'viewmodel-consumption/1'
+RESULT_SCHEMA = 'viewmodel-result/1'
+CONSUMPTION_FIELDS = frozenset(('schema', 'authorizationId', 'unit', 'sourceHead', 'readySha256',
+    'grantSha256', 'grantPath', 'entryToken', 'freeBytesAtAdmission', 'admission', 'previousOutputs'))
+RESULT_FIELDS = CONSUMPTION_FIELDS | frozenset(('consumptionSha256', 'accepted', 'checksPassed', 'status',
+    'released', 'output', 'outputManifest'))
+FAILURE_FIELDS = frozenset(('primaryFailure', 'secondaryFailures', 'persistenceErrors'))
+
+
+def protocol_document(record):
+    """Protocol fields stay JSON; only observations have graph semantics.
+
+    Shared references in manifests/identities have ordinary JSON value semantics.
+    Every other (including future unknown) field belongs to one observation graph,
+    retaining aliases/cycles across those fields without changing the envelope.
+    """
+    schema = record['schema']
+    require(schema in (CONSUMPTION_SCHEMA, RESULT_SCHEMA), 'Unknown receipt schema')
+    fields = RESULT_FIELDS if schema == RESULT_SCHEMA else CONSUMPTION_FIELDS
+    document = {key: record[key] for key in record if key in fields}
+    # Fail closed for invalid/cyclic protocol data instead of changing its type.
+    json.dumps(document, allow_nan=False, separators=(',', ':'))
+    if schema == RESULT_SCHEMA:
+        require(type(record['accepted']) is bool and record['accepted'] is False, 'Result cannot accept itself')
+        require(type(record['checksPassed']) is bool and type(record['released']) is bool, 'Result boolean contract')
+        document['primaryFailure'] = raw(record['primaryFailure'])
+        for key in ('secondaryFailures', 'persistenceErrors'):
+            require(type(record.get(key, [])) is list, 'Failure list contract')
+            document[key] = [raw(error) for error in record.get(key, [])]
+    failure_fields = FAILURE_FIELDS if schema == RESULT_SCHEMA else frozenset()
+    extras = {key: value for key, value in record.items() if key not in fields | failure_fields}
+    document['observationEncoding'] = 'raw-graph-or-tree/1'
+    document['observations'] = raw(extras)
+    return document
+
+
 def encoded(value):
-    return (json.dumps(raw(value), allow_nan=False, separators=(',', ':')) + '\n').encode()
+    if type(value) is dict and value.get('schema') in (CONSUMPTION_SCHEMA, RESULT_SCHEMA):
+        document = protocol_document(value)
+    else:
+        document = raw(value)
+    return (json.dumps(document, allow_nan=False, separators=(',', ':')) + '\n').encode()
 
 
 def exclusive_json(path, value, cap=META_CAP):

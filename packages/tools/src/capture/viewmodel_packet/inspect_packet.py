@@ -289,6 +289,40 @@ def projection(value, viewport, where):
         require(max(coords) - min(coords) <= 1e-5, f"{where}: view/world/beam projection misaligned")
 
 
+def timeline(entry, previous):
+    filename = entry["file"]
+    duration = entry["elapsed"] - (previous["elapsed"] if previous else 0)
+    updates = entry["frame"] - (previous["frame"] if previous else 0)
+    dt = entry["dt"]
+    if previous is None:
+        # installPageFixture starts its clock before captureView's zero update
+        # and 24 setup steps. The first ordinary pose then cools for >=120 steps.
+        setup_steps = 24 if entry["loaderPending"] else 144
+        require(duration + 1e-8 >= setup_steps / 60 and
+                updates >= setup_steps + 1 + int(entry["loaderPending"]),
+                f"{filename}: initial fixture settle requires setup and pose updates")
+    # Every fixture update is zero or 1/60; zero updates consume frames, not time.
+    steps = round(duration * 60)
+    require(abs(duration * 60 - steps) <= 1e-6 and
+            (dt == 0 or abs(dt - 1 / 60) <= 1e-10) and
+            updates >= steps + int(dt == 0),
+            f"{filename}: inconsistent fixed-step elapsed/frame/last dt")
+    if previous is None:
+        return
+    # Multitool.update can reset raise immediately while hidden; neither model
+    # attachment nor viewport changes can accelerate its positive progress.
+    require(entry["raise"] <= previous["raise"] + 2.6 * duration + 1e-6,
+            f"{filename}: raise progress exceeds elapsed runtime bound")
+    # Each axis damps toward a clamped input with k = 1-exp(-9*dt).
+    # This envelope holds across any intermediate inputs and zero-dt updates.
+    decay = math.exp(-9 * duration)
+    for axis, limit in enumerate((0.035, 0.03)):
+        center = previous["sway"][axis] * decay
+        reach = limit * (1 - decay)
+        require(abs(entry["sway"][axis] - center) <= reach + 1e-8,
+                f"{filename}: sway progress exceeds elapsed runtime bound")
+
+
 def observations(value, spec, stills):
     require(type(value) is dict, "observations: expected object")
     require(type(value.get("version")) is int and value["version"] == 1, "observations: invalid version")
@@ -358,6 +392,7 @@ def observations(value, spec, stills):
             require(heat >= 0.8, f"{filename}: insufficient overheat")
         if fire or "projection" in entry:
             projection(entry.get("projection"), size, filename)
+        timeline(entry, previous)
         previous = entry
 
 

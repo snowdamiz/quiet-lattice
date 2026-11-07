@@ -1,0 +1,211 @@
+{
+  "status": "ENABLED_MISSING_AUTH_REFUSED",
+  "runtimeEnabled": true,
+  "entryEnabled": true,
+  "rows": [
+    {
+      "kind": "caller",
+      "unit": "review-thalune",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "review-thalune"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "review-thalune",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "review-ixari",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "review-ixari"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "review-ixari",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "review-ulgani",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "review-ulgani"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "review-ulgani",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "view-thalune",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "view-thalune"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "view-thalune",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "view-ixari",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "view-ixari"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "view-ixari",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "view-ulgani",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "view-ulgani"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "view-ulgani",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    },
+    {
+      "kind": "caller",
+      "unit": "return-thalune",
+      "argv": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/caller.py",
+        "--ready",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/readiness.json",
+        "--unit",
+        "return-thalune"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "57ed306f9e640a7429749568069d0f1250a4f9aea0ba32885b0c1448e37baa72"
+    },
+    {
+      "kind": "entry",
+      "unit": "return-thalune",
+      "argv": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/entry.mjs"
+      ],
+      "exit": 1,
+      "expectedRefusal": "Missing consumed parent grant",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "985085b007e273e97804df596c2c052723711c489d932c3c371c2cc45da0b721"
+    }
+  ],
+  "prospectivePathsAbsent": true
+}
