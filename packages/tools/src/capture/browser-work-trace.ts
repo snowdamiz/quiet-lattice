@@ -1038,7 +1038,15 @@ export async function runTraceObserver(options: ObserverOptions): Promise<Observ
           options.trace.on('Tracing.bufferUsage', usage);
           options.trace.on('close', lost);
           listening = true;
-          receipt.categories = await owned(() => options.trace.send({ method: 'Tracing.getCategories' }), 5000, 'categories', step);
+          await owned(
+            async () => {
+              const raw = await options.trace.send({ method: 'Tracing.getCategories' });
+              if (acceptingEvidence) receipt.categories = structuredClone(raw);
+            },
+            5000,
+            'categories',
+            step,
+          );
           const categories = isRecord(receipt.categories) ? receipt.categories.categories : null;
           if (
             !isRecord(receipt.categories) ||

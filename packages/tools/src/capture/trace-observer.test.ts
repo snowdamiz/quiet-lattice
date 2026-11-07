@@ -1129,6 +1129,104 @@ describe('R3 advisory admission boundaries in the new native caller unit', () =>
 });
 
 describe('native category discovery regression', () => {
+  it.each(['cancelled-return', 'deadline-draining-return'])('retains the detached category reply during %s', async (mode) => {
+    const f = fixture(),
+      response = { categories: [], unknown: { bytes: 'RETURNED_RAW', nested: [1, null] } },
+      expected = structuredClone(response),
+      send = f.options.trace.send;
+    let release = () => {},
+      entered = () => {},
+      returned = false;
+    const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+      started = new Promise<void>((resolve) => {
+        entered = resolve;
+      });
+    f.options.trace.send = async (command) => {
+      if (command.method !== 'Tracing.getCategories') return send(command);
+      entered();
+      if (mode === 'deadline-draining-return') await gate;
+      returned = true;
+      if (mode === 'cancelled-return') f.abort.abort(new Error('CATEGORY_CANCEL'));
+      return response;
+    };
+    f.options.trace.disconnect = async () => {
+      response.unknown.bytes = 'MUTATED_BY_CLEANUP';
+    };
+    if (mode === 'deadline-draining-return') {
+      f.options.clock = {
+        now: () => 1,
+        bound: async (task, ms, label, signal) => {
+          if (label === 'categories') {
+            await started;
+            throw new Error('CATEGORY_DEADLINE');
+          }
+          return bounded(task, ms, label, signal);
+        },
+      };
+      f.options.probe.cancel = async () => {
+        release();
+      };
+    }
+    const packet = await failed(f);
+    expect(returned).toBe(true);
+    expect(packet.failure).toBe(mode === 'cancelled-return' ? 'Error: CATEGORY_CANCEL' : 'Error: CATEGORY_DEADLINE');
+    expect(packet.steps[0].receipt).toMatchObject({ categories: expected, categoryDiscovery: { status: 'unrequested' }, startRequested: false });
+    expect(packet.summary).toBeNull();
+    expect(packet.portSettlement.kind).toBe('ports-settled');
+    expect(packet.totals.preparations).toBe(0);
+    expect(packet.totals.segments).toBe(0);
+    expect(f.calls).toEqual([]);
+    expect(methods(f)).not.toContain('Tracing.start');
+    expect(f.reports[0].steps[0].receipt).toMatchObject({ categories: expected });
+  });
+  it('cuts off a category reply after publication without changing failed evidence or writing sinks', async () => {
+    const f = fixture(),
+      send = f.options.trace.send;
+    let release = () => {},
+      entered = () => {},
+      ownedReply: Promise<unknown> = Promise.resolve();
+    const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+      started = new Promise<void>((resolve) => {
+        entered = resolve;
+      });
+    f.options.trace.send = async (command) => {
+      if (command.method !== 'Tracing.getCategories') return send(command);
+      entered();
+      await gate;
+      return { categories: [], unknown: { late: true } };
+    };
+    f.options.clock = {
+      now: () => 1,
+      bound: async (task, ms, label, signal) => {
+        if (label === 'categories') {
+          ownedReply = task;
+          await started;
+          throw new Error('CATEGORY_DEADLINE');
+        }
+        if (label.includes('callbacks-drain')) throw new Error('CATEGORY_STILL_PENDING');
+        return bounded(task, ms, label, signal);
+      },
+    };
+    const packet = await failed(f),
+      saved = JSON.stringify({ packet, reports: f.reports, retained: f.retained, chunks: [...f.chunks] });
+    expect(packet.steps[0].receipt).toMatchObject({ categories: null, categoryDiscovery: { status: 'unrequested' } });
+    expect(packet.portSettlement).toMatchObject({ kind: 'ports-unsettled', requiresController: true });
+    if (packet.portSettlement.kind !== 'ports-unsettled') throw new Error('Expected pending category callback');
+    expect(packet.portSettlement.pendingCallbacks).toBeGreaterThan(0);
+    expect(packet.finishedMs).toBeNull();
+    expect(packet.failure).toBe('Error: CATEGORY_DEADLINE');
+    expect(packet.summary).toBeNull();
+    release();
+    await ownedReply;
+    expect(JSON.stringify({ packet, reports: f.reports, retained: f.retained, chunks: [...f.chunks] })).toBe(saved);
+    expect(f.calls).toEqual([]);
+    expect(methods(f)).not.toContain('Tracing.start');
+    expect(f.emitter.eventNames()).toEqual([]);
+  });
   it.each([
     { label: 'null receipt', response: null },
     { label: 'missing field', response: {} },

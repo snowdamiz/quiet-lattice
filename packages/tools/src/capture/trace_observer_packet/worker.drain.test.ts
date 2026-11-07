@@ -6,7 +6,13 @@ import { sha256 } from './evidence.ts';
 import { observerRequiredSources } from '../trace-observer-report.ts';
 import nativeCategoryReceipt from './fixtures/native-attempt3-categories.json';
 
-const state = vi.hoisted(() => ({ calls: [] as string[], closed: false, categories: { categories: [] } as unknown, detachFails: false }));
+const state = vi.hoisted(() => ({
+  calls: [] as string[],
+  closed: false,
+  categories: { categories: [] } as unknown,
+  detachFails: false,
+  categoryCancel: false,
+}));
 vi.mock('@playwright/test', async () => {
   const { EventEmitter } = await import('node:events');
   return {
@@ -32,7 +38,10 @@ vi.mock('@playwright/test', async () => {
               state.calls.push(method);
               if (method === 'Browser.getVersion') return { product: 'CPU inert producer' };
               if (method === 'SystemInfo.getProcessInfo') return { processInfo: [{ id: 624243, type: 'renderer' }] };
-              if (method === 'Tracing.getCategories') return state.categories;
+              if (method === 'Tracing.getCategories') {
+                if (state.categoryCancel) process.emit('SIGTERM');
+                return state.categories;
+              }
               if (method === 'Tracing.end') events.emit('Tracing.tracingComplete', { dataLossOccurred: false, stream: 'owned-stream' });
               if (method === 'IO.read') return { data: '{"traceEvents":[]}', eof: true };
               return {};
@@ -73,13 +82,17 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-it.each(['malformed', 'empty', 'detach-failure'])(
+it.each(['malformed', 'empty', 'detach-failure', 'category-cancel'])(
   'drains the page before browser disposal through nativeMain, actual adapter and dispatcher: %s',
   async (mode) => {
     state.calls.length = 0;
     state.closed = false;
     state.detachFails = mode === 'detach-failure';
-    state.categories = mode === 'empty' ? nativeCategoryReceipt.response : { categories: [null], unknown: 'retained raw reply' };
+    state.categoryCancel = mode === 'category-cancel';
+    state.categories =
+      mode === 'empty' || state.categoryCancel
+        ? { ...nativeCategoryReceipt.response, unknown: { retained: 'worker category reply' } }
+        : { categories: [null], unknown: 'retained raw reply' };
     const root = realpathSync(mkdtempSync(join(tmpdir(), 't13-worker-drain-')));
     for (const dir of ['capture', 'fallback', 'consumption']) mkdirSync(join(root, dir));
     const grant = {
@@ -151,9 +164,13 @@ it.each(['malformed', 'empty', 'detach-failure'])(
         },
       },
     });
+    const listeners = process.listenerCount('SIGTERM');
     await expect(nativeMain(['--owned', path, sha256(raw)])).rejects.toThrow('adapter failed');
+    expect(process.listenerCount('SIGTERM')).toBe(listeners);
     const packet = JSON.parse(readFileSync(join(root, 'capture/packet.json'), 'utf8'));
-    expect(packet.failure).toContain(mode === 'empty' ? 'PRIMARY_PREPARE' : 'Malformed category receipt');
+    expect(packet.failure).toContain(
+      state.categoryCancel ? 'External observer cancellation' : mode === 'empty' ? 'PRIMARY_PREPARE' : 'Malformed category receipt',
+    );
     expect(packet.steps[0].receipt.categories).toEqual(state.categories);
     expect(packet.status).toBe('failed');
     expect(packet.summary).toBeNull();
@@ -163,6 +180,12 @@ it.each(['malformed', 'empty', 'detach-failure'])(
     expect(state.calls.lastIndexOf('probe.cancel')).toBeLessThan(state.calls.indexOf('browser.close'));
     expect(state.calls.slice(-3)).toEqual(['browser.close', 'server.close', 'vite.stop']);
     expect(state.calls.filter((x) => x === 'browser.close')).toHaveLength(1);
+    if (state.categoryCancel) {
+      expect(packet.totals.preparations).toBe(0);
+      expect(packet.steps[0].prepare).toBeNull();
+      expect(packet.steps[0].receipt.categoryDiscovery.status).toBe('unrequested');
+      expect(state.calls).not.toContain('probe.prepare');
+    }
     if (mode === 'empty') {
       expect(state.calls).toContain('IO.close');
       expect(packet.steps[0].prepare.value.unknown).toBe('partial CPU producer');
