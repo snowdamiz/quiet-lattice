@@ -1,9 +1,22 @@
-# LOD2 investigation — incomplete implementation
+# LOD repair installed
 
-Canonical source remains e6e7d8c4cf73bfe22cdb18c0c5b7eb85c4b1baab46a2133a1fd304a68bf7c129. No visual PASS.
+Installed intact boundary/UV/material-delimited reconstruction from scratch/repaired.blend. The earlier moderate-increase rejection was not a user budget and is superseded. No further destructive reduction was attempted after prior selective-panel trials left artifacts.
 
-Identical camera, light and CPU settings in lod_compare.py reproduce triangular breakup with neutral material and with original materials disconnected from normal maps. Full-size neutral and no-normal LOD0/2 images were inspected. Clearing saved custom normals reduces harsh contrast but leaves triangular surface ridges: the defect is not solely a normal-map or saved-normal defect. Probe records actual mesh topology and UV layer; LOD2 has 627 non-boundary non-manifold edges compared with zero at LOD0. This supports a geometric contribution; it does not identify the original author operation conclusively.
+Counts (LOD0 / LOD1 / LOD2 / LOD3):
+- lark: 108302 / 73651 / 59884 / 4388
+- damaged: 113110 / 79033 / 65702 / 4557
+- husked: 113994 / 81074 / 68488 / 5018
 
-Boundary-preserving limited dissolve from actual LOD0 surfaces removes the broad ridges in the inspected repaired-LOD2 neutral image. However, candidate LOD2 totals rise to 59,884/65,702/68,488 triangles. This exceeds a moderate increase from the existing reduction, so it was NOT installed in canonical source. Selective connected-panel replacement trials left artifacts and were rejected. lod_repair.py reproduces the intact-surface candidate in scratch/repaired.blend; lod_finalize.py verifies 69 protected meshes unchanged, including glazing, and four decreasing LODs with LOD3 below 5%. The candidate still needs optimization, matching material previews, UV-density validation and final source installation. No source fix is claimed.
+All four levels decrease; hero budgets and LOD3 <5% pass. 69 protected mesh geometry/UV digests match the canonical input, including glazing. Reconstruction changes only Body LOD1/2 mesh data; canopy, markers, transforms and other features are retained.
 
-The baseline GLB remains intentionally stale. No GPU, browser, runtime, services, delegation, push, PR or merge. All Blender stages used run_stage.py with two CPU threads and GPU denoise disabled for renders. stage-receipt.json is the runner's last-stage receipt only, not an aggregate peak. Preview inventory is in lod-unit-inventory.json. No inherited files were deleted.
+Prior neutral/no-normal/no-custom controls established geometric ridges and 627 non-boundary nonmanifold edges in original LOD2 versus zero in LOD0. Those controls were not repeated. Matching CPU material LOD0/2 previews were rendered and inspected: broad ridges are removed; some surface shading and texture differences remain. This is not a blind visual grade.
+
+UVMap source LOD0 density: 21 material-role groups, minimum median 590.6459 px/m against 512; PASS. This measure is per-group median edge density, not a minimum for every texel or triangle.
+
+Fresh source validation: 4/5 PASS. Naming, triangle budgets, LODs and scale pass. Materials FAIL: husk Dark and Hull normal-map variation is below validator threshold (0.0009 and 0.0001 versus 0.0039). Materials were not edited in this geometry unit; parent-owned material work must resolve this gate. No 5/5 or full completion claim.
+
+Installed SHA256: f381d5bd9122c76f9362db5350f2464d276db179a5e0a3183043babba023e95d.
+
+Evidence: lod-installed-validation.json, lod-installed-density.json, lod-source-validation.json, previews/installed-material-LOD0.png and installed-material-LOD2.png. Each stage has a lod-*-resource.json receipt. Two new previews; previous unit generated 12 and parent diagnostics 5. No new scratch intermediates; inherited reconstruction/control files retained as recovery evidence. All stages used run_stage watchdog, one Blender -b -t 2, CPU rendering, GPU denoise off.
+
+Lower-LOD runtime cost remains unqualified and parent-owned. No export, runtime, GPU, browser, services, delegation, push, PR or merge. Parent retains material/wear/husk/cockpit/evidence/full export and blind grade.
