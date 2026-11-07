@@ -277,6 +277,25 @@ def lods(rules, family, model, report):
 
 
 # ---------------------------------------------------------------------------------------------- materials
+def _imported_color_masks(mat, meshes):
+    """Prove the shader's mask on every material user, not just one mesh/LOD.
+
+    Blender imports COLOR_0 as the first colour attribute and renders that layer
+    for an unnamed Vertex Color node. Naming validates active_color, so all three
+    must identify the same attribute; a name such as 'Color' proves nothing.
+    """
+    masks = []
+    for o in meshes:
+        if not any(s.material == mat for s in o.material_slots):
+            continue
+        attrs = o.data.color_attributes
+        active = attrs.active_color
+        if active is None or active != attrs[0] or attrs.render_color_index != 0 or _color_mask_problem(o):
+            return ()
+        masks.append(active)
+    return tuple(masks)
+
+
 def material_set(rules, family, model, report):
     c = report["materials"]
     users = {}  # material pointer -> (material, [variants])
@@ -299,9 +318,10 @@ def material_set(rules, family, model, report):
     infos = {}
     for key, (m, vs) in sorted(users.items(), key=lambda kv: kv[1][0].name):
         cls = max((v.cls for v in vs), key=lambda k: rules["classes"][k]["texture"]) if vs else lib_cls
-        info = M.MaterialInfo(m)
-        infos[key] = info
         meshes = [o for v in vs for n in sorted(v.lods) for o in S.render_meshes(rules, v.lods[n])]
+        masks = _imported_color_masks(m, meshes) if model.mode == "export" and rules["families"][family].get("colorMask") else ()
+        info = M.MaterialInfo(m, masks)
+        infos[key] = info
         _check_material(rules, family, model, c, info, cls, meshes)
     # UV maps: textured materials need them, and so does every material whose AO the export bakes
     for a in model.assets:
