@@ -81,9 +81,45 @@ def _factor(node):
     return linked[0], (0.0 if k is not None and abs(k) < 1e-6 else k)
 
 
-def trace(socket):
+def _masked_image(socket, color_masks):
+    """The glTF importer's image × COLOR_0, with masks proved by the export validator."""
+    if not color_masks or not socket.is_linked or socket.node.type != "BSDF_PRINCIPLED" or socket != socket.node.inputs.get("Base Color"):
+        return None
+    link = socket.links[0]
+    node, out = link.from_node, link.from_socket
+    if node.type != "MIX" or node.data_type != "RGBA" or node.blend_type != "MULTIPLY" or node.mute or node.clamp_result:
+        return None
+    if not out.enabled or out.type != "RGBA":
+        return None
+    factor = node.inputs[0]
+    if not factor.enabled or factor.is_linked or factor.default_value != 1.0:
+        return None
+    inputs = [i for i in node.inputs if i.enabled and i.type == "RGBA"]
+    if len(inputs) != 2 or not all(i.is_linked for i in inputs):
+        return None
+    for image_socket, mask_socket in (inputs, inputs[::-1]):
+        mask_link = mask_socket.links[0]
+        mask = mask_link.from_node
+        if mask.type != "VERTEX_COLOR" or mask.mute or mask_link.from_socket != mask.outputs.get("Color"):
+            continue
+        if not mask_link.from_socket.enabled or (mask.layer_name and any(ca.name != mask.layer_name for ca in color_masks)):
+            continue
+        image_link = image_socket.links[0]
+        image_node = image_link.from_node
+        if image_node.type != "TEX_IMAGE" or image_node.mute or not image_link.from_socket.enabled or image_link.from_socket != image_node.outputs.get("Color"):
+            continue
+        channel = trace(image_socket)
+        if channel.kind == "image":
+            return channel
+    return None
+
+
+def trace(socket, color_masks=()):
     if socket is None:
         return Channel("constant", value=None)
+    masked = _masked_image(socket, color_masks)
+    if masked is not None:
+        return masked
     if not socket.is_linked:
         return Channel("constant", value=_const(socket))
     # direct routes: image -> [separate colour | normal map | reroute] -> socket
@@ -128,8 +164,9 @@ def trace(socket):
 
 
 class MaterialInfo:
-    def __init__(self, mat):
+    def __init__(self, mat, color_masks=()):
         self.mat = mat
+        self.color_masks = color_masks
         self.bsdf = None
         self.problem = None
         self.channels = {}
@@ -166,7 +203,8 @@ class MaterialInfo:
             elif self.bsdf is None:
                 self.channels[c] = Channel("constant")
             else:
-                self.channels[c] = trace(self.bsdf.inputs.get(SOCKETS[c]))
+                sock = self.bsdf.inputs.get(SOCKETS[c])
+                self.channels[c] = trace(sock, self.color_masks) if c == "baseColor" and self.color_masks else trace(sock)
         if self.bsdf is not None:
             strength = self.bsdf.inputs.get("Emission Strength")
             col = self.channels["emissive"]
