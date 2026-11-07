@@ -1,0 +1,83 @@
+{
+  "task": "P1.E14.T16",
+  "unit": "e14t16-serial-node-consumer-meshopt-unit",
+  "status": "PASS",
+  "suites_pass": true,
+  "attempt": 3,
+  "scratch": "/private/tmp/space-e14t16-serial-node-ovpDqK",
+  "receipt_sha256": "ce755a1122c339ed8aa5a28ec494a330d53e06313c4d95d345070efe6caa52fd",
+  "parent_retention": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/docs/review-records/p1-e14-t16/serial-node-ovpDqK",
+  "pins": {
+    "worktree_head": "d7430f7a4604ab0535cc5f064f4190ea708c7364",
+    "worktree_tree": "d85202d1ab952a31ce484829e464f345ead2ceaa",
+    "source_head_pin": "e11acd393201115e5fa682325fc19a463c0d539a",
+    "source_tree_pin": "3ffe09045b4d0673b7921018fb7f8a435a79b941",
+    "executable_parity_base": "2156fe66bb596f5604a26e4eea9fc88ed0a712c8",
+    "node": "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+    "deps": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab",
+    "vitest": "/Users/andreyyurlov/.t3/worktrees/space/t3-909360ab/node_modules/vitest/vitest.mjs",
+    "prep_sha256": "a85e71943366ffff70583d34d2f2222b3bc43ec9cfdb7118a926f14be29b1864",
+    "scratch_config": "/private/tmp/space-e14t16-serial-node-ovpDqK/vitest.config.mjs"
+  },
+  "steps": [
+    {
+      "label": "modelLibrary-6",
+      "exit": 0,
+      "wall_seconds": 0.3343746670288965,
+      "peak_rss_mib": 192.328125,
+      "timed_out": false,
+      "vitest_summary": [
+        "Test Files  1 passed (1)",
+        "Tests  6 passed (6)"
+      ],
+      "within_wall": true,
+      "within_rss": true
+    },
+    {
+      "label": "meshopt-4",
+      "exit": 0,
+      "wall_seconds": 0.3190627910080366,
+      "peak_rss_mib": 161.28125,
+      "timed_out": false,
+      "vitest_summary": [
+        "Test Files  1 passed (1)",
+        "Tests  4 passed (4)"
+      ],
+      "within_wall": true,
+      "within_rss": true
+    }
+  ],
+  "aggregate": {
+    "wall_seconds": 0.6537222919869237,
+    "peak_rss_mib": 192.328125,
+    "scratch_bytes_before": 3142,
+    "scratch_bytes_after": 8121,
+    "scratch_growth_mib": 0.004748344421386719,
+    "bounds": {
+      "wall_seconds": 90,
+      "peak_rss_mib": 256,
+      "scratch_mib": 64,
+      "workers": 1,
+      "disk_growth_mib_excluding_logs": 64
+    },
+    "within_wall": true,
+    "within_rss": true,
+    "within_scratch": true
+  },
+  "dependency_parity": {
+    "task_nm_unchanged": true,
+    "deps_nm_unchanged": true,
+    "deps_client_unchanged": true,
+    "deps_tools_unchanged": true,
+    "locks_unchanged": true,
+    "worktree_clean": true,
+    "no_task_vitest_pollution": true,
+    "task_pollution_paths": []
+  },
+  "broader_native_integration_claim": false,
+  "launcher_notes": "scratch vitest.config.mjs with absolute vitest/config import + resolve aliases for three/addons, @astra/shared, meshopt stack; drop --minWorkers; no-cache into scratch",
+  "prior_attempts_retained": [
+    "/private/tmp/space-e14t16-serial-node-Uuc4u6",
+    "/private/tmp/space-e14t16-serial-node-5lvjw8"
+  ]
+}
