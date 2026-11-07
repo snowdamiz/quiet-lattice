@@ -19,7 +19,7 @@ from pathlib import Path
 import bpy
 from mathutils import Matrix, Vector
 
-from . import bake, core, glb, ktx, lods, meshopt
+from . import bake, core, exact_masks, glb, ktx, lods, meshopt
 from . import checks as C
 from . import materials as M
 from . import rules as R
@@ -110,7 +110,8 @@ def export_one(rules, family, src, out, args):
     tmpdir = Path(tempfile.mkdtemp(prefix="art-export-"))
     try:
         tmp = tmpdir / out.name
-        _write(roots, tmp)
+        with exact_masks.preserve(exact_masks.required(rules, family)):
+            _write(roots, tmp)
         glb.finalize(tmp, names)
         textures = ktx.settings(rules, family).get("compress", False) if args.compress is None else args.compress
         geometry = meshopt.settings(rules, family).get("compress", False) if args.compress is None else args.compress

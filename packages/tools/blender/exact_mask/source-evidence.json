@@ -1,0 +1,141 @@
+{
+  "task": "P1.E14.T16",
+  "status": "SOURCE_CHECKPOINT_NATIVE_PENDING",
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+  "branch": "task/P1-E14-T16-exact-masks",
+  "base_head": "3888f189b16bd9ce70d914eebce3260750ca475d",
+  "base_tree": "00909cfc9b45153e3e18eefbca3227b3b00a30b5",
+  "commands": [
+    {
+      "label": "red-packing",
+      "command": [
+        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
+        "-B",
+        "packages/tools/blender/exact_mask/cpu_test.py",
+        "--backend",
+        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2",
+        "--baseline"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 1,
+      "seconds": 0.06673312501516193,
+      "output": "test_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... FAIL\n\n======================================================================\nFAIL: test_exact_float_rgba (__main__.Packing.test_exact_float_rgba)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187/packages/tools/blender/exact_mask/cpu_test.py\", line 29, in test_exact_float_rgba\n    self.assertEqual(out.component_type, 5126)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 5123 != 5126\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nFAILED (failures=1)\n"
+    },
+    {
+      "label": "green-cpu",
+      "command": [
+        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
+        "-B",
+        "packages/tools/blender/exact_mask/cpu_test.py",
+        "--backend",
+        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.09150354197481647,
+      "output": "test_all_primitives_lods_and_materials (__main__.Formats.test_all_primitives_lods_and_materials) ... ok\ntest_compression_opt_out_does_not_waive_format (__main__.Formats.test_compression_opt_out_does_not_waive_format) ... ok\ntest_family_scope (__main__.Formats.test_family_scope) ... ok\ntest_float_rgba_and_explicit_false (__main__.Formats.test_float_rgba_and_explicit_false) ... ok\ntest_incompatible_formats (__main__.Formats.test_incompatible_formats) ... ok\ntest_missing_and_invalid_accessor (__main__.Formats.test_missing_and_invalid_accessor) ... ok\ntest_only_collider_node_is_excluded_even_for_shared_mesh (__main__.Formats.test_only_collider_node_is_excluded_even_for_shared_mesh) ... ok\ntest_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... ok\ntest_missing_mask_does_not_change_collider (__main__.Packing.test_missing_mask_does_not_change_collider) ... ok\ntest_ordinary_export_remains_uint16 (__main__.Packing.test_ordinary_export_remains_uint16) ... ok\ntest_original_descriptors_and_arrays_unchanged (__main__.Packing.test_original_descriptors_and_arrays_unchanged) ... ok\ntest_other_attributes_unchanged (__main__.Packing.test_other_attributes_unchanged) ... ok\ntest_reject_already_integer_wrong_shape_and_type (__main__.Packing.test_reject_already_integer_wrong_shape_and_type) ... ok\ntest_restore_on_success_exception_and_nested_scope (__main__.Packing.test_restore_on_success_exception_and_nested_scope) ... ok\ntest_restore_when_real_packer_extension_raises (__main__.Packing.test_restore_when_real_packer_extension_raises) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.023s\n\nOK\n"
+    },
+    {
+      "label": "final-static",
+      "command": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/tmp/space-e14t16-source-2wuGqU/static.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.06636920798337087,
+      "output": "{\"python_parsed\": 6, \"material_validation_515ba1f_exact\": true, \"contracts_compressor_consumer_unchanged\": true}\n"
+    },
+    {
+      "label": "final-cpu",
+      "command": [
+        "/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13",
+        "-B",
+        "packages/tools/blender/exact_mask/cpu_test.py",
+        "--backend",
+        "/Applications/Blender.app/Contents/Resources/5.2/scripts/addons_core/io_scene_gltf2"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.20471129100769758,
+      "output": "test_all_primitives_lods_and_materials (__main__.Formats.test_all_primitives_lods_and_materials) ... ok\ntest_compression_opt_out_does_not_waive_format (__main__.Formats.test_compression_opt_out_does_not_waive_format) ... ok\ntest_family_scope (__main__.Formats.test_family_scope) ... ok\ntest_float_rgba_and_explicit_false (__main__.Formats.test_float_rgba_and_explicit_false) ... ok\ntest_incompatible_formats (__main__.Formats.test_incompatible_formats) ... ok\ntest_missing_and_invalid_accessor (__main__.Formats.test_missing_and_invalid_accessor) ... ok\ntest_only_collider_node_is_excluded_even_for_shared_mesh (__main__.Formats.test_only_collider_node_is_excluded_even_for_shared_mesh) ... ok\ntest_exact_float_rgba (__main__.Packing.test_exact_float_rgba) ... ok\ntest_missing_mask_does_not_change_collider (__main__.Packing.test_missing_mask_does_not_change_collider) ... ok\ntest_ordinary_export_remains_uint16 (__main__.Packing.test_ordinary_export_remains_uint16) ... ok\ntest_original_descriptors_and_arrays_unchanged (__main__.Packing.test_original_descriptors_and_arrays_unchanged) ... ok\ntest_other_attributes_unchanged (__main__.Packing.test_other_attributes_unchanged) ... ok\ntest_reject_already_integer_wrong_shape_and_type (__main__.Packing.test_reject_already_integer_wrong_shape_and_type) ... ok\ntest_restore_on_success_exception_and_nested_scope (__main__.Packing.test_restore_on_success_exception_and_nested_scope) ... ok\ntest_restore_when_real_packer_extension_raises (__main__.Packing.test_restore_when_real_packer_extension_raises) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.025s\n\nOK\n"
+    },
+    {
+      "label": "consumer-syntax",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "--check",
+        "packages/tools/blender/exact_mask/consumer.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.022705167008098215,
+      "output": ""
+    },
+    {
+      "label": "resolver-syntax",
+      "command": [
+        "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+        "--check",
+        "packages/tools/blender/exact_mask/dependencies.mjs"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.020197874982841313,
+      "output": ""
+    },
+    {
+      "label": "launcher-syntax",
+      "command": [
+        "/bin/bash",
+        "-n",
+        "packages/tools/blender/exact_mask/run_boundary.sh"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.002599624975118786,
+      "output": ""
+    },
+    {
+      "label": "affected-candidates",
+      "command": [
+        "/opt/homebrew/bin/python3",
+        "-B",
+        "/tmp/space-e14t16-source-2wuGqU/audit.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+      "exit": 0,
+      "seconds": 0.057922666950616986,
+      "output": "biped.glb Counter({\"(5123, 'VEC4', True)\": 36}) f9294a466d6223f695f102dc1a13ed526f155e67\nflyer.glb Counter({\"(5123, 'VEC4', True)\": 36}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_grazer.glb Counter({\"(5123, 'VEC4', True)\": 16}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_heavy.glb Counter({\"(5123, 'VEC4', True)\": 24}) f9294a466d6223f695f102dc1a13ed526f155e67\nquad_small.glb Counter({\"(5123, 'VEC4', True)\": 24}) f9294a466d6223f695f102dc1a13ed526f155e67\noutpost_drone.glb Counter() f9294a466d6223f695f102dc1a13ed526f155e67\noutpost_overseer.glb Counter() f9294a466d6223f695f102dc1a13ed526f155e67\ntree_blob_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_cactus_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_conifer_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_coral_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_mushroom_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_palm_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_round_t04.glb Counter({\"(5126, 'VEC4', False)\": 12}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\ntree_spiral_t04.glb Counter({\"(5126, 'VEC4', False)\": 8}) 70f8a164614ad9cf370e448a081603bfc4fa1cf4\nnon_tree_foliage.glb Counter({\"(5126, 'VEC4', False)\": 36}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\nnon_tree_resources.glb Counter({\"(5126, 'VEC4', False)\": 48}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\nnon_tree_stone.glb Counter({\"(5126, 'VEC4', False)\": 40}) a46e7c4d444befd6efe6e06b9134b3a41abcb639\n"
+    }
+  ],
+  "affected_candidates": {
+    "command": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "/tmp/space-e14t16-source-2wuGqU/audit.py"
+    ],
+    "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-2f3dd187",
+    "exit": 0,
+    "seconds": 0.057922666950616986
+  },
+  "dependency_snapshot": {
+    "before": "/tmp/space-e14t16-source-2wuGqU/before.json",
+    "after": "/tmp/space-e14t16-source-2wuGqU/after.json",
+    "equal": true,
+    "sha256": "d4c733039f979e9c625efce58b92ab51ddf73ed28a98a2bd778676bc3216b479",
+    "scope": "126 installed backend .py files, local node_modules presence/symlinks, ignored file list, lockfile/root/tools package files; no shared Node dependencies executed",
+    "observed_mutation": false
+  },
+  "red_test_sha256": "0ff4344c0c725fc26954afe02280d1300496f0cd7acc194c8a5d0304f81fa008",
+  "trigger_sha256": "e0f017545582804d4dc1624529388ec63ef4dc83bf5ec2d5f75ebbdd355ce3b5",
+  "pending": [
+    "actual saved-source Blender export",
+    "stock meshopt codec and actual GLTFLoader consumer",
+    "existing pipeline/515ba1f material regressions",
+    "fresh independent review",
+    "parent integration checks"
+  ],
+  "limits": "CPU packer test uses real installed pure Python modules but no bpy runtime, mesh extraction, codecs or loader; no asset regeneration, installs, dependency links, services, GPU, nested agents, push, PR or merge."
+}

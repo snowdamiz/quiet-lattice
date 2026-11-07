@@ -5,7 +5,7 @@ from pathlib import Path
 import bpy
 import numpy as np
 
-from . import ktx, meshopt
+from . import exact_masks, ktx, meshopt
 from . import materials as M
 from . import rules as R
 from . import scene as S
@@ -521,6 +521,8 @@ def geometry(rules, family, model, report, path, compressed, legacy=False):
     c = report["triangles"]
     try:
         info = meshopt.inspect(path)
+        for subject, message in exact_masks.format_problems(rules, family, path):
+            c.fail(subject, message)
     except Exception as e:  # a .glb the importer read but whose JSON cannot be parsed
         c.fail(Path(path).name, f"cannot read its buffers: {e}")
         return
