@@ -1,0 +1,1117 @@
+[
+  {
+    "mode": "permission",
+    "status": "DEFECT_REPRODUCED",
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": false,
+          "kernel": {
+            "live": 0,
+            "coalition_absent": true
+          },
+          "members": [],
+          "births": [
+            {
+              "pid": 214000001,
+              "recorded": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 17538,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "current": null
+            }
+          ],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.94506eaeeefe4869aea52a78e84e0b26"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "REGISTRATION_ABSENT",
+          "registrationStderr": "",
+          "scratchAbsent": false,
+          "privateTmpAbsent": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Owned scratch namespace remains",
+            "details": {}
+          }
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Owned scratch namespace remains",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "AssertionError",
+          "message": "Attempt cleanup remains unproved: /private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "TerminalAttemptAccountingFailure",
+          "message": "Every allocation attempt requires its own positive terminal audit",
+          "attempts": 1,
+          "handles": 1,
+          "audits": 1
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.01278516702586785,
+      "outputBytes": 0,
+      "freeBytesAfter": 38392578048,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "AssertionError",
+              "message": "",
+              "details": {}
+            },
+            "cleanupFailure": {
+              "type": "AssertionError",
+              "message": "Owned drain did not prove clean release",
+              "details": {}
+            },
+            "persistenceFailures": [],
+            "terminal": null,
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/private",
+              "admission": {
+                "ownedFixture": true
+              }
+            },
+            "bootstrapObservations": [
+              {
+                "argv": [
+                  "/bin/launchctl",
+                  "bootstrap",
+                  "gui/501",
+                  "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj/job.plist"
+                ],
+                "registrationUncertain": true,
+                "result": {
+                  "args": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj/job.plist"
+                  ],
+                  "returncode": 0,
+                  "stdout": "BOOT_OK",
+                  "stderr": ""
+                }
+              }
+            ],
+            "bootstrapPortRestored": true,
+            "actualExecutables": {
+              "214000001:1:2:501": {
+                "identity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 17538,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 17538,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "executable": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary",
+                "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              }
+            },
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 271093.083861583,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "members": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "214000001": 4096
+                  },
+                  "stdout": "214000001 4\n",
+                  "stderr": ""
+                },
+                "after": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "aggregateBytes": 4096,
+                "accepted": true
+              }
+            ],
+            "outcome": "observer_failed",
+            "exits": {},
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj",
+              "target": "gui/501/local.stations.round4.94506eaeeefe4869aea52a78e84e0b26",
+              "coalition_id": "123",
+              "registered": "True"
+            },
+            "drain": {
+              "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+              "exits": {
+                "capture": 0,
+                "caffeinate": 0
+              },
+              "errors": [
+                "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary'"
+              ],
+              "signals": [],
+              "drained": true,
+              "clean": false,
+              "stage": "native-189-encode",
+              "readiness_sha256": "90d59e241c49369570db0fe5bc5fe972192a05e7726c0a77d39aec197ed8ccf4",
+              "kernel_before_launch": {
+                "live": 1,
+                "coalition_absent": false
+              },
+              "kernel_before_root_release": {
+                "live": 1,
+                "coalition_absent": false
+              },
+              "kernel_terminal": {
+                "live": 0,
+                "coalition_absent": true
+              },
+              "remaining": [],
+              "elapsed_cleanup_seconds": 0.004097500001080334
+            },
+            "drainMembers": [],
+            "drainKernel": {
+              "live": 0,
+              "coalition_absent": true
+            },
+            "releaseAudits": []
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "ccc2b4d6aae84eb81e2c744e6223e4805bd4e88cfb78ff6c463d0ac1cb403470"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/result.json",
+          "status": "written",
+          "sha256": "d528dd002d359d5122d9cfc02c1eca4dcff678b7f340a540fd17fef9d436c18a",
+          "bytes": 9384
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "ff6da5a4bb50e01d4be31d785ead46afee7c87b130b84f481ebf25a52030da6c",
+          "bytes": 9482
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "cleanupFailure": {
+        "type": "AssertionError",
+        "message": "Owned drain did not prove clean release",
+        "details": {}
+      },
+      "persistenceFailures": [],
+      "terminal": null,
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/private",
+        "admission": {
+          "ownedFixture": true
+        }
+      },
+      "bootstrapObservations": [
+        {
+          "argv": [
+            "/bin/launchctl",
+            "bootstrap",
+            "gui/501",
+            "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj/job.plist"
+          ],
+          "registrationUncertain": true,
+          "result": {
+            "args": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj/job.plist"
+            ],
+            "returncode": 0,
+            "stdout": "BOOT_OK",
+            "stderr": ""
+          }
+        }
+      ],
+      "bootstrapPortRestored": true,
+      "actualExecutables": {
+        "214000001:1:2:501": {
+          "identity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 17538,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 17538,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "executable": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary",
+          "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        }
+      },
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 271093.083861583,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "before": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "214000001": 4096
+            },
+            "stdout": "214000001 4\n",
+            "stderr": ""
+          },
+          "after": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "kernelAfter": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "aggregateBytes": 4096,
+          "accepted": true
+        }
+      ],
+      "outcome": "observer_failed",
+      "exits": {},
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj",
+        "target": "gui/501/local.stations.round4.94506eaeeefe4869aea52a78e84e0b26",
+        "coalition_id": "123",
+        "registered": "True"
+      },
+      "drain": {
+        "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+        "exits": {
+          "capture": 0,
+          "caffeinate": 0
+        },
+        "errors": [
+          "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary'"
+        ],
+        "signals": [],
+        "drained": true,
+        "clean": false,
+        "stage": "native-189-encode",
+        "readiness_sha256": "90d59e241c49369570db0fe5bc5fe972192a05e7726c0a77d39aec197ed8ccf4",
+        "kernel_before_launch": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_before_root_release": {
+          "live": 1,
+          "coalition_absent": false
+        },
+        "kernel_terminal": {
+          "live": 0,
+          "coalition_absent": true
+        },
+        "remaining": [],
+        "elapsed_cleanup_seconds": 0.004097500001080334
+      },
+      "drainMembers": [],
+      "drainKernel": {
+        "live": 0,
+        "coalition_absent": true
+      },
+      "releaseAudits": []
+    },
+    "oracle": [
+      {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary'",
+        "errno": 13,
+        "filename": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary",
+        "args": [
+          13,
+          "Permission denied"
+        ]
+      }
+    ],
+    "helperState": {
+      "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+      "exits": {
+        "capture": 0,
+        "caffeinate": 0
+      },
+      "errors": [
+        "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/binary'"
+      ],
+      "signals": [],
+      "drained": true,
+      "clean": false,
+      "stage": "native-189-encode",
+      "readiness_sha256": "90d59e241c49369570db0fe5bc5fe972192a05e7726c0a77d39aec197ed8ccf4",
+      "kernel_before_launch": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "kernel_before_root_release": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "kernel_terminal": {
+        "live": 0,
+        "coalition_absent": true
+      },
+      "remaining": [],
+      "elapsed_cleanup_seconds": 0.004097500001080334
+    },
+    "events": [
+      [
+        "/bin/launchctl",
+        "bootstrap",
+        "gui/501",
+        "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission/stations-round4-owned-z1n7yvbj/job.plist"
+      ],
+      [
+        "/bin/ps",
+        "-p",
+        "214000001",
+        "-o",
+        "pid=,rss="
+      ],
+      "binary-denied-after-initial-observation",
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.94506eaeeefe4869aea52a78e84e0b26"
+      ]
+    ],
+    "nativeProcesses": 0
+  },
+  {
+    "mode": "permission-save",
+    "status": "DEFECT_REPRODUCED",
+    "result": {
+      "status": "HOLD",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+        "details": {}
+      },
+      "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+      "runtimeAuthorization": false,
+      "dispatchFailure": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "terminalAudit": [
+        {
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "releaseProved": false,
+          "kernel": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "births": [
+            {
+              "pid": 214000001,
+              "recorded": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 17538,
+                "pgid": 214000001,
+                "sid": 214000001
+              },
+              "current": {
+                "pid": 214000001,
+                "birth": [
+                  1,
+                  2
+                ],
+                "uid": 501,
+                "status": 1,
+                "ppid": 17538,
+                "pgid": 214000001,
+                "sid": 214000001
+              }
+            }
+          ],
+          "registrationArgv": [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.878c73e5cab04436b6886347c23ee776"
+          ],
+          "registrationExit": 1,
+          "registrationStdout": "REGISTRATION_ABSENT",
+          "registrationStderr": "",
+          "scratchAbsent": false,
+          "privateTmpAbsent": false,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Kernel coalition has live tasks",
+            "details": {}
+          }
+        }
+      ],
+      "terminalAuditFailures": [
+        {
+          "type": "AssertionError",
+          "message": "Kernel coalition has live tasks",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "AssertionError",
+          "message": "Attempt cleanup remains unproved: /private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "details": {},
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json"
+        },
+        {
+          "type": "TerminalAttemptAccountingFailure",
+          "message": "Every allocation attempt requires its own positive terminal audit",
+          "attempts": 1,
+          "handles": 1,
+          "audits": 1
+        }
+      ],
+      "nativeJobs": 1,
+      "pipelineSeconds": 0.00905533303739503,
+      "outputBytes": 0,
+      "freeBytesAfter": 38391865344,
+      "terminalReleaseProved": false,
+      "receiptFallbacks": [
+        {
+          "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "receipt": {
+            "name": "native-189-encode",
+            "primaryFailure": {
+              "type": "OSError",
+              "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+              "details": {}
+            },
+            "cleanupFailure": {
+              "type": "OSError",
+              "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+              "details": {}
+            },
+            "persistenceFailures": [],
+            "terminal": null,
+            "argv": [
+              "/INERT"
+            ],
+            "phase": "start",
+            "privateTmp": {
+              "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/private",
+              "admission": {
+                "ownedFixture": true
+              }
+            },
+            "bootstrapObservations": [
+              {
+                "argv": [
+                  "/bin/launchctl",
+                  "bootstrap",
+                  "gui/501",
+                  "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt/job.plist"
+                ],
+                "registrationUncertain": true,
+                "result": {
+                  "args": [
+                    "/bin/launchctl",
+                    "bootstrap",
+                    "gui/501",
+                    "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt/job.plist"
+                  ],
+                  "returncode": 0,
+                  "stdout": "BOOT_OK",
+                  "stderr": ""
+                }
+              }
+            ],
+            "bootstrapPortRestored": true,
+            "actualExecutables": {
+              "214000001:1:2:501": {
+                "identity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 17538,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "memberIdentity": {
+                  "pid": 214000001,
+                  "birth": [
+                    1,
+                    2
+                  ],
+                  "uid": 501,
+                  "status": 1,
+                  "ppid": 17538,
+                  "pgid": 214000001,
+                  "sid": 214000001
+                },
+                "executable": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/binary",
+                "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+              }
+            },
+            "observerEvents": [],
+            "rssObservations": [
+              {
+                "monotonic": 271093.099107625,
+                "limitBytes": 8589934592,
+                "quota": false,
+                "kernelBefore": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "members": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "before": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "rss": {
+                  "bytesByPid": {
+                    "214000001": 4096
+                  },
+                  "stdout": "214000001 4\n",
+                  "stderr": ""
+                },
+                "after": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "membersAfter": [
+                  {
+                    "pid": 214000001,
+                    "birth": [
+                      1,
+                      2
+                    ],
+                    "uid": 501,
+                    "status": 1,
+                    "ppid": 17538,
+                    "pgid": 214000001,
+                    "sid": 214000001
+                  }
+                ],
+                "kernelAfter": {
+                  "live": 1,
+                  "coalition_absent": false
+                },
+                "aggregateBytes": 4096,
+                "accepted": true
+              }
+            ],
+            "ownedAllocation": {
+              "out": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/owned-job",
+              "scratch": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt",
+              "target": "gui/501/local.stations.round4.878c73e5cab04436b6886347c23ee776",
+              "coalition_id": "123",
+              "registered": "True"
+            },
+            "releaseAudits": []
+          }
+        }
+      ],
+      "jobs": [
+        {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/receipt.json",
+          "sha256": "9f11e1f8f733fb554f0e84d779f9d501c3f3151c3cc2c6c5c98f6b4cc0a7265e"
+        }
+      ],
+      "terminalPersistenceFailures": [],
+      "terminalDelivery": {
+        "proof": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/result.json",
+          "status": "written",
+          "sha256": "ef9f3249c52f487296c78ca69d5a1723dea0db1c91f94d7e4112fc8c375fed8d",
+          "bytes": 8806
+        },
+        "packet": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/packet/integration-result.json",
+          "status": "written",
+          "completeObservations": true,
+          "sha256": "afa143ab58a90392d8475b987125838dd48ac09ad4348f2fb546b08ff50c7e5e",
+          "bytes": 8904
+        },
+        "completeObservationsPersisted": true,
+        "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+      }
+    },
+    "receipt": {
+      "name": "native-189-encode",
+      "primaryFailure": {
+        "type": "OSError",
+        "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+        "details": {}
+      },
+      "cleanupFailure": {
+        "type": "OSError",
+        "message": "SECONDARY_WAIT_RECEIPT_WRITE",
+        "details": {}
+      },
+      "persistenceFailures": [],
+      "terminal": null,
+      "argv": [
+        "/INERT"
+      ],
+      "phase": "start",
+      "privateTmp": {
+        "path": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/private",
+        "admission": {
+          "ownedFixture": true
+        }
+      },
+      "bootstrapObservations": [
+        {
+          "argv": [
+            "/bin/launchctl",
+            "bootstrap",
+            "gui/501",
+            "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt/job.plist"
+          ],
+          "registrationUncertain": true,
+          "result": {
+            "args": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt/job.plist"
+            ],
+            "returncode": 0,
+            "stdout": "BOOT_OK",
+            "stderr": ""
+          }
+        }
+      ],
+      "bootstrapPortRestored": true,
+      "actualExecutables": {
+        "214000001:1:2:501": {
+          "identity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 17538,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "memberIdentity": {
+            "pid": 214000001,
+            "birth": [
+              1,
+              2
+            ],
+            "uid": 501,
+            "status": 1,
+            "ppid": 17538,
+            "pgid": 214000001,
+            "sid": 214000001
+          },
+          "executable": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/binary",
+          "sha256": "cd3ee7a44b8804a40bc077e8d0c535c3153b6b865419d1581ecbbe446ba0d2fa"
+        }
+      },
+      "observerEvents": [],
+      "rssObservations": [
+        {
+          "monotonic": 271093.099107625,
+          "limitBytes": 8589934592,
+          "quota": false,
+          "kernelBefore": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "members": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "before": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "rss": {
+            "bytesByPid": {
+              "214000001": 4096
+            },
+            "stdout": "214000001 4\n",
+            "stderr": ""
+          },
+          "after": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "membersAfter": [
+            {
+              "pid": 214000001,
+              "birth": [
+                1,
+                2
+              ],
+              "uid": 501,
+              "status": 1,
+              "ppid": 17538,
+              "pgid": 214000001,
+              "sid": 214000001
+            }
+          ],
+          "kernelAfter": {
+            "live": 1,
+            "coalition_absent": false
+          },
+          "aggregateBytes": 4096,
+          "accepted": true
+        }
+      ],
+      "ownedAllocation": {
+        "out": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/proof/jobs/native-189-encode/owned-job",
+        "scratch": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt",
+        "target": "gui/501/local.stations.round4.878c73e5cab04436b6886347c23ee776",
+        "coalition_id": "123",
+        "registered": "True"
+      },
+      "releaseAudits": []
+    },
+    "oracle": [
+      {
+        "type": "PermissionError",
+        "message": "[Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/binary'",
+        "errno": 13,
+        "filename": "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/binary",
+        "args": [
+          13,
+          "Permission denied"
+        ]
+      }
+    ],
+    "helperState": {
+      "scope": "THALUNE_RUN_2X189_8_STILLS_SOURCE_CANDIDATE",
+      "exits": {},
+      "errors": [
+        "PermissionError: [Errno 13] Permission denied: '/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/binary'",
+        "OSError: SECONDARY_WAIT_RECEIPT_WRITE"
+      ],
+      "signals": [],
+      "drained": false,
+      "clean": false,
+      "stage": "native-189-encode",
+      "readiness_sha256": "90d59e241c49369570db0fe5bc5fe972192a05e7726c0a77d39aec197ed8ccf4",
+      "kernel_before_launch": {
+        "live": 1,
+        "coalition_absent": false
+      },
+      "elapsed_cleanup_seconds": 0.00033762503881007433
+    },
+    "events": [
+      [
+        "/bin/launchctl",
+        "bootstrap",
+        "gui/501",
+        "/private/tmp/t02-r7-correction-mue78vhy/red/observer-permission-save/stations-round4-owned-nwowapvt/job.plist"
+      ],
+      [
+        "/bin/ps",
+        "-p",
+        "214000001",
+        "-o",
+        "pid=,rss="
+      ],
+      "binary-denied-after-initial-observation",
+      [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.878c73e5cab04436b6886347c23ee776"
+      ]
+    ],
+    "nativeProcesses": 0
+  }
+]

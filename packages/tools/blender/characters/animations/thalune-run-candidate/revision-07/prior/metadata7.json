@@ -1,0 +1,257 @@
+{
+  "controls": [
+    {
+      "mode": "replace-after-read",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/replace-after-read.json",
+      "reads": [
+        {
+          "requested": 2097153,
+          "returned": 293
+        }
+      ],
+      "error": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "snapshot": {
+        "value": {
+          "primaryFailure": {
+            "type": "ORIGINAL_FAILURE",
+            "unknown": {
+              "keep": 17
+            }
+          },
+          "cleanupFailure": null,
+          "persistenceFailures": [],
+          "outcome": "completed",
+          "exits": {
+            "capture": 0
+          },
+          "terminal": {
+            "registrationAbsent": true,
+            "scratchAndTmpAbsent": true,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true
+            }
+          }
+        },
+        "sha256": "bdafa6fb2767db442e19d3475fc37da6caf3e617a08a4189ca2c0685d72f9b33",
+        "bytes": 293,
+        "observation": {
+          "path": "/private/tmp/t02-json-controls-puf4iv9y/replace-after-read.json",
+          "limitBytes": 2097152,
+          "readBytes": 293,
+          "before": {
+            "mode": 33188,
+            "bytes": 293,
+            "dev": 16777232,
+            "ino": 485818449
+          },
+          "sha256": "bdafa6fb2767db442e19d3475fc37da6caf3e617a08a4189ca2c0685d72f9b33"
+        }
+      }
+    },
+    {
+      "mode": "oversized",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/oversized.json",
+      "reads": [],
+      "error": {
+        "type": "AssertionError",
+        "message": "Admission JSON type/size refused before read",
+        "details": {
+          "admissionObservation": {
+            "path": "/private/tmp/t02-json-controls-puf4iv9y/oversized.json",
+            "limitBytes": 2097152,
+            "readBytes": 0,
+            "before": {
+              "mode": 33188,
+              "bytes": 8388608,
+              "dev": 16777232,
+              "ino": 485818451
+            }
+          }
+        }
+      },
+      "snapshot": null
+    },
+    {
+      "mode": "growth",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/growth.json",
+      "reads": [
+        {
+          "requested": 2097153,
+          "returned": 2097153
+        }
+      ],
+      "error": {
+        "type": "AssertionError",
+        "message": "Admission JSON grew/truncated",
+        "details": {
+          "admissionObservation": {
+            "path": "/private/tmp/t02-json-controls-puf4iv9y/growth.json",
+            "limitBytes": 2097152,
+            "readBytes": 2097153,
+            "before": {
+              "mode": 33188,
+              "bytes": 293,
+              "dev": 16777232,
+              "ino": 485818452
+            }
+          }
+        }
+      },
+      "snapshot": null
+    },
+    {
+      "mode": "symlink",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/symlink.json",
+      "reads": [],
+      "error": {
+        "type": "AssertionError",
+        "message": "Admission JSON type/size refused before read",
+        "details": {
+          "admissionObservation": {
+            "path": "/private/tmp/t02-json-controls-puf4iv9y/symlink.json",
+            "limitBytes": 2097152,
+            "readBytes": 0,
+            "before": {
+              "mode": 41453,
+              "bytes": 47,
+              "dev": 16777232,
+              "ino": 485818454
+            }
+          }
+        }
+      },
+      "snapshot": null
+    },
+    {
+      "mode": "fifo",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/fifo.json",
+      "reads": [],
+      "error": {
+        "type": "AssertionError",
+        "message": "Admission JSON type/size refused before read",
+        "details": {
+          "admissionObservation": {
+            "path": "/private/tmp/t02-json-controls-puf4iv9y/fifo.json",
+            "limitBytes": 2097152,
+            "readBytes": 0,
+            "before": {
+              "mode": 4516,
+              "bytes": 0,
+              "dev": 16777232,
+              "ino": 485818456
+            }
+          }
+        }
+      },
+      "snapshot": null
+    },
+    {
+      "mode": "exit-bool",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/exit-bool.json",
+      "reads": [
+        {
+          "requested": 2097153,
+          "returned": 248
+        }
+      ],
+      "error": {
+        "type": "AssertionError",
+        "message": "Parent-observed worker exit is not exact zero",
+        "details": {}
+      },
+      "snapshot": {
+        "value": {
+          "primaryFailure": null,
+          "cleanupFailure": null,
+          "persistenceFailures": [],
+          "outcome": "completed",
+          "exits": {
+            "capture": false
+          },
+          "terminal": {
+            "registrationAbsent": true,
+            "scratchAndTmpAbsent": true,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true
+            }
+          }
+        },
+        "sha256": "943b17180cd1e9b95e55ebf017a3651f52b95508e54e53b4b96b04b3f1969c88",
+        "bytes": 248,
+        "observation": {
+          "path": "/private/tmp/t02-json-controls-puf4iv9y/exit-bool.json",
+          "limitBytes": 2097152,
+          "readBytes": 248,
+          "before": {
+            "mode": 33188,
+            "bytes": 248,
+            "dev": 16777232,
+            "ino": 485818457
+          },
+          "sha256": "943b17180cd1e9b95e55ebf017a3651f52b95508e54e53b4b96b04b3f1969c88"
+        }
+      }
+    },
+    {
+      "mode": "failed-receipt",
+      "path": "/private/tmp/t02-json-controls-puf4iv9y/failed-receipt.json",
+      "reads": [
+        {
+          "requested": 2097153,
+          "returned": 293
+        }
+      ],
+      "error": {
+        "type": "AssertionError",
+        "message": "",
+        "details": {}
+      },
+      "snapshot": {
+        "value": {
+          "primaryFailure": {
+            "type": "ORIGINAL_FAILURE",
+            "unknown": {
+              "keep": 17
+            }
+          },
+          "cleanupFailure": null,
+          "persistenceFailures": [],
+          "outcome": "completed",
+          "exits": {
+            "capture": 0
+          },
+          "terminal": {
+            "registrationAbsent": true,
+            "scratchAndTmpAbsent": true,
+            "kernel": {
+              "live": 0,
+              "coalition_absent": true
+            }
+          }
+        },
+        "sha256": "bdafa6fb2767db442e19d3475fc37da6caf3e617a08a4189ca2c0685d72f9b33",
+        "bytes": 293,
+        "observation": {
+          "path": "/private/tmp/t02-json-controls-puf4iv9y/failed-receipt.json",
+          "limitBytes": 2097152,
+          "readBytes": 293,
+          "before": {
+            "mode": 33188,
+            "bytes": 293,
+            "dev": 16777232,
+            "ino": 485818458
+          },
+          "sha256": "bdafa6fb2767db442e19d3475fc37da6caf3e617a08a4189ca2c0685d72f9b33"
+        }
+      }
+    }
+  ],
+  "count": 7,
+  "scratch": "/private/tmp/t02-json-controls-puf4iv9y"
+}

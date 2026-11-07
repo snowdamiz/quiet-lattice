@@ -1,0 +1,180 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "OSError",
+    "message": "ATTEMPT_LEDGER_FAILURE",
+    "details": {
+      "args": [
+        "ATTEMPT_LEDGER_FAILURE"
+      ],
+      "errno": null,
+      "filename": null,
+      "filename2": null
+    }
+  },
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "OSError",
+    "message": "ATTEMPT_LEDGER_FAILURE",
+    "details": {
+      "args": [
+        "ATTEMPT_LEDGER_FAILURE"
+      ],
+      "errno": null,
+      "filename": null,
+      "filename2": null
+    }
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": false,
+      "failure": {
+        "type": "AssertionError",
+        "message": "Unprovable attempted allocation",
+        "details": {
+          "args": [
+            "Unprovable attempted allocation"
+          ]
+        }
+      }
+    }
+  ],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Unprovable attempted allocation",
+      "details": {
+        "args": [
+          "Unprovable attempted allocation"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "FileNotFoundError",
+      "message": "[Errno 2] No such file or directory: '/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json'",
+      "details": {
+        "admissionObservation": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+          "limitBytes": 2097152,
+          "readBytes": 0
+        },
+        "args": [
+          2,
+          "No such file or directory"
+        ],
+        "errno": 2,
+        "filename": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+        "filename2": null
+      },
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 1,
+      "handles": 1,
+      "audits": 1
+    }
+  ],
+  "nativeJobs": 1,
+  "pipelineSeconds": 7.258402183651924e-05,
+  "outputInventory": {
+    "normalBytes": 0,
+    "reservedBytes": 0,
+    "files": 0,
+    "reservedFiles": 0,
+    "paths": [],
+    "totalBytes": 0,
+    "complete": true,
+    "enumeration": {
+      "root": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/packet",
+      "complete": true,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/packet",
+          "directories": [],
+          "files": []
+        }
+      ]
+    }
+  },
+  "outputBytes": 0,
+  "freeBytesAfter": 33670590464,
+  "terminalReleaseProved": false,
+  "receiptFallbacks": [],
+  "jobs": [],
+  "terminalPersistenceFailures": [
+    {
+      "type": "OSError",
+      "message": "PROOF_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PROOF_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "proof"
+    },
+    {
+      "type": "OSError",
+      "message": "PACKET_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PACKET_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "packet"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stdout"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stderr"
+    }
+  ],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/proof/result.json",
+      "status": "failed"
+    },
+    "packet": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/packet/integration-result.json",
+      "status": "failed"
+    },
+    "completeObservationsPersisted": false,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+    "stdout": {
+      "status": "failed"
+    },
+    "stderr": {
+      "status": "failed"
+    }
+  }
+}

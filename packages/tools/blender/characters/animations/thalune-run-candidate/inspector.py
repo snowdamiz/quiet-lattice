@@ -18,6 +18,7 @@ import sys
 import time
 import struct
 import zlib
+from inventory_boundary import paths as inventory_paths
 
 HERE=Path(__file__).resolve().parent
 READY=HERE/'readiness.json'
@@ -35,7 +36,11 @@ def write(path,value):
 def error_receipt(error):
     try:message=str(error)
     except BaseException:message='<original error could not be stringified>'
-    try:details=json.loads(json.dumps(vars(error),default=str))
+    try:
+        attributes=dict(vars(error))
+        for key in ['args','errno','filename','filename2','winerror']:
+            if hasattr(error,key):attributes.setdefault(key,getattr(error,key))
+        details=json.loads(json.dumps(attributes,default=str))
     except BaseException as secondary:details={'detailsEncodingFailure':type(secondary).__name__}
     return {'type':type(error).__name__,'message':message,'details':details}
 
@@ -43,7 +48,7 @@ def utc():return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 def tree_index(directory,exclude,allow_profile_links=False):
     rows=[]
-    for p in sorted(Path(directory).rglob('*')):
+    for p in sorted(inventory_paths(Path(directory))):
         relative=str(p.relative_to(directory))
         if p.is_symlink():
             assert allow_profile_links and 'owned-job' in p.parts,'Artifact symlink refused'
@@ -67,7 +72,7 @@ def inspect_primary_capture(stage,directory,ready,validation_directory,release_r
     whole_packet=packet_budget.inspect(packet_root)
     assert not (packet_root/'failure.json').exists(),'Reserved first failure holds primary packet'
     expected_validation={name+suffix for name in ['probe','rgb','rgba'] for suffix in ['.stdout','.stderr','-command.json']}|{'validation.json'}
-    assert {str(p.relative_to(validation_directory)) for p in validation_directory.rglob('*') if p.is_file()}==expected_validation
+    assert {str(p.relative_to(validation_directory)) for p in inventory_paths(validation_directory) if p.is_file()}==expected_validation
     spec=importlib.util.spec_from_file_location('rgb_primary_inspector',HERE/'rgb-primary.py');worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
     assert release_receipt['primaryFailure'] is None and release_receipt['cleanupFailure'] is None
     assert release_receipt['terminal']['registrationAbsent'] and release_receipt['terminal']['scratchAndTmpAbsent']

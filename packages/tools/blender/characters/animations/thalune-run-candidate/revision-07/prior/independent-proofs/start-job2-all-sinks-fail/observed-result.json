@@ -1,0 +1,367 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "RuntimeError",
+    "message": "FIRST_JOB_FAILURE",
+    "details": {
+      "future": {
+        "nested": [
+          null,
+          false,
+          17
+        ]
+      },
+      "args": [
+        "FIRST_JOB_FAILURE"
+      ]
+    }
+  },
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "OSError",
+    "message": "RETURNED_RECEIPTS_FAILURE",
+    "details": {
+      "args": [
+        "RETURNED_RECEIPTS_FAILURE"
+      ],
+      "errno": null,
+      "filename": null,
+      "filename2": null
+    }
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 1,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/motion-thalune-run-lod0"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "releaseProved": false,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 2,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/motion-thalune-run-lod2"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": false,
+      "privateTmpAbsent": false,
+      "failure": {
+        "type": "AssertionError",
+        "message": "Owned scratch namespace remains",
+        "details": {
+          "args": [
+            "Owned scratch namespace remains"
+          ]
+        }
+      }
+    }
+  ],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Owned scratch namespace remains",
+      "details": {
+        "args": [
+          "Owned scratch namespace remains"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json"
+    },
+    {
+      "type": "AssertionError",
+      "message": "Attempt cleanup remains unproved: /private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "details": {
+        "args": [
+          "Attempt cleanup remains unproved: /private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 2,
+      "handles": 2,
+      "audits": 2
+    }
+  ],
+  "nativeJobs": 2,
+  "pipelineSeconds": 0.005041124997660518,
+  "outputInventory": {
+    "normalBytes": 0,
+    "reservedBytes": 0,
+    "files": 0,
+    "reservedFiles": 0,
+    "paths": [],
+    "totalBytes": 0,
+    "complete": true,
+    "enumeration": {
+      "root": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/packet",
+      "complete": true,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/packet",
+          "directories": [],
+          "files": []
+        }
+      ]
+    }
+  },
+  "outputBytes": 0,
+  "freeBytesAfter": 33669050368,
+  "terminalReleaseProved": false,
+  "receiptFallbacks": [
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "receipt": {
+        "name": "motion-thalune-run-lod2",
+        "primaryFailure": {
+          "type": "RuntimeError",
+          "message": "FIRST_JOB_FAILURE",
+          "details": {
+            "future": {
+              "nested": [
+                null,
+                false,
+                17
+              ]
+            },
+            "args": [
+              "FIRST_JOB_FAILURE"
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "OSError",
+          "message": "SECONDARY_CLEANUP_FAILURE",
+          "details": {
+            "future": {
+              "rawCleanup": [
+                "keep",
+                false
+              ]
+            },
+            "args": [
+              "SECONDARY_CLEANUP_FAILURE"
+            ],
+            "errno": null,
+            "filename": null,
+            "filename2": null
+          }
+        },
+        "persistenceFailures": [
+          {
+            "type": "OSError",
+            "message": "JOB_RECEIPT_FAILURE",
+            "details": {
+              "args": [
+                "JOB_RECEIPT_FAILURE"
+              ],
+              "errno": null,
+              "filename": null,
+              "filename2": null
+            }
+          }
+        ],
+        "terminal": null,
+        "argv": [
+          "/Users/andreyyurlov/.local/share/fnm/node-versions/v26.12.1/installation/bin/node",
+          "--import",
+          "/inert/tsx",
+          "/private/tmp/t02-r7-correction-mue78vhy/prior/snapshot/packages/tools/blender/characters/animations/thalune-run-candidate/entry.mjs",
+          "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/ready.json",
+          "motion-thalune-run-lod2",
+          "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/packet/captures/motion-thalune-run-lod2"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/private",
+          "admission": {
+            "rawAllocation": [
+              null,
+              29
+            ]
+          }
+        },
+        "bootstrapPortRestored": true,
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/owned-job",
+          "scratch": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/owned-job/scratch",
+          "target": "inert/motion-thalune-run-lod2",
+          "coalition_id": "2"
+        },
+        "releaseAudits": []
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "56a07691bce62e662f5f29373296d7d744f4274b79bf0925f2b772ddacd66cd8"
+    },
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "sha256": "f090caaa72663e20fc6fbfbb007a48cad9d1477258c85fae4274698cc66f3639"
+    }
+  ],
+  "terminalPersistenceFailures": [
+    {
+      "type": "OSError",
+      "message": "PROOF_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PROOF_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "proof"
+    },
+    {
+      "type": "OSError",
+      "message": "PACKET_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PACKET_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "packet"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stdout"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stderr"
+    }
+  ],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/proof/result.json",
+      "status": "failed"
+    },
+    "packet": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/start-job2-all-sinks-fail/packet/integration-result.json",
+      "status": "failed"
+    },
+    "completeObservationsPersisted": false,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+    "stdout": {
+      "status": "failed"
+    },
+    "stderr": {
+      "status": "failed"
+    }
+  }
+}

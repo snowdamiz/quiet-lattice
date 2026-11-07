@@ -1,9 +1,9 @@
 {
   "status": "PASS_SOURCE_CPU_NATIVE_DISABLED",
-  "revision": "06",
-  "base": "258926df00eaf6a306920b9905ff925358a73c1d",
-  "sourceFiles": 35,
-  "sourceAndDataBindings": 2351,
+  "revision": "07",
+  "base": "609f454dfe65c8e3a7fbc7e69b4c36a584f6af98",
+  "sourceFiles": 37,
+  "sourceAndDataBindings": 2353,
   "softwareBindings": 12,
   "originalRecoveryRows": 21,
   "additionalEarlierRecoveries": 2,
@@ -14,7 +14,7 @@
   "newControls": 69,
   "metadataControls": 7,
   "legacyAdmissionRedGreenControls": 2,
-  "totalCPUControls": 440,
+  "totalCPUControls": 490,
   "runtimeJobs": 0,
   "blenderProcesses": 0,
   "hydration": false,
@@ -50,18 +50,18 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/bind-local.py",
-      "bytes": 6180,
-      "sha256": "47b936d4adffa3c886d592fbc40207dc0b25f0214211607edd64ae8daedc3091"
+      "bytes": 6242,
+      "sha256": "0b6fc314a8894913cded6535e87a5297f57325d7a8c46dd8af6a49ef0e6c86ee"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/caller.py",
-      "bytes": 25272,
-      "sha256": "8ff587b33c7e9a7663f0454939f87cf6f1d8fe70219c7b2524217574538c033e"
+      "bytes": 28789,
+      "sha256": "0aac9ee207a0b987af998bb5ca0585347d45a7cd37742a11ca551276cf686a0c"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/candidate-index.json",
-      "bytes": 6161,
-      "sha256": "10b5476740533b4143e17c098301c22678f452661ad4f001437fd34e9f94be4d"
+      "bytes": 6476,
+      "sha256": "a446e7bf78ae20ac2ff87031dfddd327bf3eb8f1fae586c1d223859369a9a4a7"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/contract.py",
@@ -100,8 +100,13 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/inspector.py",
-      "bytes": 14471,
-      "sha256": "17b1580b8530c0d258af1b08455499c7a7b379977cf5ccaf7a4240d8812caa8e"
+      "bytes": 14735,
+      "sha256": "5a1efb2e86416f7dead45cad9ccd8c7abf1f77fb7a8e77e089770aecc5a46aa3"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/inventory_boundary.py",
+      "bytes": 3760,
+      "sha256": "c3e9886d6032b3688b1c82681cdce1553e708957c483d8164ebd7b818705b7e7"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/metadata-controls.py",
@@ -135,8 +140,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/packet_budget.py",
-      "bytes": 3973,
-      "sha256": "fd1fd0846f5985f39d96bc7ea5a02c61ab825fb2eb3aba1affb33cb99ce0ac3f"
+      "bytes": 4437,
+      "sha256": "5e211b6d759d456dd3d8f6fd3c91702c86d7583e23525ba1731be089b3b91df8"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/page-api.mjs",
@@ -160,8 +165,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/readiness.json",
-      "bytes": 844631,
-      "sha256": "90d59e241c49369570db0fe5bc5fe972192a05e7726c0a77d39aec197ed8ccf4"
+      "bytes": 845184,
+      "sha256": "1df822cb9635c2aaf40e12295d96933b43cd565b35cc0612eef93a15d653d06f"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/recovery-provenance.json",
@@ -175,8 +180,8 @@
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/release_accounting.py",
-      "bytes": 9840,
-      "sha256": "64670d2903354a0fdc601ca27d5564be273ab0b2e392896af112b2928c9ea45b"
+      "bytes": 10735,
+      "sha256": "bf84569764d31354e6a6955b450f68a03ed6d3753ba41f36e4dfafcd10032ae8"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/resolve-bindings.mjs",
@@ -2119,6 +2124,11 @@
       "sha256": "9afe22b1c631edbfe818ad8326fb9481dd5858c5b36a27c4b68e4bc619e7078c"
     },
     {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-06/combined-hash-manifest.json",
+      "bytes": 189974,
+      "sha256": "682108c49746b4cb7a78765a6c2c5c903145f931cb8aab844de1ca5818db5eef"
+    },
+    {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-06/commands.json",
       "bytes": 35752,
       "sha256": "1e095dd345b71d7a17a4fce376985b659405b64365423feb9f2e0e71a0196d37"
@@ -3419,6 +3429,946 @@
       "sha256": "b8f2e1ec78edfa5e57e6888faf4215da16f3a376b6397d03060d751100ea38f8"
     },
     {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/REPORT.md",
+      "bytes": 13869,
+      "sha256": "9370fd69f44af25ce900c071a4f4a7c1988e33f45533b6d9389cd1bd9fc2b904"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/commands.json",
+      "bytes": 23460,
+      "sha256": "50330afd172da7cda55ae6b6822b7c54c5406fcbae045e0447b9884866acafd2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/evidence-provenance.json",
+      "bytes": 73731,
+      "sha256": "72efcf43e81650bc9d238c7676d7feec7a6e75108a9bafaafdb68ed4feaaae6f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/additional-commands.json",
+      "bytes": 879,
+      "sha256": "9afe22b1c631edbfe818ad8326fb9481dd5858c5b36a27c4b68e4bc619e7078c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/native-disabled.stderr",
+      "bytes": 1278,
+      "sha256": "fd2f930363480edbb0772861c212cbdec9ab6727b17cee78bb5f3e7625b72fb0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/native-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/native-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/native-preflight.stdout",
+      "bytes": 80,
+      "sha256": "fd6b8356b962e15af5906ab73a8a1c1f3160aa3a43a880adb1f395e4f5ad5400"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/old-failed-preserved.json",
+      "bytes": 1366,
+      "sha256": "8abd1b22de1f6bb8160886ea48a23fbdc224561d559b639be734600b12dc858b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/preservation.json",
+      "bytes": 191240,
+      "sha256": "b632cff6e631b92ba5495dd808ddb680bcfcafe6cad8a660307e1e49c5993287"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-checks/verify-final.py",
+      "bytes": 4582,
+      "sha256": "de3e5b138017967d8dd19c11f2412b1a4b839383bc76bffddfb260348ca3334f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/final-commands.json",
+      "bytes": 4311,
+      "sha256": "365c33353f5c4de91832856c6b0647b11bea61aa134d69e7983515e43ab01966"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/format.stdout",
+      "bytes": 66,
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/freeze.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/freeze.stdout",
+      "bytes": 236,
+      "sha256": "251acd96c32a8924699dee5c50726d53fc7ae47a43c8d75b36d105ada9e80b70"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-commands.json",
+      "bytes": 1310,
+      "sha256": "2a0433b51e693c468557428cc9e906116ffddd777b97424ba5d64a3171cfae06"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/close-failures-results.json",
+      "bytes": 668588,
+      "sha256": "7c9ad433eada30750914f4f07b2d5438be43c2f4aee65d7c115e6249ab96db95"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/close-failures.py",
+      "bytes": 2116,
+      "sha256": "a94a57f6c117837edbd9a1fa3e94bf9b5491d77d3572efeb2f95bed3d7a8a1e1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/close-failures.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/close-failures.stdout",
+      "bytes": 90,
+      "sha256": "7168cbe726b622f4d74f3351e4a23afbb23711d33170106593c685bd30709726"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/independent-results.json",
+      "bytes": 425811,
+      "sha256": "7f20480079b92951c424f3436ffd5cdc00a8b99f05bcbdf19316bb9d01ffb0f0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/independent.py",
+      "bytes": 6610,
+      "sha256": "c3deef9a4093a1cd7ee63af990f0b208ec6b7b3b287b0a1197a9120ee2e8f29f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/independent.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/independent.stdout",
+      "bytes": 202,
+      "sha256": "6fc7af5b684db308fc4585d6a9756955fb6b7d09f5dbdbcb085da28472ce4927"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/observer-native-results.json",
+      "bytes": 57702,
+      "sha256": "1fb29b5dde47d68d5d1ed2c0cd7fa98d190879d703aaa1df079846a5a98ab2e8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/observer-native.py",
+      "bytes": 5367,
+      "sha256": "4c2f135bdd752ae9d728eeceefd840ba57b39d67f49dd0e702a00681b01a6f89"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/observer-native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/green-repros/observer-native.stdout",
+      "bytes": 695,
+      "sha256": "c9774e5b4c4fa5b4f16adfe1c53f514ca1f5e699fc666c4dc494364f8cac2ad5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/lint.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/lint.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-final.json",
+      "bytes": 1582113,
+      "sha256": "4f93096935ecac89cf38928160993b56612fafc16c82b30913dd5c51baef83ef"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-first.stderr",
+      "bytes": 757,
+      "sha256": "aff72f86f7af006d1d60ef5d37a53be3df73ecbe441088fb413b46ae8404ecb6"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-first.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-second.json",
+      "bytes": 1406631,
+      "sha256": "6e05bbf450ea4b1bbad02787597367cc98bd13dcefb2d3cd51b2508335d032a8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-second.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-second.stdout",
+      "bytes": 925,
+      "sha256": "2b1853ea051fc55c989d327c75513b0225a926487c9a75f7456fd31adf7a6db2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-third.json",
+      "bytes": 1505770,
+      "sha256": "2245c25ecccea07766a0f9423d0883f5aee18f6c8e43a9c56c06d9ee51eed492"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-third.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new-third.stdout",
+      "bytes": 1353,
+      "sha256": "8594e26c4229e082daf8bbc8cdbb1ad6dcbc258b5886415c270e0347b5ea758e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new39.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/new39.stdout",
+      "bytes": 1353,
+      "sha256": "8594e26c4229e082daf8bbc8cdbb1ad6dcbc258b5886415c270e0347b5ea758e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/next-launch.json",
+      "bytes": 85052,
+      "sha256": "b09ecb4226df594ae8df60ecb4ec4ba7eea6932b6a5a01f4577e7a148335946f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/admission-redgreen.json",
+      "bytes": 826,
+      "sha256": "7a67c3d13163043e95c011e0d1983d24d2c46b0d2666946767168c370fe3c883"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/admission-redgreen.py",
+      "bytes": 3276,
+      "sha256": "20f5a4c8df08a6b0a24dddaa887a02f1fba9f5433f49621116c4913e8eddbd69"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/admission2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/admission2.stdout",
+      "bytes": 51,
+      "sha256": "ce7fee54ed230f47ec5364fdf60b0e6ed1653f1e80785b767e3c54f4b5356495"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/adverse-green-results.json",
+      "bytes": 195386,
+      "sha256": "d5ca22b4320bde247090543cac0fb0d4fd87128e6c88f134416b88982647fe78"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/adverse-green.py",
+      "bytes": 8795,
+      "sha256": "99b9dffc0c618edf46ea33ad9eedd8ce22d0c1b0e56bf50329fa2ca6bf09102c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/caller-disabled.stderr",
+      "bytes": 1133,
+      "sha256": "bcc99a09d4df05c0040dbd57f1b80429568e459ec919f7583f9e44acb3ed5f04"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/caller-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/commands.json",
+      "bytes": 4135,
+      "sha256": "94dcf1edb65d9d9ab5a8b3b26aa91660ed792c0e5cf1ad7c26f9061ac4aa44d7"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/control-commands.json",
+      "bytes": 6230,
+      "sha256": "92525a7a8cc08ee6f15c75fef9088aa75d1918c146c4c98d2f492609f57e08e2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/entry-disabled.stderr",
+      "bytes": 711,
+      "sha256": "71810ccc61aab0de813205965bbb87f4116b4e6922176d775f65a9cda29dc6f8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/entry-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/evidence20.json",
+      "bytes": 6860,
+      "sha256": "0a6c78ab9a22c1625c1554840210e11bc312f15026435dcda22bad24bb852d9c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/evidence20.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/evidence20.stdout",
+      "bytes": 188,
+      "sha256": "0bfc679179e5410bdcf7eb7311d31ef3aec07c192156bcb7b51fc9b8a8317187"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/all-observation-and-delivery-fail/observed-result.json",
+      "bytes": 9039,
+      "sha256": "f729a0311e59ca6b6160d15e6a773e07f04f596f6102e598b70e4c943c916f05"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/attempt-ledger-job1-all-sinks-fail/observed-result.json",
+      "bytes": 5136,
+      "sha256": "6cd52c0f371fd3ebc6ab55f9738c66d339e9a84efcc464362ef2ecb83727f1c2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/attempt-ledger-job2-all-sinks-fail/observed-result.json",
+      "bytes": 6616,
+      "sha256": "d453726791a91a8b77fdc1d96ac5349ab22262f012fef3f7ae6caa9e89a5b55c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/attempt-ledger-job3-all-sinks-fail/observed-result.json",
+      "bytes": 8064,
+      "sha256": "11579d12509e72950084e8a6325a078bcd88f03ca73bc0add337f229fad5bdd6"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/attempt-ledger-job4-all-sinks-fail/observed-result.json",
+      "bytes": 9608,
+      "sha256": "19a7423f239d834bcfee5c018da6f7ca96d20fd2f56177e3301806170ef31e0e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/attempt-ledger-job5-all-sinks-fail/observed-result.json",
+      "bytes": 11145,
+      "sha256": "b131e80d04998e15ee760a028969c918f82cb92e9154afb3642d7dad2febab02"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/audit-timeout-all-sinks-fail/observed-result.json",
+      "bytes": 12617,
+      "sha256": "52a6cb73b95544060186589143d75f010c73add2d2248b8f622311c1b7e27a47"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/happy-exit-zero/observed-result.json",
+      "bytes": 9060,
+      "sha256": "2fc0ff763d0a42910692a1ec5bcd6505f604d8c635eab53d81f0d2c6734e3502"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/happy-then-packet-fails/observed-result.json",
+      "bytes": 9501,
+      "sha256": "e84ed8ec72e7da59447e397e82f7921bbf69b1f5d759c0fc9ec0225c6e1d7497"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/happy-then-proof-fails/observed-result.json",
+      "bytes": 9517,
+      "sha256": "487f1fc842bde3e13e616334f82f968caba84e7c67b52fc3daa4acfe7b3cdb74"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/happy-then-streams-fail/observed-result.json",
+      "bytes": 9950,
+      "sha256": "d6fc9e57a9a9b96cfcf92421fa637a67f180a241626257f28bba1b6d754b9d60"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/initial-receipt-job1-all-sinks-fail/observed-result.json",
+      "bytes": 6742,
+      "sha256": "fe0c41b4bc5e8dd01955a8499bd2be9045ffb7b2fd9fa5af0ab6b388b776c00d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/initial-receipt-job2-all-sinks-fail/observed-result.json",
+      "bytes": 8222,
+      "sha256": "e8dfbc3a40534880e6e9b39ae387e950d38e9a742d73ce799b5facbd0218b8ed"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/initial-receipt-job3-all-sinks-fail/observed-result.json",
+      "bytes": 9662,
+      "sha256": "a3ff106428c817993509a0c785e4de10c6d8b33681a3f5c0e2a8e5cd3a95b013"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/initial-receipt-job4-all-sinks-fail/observed-result.json",
+      "bytes": 11223,
+      "sha256": "fe51f13f0f610eba688c1c16a7b7eb35f395ac63a8f7ec043fe390123227b8c3"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/initial-receipt-job5-all-sinks-fail/observed-result.json",
+      "bytes": 12762,
+      "sha256": "e91a7a111c06eaa710a7134cdf4585f28a40c2fb101d185d4ef6c4de68f4b2f0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/large-proof-loss-packet-partial/observed-result.json",
+      "bytes": 714877,
+      "sha256": "3a63916ffc00c39fcdf756fcbab3d62e196128c0fc687154f67b472d5f50ad0a"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/raw-nonserializable-still-escapes-in-memory/observed-result.json",
+      "bytes": 15760,
+      "sha256": "45f53d97239c8125377a3ec8744912376d28bff482cf112dfc9460dfb1e48e3a"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/sequence-state-job1-all-sinks-fail/observed-result.json",
+      "bytes": 4574,
+      "sha256": "0ec27a56b76edc28bbec8817f30587194efb83ef51cb6d1c75e4dd7eebc3a7ce"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/sequence-state-job2-all-sinks-fail/observed-result.json",
+      "bytes": 6052,
+      "sha256": "e46ec15c432fdf3f8fbc9f6b77acee5a8c73b972e21ebe802aed775c67d996ed"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/sequence-state-job3-all-sinks-fail/observed-result.json",
+      "bytes": 7555,
+      "sha256": "5e8faa0812e96a7c05188f17870087481abbb0213a0b4bf19b0feed6a1b6cda1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/sequence-state-job4-all-sinks-fail/observed-result.json",
+      "bytes": 9092,
+      "sha256": "3135cf7abcaca73728a1bd6ae6f7565a4c77b0a6485fdce4b7d5b45bb677b262"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/sequence-state-job5-all-sinks-fail/observed-result.json",
+      "bytes": 10612,
+      "sha256": "50efb0fa80d368b85448b30e6757216ac45fc5fbf98ff4131fb471f801c00030"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/start-job1-all-sinks-fail/observed-result.json",
+      "bytes": 8898,
+      "sha256": "5905d15cdbae35371245adf29f2ce229881d3fe184396b8f11db8211b0d69977"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/start-job2-all-sinks-fail/observed-result.json",
+      "bytes": 10357,
+      "sha256": "164d129107affea5c48e494911ea73682b6f5856beb13c83bf5c9df46d7ed237"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/start-job3-all-sinks-fail/observed-result.json",
+      "bytes": 11742,
+      "sha256": "265acf472da8d97dc2d365b0220049d1e2293d14838d1c12e2096d989644cd85"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/start-job4-all-sinks-fail/observed-result.json",
+      "bytes": 13199,
+      "sha256": "8deec55fabd91b5bd0afda44dc44db2e72af8a9ffa84e76b383199b80fbcca5d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/start-job5-all-sinks-fail/observed-result.json",
+      "bytes": 14719,
+      "sha256": "56928ce86d593f735ae126fcdcf86c89991bd0daf8c5a22990220f700d51a4fd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-proofs/stdout-flush-then-stderr-succeeds/observed-result.json",
+      "bytes": 8767,
+      "sha256": "cbfd70fccfdd99c2a570d10ae2b5569b21f9a364267d9fff753bf2bdbca0163d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/independent-results.json",
+      "bytes": 10735,
+      "sha256": "60698c55c1eefcc4ebcf3ddfd53842fecbb7c82c3ff84ddae5eeb8b494fe996f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/metadata7.json",
+      "bytes": 7018,
+      "sha256": "1f16e1da3344b379791fe75f8fe7f99ab52b784a55639eea555695463341031e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/metadata7.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/metadata7.stdout",
+      "bytes": 51,
+      "sha256": "66a1f64879fac45781b787f3f00e8bfaa563bca09684cb2a9df5b7bc9041b9e8"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native-disabled.stderr",
+      "bytes": 1278,
+      "sha256": "fd2f930363480edbb0772861c212cbdec9ab6727b17cee78bb5f3e7625b72fb0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native-preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native-preflight.stdout",
+      "bytes": 80,
+      "sha256": "fd6b8356b962e15af5906ab73a8a1c1f3160aa3a43a880adb1f395e4f5ad5400"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native69-bound.json",
+      "bytes": 1476772,
+      "sha256": "e5f3bd8f7163042e2ac8fb34b370cf9bf87937937181b6a8da6307290affa016"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native69-bound.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/native69-bound.stdout",
+      "bytes": 94,
+      "sha256": "418f5a5c20e087a8ea34979c34005f83b09340e0400340597bf4ff76fec24ea7"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/new-bound-commands.json",
+      "bytes": 1247,
+      "sha256": "cfb721df646df268fdca30bf8efb663140132ae247ecbdf5257474f5e3424032"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/node18.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/node18.stdout",
+      "bytes": 184,
+      "sha256": "6f78edd35f35c6879d57be128613e5e593b996cadc6a0c99b95a85bb5b0c7a09"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/optimized-disabled.stderr",
+      "bytes": 72,
+      "sha256": "7839570688f974cebb9bc8964c1173e5f8cabbb4a5cb97b9f0becccfe79e03f1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/optimized-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/preflight.stdout",
+      "bytes": 163,
+      "sha256": "d35ef2f56e35e9e63f2e34c0ce2600286e89a8b2aae191f25249e0270e926b81"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/prior29.py",
+      "bytes": 12366,
+      "sha256": "3f4e26ded327f38fb271ef57f7a2b855fd1e7a20b447c9339bf4081b6e7ad8bf"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/prior29.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/prior29.stdout",
+      "bytes": 126,
+      "sha256": "c401576f24cd769c44757ec28e3c4888fed921a3936f5f476bda0f19d68b9ec1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/publication3.json",
+      "bytes": 923,
+      "sha256": "3d36ebcbc958512c435edcdeca753586947d5e215833c90b15a11d00f33fcee3"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/publication3.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/publication3.stdout",
+      "bytes": 47,
+      "sha256": "84bf9a7761f1637a9576fa1aedb40bb2e9f9a787b8d49ab84baced0ce801fc57"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/pure-node-controls.json",
+      "bytes": 2054,
+      "sha256": "cff47768107d78315e4356a236110a4fc4c4d4193be3066de3d8e4fc5b5929a4"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/pure-python-controls.json",
+      "bytes": 10577,
+      "sha256": "2ea780fe646f7825a3e69a2d9ce93ad2af0528c5cb8a660fd05f3de2a6e5f500"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/python108.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/python108.stdout",
+      "bytes": 54,
+      "sha256": "51186cd369471c47a95e228bec6aeb6d22310778f564feeb1c6c7a6f06889d3c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/retained-adverse17.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/retained-adverse17.stdout",
+      "bytes": 62,
+      "sha256": "c225d5dcfc56f7d98ce31ebecae703181cf7b05f4063d7626ba2fe50dc680f34"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/revision05-74.json",
+      "bytes": 2733942,
+      "sha256": "18bbe360bcb6801ee7a9fa3fc2ada825e7a473be203b69b8f678406f0f7e6a5d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/revision05-74.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/revision05-74.stdout",
+      "bytes": 2082,
+      "sha256": "3ce79386f262d973b8ef1ab98d946379fa16386cd0d59ea177d81d5412893ab5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/run-all.py",
+      "bytes": 1595,
+      "sha256": "c4666df208e214a2fb32c250e92bdb7b79f7aeae3e787c50e243d1f61c09b77a"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/run-controls.py",
+      "bytes": 3829,
+      "sha256": "3bf50d52a8e188f4025a28248ef7ac8644f4d71610217393c195a126103c93c5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/run-new-bound.py",
+      "bytes": 1361,
+      "sha256": "2b68c35842ad7a1088e34c2d53b76c713bcbc2dbc6a2993fa415a14db7e0ee9d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/scratch-source-identities.json",
+      "bytes": 6184,
+      "sha256": "f68b0b82f17da12ee85fb576ae220b6f1719b65a0d1d2732fc59570aca70663e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/supplied224.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/supplied224.stdout.raw-text.json",
+      "bytes": 1492,
+      "sha256": "b15859aaf17ddd3b81011d67e4c94b6d93dddfe6d72afec4413292130c0b1917"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/supplied78.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/supplied78.stdout.raw-text.json",
+      "bytes": 449,
+      "sha256": "eec1f3511621d6ea8f18298c769ef5b87414045dd2376edb2611ce85a259d8a7"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/terminal30.json",
+      "bytes": 15181,
+      "sha256": "517881c16b67635637742c7141c7f900a1e9b9371580e92e5cbf1589d040c5af"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/terminal30.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/terminal30.stdout",
+      "bytes": 149,
+      "sha256": "b149854a172e3efc43dc24011eacd09d1ce92c5f13583831c377f53ae47d3998"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/timed12.json",
+      "bytes": 13289,
+      "sha256": "ff9c3f87fddf38371fe7a7c8eefb7f60681a9c62ac8ff226fced058728c64eb7"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/timed12.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/timed12.stdout",
+      "bytes": 53,
+      "sha256": "b6efd104779947ff367310a9c55c3733f83f338587bbbe7138be6e924d6129b5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/worker-disabled.stderr",
+      "bytes": 746,
+      "sha256": "a4536a8cc6d3e4d1660148ce53ef87b8801869a4640bc3bf37cb00bca70a7344"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior/worker-disabled.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior393.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior393.stdout",
+      "bytes": 161,
+      "sha256": "37aa46a832bdae862884718d06c70f98707a06972c41f2c8cd49e788a2a30e2a"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior47.json",
+      "bytes": 3193964,
+      "sha256": "9b379942522364421422aae94f6170dc553fb59f0da5fce2b691c5f7694de158"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior47.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior47.stdout",
+      "bytes": 1656,
+      "sha256": "0b85c3f534e721df3df7aea51c3d991c318cf9f65889d000f01549ed4c748756"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/aggregate-bytes/observations.json",
+      "bytes": 22532,
+      "sha256": "c28f15d4fef5db28c9aa46552c2d561eec42bd570614f9e6373aecf544d44b3b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/aggregate-entries/observations.json",
+      "bytes": 2802766,
+      "sha256": "0170c477c2b8e1e3a7a5996cce6dd9bc2c0963865dbd2fa4ee3f8fd85a6906b0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/aggregate-scan-cancel/observations.json",
+      "bytes": 10637,
+      "sha256": "53f5895f1db94cde8c48da3425d23f2fabc50486ed314e3c2ecf2b462d029ddb"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/aggregate-scan-deadline/observations.json",
+      "bytes": 11073,
+      "sha256": "a4a8bd8ff170d90c55cc6f47710b7b56c4c83a64ac8c7e7e0492c2091ebba887"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/aggregate-scan-error/observations.json",
+      "bytes": 12853,
+      "sha256": "668afdfb7988f1d95adf45d6cb3b8f4463f1c0dd519f90bef19027e1578d9b9b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-cancel/observations.json",
+      "bytes": 13084,
+      "sha256": "824d14e978cad7d6f2b20b76f7fb9c77f680e0a154962955b6a3f94ee021a574"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-close-error/observations.json",
+      "bytes": 14904,
+      "sha256": "e0005076969a01893a54e9e821331a8f79779b01054f74aa0651e1810d307140"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-deadline/observations.json",
+      "bytes": 13768,
+      "sha256": "fa0615da7a4435c0ff1a649bfacf10e33ede57aadceee920f9a7f53965927bdd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-entries4096/observations.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-entries4097/observations.json",
+      "bytes": 2793378,
+      "sha256": "1e135c7204045a18207525a3d2e8c5af3950f46eef2726f0718dbc898f0bae58"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-fifo/observations.json",
+      "bytes": 11310,
+      "sha256": "6e3dea59c4722b819fa5f8be27a3490d15dc71a7260829d75436fab6bd08aaf0"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-growth/observations.json",
+      "bytes": 13933,
+      "sha256": "5f18c9a443ba4de122d13f8552b7276df9bb76d45fc1d455bdb7a0d72899781f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-limit/observations.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-over-limit/observations.json",
+      "bytes": 11658,
+      "sha256": "cee8aae6ee341fa6bbebe27333ecddb1a03d01695090a04052146127bd8f8d59"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-read-and-close-error/observations.json",
+      "bytes": 28647,
+      "sha256": "e6d6722fc4dcbde69f8bdedc9f0325410a8658e2f997a3d8e61d047caaf3e119"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-read-error/observations.json",
+      "bytes": 20701,
+      "sha256": "a7162234bb3195084e329aef97a4399f28c53abd37a1e59a9e1d424fd83a892f"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-replace-after-read/observations.json",
+      "bytes": 14013,
+      "sha256": "ffb74774b12bbc4e0dd39e71d2ccab9fc328146259257894cdea0022fdbf2f5b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-replace-fifo/observations.json",
+      "bytes": 13769,
+      "sha256": "921c828644f84b2269bebc4aa78fe047ac3f8c54682c67dc285f2fda518f0d0c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-replace-link/observations.json",
+      "bytes": 13691,
+      "sha256": "db5327884d0dc07705c3c0384be3dd7cd6e516a0d2dcb65bb03498f80b41a85d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-replace-regular/observations.json",
+      "bytes": 13981,
+      "sha256": "35211f1cf9c853ac2a90ede57a4f0885f75fca08152ac574d0b7ea4566a445be"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-symlink/observations.json",
+      "bytes": 11342,
+      "sha256": "d918b944985264e8b4c6b051874afc52afbb645930eaa0a9ccc192ed392f0841"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/prior74-observations/cache-truncate/observations.json",
+      "bytes": 13913,
+      "sha256": "f23965233910dcd68c0e19bf4ab43633942c0f4596ff97975189dcb61948b33c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/REPORT.md",
+      "bytes": 20373,
+      "sha256": "e4ef52c0b8ad30db0ec5fa8f11eefc6c9f883e02e66bf4b03bf7cbb9febb2c7b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/close-failures-results.json",
+      "bytes": 493621,
+      "sha256": "fa7f7304ce5d603675ebd402d0839c6c6ff0ed3847e975c2b0383eefcc6f4b0d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/close-failures.py",
+      "bytes": 2116,
+      "sha256": "a94a57f6c117837edbd9a1fa3e94bf9b5491d77d3572efeb2f95bed3d7a8a1e1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/close-failures.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/close-failures.stdout",
+      "bytes": 90,
+      "sha256": "7168cbe726b622f4d74f3351e4a23afbb23711d33170106593c685bd30709726"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/independent-results.json",
+      "bytes": 386031,
+      "sha256": "989728cb8527dae01aaefac2bd6d3672b016269b10c0dbc5ca91d3c2f5db7bfe"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/independent.py",
+      "bytes": 6553,
+      "sha256": "6808d4f958526505c5493bdffa26e9ae9c961a350fda64249085d73376232fe1"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/independent.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/independent.stdout",
+      "bytes": 215,
+      "sha256": "210f630f55fe7b86c2b8d22cefa14f026c03bc8eb3bac3319662032d044b79da"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/observer-native-results.json",
+      "bytes": 34911,
+      "sha256": "2604a45e47d17122b7e7be89d5a6ef53bb267a391464f8f81c378315319b1aa2"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/observer-native.py",
+      "bytes": 5305,
+      "sha256": "a47ddcd23d5e0e60c6c64ae9ccb1f8e342ae928b645663bc02c3594435616f5d"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/observer-native.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red/observer-native.stdout",
+      "bytes": 162,
+      "sha256": "517b907fcab30db9f18d106726e4994f6e33ff1b1c6f7e59771f8a50c37222c9"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/red-commands.json",
+      "bytes": 1285,
+      "sha256": "37bf6ee55a7ada9d507493e8f44f42b8bbec530d7ca440362b93524ad0bd9930"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/report-format.json",
+      "bytes": 986,
+      "sha256": "92e8ee130c3dc6729248d707a4cb158e8d86c19ea5192ea6315d869abe7cddbd"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/run-final.py",
+      "bytes": 2253,
+      "sha256": "df6c19aa3cb3b91573e71d5bbb65cdf26e1214a5a5e0ca3591305ff1ff1808d3"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/run-green.py",
+      "bytes": 1020,
+      "sha256": "16e05697e4e04173fe960e25bc13467cdd0f7f084474c7633114dc5914ad817e"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/run-red.py",
+      "bytes": 991,
+      "sha256": "61fb7d88804f602af647fd5f49ec611e5f34973f1ba963a854c6344a6f28042c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/seal.py",
+      "bytes": 2372,
+      "sha256": "6434ec5641eb4aa39039de3529430162393788365b7cd7685e2d07696749b850"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/staged-format-correction.json",
+      "bytes": 489,
+      "sha256": "be1e224ca74d8fc958ac1b8d203e5da74fd61057dac47fd6f91ea1a36c440b17"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/syntax.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/syntax.stdout",
+      "bytes": 30,
+      "sha256": "6f8e785fdad196f471ffa9eb033745ea0e4a5c09a49a997ef900a01d6dfba46c"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/typecheck.stderr",
+      "bytes": 20,
+      "sha256": "c30349cfc97c6b3a6ef62e2ec6233293076c612b712bb8571f4cb31a30de128b"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/typecheck.stdout",
+      "bytes": 270,
+      "sha256": "626018b2e35a77e1d8fe697a58341645286fa1ccb2e75db823eae08d894b35e5"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision-07/unit-provenance.json",
+      "bytes": 1637,
+      "sha256": "3ab8ae01e24bba9cd1897a2cd796ddafbe7f4aea40b991a33421b25650fdb40e"
+    },
+    {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision05-controls.py",
       "bytes": 20066,
       "sha256": "df67524cf5b93ff2972a8436552844e81fa6bfc442baf62c6b51f4a4d1b2637d"
@@ -3427,6 +4377,11 @@
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision06-controls.py",
       "bytes": 18102,
       "sha256": "b1d68d891ed960e7954d783dba797d0137bfc4e53ef1bb84773a6a118826cc15"
+    },
+    {
+      "path": "packages/tools/blender/characters/animations/thalune-run-candidate/revision07-controls.py",
+      "bytes": 18902,
+      "sha256": "dbf23769be510793b38ad18cb1b81e4dc92fe7eec7d431d0bcc8e7ca498fbd38"
     },
     {
       "path": "packages/tools/blender/characters/animations/thalune-run-candidate/rgb-primary.py",
@@ -3456,6 +4411,8 @@
   ],
   "revisionBoundaryControls": 74,
   "adaptedCurrentAdverseControls": 17,
-  "priorSuppliedCPUControls": 393,
-  "nativeR2BoundaryControls": 47
+  "priorSuppliedCPUControls": 440,
+  "nativeR2BoundaryControls": 47,
+  "nativeR3BoundaryControls": 39,
+  "nativeR3IndependentControls": 11
 }

@@ -50,39 +50,48 @@ def bounded_packet_summary(result,proof_reference):
     assert len(encode(summary))<=budget.RECORD_BYTES,'Bounded terminal envelope exceeds reserve'
     return summary,False
 
-def observe_executables(job,allowed,admitted,events,read_identity,read_path,file_sha=sha,on_event=lambda:None):
+def observe_executables(job,allowed,admitted,events,read_identity,read_path,file_sha=sha,on_event=lambda:None,on_failure=lambda error:None):
     """Observe only kernel-owned members; a PID alone never carries admission."""
     for row in job.members():
-        key=admission_key(row);prior=admitted.get(key);before=read_identity(row['pid'])
+        event={'memberIdentity':row,'status':'observing'};events.append(event)
+        key=admission_key(row);prior=admitted.get(key)
+        event.update(pid=row['pid'],priorActualAdmission=prior)
+        before=read_identity(row['pid']);event['beforeIdentity']=before
         def transition(after,error=None,path=None):
-            event={'pid':row['pid'],'memberIdentity':row,'beforeIdentity':before,'postReadIdentity':after,
-                'priorActualAdmission':prior,'pathReadError':error,'returnedPath':path}
-            if after is None:
-                event['status']='departed' if prior else 'unadmitted_departure_refused'
+            event.update(postReadIdentity=after,pathReadError=error_receipt(error) if error is not None else None,returnedPath=path)
+            if after is None:event['status']='departed' if prior else 'unadmitted_departure_refused'
             elif identity_key(after)!=identity_key(row):event['status']='replacement_or_uid_change_refused'
             elif after['status']==5:event['status']='awaiting_reap' if prior else 'unadmitted_zombie_refused'
             else:event['status']='live_path_error_refused'
-            events.append(event);on_event() # Preserve the actual post-read identity before any refusal.
+            allowed_transition=(prior is not None and identity_key(prior['identity'])==identity_key(row) and
+                                (after is None or (identity_key(after)==identity_key(row) and after['status']==5)))
+            if error is not None and not allowed_transition:on_failure(error)
+            on_event()
             assert prior is not None,'Unadmitted child cannot inherit executable admission'
             assert identity_key(prior['identity'])==identity_key(row),'Admission birth/UID mismatch'
             assert after is None or identity_key(after)==identity_key(row),'Replacement birth/UID cannot inherit admission'
             assert after is None or after['status']==5,'Live same-birth executable-path failure'
-        if before is None:
-            transition(before);continue
+        if before is None:transition(before);continue
         assert identity_key(before)==identity_key(row),'Member birth/UID changed before path read'
-        if before['status']==5:
-            transition(before);continue
+        if before['status']==5:transition(before);continue
         try:path=read_path(row['pid'])
         except OSError as error:
-            after=read_identity(row['pid'])
-            transition(after,{'type':type(error).__name__,'message':str(error),'errno':error.errno})
+            event['pathReadError']=error_receipt(error)
+            try:
+                after=read_identity(row['pid']);transition(after,error)
+            except BaseException:
+                on_failure(error);raise
             continue
-        after=read_identity(row['pid'])
+        event['returnedPath']=path
+        after=read_identity(row['pid']);event['postReadIdentity']=after
         if after is None or identity_key(after)!=identity_key(row) or after['status']==5:
             transition(after,path=path);continue
-        assert path in allowed and file_sha(path)==allowed[path],'Unbound CPU executable: '+str(path)
+        assert path in allowed,'Unbound CPU executable: '+str(path)
+        actual_hash=file_sha(path);event['observedSha256']=actual_hash
+        assert actual_hash==allowed[path],'Unbound CPU executable: '+str(path)
         admitted[key]={'identity':after,'memberIdentity':row,'executable':path,'sha256':allowed[path]}
-        on_event()
+        event['status']='admitted';on_event()
+
 
 def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started):
     """An audit refusal holds the unit and is evidence; it must not erase its summary."""
@@ -109,7 +118,15 @@ def persist_terminal_summary(result,handles,audit_one,jobs,proof,packet,started)
     accounted=accounted and all(isinstance(x,dict) and x.get('releaseProved') is True and x['kernel']['live']==0 and x['kernel']['coalition_absent'] is True for x in audits) and [x.get('attemptPath') for x in audits]==paths
     if not accounted:errors.append({'type':'TerminalAttemptAccountingFailure','message':'Every allocation attempt requires its own positive terminal audit','attempts':len(jobs),'handles':len(handles),'audits':len(audits)})
     result.update(terminalAudit=audits,terminalAuditFailures=errors,nativeJobs=len(jobs),pipelineSeconds=time.monotonic()-started)
-    for name,read in [('outputBytes',lambda:sum(p.stat().st_size for p in packet.rglob('*') if p.is_file())),
+    result.pop('outputBytes',None)
+    def output_bytes():
+        try:
+            result['outputInventory']=budget.inventory(packet)
+            return result['outputInventory']['totalBytes']
+        except BaseException as error:
+            result['outputInventory']=getattr(error,'packetInventory',{'complete':False})
+            raise
+    for name,read in [('outputBytes',output_bytes),
                       ('freeBytesAfter',lambda:shutil.disk_usage(HERE).free)]:
         try:result[name]=read()
         except BaseException as error:errors.append({**error_receipt(error),'observation':name})

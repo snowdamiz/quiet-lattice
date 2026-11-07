@@ -12,6 +12,7 @@ import subprocess
 import shutil
 import time
 import contract
+from inventory_boundary import guarded_call, tree_bytes
 from admission_json import snapshot, read
 import packet_budget as budget
 from inspector import sha, write, error_receipt, inspect_capture
@@ -285,20 +286,65 @@ class StationAdapter:
                 receipt.update(actualExecutables=admitted, observerEvents=events)
                 observer = self.stage_observer(definition, job, private)
                 resource_observer = self.resource_observer(job, receipt)
-                def observe():
+                seen_errors={}
+                def retain_observer(error, phase):
                     nonlocal primary_error
+                    if id(error) in seen_errors:return
+                    failure=error_receipt(error);seen_errors[id(error)]=(error,failure)
+                    receipt.setdefault('observationFailures',[]).append(dict(phase=phase,failure=failure))
+                    if phase=='resource':receipt.setdefault('resourceFailures',[]).append(failure)
+                    if receipt['primaryFailure'] is None:
+                        primary_error=error;receipt['primaryFailure']=failure
+                    elif error is not primary_error:receipt.setdefault('secondaryFailures',[]).append(failure)
+                def observe_stage():
+                    # Observe the raw helper callback/save exceptions before its own catch.
+                    ports={};command_namespace=None;command_port=None
+                    def wrap(original,phase):
+                        def call(*args,**kwargs):
+                            try:return original(*args,**kwargs)
+                            except BaseException as error:retain_observer(error,phase);raise
+                        return call
+                    try:
+                        implementation=getattr(observer,'_observe',None)
+                        namespace=getattr(getattr(implementation,'__func__',implementation),'__globals__',{})
+                        command=namespace.get('current_commands')
+                        if command is not None:
+                            command_namespace=command.__globals__;command_port=command_namespace['subprocess']
+                            class ObservedCommand:
+                                def __getattr__(self,key):return getattr(command_port,key)
+                                def run(self,argv,*args,**kwargs):
+                                    event={'argv':list(argv)};receipt.setdefault('stageCommandObservations',[]).append(event)
+                                    try:
+                                        value=command_port.run(argv,*args,**kwargs)
+                                        event['result']=vars(value).copy()
+                                        event['result']=json.loads(json.dumps(event['result'],default=str))
+                                        return value
+                                    except BaseException as error:
+                                        event['failure']=error_receipt(error);retain_observer(error,'stage-command');raise
+                            command_namespace['subprocess']=ObservedCommand()
+                        for name in ['_observe','_structured_save']:
+                            if hasattr(observer,name):
+                                ports[name]=(name in vars(observer),getattr(observer,name))
+                                setattr(observer,name,wrap(getattr(observer,name),'stage'+('-persistence' if name=='_structured_save' else '')))
+                        observer.observe()
+                    finally:
+                        if command_namespace is not None:command_namespace['subprocess']=command_port
+                        for name,(existed,original) in ports.items():
+                            if existed:setattr(observer,name,original)
+                            else:delattr(observer,name)
+                def observe():
+                    phase='resource'
                     try:
                         if resource_observer: resource_observer()
+                        phase='executable'
+                        observe_executables(job, ready['process_binary_sha256'], admitted, events,
+                                            self.core.identity, self.temp.executable_path, on_event=persist,
+                                            on_failure=lambda error:retain_observer(error,'executable'))
+                        phase='stage'
+                        if observer:observe_stage()
                     except BaseException as error:
-                        failure = error_receipt(error)
-                        receipt.setdefault('resourceFailures', []).append(failure)
-                        if receipt['primaryFailure'] is None:
-                            primary_error = error
-                            receipt['primaryFailure'] = failure
+                        retain_observer(error,phase)
                         raise
-                    observe_executables(job, ready['process_binary_sha256'], admitted, events,
-                                        self.core.identity, self.temp.executable_path, on_event=persist)
-                    if observer: observer.observe()
                 if resource_observer: observe()
                 receipt['outcome'] = job.wait(max(.001, ready['captureSeconds']-(time.monotonic()-started)), observe)
                 receipt['exits'] = dict(job.state['exits']); persist()
@@ -321,16 +367,18 @@ class StationAdapter:
                     assert drained['drained'] and drained['clean'], 'Owned drain did not prove clean release'
                     assert not receipt['drainMembers'], 'Coalition members remain after drain'
                     assert receipt['drainKernel']['live'] == 0, 'Kernel tasks remain after drain'
-                    job.archive(profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
+                    inventory_observations=receipt.setdefault('inventoryObservations',[])
+                    guarded_call(job.archive,inventory_observations,profile_namespace=private, profile_prefixes=('playwright_chromiumdev_profile-',))
                     profiles = read(job.out/'profile_release.json'); receipt['profiles'] = profiles
                     assert profiles['all_absent']
-                    cache = self.temp.preserve_private_tmp(private, admission, job.out/'preserved-private-tmp', job=job)
+                    cache = guarded_call(self.temp.preserve_private_tmp,inventory_observations,private, admission, job.out/'preserved-private-tmp', job=job)
                     receipt['cache'] = cache
                     assert cache['all_bytes_preserved'] and cache['namespace_removed']
                     receipt['taskRelease'] = self.after_release(definition, receipt)
                     audit = self.audit(handle)
                     receipt['terminal'] = dict(kernel=audit['kernel'], registrationAbsent=True, scratchAndTmpAbsent=True, audit=audit)
-                    size = sum(p.stat().st_size for p in out.rglob('*') if p.is_file())
+                    receipt['archiveInventory']={}
+                    size = tree_bytes(out,receipt['archiveInventory'])
                     receipt['archiveBytesObservedAfterRelease'] = size
                     assert size <= ready['limits']['maxArchiveStageBytes'], 'Archive acceptance cap exceeded; retain all bytes'
             except BaseException as error: receipt['cleanupFailure'] = error_receipt(error)

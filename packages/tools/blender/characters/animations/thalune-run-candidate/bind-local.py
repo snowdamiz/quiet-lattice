@@ -6,6 +6,7 @@ require_assertions(__debug__)
 import datetime, hashlib, importlib.util, json, os, shutil, subprocess
 from pathlib import Path
 import contract
+from inventory_boundary import paths as inventory_paths
 
 HERE, ROOT = contract.HERE, contract.ROOT
 
@@ -18,7 +19,7 @@ def binding(path):
 
 def files(directory):
     # Installed package dependencies are separate roots; never follow directory links here.
-    return [p for p in directory.rglob('*') if p.is_file() and not p.is_symlink() and '__pycache__' not in p.parts]
+    return [p for p in inventory_paths(directory) if p.is_file() and not p.is_symlink() and '__pycache__' not in p.parts]
 
 def main():
     node = str(Path(shutil.which('node')).resolve(strict=True))

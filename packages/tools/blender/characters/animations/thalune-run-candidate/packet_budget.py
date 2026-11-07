@@ -3,24 +3,34 @@ import sys
 sys.dont_write_bytecode=True
 from assertion_guard import require_assertions
 require_assertions(__debug__)
-import json,os
+import json,os,stat
+from inventory_boundary import paths as inventory_paths
 from pathlib import Path
 from contract import METADATA_BYTES, FILE_COUNT, RECORD_BYTES, VIDEOS, STILLS, VIDEO_BYTES, IMAGE_BYTES
 RESERVED={'failure.json','integration-result.json'}
 
 def inventory(root):
-    root=Path(root).resolve();normal=reserved=files=reserved_files=0;paths=[]
-    for p in root.rglob('*'):
-        assert not p.is_symlink(),'Packet symlink refused'
-        if p.is_dir():continue
-        assert p.is_file(),'Packet file kind refused'
-        name=str(p.relative_to(root));size=p.stat().st_size;paths.append(name);files+=1
-        if name in VIDEOS:assert size<=VIDEO_BYTES,'Primary media byte ceiling'
-        elif name in STILLS:assert size<=IMAGE_BYTES,'Still image byte ceiling'
-        elif name in RESERVED:
-            assert size<=RECORD_BYTES,'Reserved record byte ceiling';reserved+=size;reserved_files+=1
-        else:normal+=size
-    return {'normalBytes':normal,'reservedBytes':reserved,'files':files,'reservedFiles':reserved_files,'paths':paths}
+    root=Path(root).resolve()
+    result=dict(normalBytes=0,reservedBytes=0,files=0,reservedFiles=0,paths=[],totalBytes=0,complete=False,enumeration={})
+    try:
+        for p in inventory_paths(root,result['enumeration']):
+            info=p.lstat();result['pendingPath']=str(p)
+            assert not stat.S_ISLNK(info.st_mode),'Packet symlink refused'
+            if stat.S_ISDIR(info.st_mode):continue
+            assert stat.S_ISREG(info.st_mode),'Packet file kind refused'
+            name=str(p.relative_to(root));size=info.st_size;result['paths'].append(name);result['files']+=1;result['totalBytes']+=size
+            if name in VIDEOS:assert size<=VIDEO_BYTES,'Primary media byte ceiling'
+            elif name in STILLS:assert size<=IMAGE_BYTES,'Still image byte ceiling'
+            elif name in RESERVED:
+                result['reservedBytes']+=size;result['reservedFiles']+=1
+                assert size<=RECORD_BYTES,'Reserved record byte ceiling'
+            else:result['normalBytes']+=size
+        result.pop('pendingPath',None);result['complete']=True
+        return result
+    except BaseException as error:
+        error.packetInventory=result
+        raise
+
 
 def before_write(root,target,count,*,atomic=False,reserved=False,metadata_limit=METADATA_BYTES,file_limit=FILE_COUNT,record_limit=RECORD_BYTES):
     root=Path(root).resolve();target=Path(target).absolute();name=str(target.relative_to(root))

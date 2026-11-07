@@ -1,0 +1,422 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "OSError",
+    "message": "SEQUENCE_STATE_FAILURE",
+    "details": {
+      "args": [
+        "SEQUENCE_STATE_FAILURE"
+      ],
+      "errno": null,
+      "filename": null,
+      "filename2": null
+    }
+  },
+  "runtimeAuthorization": false,
+  "stills": {
+    "accepted": true
+  },
+  "reels": [
+    {
+      "accepted": true
+    },
+    {
+      "accepted": true
+    }
+  ],
+  "dispatchFailure": {
+    "type": "OSError",
+    "message": "SEQUENCE_STATE_FAILURE",
+    "details": {
+      "args": [
+        "SEQUENCE_STATE_FAILURE"
+      ],
+      "errno": null,
+      "filename": null,
+      "filename2": null
+    }
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 1,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/motion-thalune-run-lod0"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 2,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/motion-thalune-run-lod2"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/stills-thalune-run/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 3,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/stills-thalune-run"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/validate-thalune-run-lod0/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 4,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/validate-thalune-run-lod0"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    },
+    {
+      "attemptPath": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/validate-thalune-run-lod2/receipt.json",
+      "releaseProved": true,
+      "kernel": {
+        "live": 0,
+        "coalition_absent": true,
+        "rawKernel": {
+          "id": 5,
+          "future": [
+            false,
+            null,
+            71
+          ]
+        }
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51,
+          "recorded": {
+            "birth": [
+              1,
+              2
+            ],
+            "rawRecorded": [
+              "future",
+              null
+            ]
+          },
+          "current": {
+            "birth": [
+              2,
+              3
+            ],
+            "rawBirth": [
+              null,
+              97
+            ]
+          }
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "inert/validate-thalune-run-lod2"
+      ],
+      "registrationExit": 1,
+      "registrationStdout": "RAW_REGISTRATION_STDOUT",
+      "registrationStderr": "RAW_REGISTRATION_STDERR",
+      "scratchAbsent": true,
+      "privateTmpAbsent": true
+    }
+  ],
+  "terminalAuditFailures": [],
+  "nativeJobs": 5,
+  "pipelineSeconds": 0.016034542000852525,
+  "outputInventory": {
+    "normalBytes": 0,
+    "reservedBytes": 0,
+    "files": 0,
+    "reservedFiles": 0,
+    "paths": [],
+    "totalBytes": 0,
+    "complete": true,
+    "enumeration": {
+      "root": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/packet",
+      "complete": true,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/packet",
+          "directories": [],
+          "files": []
+        }
+      ]
+    }
+  },
+  "outputBytes": 0,
+  "freeBytesAfter": 33656791040,
+  "terminalReleaseProved": true,
+  "receiptFallbacks": [],
+  "jobs": [
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/motion-thalune-run-lod0/receipt.json",
+      "sha256": "860c1f2c95d770f02f9f82f828d4b25529217056f3a8a266b69c12c285befdac"
+    },
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/motion-thalune-run-lod2/receipt.json",
+      "sha256": "6eefc09c7d405ee17b2f00b2e656f57a4ca188376638c04db074db760e8100d1"
+    },
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/stills-thalune-run/receipt.json",
+      "sha256": "d5079a554aec2d70375f9a737804f22478f1289bf9df658d095c94d18757226c"
+    },
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/validate-thalune-run-lod0/receipt.json",
+      "sha256": "d416b1ddf0666a04d6418f1c6d4e5fccba91ca4aeb589fb252b11179aa5ddb5c"
+    },
+    {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/jobs/validate-thalune-run-lod2/receipt.json",
+      "sha256": "a39ed39c180123e3e534e144b7266949ebd2aa6b80fe7a6fbbcb4184ddf87e56"
+    }
+  ],
+  "terminalPersistenceFailures": [
+    {
+      "type": "OSError",
+      "message": "PROOF_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PROOF_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "proof"
+    },
+    {
+      "type": "OSError",
+      "message": "PACKET_SINK_FAILURE",
+      "details": {
+        "args": [
+          "PACKET_SINK_FAILURE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "packet"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stdout"
+    },
+    {
+      "type": "OSError",
+      "message": "STREAM_UNAVAILABLE",
+      "details": {
+        "args": [
+          "STREAM_UNAVAILABLE"
+        ],
+        "errno": null,
+        "filename": null,
+        "filename2": null
+      },
+      "sink": "stderr"
+    }
+  ],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/proof/result.json",
+      "status": "failed"
+    },
+    "packet": {
+      "path": "/private/tmp/t02-r7-correction-mue78vhy/prior/independent-proofs/sequence-state-job5-all-sinks-fail/packet/integration-result.json",
+      "status": "failed"
+    },
+    "completeObservationsPersisted": false,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result",
+    "stdout": {
+      "status": "failed"
+    },
+    "stderr": {
+      "status": "failed"
+    }
+  }
+}

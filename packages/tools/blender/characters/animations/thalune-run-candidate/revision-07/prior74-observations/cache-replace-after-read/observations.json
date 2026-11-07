@@ -1,0 +1,481 @@
+[
+  {
+    "beforeInventory": {
+      "paths": [
+        "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache"
+      ],
+      "trees": [
+        [
+          {
+            "path": ".",
+            "dev": 16777232,
+            "ino": 485850986,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794039506570565515,
+            "ctime": 1794039506570565515,
+            "links": 3
+          },
+          {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 485850987,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794039506570792141,
+            "ctime": 1794039506570792141,
+            "links": 1
+          }
+        ]
+      ],
+      "entriesSeen": 2,
+      "statBytes": 8,
+      "descriptors": [
+        {
+          "path": "/",
+          "parentFd": null,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "/",
+            "dev": 16777232,
+            "ino": 2,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 736,
+            "mtime": 1790233837000000000,
+            "ctime": 1790233837000000000,
+            "links": 23
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "private",
+          "parentFd": 3,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "private",
+            "dev": 16777232,
+            "ino": 22907066,
+            "uid": 0,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 192,
+            "mtime": 1793752979086280124,
+            "ctime": 1793752979086280124,
+            "links": 6
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "tmp",
+          "parentFd": 4,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "tmp",
+            "dev": 16777232,
+            "ino": 315902304,
+            "uid": 0,
+            "gid": 0,
+            "mode": 17407,
+            "bytes": 251840,
+            "mtime": 1794039506481869558,
+            "ctime": 1794039506481869558,
+            "links": 7870
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "t02-r5-controls-phj7qzq9",
+          "parentFd": 5,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "t02-r5-controls-phj7qzq9",
+            "dev": 16777232,
+            "ino": 485818496,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16832,
+            "bytes": 1856,
+            "mtime": 1794039506570346765,
+            "ctime": 1794039506570346765,
+            "links": 58
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache-replace-after-read",
+          "parentFd": 6,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache-replace-after-read",
+            "dev": 16777232,
+            "ino": 485850985,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794039506570448015,
+            "ctime": 1794039506570448015,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "cache",
+          "parentFd": 7,
+          "operation": "directory",
+          "closed": true,
+          "opened": {
+            "path": "cache",
+            "dev": 16777232,
+            "ino": 485850986,
+            "uid": 501,
+            "gid": 0,
+            "mode": 16877,
+            "bytes": 96,
+            "mtime": 1794039506570565515,
+            "ctime": 1794039506570565515,
+            "links": 3
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": [
+              "cacheRead"
+            ]
+          }
+        },
+        {
+          "path": "data",
+          "parentFd": 8,
+          "operation": "content",
+          "closed": true,
+          "opened": {
+            "path": "data",
+            "dev": 16777232,
+            "ino": 485850987,
+            "uid": 501,
+            "gid": 0,
+            "mode": 33188,
+            "bytes": 8,
+            "mtime": 1794039506570792141,
+            "ctime": 1794039506570792141,
+            "links": 1
+          },
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {},
+            "retainedObservationFields": []
+          }
+        }
+      ],
+      "lastEntry": "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache/data",
+      "files": [
+        {
+          "path": "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache/data",
+          "readBytes": 8,
+          "failure": {
+            "type": "AssertionError",
+            "message": "Cache pathname replaced during read",
+            "details": {
+              "args": [
+                "Cache pathname replaced during read"
+              ]
+            }
+          }
+        }
+      ],
+      "contentBytesRead": 8
+    },
+    "failure": {
+      "type": "AssertionError",
+      "message": "Cache pathname replaced during read",
+      "details": {
+        "cacheRead": {
+          "paths": [
+            "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache"
+          ],
+          "trees": [
+            [
+              {
+                "path": ".",
+                "dev": 16777232,
+                "ino": 485850986,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794039506570565515,
+                "ctime": 1794039506570565515,
+                "links": 3
+              },
+              {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 485850987,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794039506570792141,
+                "ctime": 1794039506570792141,
+                "links": 1
+              }
+            ]
+          ],
+          "entriesSeen": 2,
+          "statBytes": 8,
+          "descriptors": [
+            {
+              "path": "/",
+              "parentFd": null,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "/",
+                "dev": 16777232,
+                "ino": 2,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 736,
+                "mtime": 1790233837000000000,
+                "ctime": 1790233837000000000,
+                "links": 23
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "private",
+              "parentFd": 3,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "private",
+                "dev": 16777232,
+                "ino": 22907066,
+                "uid": 0,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 192,
+                "mtime": 1793752979086280124,
+                "ctime": 1793752979086280124,
+                "links": 6
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "tmp",
+              "parentFd": 4,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "tmp",
+                "dev": 16777232,
+                "ino": 315902304,
+                "uid": 0,
+                "gid": 0,
+                "mode": 17407,
+                "bytes": 251840,
+                "mtime": 1794039506481869558,
+                "ctime": 1794039506481869558,
+                "links": 7870
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "t02-r5-controls-phj7qzq9",
+              "parentFd": 5,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "t02-r5-controls-phj7qzq9",
+                "dev": 16777232,
+                "ino": 485818496,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16832,
+                "bytes": 1856,
+                "mtime": 1794039506570346765,
+                "ctime": 1794039506570346765,
+                "links": 58
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache-replace-after-read",
+              "parentFd": 6,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache-replace-after-read",
+                "dev": 16777232,
+                "ino": 485850985,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794039506570448015,
+                "ctime": 1794039506570448015,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "cache",
+              "parentFd": 7,
+              "operation": "directory",
+              "closed": true,
+              "opened": {
+                "path": "cache",
+                "dev": 16777232,
+                "ino": 485850986,
+                "uid": 501,
+                "gid": 0,
+                "mode": 16877,
+                "bytes": 96,
+                "mtime": 1794039506570565515,
+                "ctime": 1794039506570565515,
+                "links": 3
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": [
+                  "cacheRead"
+                ]
+              }
+            },
+            {
+              "path": "data",
+              "parentFd": 8,
+              "operation": "content",
+              "closed": true,
+              "opened": {
+                "path": "data",
+                "dev": 16777232,
+                "ino": 485850987,
+                "uid": 501,
+                "gid": 0,
+                "mode": 33188,
+                "bytes": 8,
+                "mtime": 1794039506570792141,
+                "ctime": 1794039506570792141,
+                "links": 1
+              },
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {},
+                "retainedObservationFields": []
+              }
+            }
+          ],
+          "lastEntry": "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache/data",
+          "files": [
+            {
+              "path": "/private/tmp/t02-r5-controls-phj7qzq9/cache-replace-after-read/cache/data",
+              "readBytes": 8,
+              "failure": {
+                "type": "AssertionError",
+                "message": "Cache pathname replaced during read",
+                "details": {
+                  "args": [
+                    "Cache pathname replaced during read"
+                  ]
+                }
+              }
+            }
+          ],
+          "contentBytesRead": 8
+        },
+        "args": [
+          "Cache pathname replaced during read"
+        ]
+      }
+    }
+  }
+]

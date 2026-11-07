@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision07-controls.py", line 17, in <module>
+    browser=helper('run_round4_browser_proof.py',dict(core))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/revision07-controls.py", line 16, in helper
+    space=dict(__name__='inert_exact',__file__=str(f),**injections);exec(compile(t,str(f),'exec'),space);return space
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument '__name__'
