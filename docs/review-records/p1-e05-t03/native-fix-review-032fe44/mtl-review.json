@@ -1,0 +1,218 @@
+{
+  "scope": "CPU replay of historical facts, no live PID query",
+  "cases": [
+    {
+      "kind": "exact-base",
+      "result": "expected-refusal",
+      "error": "Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+    },
+    {
+      "kind": "head",
+      "result": "admitted-retained-facts",
+      "receipt": {
+        "utc": "2026-11-07T11:03:02.219762+00:00",
+        "scope": "OBSERVED_STATION_CHROMIUM_COHORT",
+        "launch": null,
+        "processes": [
+          {
+            "kernel": {
+              "pid": 55005,
+              "ppid": 1,
+              "pgid": 55005,
+              "birth": [
+                1794046928,
+                112755
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                42831,
+                42832
+              ]
+            },
+            "coalition": [
+              42831,
+              42832
+            ],
+            "binary": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+            "role": "owned-launch-helper",
+            "command_observed": true,
+            "admitted": true,
+            "prelaunch_sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
+          }
+        ],
+        "all_ever_lived_processes_observed": false,
+        "external_native_XPC_ownership": "UNQUALIFIED"
+      }
+    },
+    {
+      "kind": "unknown",
+      "binary": "/System/Library/PrivateFrameworks/CascadeSets.framework/Versions/A/XPCServices/SetStoreUpdateService.xpc/Contents/MacOS/SetStoreUpdateService",
+      "result": "expected-refusal"
+    },
+    {
+      "kind": "unknown",
+      "binary": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/Other.xpc/Contents/MacOS/Other",
+      "result": "expected-refusal"
+    }
+  ],
+  "actualBinding": {
+    "executable": {
+      "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "realpath": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "bytes": 389760,
+      "sha256": "65af927ce641351e604bf36da7a664e5350d583483c7e5f3fe799e0d0db7a78b"
+    },
+    "codesign": {
+      "path": "/usr/bin/codesign",
+      "realpath": "/usr/bin/codesign",
+      "bytes": 973408,
+      "sha256": "d517c9be608ffd266ec106c685e880cda71abc94001450e36d2476016406dd1e"
+    },
+    "protectedRoute": [
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+        "device": 16777232,
+        "inode": 1152921500312166635,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS",
+        "device": 16777232,
+        "inode": 1152921500312166634,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents",
+        "device": 16777232,
+        "inode": 1152921500312166631,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc",
+        "device": 16777232,
+        "inode": 1152921500312166630,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices",
+        "device": 16777232,
+        "inode": 1152921500312166629,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions/A",
+        "device": 16777232,
+        "inode": 1152921500312166601,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework/Versions",
+        "device": 16777232,
+        "inode": 1152921500312166600,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks/Metal.framework",
+        "device": 16777232,
+        "inode": 1152921500312166596,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library/Frameworks",
+        "device": 16777232,
+        "inode": 1152921500312149173,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System/Library",
+        "device": 16777232,
+        "inode": 1152921500311918287,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/System",
+        "device": 16777232,
+        "inode": 1152921500311879703,
+        "uid": 0,
+        "mode": 493
+      },
+      {
+        "path": "/",
+        "device": 16777232,
+        "inode": 2,
+        "uid": 0,
+        "mode": 493
+      }
+    ],
+    "requirement": "identifier \"com.apple.MTLCompilerService\" and anchor apple",
+    "signature": {
+      "designated ": "> identifier \"com.apple.MTLCompilerService\" and anchor apple",
+      "Executable": "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService",
+      "Identifier": "com.apple.MTLCompilerService",
+      "Format": "bundle with Mach-O universal (x86_64 arm64e arm64e.x1)",
+      "CodeDirectory v": "20400 size=565 flags=0x0(none) hashes=7+7 location=embedded",
+      "Platform identifier": "26",
+      "VersionPlatform": "1",
+      "VersionMin": "1769472",
+      "VersionSDK": "1769472",
+      "Hash type": "sha256 size=32",
+      "CandidateCDHash sha256": "0564f4ea2063dbc3a9de0ac47ded14661384d230",
+      "CandidateCDHashFull sha256": "0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9",
+      "Hash choices": "sha256",
+      "CMSDigest": "0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9",
+      "CMSDigestType": "2",
+      "Executable Segment base": "0",
+      "Executable Segment limit": "32768",
+      "Executable Segment flags": "0x1",
+      "Page size": "16384",
+      "CDHash": "0564f4ea2063dbc3a9de0ac47ded14661384d230",
+      "Signature size": "4202",
+      "Authority": "Apple Root CA",
+      "Signed Time": "Aug 10, 2026 at 2:13:14\u202fAM",
+      "Info.plist entries": "21",
+      "TeamIdentifier": "not set",
+      "Sealed Resources version": "2 rules=2 files=0",
+      "Total signatures": "1",
+      "Chosen signature": "1"
+    },
+    "observations": [
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "--verify",
+          "--strict",
+          "-R",
+          "=identifier \"com.apple.MTLCompilerService\" and anchor apple",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/codesign",
+          "-d",
+          "--verbose=4",
+          "-r-",
+          "/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService"
+        ],
+        "exit": 0,
+        "stdout": "designated => identifier \"com.apple.MTLCompilerService\" and anchor apple\n",
+        "stderr": "Executable=/System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\nIdentifier=com.apple.MTLCompilerService\nFormat=bundle with Mach-O universal (x86_64 arm64e arm64e.x1)\nCodeDirectory v=20400 size=565 flags=0x0(none) hashes=7+7 location=embedded\nPlatform identifier=26\nVersionPlatform=1\nVersionMin=1769472\nVersionSDK=1769472\nHash type=sha256 size=32\nCandidateCDHash sha256=0564f4ea2063dbc3a9de0ac47ded14661384d230\nCandidateCDHashFull sha256=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nHash choices=sha256\nCMSDigest=0564f4ea2063dbc3a9de0ac47ded14661384d2301a6018710e554664ea1d29c9\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=32768\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=0564f4ea2063dbc3a9de0ac47ded14661384d230\nSignature size=4202\nAuthority=macOS Software Signing\nAuthority=Apple Code Signing Certification Authority\nAuthority=Apple Root CA\nSigned Time=Aug 10, 2026 at 2:13:14\u202fAM\nInfo.plist entries=21\nTeamIdentifier=not set\nSealed Resources version=2 rules=2 files=0\nTotal signatures=1\nChosen signature=1\n"
+      }
+    ],
+    "scope": "Exact owned-cohort executable only; current UID/birth/coalition/executable checks remain mandatory. External XPC ownership unqualified."
+  }
+}

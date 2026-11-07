@@ -1,0 +1,2434 @@
+{
+  "head": "2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4",
+  "tree": "012a0dfbfd3dd3917bae8c848f686c4f8e4d8238",
+  "base": "f4fd0ea574bb74fdaac6628556985a55046186f4",
+  "verdict": "REVISE",
+  "scope": "bounded tooling review only",
+  "reportSHA256": "6acc525a7d55bdd701730cbbd474c0a7b4cc5a6a6874279b593c1737939fdb91",
+  "verifySHA256": "f958bf002aceb6c784b9bb48219acec15c4ef27e3d949efa41aa6c60fc4ab823",
+  "files": [
+    {
+      "path": "REPORT.txt",
+      "bytes": 13295,
+      "sha256": "6acc525a7d55bdd701730cbbd474c0a7b4cc5a6a6874279b593c1737939fdb91"
+    },
+    {
+      "path": "VERIFY.txt",
+      "bytes": 123486,
+      "sha256": "f958bf002aceb6c784b9bb48219acec15c4ef27e3d949efa41aa6c60fc4ab823"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "cd7843b39bb9a65d2af3fc32f5d4533b1dd2d13726e13e86441784fa7417cbfe"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2544,
+      "sha256": "1912e8f411e456e9d5d0fab5c7c092951ee0d873ffbe08924b2b199a98e6bd68"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 3223,
+      "sha256": "24b1b0a4249551c378360b74d94abfd80930004f55839423106fd5cacbfb6700"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "e77aa02e637635ef01d49d0b80e2c3b4d82a95549eebf999bbe0d01ff6562573"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/receipt.json",
+      "bytes": 4830,
+      "sha256": "77b34371b98a6d535a656da9e636f6debef167d08011f61c18c52e403d372852"
+    },
+    {
+      "path": "base-ps-exit/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 340,
+      "sha256": "d465f5aa15e203b9fe44740070a25773cb37cf5a1ebbdd0adb8c1576cb9c98f9"
+    },
+    {
+      "path": "base-ps-exit/bin/ps",
+      "bytes": 163,
+      "sha256": "7897162fa5762ecb36b607d0fe8e0758463674b925b4bdeac6b1726d2d931800"
+    },
+    {
+      "path": "base-ps-exit/cleanup.json",
+      "bytes": 461,
+      "sha256": "0896c448a1e9f7487c7566e85cade99c1e3ae2f76ae98c0e106d2bb870bd8ed7"
+    },
+    {
+      "path": "base-ps-exit/code-pins.json",
+      "bytes": 447,
+      "sha256": "9c80f8f592a5f9f0a7dfd8ff8aebdbd05f50344f32cfece6ad41a520ea7a37da"
+    },
+    {
+      "path": "base-ps-exit/command.log",
+      "bytes": 1374,
+      "sha256": "19d9590c33f7746c15de4a6ae6c7721262c3adecd65a4aeda0be974f3e917d21"
+    },
+    {
+      "path": "base-ps-exit/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "base-ps-exit/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 110,
+      "sha256": "ffc096c839c64f5df3eec467b3ab41664a25d0b7e30da88e5ee59c494debf706"
+    },
+    {
+      "path": "base-ps-exit/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "base-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 7691,
+      "sha256": "f54bc42109f242ce2e060c2e1c381e58cdb41c686a28261175fa12240b449377"
+    },
+    {
+      "path": "base-ps-exit/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 5965,
+      "sha256": "892920e9e7a30149f3582403dc20f402014ca8a105fea06effe5f2483b453eac"
+    },
+    {
+      "path": "base-ps-exit/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 4423,
+      "sha256": "d49b1bdf53816125ec2e4a31da6684185afccb350534d6976c796df385494817"
+    },
+    {
+      "path": "base-ps-exit/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "base-ps-exit/result.json",
+      "bytes": 5298,
+      "sha256": "fa6f83f988ea4e93a0e47d16db2e2ce6d9f0d0d0163999cd548a3eefd22d6b07"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "a43ebcc70b352cc592942c8c7c9685ea025556c4b7198bfaaeccbd4fe06c51b9"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2552,
+      "sha256": "18a942c353e957d9eb403bf8e6b2905c3b7adfe569035c5f8ee25f848593e34c"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 4788,
+      "sha256": "f019fa93f154de5f13cde061b0ad3f2f240624f7f03ee15a8c8b54225392481b"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "61951d82a705f2cea1629fbee6c0e8175dd346b08bd5ff1c395df19b8920b636"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/receipt.json",
+      "bytes": 4842,
+      "sha256": "702b0a959aa0820bd84639d55da9fc1b2d6a0d78a7ab7b70d33e073c61451fbc"
+    },
+    {
+      "path": "base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 345,
+      "sha256": "028721b79457667d0547ee1e6c29fe45cea102ec7d0b27758915c2c0df92cf47"
+    },
+    {
+      "path": "base-ps-timeout/bin/ps",
+      "bytes": 116,
+      "sha256": "ea1e36da09702190beb8720dbd18400e62474d98cd40a98d0bcb8ce8c16069c5"
+    },
+    {
+      "path": "base-ps-timeout/cleanup.json",
+      "bytes": 464,
+      "sha256": "a81b465dad0b1158ebf56b79adf447a1151355fc4fd554697aa0ce2e3787ecb6"
+    },
+    {
+      "path": "base-ps-timeout/code-pins.json",
+      "bytes": 447,
+      "sha256": "9c80f8f592a5f9f0a7dfd8ff8aebdbd05f50344f32cfece6ad41a520ea7a37da"
+    },
+    {
+      "path": "base-ps-timeout/command.log",
+      "bytes": 1384,
+      "sha256": "68a26206f221061b2175f79376acff988bcfa1241c9d207101b0bd7b07413e98"
+    },
+    {
+      "path": "base-ps-timeout/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "base-ps-timeout/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 113,
+      "sha256": "dfd7c50b0974913df72b1af479f4ec13e9a08674d8fb6121e18bf9ff1264f686"
+    },
+    {
+      "path": "base-ps-timeout/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "base-ps-timeout/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 7691,
+      "sha256": "f54bc42109f242ce2e060c2e1c381e58cdb41c686a28261175fa12240b449377"
+    },
+    {
+      "path": "base-ps-timeout/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 5965,
+      "sha256": "892920e9e7a30149f3582403dc20f402014ca8a105fea06effe5f2483b453eac"
+    },
+    {
+      "path": "base-ps-timeout/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 4423,
+      "sha256": "d49b1bdf53816125ec2e4a31da6684185afccb350534d6976c796df385494817"
+    },
+    {
+      "path": "base-ps-timeout/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "base-ps-timeout/result.json",
+      "bytes": 5316,
+      "sha256": "f48a83b66e7d32c896eeea3dd86dc9991f305bbd10b126cf679d7c3e3c29fdec"
+    },
+    {
+      "path": "base-publication/BASE-accepts-fsync/command.log",
+      "bytes": 83,
+      "sha256": "2102af5c3b2617bb79e9aae2c7fad35521dae4ead5141e0835f03d5758257e3c"
+    },
+    {
+      "path": "base-publication/BASE-accepts-fsync/promotion.json",
+      "bytes": 1577,
+      "sha256": "ae1f5b0583937f084a6ace6973a41ac8f03a500c8d9270955f5b1b610867360a"
+    },
+    {
+      "path": "base-publication/BASE-accepts-fsync/result.json",
+      "bytes": 367,
+      "sha256": "c6e5d060a651a3f896d7a6c8f01817e96c2074f38f1ca046fb2101e1a0b43adc"
+    },
+    {
+      "path": "base-publication/assets/blend/hulls/swift.blend",
+      "bytes": 42959316,
+      "sha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/dispatch.json",
+      "bytes": 61,
+      "sha256": "11ea80dd97a71f7f956d541aeddbc2ab499c0331d498e2b98064aa584bb2364e"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/guardian.json",
+      "bytes": 279,
+      "sha256": "dfd1202724393fb5eeaa0edea2328e20e9cd7c44c24a86245b2a3c216770c229"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/launch.json",
+      "bytes": 3027,
+      "sha256": "5518b8b872af9fe773dc2c2896471b3e44060c553442fe20557785be6b26a1d9"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/process.log",
+      "bytes": 92,
+      "sha256": "57182c850425f133ee77d9a87d7b782638d2448277fe6089b37e11b814f52de7"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/receipt.json",
+      "bytes": 5286,
+      "sha256": "2abf38527bc142c3b9f964c28169050bf21c35313c0c0801fb6ae695b142fcec"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/audit-fsync/supervisor-launch.json",
+      "bytes": 813,
+      "sha256": "f087655b48eec5dff59aa284e4336f65a169b53e003bc97700a524a63e969167"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "71a04bb149d2ed00ed61c18ca4d9ceb9b33ab1f59a8bc330b24f25680ca52fe3"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/display-fit.json",
+      "bytes": 6490,
+      "sha256": "dbc2e1c0392edc2dd12a1b092b500097b3bde9bc3680ddab166fcdb5403ca437"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/guardian.json",
+      "bytes": 280,
+      "sha256": "78db356653631f3454d66e5fa919517068f06e794aad199de13dffe7964227da"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/launch.json",
+      "bytes": 3013,
+      "sha256": "32be0fc8250db937031afb3d23f3d72a46fd0b6673503d18ec006b19f7e9651a"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/process.log",
+      "bytes": 92,
+      "sha256": "57182c850425f133ee77d9a87d7b782638d2448277fe6089b37e11b814f52de7"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/receipt.json",
+      "bytes": 5273,
+      "sha256": "32ebdb88fb4ab23fcbb52ac6525e45870b2d0c2117e33139acd5993750313ae6"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/fit-ok/supervisor-launch.json",
+      "bytes": 804,
+      "sha256": "e1191832215ff102b651881e64ec59b18319df8a733383c15dd20ad0ea60da47"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "9fc99d4d1ad2b4ec4945a49d5dfa6fc058d60bfab1cb4d4bc1004c9983376238"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/guardian.json",
+      "bytes": 280,
+      "sha256": "80777ca020867d5ecd429cc870870f495b5cb4d38bc964241582430498ad59be"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/identity.json",
+      "bytes": 142387,
+      "sha256": "a22bd9fd9dc4599a4e27dc6d3592169252fd908c7b7df711b65d6f187a8aea50"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/launch.json",
+      "bytes": 3038,
+      "sha256": "84afb63ea2fd029471519087801dafc992910d654003672f43a3313ac9be03dc"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/process.log",
+      "bytes": 92,
+      "sha256": "57182c850425f133ee77d9a87d7b782638d2448277fe6089b37e11b814f52de7"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/receipt.json",
+      "bytes": 5298,
+      "sha256": "80e2d00024460b6607e81cffc37329205b084171580409e145662797b08a94d0"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/identity-ok/supervisor-launch.json",
+      "bytes": 824,
+      "sha256": "368108aee23287c072b0ab80b6b5793800d09c51bfbc50cc92fe2284690b6e54"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "862ee10b188e4e50a857886b2057879c50597fdbd33b4b7c1c4f1f36d127f076"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/guardian.json",
+      "bytes": 280,
+      "sha256": "b1e29c9bdfb58784457e6706a08cdaf88f4e51213f801d74abdc662a5c7a8960"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/launch.json",
+      "bytes": 3026,
+      "sha256": "ad642d25c7159bc69bc7c27ab6acc8d283359f64fa6ed7a209d8de080f0089a2"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb",
+      "bytes": 24721524,
+      "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/process.log",
+      "bytes": 92,
+      "sha256": "57182c850425f133ee77d9a87d7b782638d2448277fe6089b37e11b814f52de7"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/receipt.json",
+      "bytes": 5286,
+      "sha256": "cff4932a4c2229fe3d6e19d52ec0c514ea3f77a5c3d726789b1584e86b470c9a"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/source-pin.json",
+      "bytes": 284,
+      "sha256": "a99777b5b69a647e07164b4e6735dbb7dadef9efdf2b204685853e0aec9454f0"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/supervisor-launch.json",
+      "bytes": 815,
+      "sha256": "151f1ed84a99b2f6e1b234c00057d13ab4b4722b70d6f95a0679b3d02a552ebf"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.blend.json",
+      "bytes": 14418,
+      "sha256": "0d9747586e04f0bde6743c644dbd6485bb3fdf61761dc9011639cfc2f720cd1c"
+    },
+    {
+      "path": "base-publication/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.glb.json",
+      "bytes": 11755,
+      "sha256": "265a1f34a1e4f6212120d70022cd6bf62d2bbb6a132f6b3bc5f3059055ee6d06"
+    },
+    {
+      "path": "base-publication/audit-fsync-result.json",
+      "bytes": 340,
+      "sha256": "3bb3a64c6b8210d2f5fa62c6af532e964fa957b95ae8db060c417cade55768a2"
+    },
+    {
+      "path": "base-publication/audit-fsync.log",
+      "bytes": 1019,
+      "sha256": "a30776107ceae608d43e5eb9f84297aaee96634ec27ad6f34ca96bc79f590f8a"
+    },
+    {
+      "path": "base-publication/cleanup.json",
+      "bytes": 201,
+      "sha256": "ec8dd83dbb86163dbb39d5a6a73dd79b4185f51931da1e431a5e60d2f1e8b15f"
+    },
+    {
+      "path": "base-publication/code-pins.json",
+      "bytes": 447,
+      "sha256": "9c80f8f592a5f9f0a7dfd8ff8aebdbd05f50344f32cfece6ad41a520ea7a37da"
+    },
+    {
+      "path": "base-publication/fit-ok.log",
+      "bytes": 90,
+      "sha256": "cf07ec07e867b00b938b89fb1eefafda58cbb35ae7479457acc2e8cf4ef718c9"
+    },
+    {
+      "path": "base-publication/fsync-event.json",
+      "bytes": 145,
+      "sha256": "c0a423860e81dd591873d5fe9f61384db72b5cdb684e4ff9c94a3269bb5c7b82"
+    },
+    {
+      "path": "base-publication/hook/sitecustomize.py",
+      "bytes": 2128,
+      "sha256": "17b43fad8de8d7cfc30c5c5a48a3b7c533fe7ee2c7eeaf545f197387559f7c8b"
+    },
+    {
+      "path": "base-publication/identity-ok.log",
+      "bytes": 90,
+      "sha256": "3d5caa74820365ba80abe58127cc3aeac8d5c315e3787e7a4760694fb0565a42"
+    },
+    {
+      "path": "base-publication/packages/client/public/models/hulls/swift.glb",
+      "bytes": 24721524,
+      "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"
+    },
+    {
+      "path": "base-publication/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "base-publication/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 7691,
+      "sha256": "f54bc42109f242ce2e060c2e1c381e58cdb41c686a28261175fa12240b449377"
+    },
+    {
+      "path": "base-publication/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 5965,
+      "sha256": "892920e9e7a30149f3582403dc20f402014ca8a105fea06effe5f2483b453eac"
+    },
+    {
+      "path": "base-publication/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 4423,
+      "sha256": "d49b1bdf53816125ec2e4a31da6684185afccb350534d6976c796df385494817"
+    },
+    {
+      "path": "base-publication/publish.py",
+      "bytes": 860,
+      "sha256": "6cfa7b043c8a67f80e9824ef8730f3a42047655b1cfda03f5bfc1e73ab16292c"
+    },
+    {
+      "path": "base-publication/retained-lock-fsync/owner.json",
+      "bytes": 120,
+      "sha256": "ed3dbd47aa2d1883bd5e3f1a4253aa58e20e87718e5cc62fb108de4636472bd8"
+    },
+    {
+      "path": "base-publication/stock-ok.log",
+      "bytes": 90,
+      "sha256": "cf07ec07e867b00b938b89fb1eefafda58cbb35ae7479457acc2e8cf4ef718c9"
+    },
+    {
+      "path": "baseline-run.log",
+      "bytes": 838,
+      "sha256": "b802cbba9f0c99cbe4240c8f79ec75970b9fc1b8b0411bd2e0439ac2e85bd70c"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "082a4c8ca8896e843ba28c3ba225819d236796b96341e204828b52e4f6113945"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "24b9d850f33ed14e11ee7a286bfe1669945726803280de57aa353e654de80d23"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 2700,
+      "sha256": "e49ace5d166e144693e78cbee7a5f8f4c1be24f6a52c52deb859c9aa8a9e0c0c"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2625,
+      "sha256": "3c2e3c255766908833e4360cb56247f594be31482d6d79033c6326bb1a486fae"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 2322,
+      "sha256": "f49f58571c63c9e356b8c5fa3c70fca29a4ceb45085cc784e39ebe1d407ba886"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/receipt.json",
+      "bytes": 4934,
+      "sha256": "e43420c7c72f721f30787f8c3e15ba2f48583b24445df185dfa7643d1e84ad1c"
+    },
+    {
+      "path": "candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 364,
+      "sha256": "1b85aaf8c447c82a33c7b16e173d3bb1f4a664c33152e9f92fa65b5e8d6ff3fb"
+    },
+    {
+      "path": "candidate-both-observers/bin/ps",
+      "bytes": 163,
+      "sha256": "7897162fa5762ecb36b607d0fe8e0758463674b925b4bdeac6b1726d2d931800"
+    },
+    {
+      "path": "candidate-both-observers/cleanup.json",
+      "bytes": 135,
+      "sha256": "2c338c0892402c952af512ee5f340eb8e7570e748fb325dadf44d47c0186037c"
+    },
+    {
+      "path": "candidate-both-observers/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "candidate-both-observers/command.log",
+      "bytes": 144,
+      "sha256": "2c62f8354295b068d7e6240b4af2007842ff33d0f4e138d302e87162cceadb28"
+    },
+    {
+      "path": "candidate-both-observers/hook/sitecustomize.py",
+      "bytes": 396,
+      "sha256": "8607fe7c01147986d2ea1d7bb40c4c7bd6153f3b1cac58a86f33db86b9e52959"
+    },
+    {
+      "path": "candidate-both-observers/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 122,
+      "sha256": "0115fa2a0e9b119b64bf35400ca74bc10fefd231d4bccab28cbd947c2576a12c"
+    },
+    {
+      "path": "candidate-both-observers/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "candidate-both-observers/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "candidate-both-observers/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "candidate-both-observers/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate-both-observers/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "candidate-both-observers/result.json",
+      "bytes": 8042,
+      "sha256": "b6dba5d94167b87064f3afbbfebe1212d17c1bdd3efdfdd8eb81dc0cf0bae63d"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "d76249f7f2a90470bec484e83b0ce1378fd2e32905193d1167911df2ce55069c"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "fd4c341333a4fa378b1cb1dc35fccb7af9d0df935708dc9d0684983388768476"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 1451,
+      "sha256": "f1510d4a8fb99edf8809238d04ec4c37da75b1ae3d59c48e3a2d5490613d3d45"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2604,
+      "sha256": "0296fd7d0b16186365153f4c9903d16e5746c043de86045839360163141d2106"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 1250,
+      "sha256": "ff0a3893cc0a102ba78e507af887347dc16734a876c2bf5e0a44ab6371c7c205"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "a7055ee1c84e9ec2c994b3cf6d6b555b6855ab5739d5430c7238d67f2b38b4b7"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/receipt.json",
+      "bytes": 4912,
+      "sha256": "e946c3da69589a064505872e982d9a6c45a78a7720f4d62c5701816e54895dda"
+    },
+    {
+      "path": "candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 350,
+      "sha256": "d2336ee5d0a2dd7556d3fd577ec8a671e5e6c10fcbb3d670e3f710f62ab8f8d6"
+    },
+    {
+      "path": "candidate-ps-exit/bin/ps",
+      "bytes": 163,
+      "sha256": "7897162fa5762ecb36b607d0fe8e0758463674b925b4bdeac6b1726d2d931800"
+    },
+    {
+      "path": "candidate-ps-exit/cleanup.json",
+      "bytes": 135,
+      "sha256": "48e405013ecca1b4afecb964bd95986697a6d8c4a0d548ea3dd67a7d2aa2958c"
+    },
+    {
+      "path": "candidate-ps-exit/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "candidate-ps-exit/command.log",
+      "bytes": 111,
+      "sha256": "d87ad0a4502cd440cce09573946ddfc69228e4631141eee9b5f5183fae56ccef"
+    },
+    {
+      "path": "candidate-ps-exit/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "candidate-ps-exit/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "candidate-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "candidate-ps-exit/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "candidate-ps-exit/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate-ps-exit/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "candidate-ps-exit/result.json",
+      "bytes": 6711,
+      "sha256": "98d942785248b0e0bc1600f55f3c988a5807e9110caa793e0ecacef88aa1c7d2"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "f0881a0d1d5548404ec02ce3bbdc69dcb40a0eee36da827a142d4c7540563cfb"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "60e2f340c6637bc5225f1f7381ff5b230e96436b530c8ff500476c51a1037898"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 1365,
+      "sha256": "b8527c9597a91bd33a7a6a8f93693144c44cf77078e9ab16e03e61dfd2375ae3"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2612,
+      "sha256": "e2c18889ce9a336a2d711998d686664a57d80dd5b111e280a0d238002e503fb6"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 1164,
+      "sha256": "2e791df7882870308cfbf805b20d21b91a6dbe6afbb2936bd280739d812f2532"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "216c717f61b3924d65228a06c386e82db170daea495f490562b9e2956ac073e7"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/receipt.json",
+      "bytes": 4920,
+      "sha256": "777a7bb6d968d990e3a9ff0ea70a6c9dab6cdfbf76be385962be0f3c1925409c"
+    },
+    {
+      "path": "candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 355,
+      "sha256": "653bef64debd9aea67d75952e942c0216e78fe93327b1b11af35402e6ba04125"
+    },
+    {
+      "path": "candidate-ps-timeout/bin/ps",
+      "bytes": 116,
+      "sha256": "ea1e36da09702190beb8720dbd18400e62474d98cd40a98d0bcb8ce8c16069c5"
+    },
+    {
+      "path": "candidate-ps-timeout/cleanup.json",
+      "bytes": 135,
+      "sha256": "c944eb62e1d92b7e7830e0fe1ff61b44262f6edf2946d8564b838c1e717cdb0a"
+    },
+    {
+      "path": "candidate-ps-timeout/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "candidate-ps-timeout/command.log",
+      "bytes": 111,
+      "sha256": "d2d2c80efb14fcbb46fed0242452f4cc967ab6bfeb14103746b92f8e94adac18"
+    },
+    {
+      "path": "candidate-ps-timeout/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "candidate-ps-timeout/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "candidate-ps-timeout/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "candidate-ps-timeout/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "candidate-ps-timeout/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate-ps-timeout/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "candidate-ps-timeout/result.json",
+      "bytes": 6636,
+      "sha256": "8b60699cf14cf42ca89893070df8f2532d984947f45c623e5e13d2dc81201674"
+    },
+    {
+      "path": "candidate-publication/CANDIDATE-accepts-cancel-before-commit/command.log",
+      "bytes": 83,
+      "sha256": "2102af5c3b2617bb79e9aae2c7fad35521dae4ead5141e0835f03d5758257e3c"
+    },
+    {
+      "path": "candidate-publication/CANDIDATE-accepts-cancel-before-commit/promotion.json",
+      "bytes": 1983,
+      "sha256": "6b34ff68481500c9c67dd137039558032e92588709f1f925d7ab6cac210b316f"
+    },
+    {
+      "path": "candidate-publication/CANDIDATE-accepts-cancel-before-commit/result.json",
+      "bytes": 387,
+      "sha256": "318ef6e9d2e9fbf0758bee23311f17d28e0ee61a36b26589b9661c33a9fe1e28"
+    },
+    {
+      "path": "candidate-publication/accept-normal/command.log",
+      "bytes": 83,
+      "sha256": "2102af5c3b2617bb79e9aae2c7fad35521dae4ead5141e0835f03d5758257e3c"
+    },
+    {
+      "path": "candidate-publication/accept-normal/promotion.json",
+      "bytes": 1947,
+      "sha256": "4b1d937385237ea08fc15d66b3a2089dfb049317f3e1a5e4be0b4d49df2ddd2a"
+    },
+    {
+      "path": "candidate-publication/accept-normal/result.json",
+      "bytes": 362,
+      "sha256": "b61b6fc10150ddda5d36de4c0007055338bec6d74fa664f2ee86cc81704466bf"
+    },
+    {
+      "path": "candidate-publication/accept-pause-before-commit/command.log",
+      "bytes": 83,
+      "sha256": "2102af5c3b2617bb79e9aae2c7fad35521dae4ead5141e0835f03d5758257e3c"
+    },
+    {
+      "path": "candidate-publication/accept-pause-before-commit/promotion.json",
+      "bytes": 1981,
+      "sha256": "41667cc3a254999be7306e43600ea9746ab397dc1c9ae7a4a95ce2deaf44c633"
+    },
+    {
+      "path": "candidate-publication/accept-pause-before-commit/result.json",
+      "bytes": 375,
+      "sha256": "b86c9cd8ddc3ea23b423aa0fb35d0a8094d109fa2dc30d77a62fe4513ff9765d"
+    },
+    {
+      "path": "candidate-publication/assets/blend/hulls/swift.blend",
+      "bytes": 42959316,
+      "sha256": "7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/dispatch.json",
+      "bytes": 61,
+      "sha256": "34fbe86ee16e77965a7075d0c4a53a43640a75e4a145c8f696e2a4e55847d3d9"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/guardian.json",
+      "bytes": 632,
+      "sha256": "0305819546c73400825d23b81d58ca8ed896718afbbedfa36d62e1b34cb4ddd3"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/launch.json",
+      "bytes": 3102,
+      "sha256": "e3f5e8f8b0a2aa38964893f2bd98fef5edf17c7b7bfc30a09d353723330791e7"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/process.log",
+      "bytes": 656,
+      "sha256": "f2a2ab771ec153b871cd3f1a45b455ee5e15ff06ff941b088ea6139358ac9df8"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/publication.json",
+      "bytes": 570,
+      "sha256": "39509bc0064f1b9f528052419b4c851a36c46677f4ea33bf998fa58691af836e"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/receipt.json",
+      "bytes": 5388,
+      "sha256": "327744d9187b8d81df0ac06d0dcea5942c5c0d4cd248bc20f498a4c19c7e32c4"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "02146e569d68133117db8f7abae83b4d881fa17c81c9a77f72fbcaf9debf3dac"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/.publication-open",
+      "bytes": 58,
+      "sha256": "77a5d14beb9040cada56343b0b255f0cab1f3ee0f517ce28f07a3ff3369284de"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/dispatch.json",
+      "bytes": 61,
+      "sha256": "7b24c1f18d87082280a7efb80864304b29d0493b4c801a7b819bbb0350003403"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/guardian.json",
+      "bytes": 631,
+      "sha256": "2c59049995712209f77654c5b9c317b239398b82e966c9ec3d40f5fd806957dd"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/launch.json",
+      "bytes": 3100,
+      "sha256": "44a0a7fc96eeb9d03e8026151e2a8e0453ec6b39d57b6fa20d44a9edcc5c9e8c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/process.log",
+      "bytes": 655,
+      "sha256": "17d3fd19a7d109e46ae2735e9e136f41d59dcd9e3bcf90d089f96f46919710ca"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/receipt.json",
+      "bytes": 5386,
+      "sha256": "c6404e7641ccab1312c0024df8ecc188eb4f823c67b9e1bc99f6a9a95711ccf2"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-cancel-provisional/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "cc225fba0b7c8d83da5794e292a930f914bb5aec78fafb90492213fe8ba2f25e"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/.publication-open",
+      "bytes": 58,
+      "sha256": "b517153a2c64e700bcd5cff1791e494d133e9a7c1f3dfb94722b36bb81df4ebd"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/dispatch.json",
+      "bytes": 61,
+      "sha256": "d63bda2f5bbc32e3275857166b53d520d546aeda5a8b0b800de86ce194b9d3f6"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/guardian.json",
+      "bytes": 634,
+      "sha256": "6ebad8f18d5899d19e1c19402c1a524d8d1843cf8791605c5f1d5b9474f619e0"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/launch.json",
+      "bytes": 3090,
+      "sha256": "f08ed17fa269752fa5a1533f63385d8df5f844d338cdfca2c345565519755813"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/process.log",
+      "bytes": 660,
+      "sha256": "001eab16311fe63be80d3524647958d78bc7a4760ecfc0fe244b4a70a7cf78a3"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/published",
+      "bytes": 4,
+      "sha256": "51280dabfbc880cdc5f92cc2f4f22c8032de5aba401c3268250a11eeb2df1f73"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/receipt.json",
+      "bytes": 5378,
+      "sha256": "f49cb26b41f084fa08062e308b46b8470570d4eb392b8abd2388ad8636fcc812"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-exit23/supervisor-launch.json",
+      "bytes": 825,
+      "sha256": "5e4afebcfa40c58d832ea03937ded7b626e755595ddc518373bc37322f52db6f"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/.publication-open",
+      "bytes": 58,
+      "sha256": "9800726bbf46a8a1c9271bc3cfe33cdbfbcac23103b160d1dca50e5966e84a46"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/.receipt.json.writing",
+      "bytes": 5373,
+      "sha256": "c3b634e635c4d3d8f27175c6d4f66d00c9d4ca8a8bdcd237c2ee616b668c11b5"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/dispatch.json",
+      "bytes": 61,
+      "sha256": "54ac7c3106ec2ca5333a3aac25138026700a71e34ecd35772b822823619cbaa2"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/guardian.json",
+      "bytes": 632,
+      "sha256": "8fcf1bfed6427147f84b395a9ac58ee75f473ff4578367ddee9dba6dc4fd8bd8"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/launch.json",
+      "bytes": 3087,
+      "sha256": "403fb03e36ae8831cfb720c60205533c9a8ab5acbcbedcb2ffaf4bbe03edb64c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/process.log",
+      "bytes": 656,
+      "sha256": "ce240d1539e081985d45fcc155be5dc3a1805b2a24551c0d0fcec1a707923cd3"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "23dba77390dcdb1ceefe1a209804102c595899d8a5e5a7ca19a8f4456a60e370"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/.publication-open",
+      "bytes": 58,
+      "sha256": "9f7d8c73ac840c6ea08e865a8331735580c59f0e0c42370378a46de4e619922c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/dispatch.json",
+      "bytes": 61,
+      "sha256": "d9fa66a4bb76884556bfe9ab6a23766e9e25c1b42c565649516e341483d58045"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/guardian.json",
+      "bytes": 632,
+      "sha256": "d7dc398087e1db2813ef0938d8644d3d4df17b4a69e731eeb263401387da4bbe"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/launch.json",
+      "bytes": 3100,
+      "sha256": "317300cfcf98fdfee0b22198be1736dffec022b1e8d20ddd633448f3b187db58"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/process.log",
+      "bytes": 656,
+      "sha256": "a0dd8f5deb43bb119e581023d5c91ced1f30984c8d66bbfedf04f2ee21bf3ad9"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/publication.json",
+      "bytes": 570,
+      "sha256": "0a5258fa4579344e06b73a79570c502d36eb16071876ced52ff2dea0a11763e3"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/receipt.json",
+      "bytes": 5386,
+      "sha256": "32d81664f717bf9176dc587f87299a6d9423785633d53989e704a0b731b4b046"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-kill-before-commit/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "fb755677e0e6c5a8b7a598248a79d5fd033bc659c9c39cb3e5e2fc0fc5bd11f3"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/.publication-open",
+      "bytes": 58,
+      "sha256": "500661f90721d74211d8844b93bbf10b8fb0ef2e66fcda3fad8f710581b28ebb"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/.publication.json.writing",
+      "bytes": 570,
+      "sha256": "818aa42f6cb0c55c9d758c757aee97066a3dc49fb002e7d63b9e106b4988212d"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/dispatch.json",
+      "bytes": 61,
+      "sha256": "d8c156936f707002ee7a62dd93de886dd73b906d3265e95e06767804c7bf5273"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/guardian.json",
+      "bytes": 632,
+      "sha256": "2c264e080c9e081d3578ecc3bc9847a87a887e2f43cd319f45cd0f7d62138791"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/launch.json",
+      "bytes": 3095,
+      "sha256": "8b5b60f4c0b5b26bdf7decc73f7c3903534b09591c437b2ebaec654ecfd0db16"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/process.log",
+      "bytes": 656,
+      "sha256": "fd5f6efed6e4c1fceb1403e68c5b558727deb7c704dd64abb018524cc4840237"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/publication.json",
+      "bytes": 570,
+      "sha256": "818aa42f6cb0c55c9d758c757aee97066a3dc49fb002e7d63b9e106b4988212d"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/receipt.json",
+      "bytes": 5381,
+      "sha256": "541ba91a00c3057aef8a8cc42dec6fafbe91ea7995b99fd781aa18ae826ef54c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-manifest-sync/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "af2672bff40c960eb195c6d5b5a47a105651a09d266969494a3533f9d4e7e861"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "6250b0826c5f0269fafe8f797d54a00de0455902898cfffcb6b16abb5a3e0566"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "915ac681e8583e24d23196ea34469e7d4d538a8dd1f74fee9ddbbce2966ec390"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/launch.json",
+      "bytes": 3084,
+      "sha256": "7be24225febe655c4adc9f375aa3656c4d70a5018dbd4d8f7d1937d6752e84a9"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/process.log",
+      "bytes": 657,
+      "sha256": "a670418c96b1051c5312674114c8ee0503ee8ae993e3ced84281bb700044e7b7"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/publication.json",
+      "bytes": 570,
+      "sha256": "729480afce99a2ffb659b74f5c0118d7aba010340c7f646ff95c202465de69e4"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/receipt.json",
+      "bytes": 5370,
+      "sha256": "1ea920daee4bb9a69c4d3bbb87e384968c7bd3c82815d9fb9de651c4671b5078"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-ok/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "9fcb205071889406420d84ad05876b95715eb5bdef71000ee427767b10781949"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/dispatch.json",
+      "bytes": 61,
+      "sha256": "b65d05d91c2f55c51845b37b1bc377b08ba692cf14de58d50636746dbc79bf0b"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/guardian.json",
+      "bytes": 632,
+      "sha256": "3b3f3c0bc2363b212bf0d59042f02bfb66b8d4e9fee01cfea0eb94e470a862bb"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/launch.json",
+      "bytes": 3101,
+      "sha256": "d4c3174c77904297fdb1e381e95bed8a716cbd6cc7212726835e487a90fdae14"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/process.log",
+      "bytes": 656,
+      "sha256": "8f2e41653a9dd3404222573efd7a32f7b2aed501578ba07056c6c23c6271eacd"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/publication.json",
+      "bytes": 570,
+      "sha256": "f03b675a6cad585869669acbab29749fc69d3545f7707a0a7d2aa28d0b8d3815"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/receipt.json",
+      "bytes": 5387,
+      "sha256": "34ebb53407abd4c28ae83f98b29641c86b349fabb18574abb477b35ef50a2bca"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-pause-before-commit/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "dc49f0989ec23d4bdab2efde989ac402d94766b1bddd147e64ce93498c75c5e2"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/.publication-open",
+      "bytes": 58,
+      "sha256": "7db81905f6ee6d14917860eeb68c2bcdc06401cd5eae58036ccc0c47498fd110"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/.receipt.json.writing",
+      "bytes": 5381,
+      "sha256": "7b9c040d1c5a9ec47c7249ab5d7232470da2dfd618db367ee3e84708ae8a57e1"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/dispatch.json",
+      "bytes": 61,
+      "sha256": "9b2ace83bf9d54ee67a9484b9dbf0a7fd75555001bfc79e0bc958d4bc87cfd67"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/guardian.json",
+      "bytes": 632,
+      "sha256": "9d777c8a0263cbce9061eb999d6b4ac4a5b6ea37950f8c3d248f8ba400b29dee"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/launch.json",
+      "bytes": 3095,
+      "sha256": "3338846dbb6363ede3164d08b2feac5d56dce5cc969a72381c2b2e69d4559f51"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/process.log",
+      "bytes": 656,
+      "sha256": "7bacbc9bd7c885aa80b9589977da6aeeef2595e458ee3db57b0f402cf12a35ee"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "26061332d457b6a357ba592821a422277a843d708fb05c26ab5e4c82cf6872e0"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/.publication-open",
+      "bytes": 58,
+      "sha256": "11fd3963469596ad4f777975e86510732c6e75943015663ab61bae9721de509c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/.receipt.json.writing",
+      "bytes": 5380,
+      "sha256": "37659a42a2debd65d322e1243dd5421984d63f3423ac517b04fe54fb2f7593e1"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/dispatch.json",
+      "bytes": 61,
+      "sha256": "91d8304ce77e55c399d9c67c4c420a5c844ace01f8f8c374d12c642b57b36d02"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/guardian.json",
+      "bytes": 632,
+      "sha256": "517db0c15d8c53fb12fe80df95df07f39d5b2e8455315e68e482a2214e46b339"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/launch.json",
+      "bytes": 3094,
+      "sha256": "3d146e4d3e71541bbce30e0dff42d226592fca94325c819f9a65307decdb3786"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/process.log",
+      "bytes": 656,
+      "sha256": "20e38f31a10528519e7b9afd02cd6756d6c5925e6133da496df2abb5cc6bbaf1"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "51a3ca1d2ed76fe3debae739690a6bbdc3f2e07dd07a75a1bc767147643dbfd8"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/.publication-open",
+      "bytes": 58,
+      "sha256": "8306ef9622978109dc07205cb86003fb74dcbffb650e7a401e878662584f975b"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/dispatch.json",
+      "bytes": 61,
+      "sha256": "25ea16683956ab925e767c4fb4cd72dfde3fe72990f19d914a8cd532f190cd98"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/guardian.json",
+      "bytes": 4281,
+      "sha256": "4c40579cb6b9d1a6b281224514caa10e2f788d29791de98d1cee5b4cb83db642"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/launch.json",
+      "bytes": 3097,
+      "sha256": "aa0d71dea312bba152d0b19a404801cf62b021a30c75be0027c4068769caa653"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/process.log",
+      "bytes": 3707,
+      "sha256": "0f6748175b3d4edf4c5aefb05c8aaee38ad8512ad3d05205c6f9e54d7b5d0dba"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/receipt.json",
+      "bytes": 5426,
+      "sha256": "50527fc587ad320035b03536998d128e171dee13f5a7a91526bcf1f3f1b7af69"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "10d0175d80d3e232e7c9c4b3230bc7d6c4f743a6fc2fb3284cdc97eac54b5fb0"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/.publication-open",
+      "bytes": 58,
+      "sha256": "2226def2c0b1fa28eef5b88872cfad4d0406bcfa341f6cc02d762d31c9a3c946"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/audit.json",
+      "bytes": 55490,
+      "sha256": "8bbd9e9ab69a847574c60832a53953236bb436ffff16ffc5a985b58bb101b33a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/dispatch.json",
+      "bytes": 61,
+      "sha256": "d7461a596f74f1d9d48539212348e25cfe7f6a434f6846c21fee0f443edf5b3b"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/guardian.json",
+      "bytes": 632,
+      "sha256": "fbca0c55b79b24352d59757d053d7ccff98ffa5f49b385ce55e5da014301d4ad"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/launch.json",
+      "bytes": 3094,
+      "sha256": "3b22a71b4b0c6017a68558b714dcdd8bfa2e80b49552c52485ea59762f3beaa9"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/process.log",
+      "bytes": 656,
+      "sha256": "9b385bf3425fef282b5c974c084031d2e2b9964fe5d924ebcb454f9238d6049f"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/publication.json",
+      "bytes": 570,
+      "sha256": "609f262ba98374569baa7c6c9053a849e7eeafa5304184f700d9871da8070077"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/receipt.json",
+      "bytes": 5380,
+      "sha256": "042c70168736b7abb4994bcd35e554f5a66e08f519331bedb7c6a80f63581193"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/audit-unlink-error/supervisor-launch.json",
+      "bytes": 823,
+      "sha256": "b078383707230565dfed673a13074083f09fb778a02f43803659f65b1c84111d"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "46ccece817411d8a3e3c050abb53c4a6ba1e46f7df93edcd13ec96a42c2f27e5"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/display-fit.json",
+      "bytes": 6490,
+      "sha256": "dbc2e1c0392edc2dd12a1b092b500097b3bde9bc3680ddab166fcdb5403ca437"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "bedd2fd186e5c0371ffd6e2fa666277fbf3425a619dcfa8a318aa576e3c95812"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/launch.json",
+      "bytes": 3073,
+      "sha256": "e5aa01e110d5cc4a94b5c389d652e371968c89c61dcd9477531d7d1c2d642f4f"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/process.log",
+      "bytes": 657,
+      "sha256": "f4a10dddff86b0d23cf621710dbc9e00f2d78734ab922af4b754347f5aa87079"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/publication.json",
+      "bytes": 570,
+      "sha256": "7515499292eb4a6591b448ab3fb8bbb72baaf7a2d954a2394a58787262c7f25c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/receipt.json",
+      "bytes": 5359,
+      "sha256": "d69bcf7ff7c7ebe22dff4478bcdfbb3d1ccc2a8e12ef7f02b531297be266c3f2"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/fit-ok/supervisor-launch.json",
+      "bytes": 814,
+      "sha256": "9228d76abc91882566644bb8f895baf6c613d9a07347b38ad900a4d0da439130"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "b50b63b858396dec76acd673495c62833336e0832ec13d046be9dff32a77fb6a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/guardian.json",
+      "bytes": 633,
+      "sha256": "384a04a97415d676ae286aba907be482d86f17b1295c6d76d926c9c260f7d202"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/identity.json",
+      "bytes": 142387,
+      "sha256": "a22bd9fd9dc4599a4e27dc6d3592169252fd908c7b7df711b65d6f187a8aea50"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/launch.json",
+      "bytes": 3098,
+      "sha256": "ae018defccc68eea17bfa78e8ef5a096de74bb7f862d139438f6bb4132595540"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/process.log",
+      "bytes": 657,
+      "sha256": "e2156f3653ce58310bef835668c2e7b0436588c27be33485e02f0c8e7e17b661"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/publication.json",
+      "bytes": 570,
+      "sha256": "c6412d5a8813a31044e3266a80b70c26f2c0fab77d24ca804a151ed793c0d65f"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/receipt.json",
+      "bytes": 5385,
+      "sha256": "d8bd32a1ecd801f949a2e6a54d22f13e95c8cae0d3620e6bc284eda25d6c3e55"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/identity-ok/supervisor-launch.json",
+      "bytes": 834,
+      "sha256": "cd0f603a750d2629b35427329c8473bafac71dded71d4554da65fec5e999fa5a"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/.publication-open",
+      "bytes": 58,
+      "sha256": "09e69b095175231e8026a0eae719f8a10736c3a43f721dd2d53b8e4838d08bcf"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/dispatch.json",
+      "bytes": 61,
+      "sha256": "6638af480e575017e9c5760a74214dedc87d0e2bd6dbb89cb5fc1eff0d00318f"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/guardian.json",
+      "bytes": 633,
+      "sha256": "e65077d57ff405c289095dce63df8d7a4fa4c3ff84cd2af019a2987356634ed1"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/launch.json",
+      "bytes": 3098,
+      "sha256": "3721363251a4fe9dfe8aaa45332f5ae51e0c7664145c07c4bbbc70cc65b958b2"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/models/hulls/swift.glb",
+      "bytes": 24721524,
+      "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/process.log",
+      "bytes": 659,
+      "sha256": "6dd40adf4835e346ffe51b5f2b588432ccebef33412f406796c36e213a6c2f57"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/published",
+      "bytes": 4,
+      "sha256": "51280dabfbc880cdc5f92cc2f4f22c8032de5aba401c3268250a11eeb2df1f73"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/receipt.json",
+      "bytes": 5385,
+      "sha256": "519a72ce877e45f30d7335a208e70601f06f2724e736405ded2dece0a29c99cd"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/source-pin.json",
+      "bytes": 284,
+      "sha256": "a99777b5b69a647e07164b4e6735dbb7dadef9efdf2b204685853e0aec9454f0"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/supervisor-launch.json",
+      "bytes": 827,
+      "sha256": "28f1bcd4e6a000f7df3ce69a224a184c18a29eda94ba8bf3a053c3fbde639527"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/validation/hulls__swift.blend.json",
+      "bytes": 14418,
+      "sha256": "0d9747586e04f0bde6743c644dbd6485bb3fdf61761dc9011639cfc2f720cd1c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-exit23-exact/validation/hulls__swift.glb.json",
+      "bytes": 11755,
+      "sha256": "265a1f34a1e4f6212120d70022cd6bf62d2bbb6a132f6b3bc5f3059055ee6d06"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/dispatch.json",
+      "bytes": 61,
+      "sha256": "2cbfb2e249f3a9782861f8a811ff45dcf69c5381d885f1be6f86f5accc07add4"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/guardian.json",
+      "bytes": 632,
+      "sha256": "8c94c03e49eafa8ba3696173bfa80650babdfd827f7068f12c69dbfc6f32976e"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/launch.json",
+      "bytes": 3086,
+      "sha256": "6dc649cd6f0a4c08365ec0ef3adaa140007511b2dcffbc5652e2aa05678f5919"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/models/hulls/swift.glb",
+      "bytes": 24721524,
+      "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/process.log",
+      "bytes": 656,
+      "sha256": "983f298fc51acc24c554a0fadf870321ed6250b8d1771bf303e8e9cb241cd01b"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/publication.json",
+      "bytes": 570,
+      "sha256": "940e2a56ecc0f6ebdf58c07bdcab7261abf1ffe64d6df75b84024371e913af54"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/published",
+      "bytes": 2,
+      "sha256": "2689367b205c16ce32ed4200942b8b8b1e262dfc70d9bc9fbc77c49699a4f1df"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/receipt.json",
+      "bytes": 5373,
+      "sha256": "a96180c81f84568bb2ed54dbf6e2cbdf60dc59f26eeaa7c47890182d5ebd1e11"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/source-pin.json",
+      "bytes": 284,
+      "sha256": "a99777b5b69a647e07164b4e6735dbb7dadef9efdf2b204685853e0aec9454f0"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/supervisor-launch.json",
+      "bytes": 825,
+      "sha256": "fac98f6f15532ea7c7f19f17d3b91e32155e1eab3b4acb04db191a4d4050dd56"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.blend.json",
+      "bytes": 14418,
+      "sha256": "0d9747586e04f0bde6743c644dbd6485bb3fdf61761dc9011639cfc2f720cd1c"
+    },
+    {
+      "path": "candidate-publication/assets/renders/hulls/swift-round4-current/stock-ok/validation/hulls__swift.glb.json",
+      "bytes": 11755,
+      "sha256": "265a1f34a1e4f6212120d70022cd6bf62d2bbb6a132f6b3bc5f3059055ee6d06"
+    },
+    {
+      "path": "candidate-publication/audit-cancel-before-commit-result.json",
+      "bytes": 464,
+      "sha256": "9a2f9132d9a8f94ca7557ab131da5cfbb85485e3419bc31d105dd9acc4b50090"
+    },
+    {
+      "path": "candidate-publication/audit-cancel-before-commit.log",
+      "bytes": 89,
+      "sha256": "888af04803ed2ab202900c7034fb5dfaf7a0cfa83a2bae61c9cf2338d3a44736"
+    },
+    {
+      "path": "candidate-publication/audit-cancel-provisional-result.json",
+      "bytes": 459,
+      "sha256": "906f4ab95307a99c502a47202b8ebc2e0bc4d729fc272b39920ab1b7829b2181"
+    },
+    {
+      "path": "candidate-publication/audit-cancel-provisional.log",
+      "bytes": 89,
+      "sha256": "dd0dd0e86bad9399eff9f65a4ecc0480bbcef63c5ca907be29816277ab141913"
+    },
+    {
+      "path": "candidate-publication/audit-exit23.log",
+      "bytes": 91,
+      "sha256": "a379b08b086dab5a762f71362bfdf87b071a6c1c99168cfb7434beea1eafc5cd"
+    },
+    {
+      "path": "candidate-publication/audit-fsync-result.json",
+      "bytes": 339,
+      "sha256": "c68ff1022b7cfc795ecccd788452607d83330efa238ed96df5157607753aad5c"
+    },
+    {
+      "path": "candidate-publication/audit-fsync.log",
+      "bytes": 1039,
+      "sha256": "81f8b89b0a60068398f0892a531167519d2d14d003a6df84dcab223eb095319c"
+    },
+    {
+      "path": "candidate-publication/audit-kill-before-commit-result.json",
+      "bytes": 360,
+      "sha256": "063cda5192f8484b54bccf395a7b676862f1680ec5998a2f39c11ebd5d84e18f"
+    },
+    {
+      "path": "candidate-publication/audit-kill-before-commit.log",
+      "bytes": 89,
+      "sha256": "dd0dd0e86bad9399eff9f65a4ecc0480bbcef63c5ca907be29816277ab141913"
+    },
+    {
+      "path": "candidate-publication/audit-manifest-sync-result.json",
+      "bytes": 357,
+      "sha256": "1b7c7dbf0a0b2274d77579862309a5162ba7b5fced37ff9df14001e80f425d13"
+    },
+    {
+      "path": "candidate-publication/audit-manifest-sync.log",
+      "bytes": 1716,
+      "sha256": "5555dd03b96a0331d066a0d393fca6fd6d3d8e488bdb7c24a13cfb3bef101b39"
+    },
+    {
+      "path": "candidate-publication/audit-ok.log",
+      "bytes": 89,
+      "sha256": "635aebd3b8b24750d19676fbebf1fe9fd52f6ff9face2179b15c80e6f09ecc8b"
+    },
+    {
+      "path": "candidate-publication/audit-pause-before-commit-result.json",
+      "bytes": 445,
+      "sha256": "91a3e0a3192ca6d0d25d000f44804117c81f106268128f891ae7c292539c44bd"
+    },
+    {
+      "path": "candidate-publication/audit-pause-before-commit.log",
+      "bytes": 89,
+      "sha256": "deb4b835803b5275bb1155a59fb93f43afa284b7f5ab705d2ed5ff06eb93fbd6"
+    },
+    {
+      "path": "candidate-publication/audit-receipt-close-result.json",
+      "bytes": 355,
+      "sha256": "153730279f3e69d5dd7c6ce1e72e5c0fa801b057d6cc2d27433cc378b263420e"
+    },
+    {
+      "path": "candidate-publication/audit-receipt-close.log",
+      "bytes": 1075,
+      "sha256": "05e004dc93ac913f0daec75adb73299d7cbda58782a8e01be9fae3018a06ae9a"
+    },
+    {
+      "path": "candidate-publication/audit-receipt-link-result.json",
+      "bytes": 353,
+      "sha256": "3f13bd14599491c1f6f729e6204c855be8de89ae02658707f14f117038aa69a9"
+    },
+    {
+      "path": "candidate-publication/audit-receipt-link.log",
+      "bytes": 1048,
+      "sha256": "4eb344d279b1ea8d71887dfba45f497dbaf9354dc892ba81051e0da9420c02b1"
+    },
+    {
+      "path": "candidate-publication/audit-unknown-cleanup.log",
+      "bytes": 164,
+      "sha256": "a4f89286152dcf022421d5c766c1f88bce1efa4abf45ee6ae3bbf1bc77d99e20"
+    },
+    {
+      "path": "candidate-publication/audit-unlink-error-result.json",
+      "bytes": 347,
+      "sha256": "a9e4bd261c9e3a80d1f48ba96b82c04c19959357c3b05b3374eca547cc69a038"
+    },
+    {
+      "path": "candidate-publication/audit-unlink-error.log",
+      "bytes": 894,
+      "sha256": "320858de066f213407bc8c7080133088051a081fd02f47ee655ac729ad72a886"
+    },
+    {
+      "path": "candidate-publication/cancel-before-commit-event.json",
+      "bytes": 242,
+      "sha256": "7458fe7fb3e4f24f6a3fa40cb9092daa54e0bf44c27d39c5aba3178342f7d567"
+    },
+    {
+      "path": "candidate-publication/cancel-before-commit-resume",
+      "bytes": 6,
+      "sha256": "a83a31320d921b888a48fa5edd0b4b5a29984de6e96bf7b8ac7d29ba06caf616"
+    },
+    {
+      "path": "candidate-publication/cancel-provisional-event.json",
+      "bytes": 240,
+      "sha256": "4cf0a9b7c77ba01b7e3563c132a0f3f9e0768d624f17176d1dd6ec5a8c4a75f0"
+    },
+    {
+      "path": "candidate-publication/cancel-provisional-resume",
+      "bytes": 6,
+      "sha256": "a83a31320d921b888a48fa5edd0b4b5a29984de6e96bf7b8ac7d29ba06caf616"
+    },
+    {
+      "path": "candidate-publication/cleanup.json",
+      "bytes": 465,
+      "sha256": "5f4ad83a29151477a8e733e9fe46679d7cd01219e37710905c26a2dff6dc4cce"
+    },
+    {
+      "path": "candidate-publication/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "candidate-publication/fit-ok.log",
+      "bytes": 89,
+      "sha256": "6bf29e8f410266481d4042bb16e46cb04740727ea2d0922f61ab2e6048e7177e"
+    },
+    {
+      "path": "candidate-publication/fsync-event.json",
+      "bytes": 145,
+      "sha256": "63e9d4d9c267b87bc931986dc6ecfb56e5bec29964ecceff01da57ed144a1345"
+    },
+    {
+      "path": "candidate-publication/hook/sitecustomize.py",
+      "bytes": 2128,
+      "sha256": "17b43fad8de8d7cfc30c5c5a48a3b7c533fe7ee2c7eeaf545f197387559f7c8b"
+    },
+    {
+      "path": "candidate-publication/identity-ok.log",
+      "bytes": 90,
+      "sha256": "3aa7e3d3d0901cbe7b65ac6737020efdbac079f40285669ac05966c1d957b215"
+    },
+    {
+      "path": "candidate-publication/kill-before-commit-event.json",
+      "bytes": 152,
+      "sha256": "4848198c8903f4e3db433e8b1db345be0fa5953f109a82a0aafc61a516c3099e"
+    },
+    {
+      "path": "candidate-publication/manifest-sync-event.json",
+      "bytes": 155,
+      "sha256": "c6701e05382a3d83a88cbf75b2cc8a7553f7cedb2735aeae57c5b9be58bbe41b"
+    },
+    {
+      "path": "candidate-publication/packages/client/public/models/hulls/swift.glb",
+      "bytes": 24721524,
+      "sha256": "5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d"
+    },
+    {
+      "path": "candidate-publication/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 135,
+      "sha256": "b08868a5ba7fa0b679974b57016fc6d8743f1785bc8ca6b438dd244bd4abc069"
+    },
+    {
+      "path": "candidate-publication/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "candidate-publication/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "candidate-publication/pause-before-commit-event.json",
+      "bytes": 224,
+      "sha256": "6335b77b4bfeff1e5bce64813f60908490d3c7ef282cf164d1b11046a3039145"
+    },
+    {
+      "path": "candidate-publication/pause-before-commit-resume",
+      "bytes": 6,
+      "sha256": "a83a31320d921b888a48fa5edd0b4b5a29984de6e96bf7b8ac7d29ba06caf616"
+    },
+    {
+      "path": "candidate-publication/publish.py",
+      "bytes": 860,
+      "sha256": "6cfa7b043c8a67f80e9824ef8730f3a42047655b1cfda03f5bfc1e73ab16292c"
+    },
+    {
+      "path": "candidate-publication/receipt-close-event.json",
+      "bytes": 153,
+      "sha256": "81dc9f258ace22f00fd4b0f01af49eeae44352b6226a2743db7d18eda7d68eb9"
+    },
+    {
+      "path": "candidate-publication/receipt-link-event.json",
+      "bytes": 152,
+      "sha256": "d139806593fa358e0789f8fa2c9fb128fe12ff155872fdb26953bc7727b4c6a5"
+    },
+    {
+      "path": "candidate-publication/reject-cancel-provisional/command.log",
+      "bytes": 1489,
+      "sha256": "8dd1718afeb0b5866031f412bf51299e6f8e6f13e478dd47ff083cb857fe733a"
+    },
+    {
+      "path": "candidate-publication/reject-cancel-provisional/result.json",
+      "bytes": 376,
+      "sha256": "68be8c66ec1cf88995f50d3013fb428b887b867ab5d8bb069b06737fa4f29899"
+    },
+    {
+      "path": "candidate-publication/reject-fsync/command.log",
+      "bytes": 1661,
+      "sha256": "344695acfef6b30632592516626e44178afe42bd862065e31eb5106b4f208cf7"
+    },
+    {
+      "path": "candidate-publication/reject-fsync/result.json",
+      "bytes": 363,
+      "sha256": "9ebb06dfd66d2b42a3741325261dde533d52a7071a15bd7685eebfb1f18f83f3"
+    },
+    {
+      "path": "candidate-publication/reject-kill-before-commit/command.log",
+      "bytes": 1489,
+      "sha256": "0dd0579f05ac9359d5624b786bc9d4da9f8271aa1b0bdd51a844460ccb09c72f"
+    },
+    {
+      "path": "candidate-publication/reject-kill-before-commit/result.json",
+      "bytes": 376,
+      "sha256": "70c171cfdcbeb0492b59298e7b7b665076878ee73fb944f85f907f337198507e"
+    },
+    {
+      "path": "candidate-publication/reject-manifest-sync/command.log",
+      "bytes": 1484,
+      "sha256": "b6631c53f9ba9cc32f28af96dbe4e3ade928572ae5c2af5e6b8b094e62e749c6"
+    },
+    {
+      "path": "candidate-publication/reject-manifest-sync/result.json",
+      "bytes": 371,
+      "sha256": "9dda358e45d3ce0794a3916963412ffec11378df17036fc498322e0b652e576f"
+    },
+    {
+      "path": "candidate-publication/reject-original-stock-exit23/command.log",
+      "bytes": 1456,
+      "sha256": "fb9e76a8955d4cbed74ea64ec8ca33f82f9efc1d800a5d2b19de7133d32a44fa"
+    },
+    {
+      "path": "candidate-publication/reject-original-stock-exit23/result.json",
+      "bytes": 344,
+      "sha256": "f7b1f3e8a159fdb0a3e947a3fc8b460958ab9de2e573cc374606d86ca600b0ab"
+    },
+    {
+      "path": "candidate-publication/reject-real-exit23/command.log",
+      "bytes": 1450,
+      "sha256": "5302811059d751b069f3cb5aa4cfff8124a2610b361583127e99b77ce720aff3"
+    },
+    {
+      "path": "candidate-publication/reject-real-exit23/result.json",
+      "bytes": 369,
+      "sha256": "0da06c7654e59fee4bb2c26d658f1827185696cf843d11764f44206f69c25d58"
+    },
+    {
+      "path": "candidate-publication/reject-real-payload-unknown-cleanup/command.log",
+      "bytes": 1459,
+      "sha256": "5a135e0fe889775a2ea31251398a98c09e9f8585d6762b4f124c93e38c046206"
+    },
+    {
+      "path": "candidate-publication/reject-real-payload-unknown-cleanup/result.json",
+      "bytes": 351,
+      "sha256": "6ff9e62425759d2b7e720b939cafb56dd1136606014465f70e642aaa9a8274a2"
+    },
+    {
+      "path": "candidate-publication/reject-receipt-close/command.log",
+      "bytes": 1669,
+      "sha256": "c68dea45f026e616b23f89e755fdfb95ef0a1f8dd1056ca6fd99956488a7e01c"
+    },
+    {
+      "path": "candidate-publication/reject-receipt-close/result.json",
+      "bytes": 371,
+      "sha256": "0c6337cdfb7d225d7c80fd7b1965cdb22bb578391f2fe41f2016bebbd72ff5bf"
+    },
+    {
+      "path": "candidate-publication/reject-receipt-link/command.log",
+      "bytes": 1668,
+      "sha256": "daa91014a4a7d24b3fdc8d188bda6a66a86afae4107137d634cc9494674ddd84"
+    },
+    {
+      "path": "candidate-publication/reject-receipt-link/result.json",
+      "bytes": 370,
+      "sha256": "567662c4868912b2cbdd873f39e7a73c0b4afe0fef02fd98b746e36ddf46d911"
+    },
+    {
+      "path": "candidate-publication/reject-unlink-error/command.log",
+      "bytes": 1483,
+      "sha256": "982cbeb5a1523d4b4fd091ef6a08c7fec0236ba3f90ec450beaee722e0004d5c"
+    },
+    {
+      "path": "candidate-publication/reject-unlink-error/result.json",
+      "bytes": 370,
+      "sha256": "8e9eece96ad23f981617959a9a5e50e7e11dd6cbf3c1867d166da17516895d5e"
+    },
+    {
+      "path": "candidate-publication/reject-while-cancel-before-commit/command.log",
+      "bytes": 1491,
+      "sha256": "3c25c642762022760aec23dd2d7b2b5a9be30677f224ede83b1e5f8bc4fdcd4a"
+    },
+    {
+      "path": "candidate-publication/reject-while-cancel-before-commit/result.json",
+      "bytes": 384,
+      "sha256": "3df3f9ee6237843b479fbdfcbede47fe8195c18972c77ea2a1f4a628a8f1de7e"
+    },
+    {
+      "path": "candidate-publication/reject-while-cancel-provisional/command.log",
+      "bytes": 1489,
+      "sha256": "8dd1718afeb0b5866031f412bf51299e6f8e6f13e478dd47ff083cb857fe733a"
+    },
+    {
+      "path": "candidate-publication/reject-while-cancel-provisional/result.json",
+      "bytes": 382,
+      "sha256": "74fd4fe10d215ba3aea4d7f69362b3a7ab6b5c0a40f89d7b053262103ee02583"
+    },
+    {
+      "path": "candidate-publication/reject-while-pause-before-commit/command.log",
+      "bytes": 1490,
+      "sha256": "d933ead64ce2e079fabbd28edcf106120c3bbff2e96dc85a0ff4c02b00281c89"
+    },
+    {
+      "path": "candidate-publication/reject-while-pause-before-commit/result.json",
+      "bytes": 383,
+      "sha256": "7d6881cfbfe156871482a950cf4506d2d20bc16063919e8197fc3e92fbdd8dfb"
+    },
+    {
+      "path": "candidate-publication/retained-lock-fsync/owner.json",
+      "bytes": 125,
+      "sha256": "ac4be91245fefa5b189d38ef11c43eebf7189ecbb6233e0cd8736dac1a6f04aa"
+    },
+    {
+      "path": "candidate-publication/retained-lock-manifest-sync/owner.json",
+      "bytes": 133,
+      "sha256": "34b369d9c85f4b98689329d9f54624d109708016b22cde5e82b10afbbf845c6f"
+    },
+    {
+      "path": "candidate-publication/retained-lock-receipt-close/owner.json",
+      "bytes": 133,
+      "sha256": "0d99d90653929359701032c358390fc48e105a88fce540c056b148e5751be311"
+    },
+    {
+      "path": "candidate-publication/retained-lock-receipt-link/owner.json",
+      "bytes": 132,
+      "sha256": "ec53e9123897137bc5c1e7dd2a245bbd373b5a74c9f5f9a1eaa63b92ec556138"
+    },
+    {
+      "path": "candidate-publication/stock-exit23-exact.log",
+      "bytes": 90,
+      "sha256": "5d1dccafe803daece40e21a5f93ef8a64043445a68eafd8ccac09655d09c8eac"
+    },
+    {
+      "path": "candidate-publication/stock-ok.log",
+      "bytes": 90,
+      "sha256": "3b5a3853a135d0e3fbb9944966535c0ae03ce336d543cdd9d9721dcf1d398f52"
+    },
+    {
+      "path": "candidate-publication/unknown-bin/ps",
+      "bytes": 180,
+      "sha256": "77ccb6ec9af0b018180113eee64c57766616f53e44ccd63ca40f84572206d70a"
+    },
+    {
+      "path": "candidate-publication/unknown-cleanup-result.json",
+      "bytes": 10212,
+      "sha256": "e3cd8800ea3aa13be640847af38821d432701af609e7a20fa09ce46090a8450a"
+    },
+    {
+      "path": "candidate-publication/unknown-hook/sitecustomize.py",
+      "bytes": 396,
+      "sha256": "8607fe7c01147986d2ea1d7bb40c4c7bd6153f3b1cac58a86f33db86b9e52959"
+    },
+    {
+      "path": "candidate-publication/unlink-error-event.json",
+      "bytes": 146,
+      "sha256": "8d76cfcb269d347603e977a6190973538dab2ac6d9e9cd0ece9014f7ea9ad0c6"
+    },
+    {
+      "path": "candidate-run.log",
+      "bytes": 11061,
+      "sha256": "981af99f292fe64b348fc305b71b473bfa8360b3a2892111b9ae92aca4b86bbb"
+    },
+    {
+      "path": "candidate.diff",
+      "bytes": 39028,
+      "sha256": "2b3b6787d7ab4a8a1a3f6fce2c09d94aac99ed5ee2727529dbeda6f731d715ae"
+    },
+    {
+      "path": "case-index.json",
+      "bytes": 15792,
+      "sha256": "0ea0336ac6e01638494a12def5afacae679f9be989e94977e72ae30b2c4047ed"
+    },
+    {
+      "path": "command-exit-ledger.json",
+      "bytes": 85892,
+      "sha256": "b2de0bc27cb92d08b125a3d3fbb92b6285f06a565924a1422e091fe009c8700f"
+    },
+    {
+      "path": "commands.jsonl",
+      "bytes": 75488,
+      "sha256": "e7f7334508d1dda7e0e99b9676cedc2111f9e199c1b2bb96b6c342447e1abd05"
+    },
+    {
+      "path": "context.json",
+      "bytes": 459,
+      "sha256": "ac2fd330cdfa9c47f50a7cc231d3e9f3d7ed1dd837f6700fd507dcbd3d337f15"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "7f824ac04fe8cc28fa0eab6eedebbb851083b86b536e78f56bd6b581a8952e87"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "2bf6aba752e7d0471a667f0b1d4430f5d07e106d2b8f35f447f8f93bcb57c7c9"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 765,
+      "sha256": "7994dd17de02af8732d21515a2e93b3771832e360c17388f54ca99eb91ad904e"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2619,
+      "sha256": "650eaf10777f895e2fa8905288624a4ba3c968f50b4c419298eca8bbd220da23"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 672,
+      "sha256": "873cd2e5ee5595a3ccb4170d6aed5f627d819aca8baf566543b0172e22a89eec"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "0e21addf7d0dc6a201c17a9419227fcbb2d0e959329c6dc854b5f39839329e75"
+    },
+    {
+      "path": "current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 360,
+      "sha256": "0ccfe5954b7462da7d394d0b080677b6bddb6dae3cf0aa7a3cf3762536c1fb9a"
+    },
+    {
+      "path": "current-after-dispatch/cleanup.json",
+      "bytes": 135,
+      "sha256": "bf7940edc6cdf036ba0e87842c939fec41fcf62cf0c1bc8603f9c3b23eebe5a2"
+    },
+    {
+      "path": "current-after-dispatch/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "current-after-dispatch/command.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "current-after-dispatch/event.json",
+      "bytes": 243,
+      "sha256": "1492f414433db48dc241257dc6f37fb02abd4b95c3c3338d6d482b6dad012f7f"
+    },
+    {
+      "path": "current-after-dispatch/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "current-after-dispatch/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 120,
+      "sha256": "16b7371181eb636b4b47369f2249abb3fdc44756a007a380e05e8913221676e6"
+    },
+    {
+      "path": "current-after-dispatch/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "current-after-dispatch/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "current-after-dispatch/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "current-after-dispatch/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "current-after-dispatch/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "current-after-dispatch/result.json",
+      "bytes": 1246,
+      "sha256": "72c542220d25eb83f0b4fe7a2352d117efe653c5a711dff65ae3730292ed2f63"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "ae1a356889bc16673a262421b895543a57d3378f2378bba20e658c1a533b0aea"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/dispatch.json",
+      "bytes": 61,
+      "sha256": "5e4bb3c34662e8a9cedf84e4a245decee8ea784ab34bfdc6c0b281d747d81875"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 764,
+      "sha256": "6d64ad7eb1d7817e964935c08f70dfa245cab78895069ea842856cebbf41fd50"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2622,
+      "sha256": "516399714c8e3f7582c51283f68238c6db1a4eaaddd077696587c379cec535a8"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 671,
+      "sha256": "b4550da2726993b4286a87bd7da56bed21ac9aad23a8402966b38b9c7035db56"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/ready.json",
+      "bytes": 54,
+      "sha256": "b280abbefff71403612cb0c684dacf2e721dc0fe71f8f13d5c84f51473889869"
+    },
+    {
+      "path": "current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 362,
+      "sha256": "07a87407e4193275505db8c0489948f6c90b45cbcb92ef2972d3d59a08957bab"
+    },
+    {
+      "path": "current-before-dispatch/cleanup.json",
+      "bytes": 135,
+      "sha256": "97d023d6836a7ad4505604bbdbd1842e657058d3c37551d382d113ddc89101dd"
+    },
+    {
+      "path": "current-before-dispatch/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "current-before-dispatch/command.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "current-before-dispatch/event.json",
+      "bytes": 244,
+      "sha256": "44830456f4130ee57b32446dfe911a04eb54d060127d791f74426a077cc6eb56"
+    },
+    {
+      "path": "current-before-dispatch/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "current-before-dispatch/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 121,
+      "sha256": "ff6031346dc9f118f3f8ca0d962a81208c547fd7173d24ee321e1134d902c0d9"
+    },
+    {
+      "path": "current-before-dispatch/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "current-before-dispatch/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "current-before-dispatch/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "current-before-dispatch/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "current-before-dispatch/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "current-before-dispatch/result.json",
+      "bytes": 1247,
+      "sha256": "44c6a2ae20964d4a5580f0bf378da07bbbf86cda4f8f5852b37cafa288796a05"
+    },
+    {
+      "path": "current-before-handshake/assets/renders/hulls/swift-round4-current/probe/.publication-open",
+      "bytes": 58,
+      "sha256": "af960fc76ad07b8b2d642f4e821f194e24ce1fc3b8fb9dbc9216a9966ec34bba"
+    },
+    {
+      "path": "current-before-handshake/assets/renders/hulls/swift-round4-current/probe/guardian.json",
+      "bytes": 723,
+      "sha256": "868adad56ee2de474a7e771adbc69b9e9080f32d20d77f3e3239153ca3abda48"
+    },
+    {
+      "path": "current-before-handshake/assets/renders/hulls/swift-round4-current/probe/launch.json",
+      "bytes": 2625,
+      "sha256": "7a9e5085e07db977f3856c6ef659f61b6de8bd4d8965d546dc9bfbe3c478a5cc"
+    },
+    {
+      "path": "current-before-handshake/assets/renders/hulls/swift-round4-current/probe/process.log",
+      "bytes": 953,
+      "sha256": "0c312d44aa8731bc08e94a0134591c70d5c1dc37a7b7813f9f59723229ed2aae"
+    },
+    {
+      "path": "current-before-handshake/assets/renders/hulls/swift-round4-current/probe/supervisor-launch.json",
+      "bytes": 364,
+      "sha256": "5578557dacb60b6cd5e589c38d8c99067aed882d0e546753a4ca3a7aad8e5895"
+    },
+    {
+      "path": "current-before-handshake/cleanup.json",
+      "bytes": 124,
+      "sha256": "0d4787ca47d12d89dd16789918a25e9595315ee58c1fdbb9ac8ea3c157fb3fa7"
+    },
+    {
+      "path": "current-before-handshake/code-pins.json",
+      "bytes": 478,
+      "sha256": "3e33c476cb3d10e7626b95eee34d17b61f2affeee3181f0bb468dd43a32bdc07"
+    },
+    {
+      "path": "current-before-handshake/command.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "current-before-handshake/event.json",
+      "bytes": 242,
+      "sha256": "606b957cba61df46a732e2dc5b6c4ace77f89615358e451e5e8e199861a4da6d"
+    },
+    {
+      "path": "current-before-handshake/hook/sitecustomize.py",
+      "bytes": 1928,
+      "sha256": "aeefd4afe937a59b8641912498a2cc2b7fa798c435c5f5c46bed42e365a5a9d1"
+    },
+    {
+      "path": "current-before-handshake/packages/tools/blender/hulls/swift-round4/.lane-lock/owner.json",
+      "bytes": 122,
+      "sha256": "3478baa8bdaaa2dff8a1178c60a56a802d0b4a1cff0cd3779ae85bcd3669d6e9"
+    },
+    {
+      "path": "current-before-handshake/packages/tools/blender/hulls/swift-round4/guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "current-before-handshake/packages/tools/blender/hulls/swift-round4/lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "current-before-handshake/packages/tools/blender/hulls/swift-round4/promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "current-before-handshake/packages/tools/blender/hulls/swift-round4/supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "current-before-handshake/producer.py",
+      "bytes": 606,
+      "sha256": "f40819bf5e8484e7e3ec110b6d724d7abe80649351902eb2639c000c8f321619"
+    },
+    {
+      "path": "current-before-handshake/result.json",
+      "bytes": 1193,
+      "sha256": "61f72330ad86fcdf41c784dbb3e1ea290c9e67f089e9a0763f1bbffde735a349"
+    },
+    {
+      "path": "diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "driver-exits.json",
+      "bytes": 1297,
+      "sha256": "67250e425ddcb6b4272891e77735a6e99f213b578863fa899b7b54316ae0929b"
+    },
+    {
+      "path": "exits.jsonl",
+      "bytes": 5461,
+      "sha256": "9138b0cd950a2af43a05bf106d1d7ec4f7df2477b734a40cf9b269985b5410b1"
+    },
+    {
+      "path": "final-checks.json",
+      "bytes": 2545,
+      "sha256": "81339ee5383dbd82e9582eea422d6b17814d2c6d0360b89d79e1c6b6bc7e5bcc"
+    },
+    {
+      "path": "final-checks.log",
+      "bytes": 2546,
+      "sha256": "dd0bf9d66f7cba5bb70a029f54396fd0c34b48b8875e50a5078de23c102fba70"
+    },
+    {
+      "path": "historical-gate.log",
+      "bytes": 1425,
+      "sha256": "71af3fba5392921f27790a20ce546c901b1c18b7985cfc297f212bddd9dcebca"
+    },
+    {
+      "path": "hold-admission.log",
+      "bytes": 83,
+      "sha256": "69340eb920c34049cd1822f4f5a38d8a93fe9a91181d40a20ea2eeb60f1d7d44"
+    },
+    {
+      "path": "neighbors-run.log",
+      "bytes": 729,
+      "sha256": "911a046405a35ac0004f2e867de1ded004a59a60b9da11186a2e89a21fbf5a0d"
+    },
+    {
+      "path": "protection-after-summary.json",
+      "bytes": 305,
+      "sha256": "88a78baa7a3382021eaf8d05162e5d7d4f21e3696adb3c42011f19bb1d795385"
+    },
+    {
+      "path": "protection-after.json",
+      "bytes": 1184919,
+      "sha256": "c40233a96ffbf4e0a733fa87f05217a8bc124d5a1be5d1e9df24439ff8855db8"
+    },
+    {
+      "path": "protection-before-summary.json",
+      "bytes": 291,
+      "sha256": "87db3fae5b3a6d4513a4f9ed436cdfb1e3fc909441c363b38645a546494f5bdd"
+    },
+    {
+      "path": "protection-before.json",
+      "bytes": 1184919,
+      "sha256": "c40233a96ffbf4e0a733fa87f05217a8bc124d5a1be5d1e9df24439ff8855db8"
+    },
+    {
+      "path": "results.json",
+      "bytes": 15792,
+      "sha256": "0ea0336ac6e01638494a12def5afacae679f9be989e94977e72ae30b2c4047ed"
+    },
+    {
+      "path": "scripts/candidate-HEAVY_HOLD.json",
+      "bytes": 376,
+      "sha256": "cbc287a290b5afa7462c7f348888300d45f36949409fecb732bf27ccfeb41a12"
+    },
+    {
+      "path": "scripts/candidate-PUBLICATION_PROTOCOL.md",
+      "bytes": 3879,
+      "sha256": "0ab43e324d8eb74e159886a747689a9212d5f229522b02595519a922559537f7"
+    },
+    {
+      "path": "scripts/candidate-check_guardian.py",
+      "bytes": 1928,
+      "sha256": "1694a642d31b2053586dcf2cf10dd80d64b9c6d57d54fed7bc664d6492becc90"
+    },
+    {
+      "path": "scripts/candidate-check_lane.py",
+      "bytes": 1955,
+      "sha256": "206de5c775823c08f4dd975ee5903d9582b566f4b7a3e5e1ebf53b66d491f0aa"
+    },
+    {
+      "path": "scripts/candidate-guardian.py",
+      "bytes": 1458,
+      "sha256": "0e1a4e3e5b405b877d85dbd8e02ed14260308c79a3378fac2d80aef08752f986"
+    },
+    {
+      "path": "scripts/candidate-lane.py",
+      "bytes": 10548,
+      "sha256": "9cbc75466970e1dff8830d168fc083233e339ad1fde2b5eef8b85cd3f29c4453"
+    },
+    {
+      "path": "scripts/candidate-promote.py",
+      "bytes": 6616,
+      "sha256": "4bde29b4777371c61380a68c42da353d9a77a23d7f1034a52b2f0f77786895b5"
+    },
+    {
+      "path": "scripts/candidate-supervise.py",
+      "bytes": 9787,
+      "sha256": "d5dda72acfcc8a3cbce6ebb7b4dbd291da16b51245f7900f815ee0dce11312d1"
+    },
+    {
+      "path": "scripts/final_checks.py",
+      "bytes": 2983,
+      "sha256": "d881203afc2fc0c196d07f277baac962aa257bc5618b6eaa552d0d0bab7a9b05"
+    },
+    {
+      "path": "scripts/neighbors.py",
+      "bytes": 2563,
+      "sha256": "4f9a50a35f26b7844245468d07df24e5bdd8e5027803a62b423fa9db2ba05242"
+    },
+    {
+      "path": "scripts/protect.py",
+      "bytes": 2554,
+      "sha256": "9563de76103efbf0b25a3644fa09ff7c391fc2602851fd0e283d6961aefb593b"
+    },
+    {
+      "path": "scripts/report.py",
+      "bytes": 17386,
+      "sha256": "ebe4686d5442bbf420e38e8e51c455b0af3d83f70c6e5f6ab9cbde4fac51b39e"
+    },
+    {
+      "path": "scripts/review-original.py",
+      "bytes": 16815,
+      "sha256": "46fc1c5bed370d833003f213e82bccc004655bce600d3638b31d88884df4f442"
+    },
+    {
+      "path": "scripts/review.py",
+      "bytes": 16942,
+      "sha256": "a418bcf59d7e78c2eea9a869443aa7baa4e2e108e8a4d54589a9179019edc03c"
+    },
+    {
+      "path": "scripts/run_review.py",
+      "bytes": 8966,
+      "sha256": "9bea1aec36619a8b34921c72022803ddf46ef923864e7f76366bca62dcbf684b"
+    }
+  ],
+  "excludes": [
+    "SEAL.json"
+  ]
+}

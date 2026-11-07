@@ -1,0 +1,55 @@
+{
+  "CVDisplayLink": {
+    "count": 192,
+    "examples": [
+      "  pw:browser [pid=48694][err] [1107/060039.599727:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +89ms",
+      "  pw:browser [pid=48694][err] [1107/060039.599971:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms"
+    ]
+  },
+  "Metal cache": {
+    "count": 97,
+    "examples": [
+      "  pw:browser [pid=48694][err] [1107/060042.046867:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +817ms",
+      "  pw:browser [pid=48694][err] [1107/060043.052593:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +35ms"
+    ]
+  },
+  "daemon": {
+    "count": 1,
+    "examples": [
+      "  pw:browser [pid=48694][err] [1107/060040.692644:ERROR:sandbox/mac/system_services.cc:31] SetApplicationIsDaemon: Error Domain=NSOSStatusErrorDomain Code=-50 \"paramErr: error in user parameter list\" (-50) +305ms"
+    ]
+  },
+  "Firefox profile": {
+    "count": 2,
+    "examples": [
+      "  pw:browser [pid=49185][err] Could not find profile folder. +30ms",
+      "Firefox cannot start here: Could not find profile folder."
+    ]
+  },
+  "shadow-map deprecation": {
+    "count": 53,
+    "examples": [
+      "  pw:browser [pid=48694][err] [1107/060040.387148:INFO:CONSOLE:368] \"THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.\", source: http://127.0.0.1:52308/@vite/client (368) +552ms",
+      "  pw:browser [pid=48694][err] [1107/060043.017325:INFO:CONSOLE:368] \"THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.\", source: http://127.0.0.1:52308/@vite/client (368) +473ms"
+    ]
+  },
+  "NO_COLOR": {
+    "count": 2,
+    "examples": [
+      "[WebServer] (node:48642) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.",
+      "(node:48652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set."
+    ]
+  },
+  "TLS": {
+    "count": 0,
+    "examples": []
+  },
+  "GPU stall": {
+    "count": 0,
+    "examples": []
+  },
+  "invalid mailbox": {
+    "count": 0,
+    "examples": []
+  }
+}

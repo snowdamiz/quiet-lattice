@@ -1,0 +1,631 @@
+{
+  "failure": null,
+  "jobState": {
+    "clean": true,
+    "drained": true,
+    "elapsed_cleanup_seconds": 0.04124045901698992,
+    "errors": [],
+    "exits": {
+      "caffeinate": 0,
+      "capture": 0
+    },
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "exited": 2,
+      "live": 1,
+      "started": 3
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "exited": 15,
+      "live": 1,
+      "started": 16
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "profiles": [
+      "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn"
+    ],
+    "remaining": [],
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "signals": []
+  },
+  "known": {
+    "96903": {
+      "birth": [
+        1794050052,
+        30196
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96903,
+      "pid": 96903,
+      "ppid": 1,
+      "status": 2,
+      "uid": 501
+    },
+    "96904": {
+      "birth": [
+        1794050052,
+        156728
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96904,
+      "pid": 96904,
+      "ppid": 96903,
+      "status": 2,
+      "uid": 501
+    },
+    "96905": {
+      "birth": [
+        1794050052,
+        159453
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96905,
+      "pid": 96905,
+      "ppid": 96903,
+      "status": 2,
+      "uid": 501
+    },
+    "96908": {
+      "birth": [
+        1794050052,
+        484946
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96904,
+      "pid": 96908,
+      "ppid": 96904,
+      "status": 2,
+      "uid": 501
+    },
+    "96910": {
+      "birth": [
+        1794050052,
+        932522
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 96910,
+      "ppid": 96904,
+      "status": 2,
+      "uid": 501
+    },
+    "96911": {
+      "birth": [
+        1794050052,
+        967992
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 96911,
+      "ppid": 96910,
+      "status": 2,
+      "uid": 501
+    },
+    "96912": {
+      "birth": [
+        1794050052,
+        969382
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 96912,
+      "ppid": 96910,
+      "status": 2,
+      "uid": 501
+    },
+    "96914": {
+      "birth": [
+        1794050052,
+        991034
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 96914,
+      "ppid": 96910,
+      "status": 2,
+      "uid": 501
+    },
+    "96919": {
+      "birth": [
+        1794050053,
+        920482
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 96919,
+      "ppid": 96910,
+      "status": 2,
+      "uid": 501
+    },
+    "96921": {
+      "birth": [
+        1794050054,
+        159380
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96921,
+      "pid": 96921,
+      "ppid": 1,
+      "status": 2,
+      "uid": 501
+    },
+    "97450": {
+      "birth": [
+        1794050090,
+        878534
+      ],
+      "coalition": [
+        43140,
+        43141
+      ],
+      "pgid": 96910,
+      "pid": 97450,
+      "ppid": 96910,
+      "status": 2,
+      "uid": 501
+    }
+  },
+  "observations": [
+    {
+      "probe": "initial-state",
+      "raw": {
+        "clean": true,
+        "drained": true,
+        "elapsed_cleanup_seconds": 0.04124045901698992,
+        "errors": [],
+        "exits": {
+          "caffeinate": 0,
+          "capture": 0
+        },
+        "kernel_before_launch": {
+          "coalition_absent": false,
+          "exited": 2,
+          "live": 1,
+          "started": 3
+        },
+        "kernel_before_root_release": {
+          "coalition_absent": false,
+          "exited": 15,
+          "live": 1,
+          "started": 16
+        },
+        "kernel_terminal": {
+          "coalition_absent": true,
+          "live": 0
+        },
+        "profiles": [
+          "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn"
+        ],
+        "remaining": [],
+        "scope": "CPU_CANDIDATE_BOUNDARY",
+        "signals": []
+      }
+    },
+    {
+      "probe": "paths",
+      "raw": [
+        {
+          "exists": false,
+          "path": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-b3mtkqe6",
+          "symlink": false
+        },
+        {
+          "exists": false,
+          "path": "/private/tmp/sbr-u2fmy8tm",
+          "symlink": false
+        },
+        {
+          "exists": false,
+          "path": "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn",
+          "symlink": false
+        }
+      ]
+    },
+    {
+      "probe": "kernel_tasks",
+      "raw": {
+        "args": [
+          43140
+        ],
+        "kwargs": {},
+        "returned": {
+          "coalition_absent": true,
+          "live": 0
+        }
+      }
+    },
+    {
+      "probe": "members",
+      "raw": {
+        "args": [],
+        "kwargs": {},
+        "returned": []
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96903
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96905
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96904
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96908
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96910
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96912
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96911
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96914
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96919
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          96921
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "identity",
+      "raw": {
+        "args": [
+          97450
+        ],
+        "kwargs": {},
+        "returned": null
+      }
+    },
+    {
+      "probe": "subprocess.run",
+      "raw": {
+        "args": [
+          [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.7b30d00099a04092923676cf506d8335"
+          ]
+        ],
+        "kwargs": {
+          "capture_output": true,
+          "text": true,
+          "timeout": 3
+        },
+        "returned": {
+          "args": [
+            "/bin/launchctl",
+            "print",
+            "gui/501/local.stations.round4.7b30d00099a04092923676cf506d8335"
+          ],
+          "returncode": 113,
+          "stderr": "Bad request.\nCould not find service \"local.stations.round4.7b30d00099a04092923676cf506d8335\" in domain for user gui: 501\n",
+          "stdout": ""
+        }
+      }
+    },
+    {
+      "probe": "subprocess.check_output",
+      "raw": {
+        "args": [
+          [
+            "/usr/bin/pmset",
+            "-g",
+            "assertions"
+          ]
+        ],
+        "kwargs": {
+          "text": true,
+          "timeout": 3
+        },
+        "returned": "2026-11-07 06:15:20 -0500 \nAssertion status system-wide:\n   BackgroundTask                 0\n   ApplePushServiceTask           0\n   UserIsActive                   0\n   PreventUserIdleDisplaySleep    0\n   SoftwareUpdateTask             0\n   PreventSystemSleep             0\n   PreventSystemSleepSecurityIndicator 0\n   ExternalMedia                  0\n   InternalPreventDisplaySleep    1\n   PreventUserIdleSystemSleep     0\n   NetworkClientActive            0\nListed by owning process:\n   pid 351(powerd): [0x000450300010829b] 00:00:00 InternalPreventDisplaySleep named: \"com.apple.powermanagement.delayDisplayOff\"  \n\tTimeout will fire in 300 secs Action=TimeoutActionTurnOff\n   pid 529(mds_stores): [0x00045065000b937e] 00:00:01 BackgroundTask named: \"com.apple.metadata.mds_stores.power\"  \nKernel Assertions: 0x100=MAGICWAKE\n   id=597  level=255 0x100=MAGICWAKE creat=  mod= description=en0 owner=IOSkywalkNetworkBSDClient\n"
+      }
+    },
+    {
+      "probe": "kernel_tasks",
+      "raw": {
+        "args": [
+          43140
+        ],
+        "kwargs": {},
+        "returned": {
+          "coalition_absent": true,
+          "live": 0
+        }
+      }
+    }
+  ],
+  "returned": {
+    "exact_owned_review_copies": [],
+    "global_port_scan": false,
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "known_births_absent": {
+      "96903": {
+        "birth": [
+          1794050052,
+          30196
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96903,
+        "pid": 96903,
+        "ppid": 1,
+        "status": 2,
+        "uid": 501
+      },
+      "96904": {
+        "birth": [
+          1794050052,
+          156728
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96904,
+        "pid": 96904,
+        "ppid": 96903,
+        "status": 2,
+        "uid": 501
+      },
+      "96905": {
+        "birth": [
+          1794050052,
+          159453
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96905,
+        "pid": 96905,
+        "ppid": 96903,
+        "status": 2,
+        "uid": 501
+      },
+      "96908": {
+        "birth": [
+          1794050052,
+          484946
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96904,
+        "pid": 96908,
+        "ppid": 96904,
+        "status": 2,
+        "uid": 501
+      },
+      "96910": {
+        "birth": [
+          1794050052,
+          932522
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 96910,
+        "ppid": 96904,
+        "status": 2,
+        "uid": 501
+      },
+      "96911": {
+        "birth": [
+          1794050052,
+          967992
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 96911,
+        "ppid": 96910,
+        "status": 2,
+        "uid": 501
+      },
+      "96912": {
+        "birth": [
+          1794050052,
+          969382
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 96912,
+        "ppid": 96910,
+        "status": 2,
+        "uid": 501
+      },
+      "96914": {
+        "birth": [
+          1794050052,
+          991034
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 96914,
+        "ppid": 96910,
+        "status": 2,
+        "uid": 501
+      },
+      "96919": {
+        "birth": [
+          1794050053,
+          920482
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 96919,
+        "ppid": 96910,
+        "status": 2,
+        "uid": 501
+      },
+      "96921": {
+        "birth": [
+          1794050054,
+          159380
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96921,
+        "pid": 96921,
+        "ppid": 1,
+        "status": 2,
+        "uid": 501
+      },
+      "97450": {
+        "birth": [
+          1794050090,
+          878534
+        ],
+        "coalition": [
+          43140,
+          43141
+        ],
+        "pgid": 96910,
+        "pid": 97450,
+        "ppid": 96910,
+        "status": 2,
+        "uid": 501
+      }
+    },
+    "namespace_absent": true,
+    "owned_idle_assertions": [],
+    "owned_listeners_absent_via_no_live_owned_task": true,
+    "profiles_absent": [
+      "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn"
+    ],
+    "registration_absent": true,
+    "scratch_absent": true,
+    "utc": "2026-11-07T11:15:20.046562+00:00"
+  }
+}

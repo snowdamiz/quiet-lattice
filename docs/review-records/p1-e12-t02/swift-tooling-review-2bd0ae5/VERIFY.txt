@@ -1,0 +1,861 @@
+VERIFY: real process / terminal publication / promotion, bounded private copies only.
+Commands are recorded with actual observed controller exits. Exit 0 of an evidence driver means expected assertions, including the REVISE counterexample, were observed.
+The injected boundaries use sitecustomize trace barriers or PATH subprocess shims; no final receipt/manifest or Popen return value was fabricated.
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit
+PID: 36806
+EXIT: 1
+EXIT EVIDENCE: base-ps-exit/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py", line 112, in main
+    guardian = json.loads((job / 'guardian.json').read_text())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/assets/renders/hulls/swift-round4-current/probe/guardian.json'
+{"exit": 1, "reason": "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/assets/renders/hulls/swift-round4-current/probe/guardian.json'", "seconds": 0.28, "peakRssKiB": 0, "childGroupEmpty": false}
+CLEANUP UNPROVEN: LOCK RETAINED
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 1 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout
+PID: 36847
+EXIT: 1
+EXIT EVIDENCE: base-ps-timeout/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/command.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/packages/tools/blender/hulls/swift-round4/lane.py", line 112, in main
+    guardian = json.loads((job / 'guardian.json').read_text())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/guardian.json'
+{"exit": 1, "reason": "FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/guardian.json'", "seconds": 10.17, "peakRssKiB": 0, "childGroupEmpty": false}
+CLEANUP UNPROVEN: LOCK RETAINED
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py --label stock-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication
+PID: 36887
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/stock-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py --label identity-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity identity ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication
+PID: 36897
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/identity-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py --label fit-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/67-final-display-fit fit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication
+PID: 36907
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/fit-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-fsync --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication
+PID: 36917
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/audit-fsync.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/fsync-event.json"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 152, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 141, in main
+    durable_json(job / 'receipt.json', receipt)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 43, in durable_json
+    os.fsync(f.fileno())
+    ^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication fsync I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-fsync fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication
+PID: 36929
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-publication/BASE-accepts-fsync/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit
+PID: 37024
+EXIT: 1
+EXIT EVIDENCE: candidate-ps-exit/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+{"exit": 1, "reason": "process observation failed", "seconds": 5.02, "peakRssKiB": 0, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 1 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout
+PID: 37108
+EXIT: 1
+EXIT EVIDENCE: candidate-ps-timeout/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout/command.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+{"exit": 1, "reason": "process observation failed", "seconds": 6.55, "peakRssKiB": 0, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers
+PID: 37247
+EXIT: 1
+EXIT EVIDENCE: candidate-both-observers/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/command.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/hook"}
+LAST 20 LOG LINES:
+{"exit": 1, "reason": "process observation failed", "seconds": 0.14, "peakRssKiB": 0, "childGroupEmpty": false}
+CLEANUP UNPROVEN: LOCK RETAINED
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake
+PID: 37264
+EXIT: -9
+EXIT EVIDENCE: current-before-handshake/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/event.json", "CASE": "before-handshake"}
+LAST 20 LOG LINES:
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch
+PID: 37271
+EXIT: -9
+EXIT EVIDENCE: current-before-dispatch/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/event.json", "CASE": "before-dispatch"}
+LAST 20 LOG LINES:
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/packages/tools/blender/hulls/swift-round4/lane.py --label probe --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/producer.py sleep
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch
+PID: 37435
+EXIT: -9
+EXIT EVIDENCE: current-after-dispatch/result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/event.json", "CASE": "after-dispatch"}
+LAST 20 LOG LINES:
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label stock-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37565
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/stock-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label identity-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/71-corrected-source-export-identity identity ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37575
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/identity-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label fit-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/67-final-display-fit fit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37586
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/fit-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-fsync --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37597
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-fsync.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/fsync-event.json"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 204, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 179, in main
+    durable_json(job / 'receipt.json', receipt)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 54, in durable_json
+    os.fsync(f.fileno())
+    ^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication fsync I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-fsync fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37610
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-fsync/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 31, in terminal
+    receipt = read(stage / 'receipt.json')
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 26, in read
+    require(path.is_file(), f'missing completed-stage evidence: {path}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: missing completed-stage evidence: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/assets/renders/hulls/swift-round4-current/audit-fsync/receipt.json
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-receipt-link --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37651
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-receipt-link.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/receipt-link-event.json"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 204, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 179, in main
+    durable_json(job / 'receipt.json', receipt)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 55, in durable_json
+    os.link(private, path)
+    ^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication receipt-link I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-receipt-link fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37662
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-receipt-link/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 31, in terminal
+    receipt = read(stage / 'receipt.json')
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 26, in read
+    require(path.is_file(), f'missing completed-stage evidence: {path}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: missing completed-stage evidence: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-link/receipt.json
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-receipt-close --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37687
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-receipt-close.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/receipt-close-event.json"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 204, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 179, in main
+    durable_json(job / 'receipt.json', receipt)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 51, in durable_json
+    with private.open('x') as f:
+         ~~~~~~~~~~~~^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication receipt-close I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-receipt-close fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 37698
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-receipt-close/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 31, in terminal
+    receipt = read(stage / 'receipt.json')
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 26, in read
+    require(path.is_file(), f'missing completed-stage evidence: {path}')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: missing completed-stage evidence: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/assets/renders/hulls/swift-round4-current/audit-receipt-close/receipt.json
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-manifest-sync --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38368
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-manifest-sync.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/manifest-sync-event.json"}
+LAST 20 LOG LINES:
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 204, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 184, in main
+    durable_json(job / 'publication.json', {'protocol': 'durable-stage-v2',
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 'producerExit': receipt['exit'], 'supervisorExit': receipt['guardianExit'],
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 'runnerPid': os.getpid(), 'files': bindings})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 56, in durable_json
+    sync_directory(path.parent)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 42, in sync_directory
+    os.fsync(fd)
+    ^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication manifest-sync I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-manifest-sync fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38394
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-manifest-sync/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-manifest-sync: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-unlink-error --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38649
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-unlink-error.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unlink-error-event.json"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.68, "peakRssKiB": 336, "childGroupEmpty": true}
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 204, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py", line 198, in main
+    publication.unlink()
+    ^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook/sitecustomize.py", line 26, in trace
+    else:raise OSError(errno.EIO,'review injection: terminal publication '+fault+' I/O error')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 5] review injection: terminal publication unlink-error I/O error
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-unlink-error fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38662
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-unlink-error/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-unlink-error: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-kill-before-commit --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38696
+EXIT: -9
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-kill-before-commit.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/kill-before-commit-event.json"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.72, "peakRssKiB": 240, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-kill-before-commit fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38752
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-kill-before-commit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-kill-before-commit: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-cancel-provisional --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38793
+EXIT: 1
+EXIT EVIDENCE: candidate-publication/audit-cancel-provisional-result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-cancel-provisional.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/cancel-provisional-event.json"}
+LAST 20 LOG LINES:
+{"exit": 0, "reason": null, "seconds": 0.72, "peakRssKiB": 240, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-cancel-provisional fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38832
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-while-cancel-provisional/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-cancel-provisional: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-cancel-provisional fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38833
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-cancel-provisional/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-cancel-provisional: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-cancel-before-commit --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38875
+EXIT: 0
+EXIT EVIDENCE: candidate-publication/audit-cancel-before-commit-result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-cancel-before-commit.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/cancel-before-commit-event.json"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-cancel-before-commit fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38886
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-while-cancel-before-commit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-cancel-before-commit: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-cancel-before-commit fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38887
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/CANDIDATE-accepts-cancel-before-commit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-pause-before-commit --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38936
+EXIT: 0
+EXIT EVIDENCE: candidate-publication/audit-pause-before-commit-result.json actual Popen.wait result
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-pause-before-commit.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/hook", "EVENT": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/pause-before-commit-event.json"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-pause-before-commit fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38956
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-while-pause-before-commit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 52, in terminal
+    require(not os.path.lexists(stage / '.publication-open'),
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: publication remains provisional or failed')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-pause-before-commit: publication remains provisional or failed
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-pause-before-commit fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 38957
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/accept-pause-before-commit/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-exit23 --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit fail
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 39036
+EXIT: 23
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-exit23.log
+LAST 20 LOG LINES:
+{"exit": 23, "reason": null, "seconds": 0.31, "peakRssKiB": 4624, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-exit23 fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 39046
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-real-exit23/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+    require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: terminal exit must be zero')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-exit23: terminal exit must be zero
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-ok --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 39048
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-ok.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-ok fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 39059
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/accept-normal/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label stock-exit23-exact --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/70-corrected-stock-validation stock fail
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 50626
+EXIT: 23
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/stock-exit23-exact.log
+LAST 20 LOG LINES:
+{"exit": 23, "reason": null, "seconds": 0.35, "peakRssKiB": 128, "childGroupEmpty": true}
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-exit23-exact identity-ok audit-ok fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 50870
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-original-stock-exit23/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+    require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: terminal exit must be zero')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: stock-exit23-exact: terminal exit must be zero
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/lane.py --label audit-unknown-cleanup --timeout 12 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/publish.py /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/assets/renders/hulls/swift-round4-current/66-final-source-world-audit audit ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 50876
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/audit-unknown-cleanup.log
+INJECTED ENVIRONMENT: {"PATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin", "PYTHONPATH": "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-hook"}
+LAST 20 LOG LINES:
+{"exit": 1, "reason": "cleanup/observation error; inspect raw facts", "seconds": 0.4, "peakRssKiB": 4608, "childGroupEmpty": false}
+CLEANUP UNPROVEN: LOCK RETAINED
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py stock-ok identity-ok audit-unknown-cleanup fit-ok
+CWD: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication
+PID: 50890
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/reject-real-payload-unknown-cleanup/command.log
+INJECTED ENVIRONMENT: {"PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/29082_1794050407975/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"}
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 116, in <module>
+    main()
+    ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 98, in main
+    candidate, source_pin, new, receipts = validate(jobs)
+                                           ~~~~~~~~^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 34, in terminal
+    require(type(receipt.get('exit')) is int and receipt['exit'] == 0,
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: terminal exit must be zero')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: audit-unknown-cleanup: terminal exit must be zero
+
+COMMAND: git diff --check f4fd0ea574bb74fdaac6628556985a55046186f4 HEAD
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: 52962
+EXIT: 0
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/diff-check.log
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/lane.py --label independent-review2-held-no-dispatch --timeout 5 --rss-mib 128 -- /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'raise SystemExit("must not run")'
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: 53015
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/hold-admission.log
+LAST 20 LOG LINES:
+Parent resource hold active: no new lane admissions until explicit parent release.
+
+COMMAND: /opt/homebrew/opt/python@3.14/bin/python3.14 -B -c 'import runpy,sys;m=runpy.run_path(sys.argv[1]);m['"'"'validate'"'"'](sys.argv[2:])' /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/promote.py 70-corrected-stock-validation 71-corrected-source-export-identity 66-final-source-world-audit 67-final-display-fit
+CWD: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+PID: 53016
+EXIT: 1
+EXIT EVIDENCE: exits.jsonl actual Popen.wait return
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/historical-gate.log
+LAST 20 LOG LINES:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import runpy,sys;m=runpy.run_path(sys.argv[1]);m['validate'](sys.argv[2:])
+                                                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/promote.py", line 80, in validate
+    receipts = {stage.name: terminal(stage, source_pin) for stage in [export_job, identity_job, audit_job, fit_job]}
+                            ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/promote.py", line 49, in terminal
+    require(receipt.get('format') == 3 and guardian.get('format') == 3
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            and receipt.get('publicationProtocol') == 'durable-stage-v2',
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f'{stage.name}: historical/provisional receipt is not a completed publication')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196/packages/tools/blender/hulls/swift-round4/promote.py", line 17, in require
+    raise RuntimeError(message)
+RuntimeError: 70-corrected-stock-validation: historical/provisional receipt is not a completed publication
+
+SUPERVISOR RAW ERROR/FAILURE TAILS:
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/assets/renders/hulls/swift-round4-current/probe/process.log
+    sys.exit(main())
+             ~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/packages/tools/blender/hulls/swift-round4/supervise.py", line 78, in main
+    if not members():
+           ~~~~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/packages/tools/blender/hulls/swift-round4/supervise.py", line 29, in members
+    return [r for r in processes() if child is not None and int(r[2]) == child.pid]
+                       ~~~~~~~~~^^
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-exit/packages/tools/blender/hulls/swift-round4/lane.py", line 10, in processes
+    rows = subprocess.check_output(['ps','-axo','pid=,ppid=,pgid=,rss=,stat='], text=True, timeout=5)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.
+producer ready sleep
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/base-ps-timeout/assets/renders/hulls/swift-round4-current/probe/process.log
+    rows = subprocess.check_output(['ps','-axo','pid=,ppid=,pgid=,rss=,stat='], text=True, timeout=5)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2154, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1268, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' timed out after 5 seconds
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/assets/renders/hulls/swift-round4-current/probe/process.log
+{"drain": {"format": 3, "reason": "process observation failed", "failureReason": "process observation failed", "parentPid": 37247, "supervisorPid": 37250, "commandGroup": 37251, "commandExit": -9, "signals": ["SIGTERM", "SIGKILL"], "signalAttempts": [{"pgid": 37251, "signal": "SIGTERM", "ownedChildPinned": true, "sent": true}, {"pgid": 37251, "signal": "SIGKILL", "ownedChildPinned": true, "sent": true}], "signalNotNeededProof": [], "childGroupEmpty": false, "ownedChildReaped": true, "remaining": null, "primaryRemaining": null, "secondaryRemaining": null, "observationErrors": [{"operation": "monitor ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}, {"operation": "drain /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}, {"operation": "drain /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}, {"operation": "final drain proof ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}, {"operation": "final drain proof /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-both-observers/bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}], "drainErrors": [], "cleanupProof": "UNPROVEN", "peakRssKiB": 0, "seconds": 0.019}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-exit/assets/renders/hulls/swift-round4-current/probe/process.log
+producer ready sleep
+{"drain": {"format": 3, "reason": "process observation failed", "failureReason": "process observation failed", "parentPid": 37024, "supervisorPid": 37027, "commandGroup": 37028, "commandExit": -9, "signals": ["SIGTERM", "SIGKILL"], "signalAttempts": [{"pgid": 37028, "signal": "SIGTERM", "ownedChildPinned": true, "sent": true}, {"pgid": 37028, "signal": "SIGKILL", "ownedChildPinned": true, "sent": true}], "signalNotNeededProof": [], "childGroupEmpty": true, "ownedChildReaped": true, "remaining": [], "primaryRemaining": null, "secondaryRemaining": [], "observationErrors": [{"operation": "monitor ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}, {"operation": "final drain proof ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: ps observation unavailable\n"}], "drainErrors": [], "cleanupProof": "secondary", "peakRssKiB": 0, "seconds": 4.847}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-ps-timeout/assets/renders/hulls/swift-round4-current/probe/process.log
+producer ready sleep
+{"drain": {"format": 3, "reason": "process observation failed", "failureReason": "process observation failed", "parentPid": 37108, "supervisorPid": 37111, "commandGroup": 37112, "commandExit": -9, "signals": ["SIGTERM", "SIGKILL"], "signalAttempts": [{"pgid": 37112, "signal": "SIGTERM", "ownedChildPinned": true, "sent": true}, {"pgid": 37112, "signal": "SIGKILL", "ownedChildPinned": true, "sent": true}], "signalNotNeededProof": [], "childGroupEmpty": true, "ownedChildReaped": true, "remaining": [], "primaryRemaining": null, "secondaryRemaining": [], "observationErrors": [{"operation": "monitor ps primary", "type": "TimeoutExpired", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' timed out after 0.997742667037528 seconds", "errno": null, "returncode": null, "stdout": null, "stderr": null}, {"operation": "final drain proof ps primary", "type": "TimeoutExpired", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' timed out after 0.5 seconds", "errno": null, "returncode": null, "stdout": null, "stderr": null}], "drainErrors": [], "cleanupProof": "secondary", "peakRssKiB": 0, "seconds": 6.381}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/assets/renders/hulls/swift-round4-current/audit-unknown-cleanup/process.log
+Exact old validated payloads published by harmless stand-in; this is not new validation. ok
+{"drain": {"format": 3, "reason": "cleanup/observation error; inspect raw facts", "failureReason": "cleanup/observation error; inspect raw facts", "parentPid": 50876, "supervisorPid": 50879, "commandGroup": 50880, "commandExit": 0, "signals": [], "signalAttempts": [{"pgid": 50880, "signal": "SIGTERM", "ownedChildPinned": true, "sent": false, "error": {"operation": "signal owned group", "type": "PermissionError", "message": "[Errno 1] Operation not permitted", "errno": 1, "returncode": null, "stdout": null, "stderr": null}}, {"pgid": 50880, "signal": "SIGKILL", "ownedChildPinned": true, "sent": false, "error": {"operation": "signal owned group", "type": "PermissionError", "message": "[Errno 1] Operation not permitted", "errno": 1, "returncode": null, "stdout": null, "stderr": null}}], "signalNotNeededProof": [], "childGroupEmpty": false, "ownedChildReaped": true, "remaining": null, "primaryRemaining": null, "secondaryRemaining": null, "observationErrors": [{"operation": "before signal for exited child ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}, {"operation": "drain /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}, {"operation": "before signal for exited child /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}, {"operation": "drain /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}, {"operation": "final drain proof ps primary", "type": "CalledProcessError", "message": "Command '['ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}, {"operation": "final drain proof /bin/ps secondary", "type": "CalledProcessError", "message": "Command '['/private/tmp/swift-r4-tooling-review2-4c8jcnsv/candidate-publication/unknown-bin/ps', '-axo', 'pid=,ppid=,pgid=,rss=,stat=']' returned non-zero exit status 31.", "errno": null, "returncode": 31, "stdout": "", "stderr": "review injection: both observers unavailable after actual payload\n"}], "drainErrors": [{"operation": "signal owned group", "type": "PermissionError", "message": "[Errno 1] Operation not permitted", "errno": 1, "returncode": null, "stdout": null, "stderr": null}, {"operation": "signal owned group", "type": "PermissionError", "message": "[Errno 1] Operation not permitted", "errno": 1, "returncode": null, "stdout": null, "stderr": null}], "cleanupProof": "UNPROVEN", "peakRssKiB": 4608, "seconds": 0.163}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-after-dispatch/assets/renders/hulls/swift-round4-current/probe/process.log
+producer ready sleep
+{"drain": {"format": 3, "reason": "runner disappeared", "failureReason": "runner disappeared", "parentPid": 37435, "supervisorPid": 37441, "commandGroup": 37443, "commandExit": -9, "signals": ["SIGTERM", "SIGKILL"], "signalAttempts": [{"pgid": 37443, "signal": "SIGTERM", "ownedChildPinned": true, "sent": true}, {"pgid": 37443, "signal": "SIGKILL", "ownedChildPinned": true, "sent": true}], "signalNotNeededProof": [], "childGroupEmpty": true, "ownedChildReaped": true, "remaining": [], "primaryRemaining": [], "secondaryRemaining": null, "observationErrors": [], "drainErrors": [], "cleanupProof": "primary", "peakRssKiB": 17360, "seconds": 5.016}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-dispatch/assets/renders/hulls/swift-round4-current/probe/process.log
+producer ready sleep
+{"drain": {"format": 3, "reason": "runner disappeared", "failureReason": "runner disappeared", "parentPid": 37271, "supervisorPid": 37274, "commandGroup": 37276, "commandExit": -9, "signals": ["SIGTERM", "SIGKILL"], "signalAttempts": [{"pgid": 37276, "signal": "SIGTERM", "ownedChildPinned": true, "sent": true}, {"pgid": 37276, "signal": "SIGKILL", "ownedChildPinned": true, "sent": true}], "signalNotNeededProof": [], "childGroupEmpty": true, "ownedChildReaped": true, "remaining": [], "primaryRemaining": [], "secondaryRemaining": null, "observationErrors": [], "drainErrors": [], "cleanupProof": "primary", "peakRssKiB": 5888, "seconds": 4.865}}
+
+LOG: /private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/assets/renders/hulls/swift-round4-current/probe/process.log
+Traceback (most recent call last):
+  File "/private/tmp/swift-r4-tooling-review2-4c8jcnsv/current-before-handshake/packages/tools/blender/hulls/swift-round4/supervise.py", line 63, in main
+    raise RuntimeError('runner disappeared' if first == b'' else 'startup handshake refused')
+RuntimeError: runner disappeared
+{"drain": {"format": 3, "reason": "runner disappeared", "failureReason": "runner disappeared", "parentPid": 37264, "supervisorPid": 37267, "commandGroup": null, "commandExit": null, "signals": [], "signalAttempts": [], "signalNotNeededProof": [], "childGroupEmpty": true, "ownedChildReaped": true, "remaining": [], "primaryRemaining": [], "secondaryRemaining": null, "observationErrors": [], "drainErrors": [{"operation": "producer setup/monitor", "type": "RuntimeError", "message": "runner disappeared", "errno": null, "returncode": null, "stdout": null, "stderr": null}], "cleanupProof": "primary", "peakRssKiB": 0, "seconds": 0.007}}
+

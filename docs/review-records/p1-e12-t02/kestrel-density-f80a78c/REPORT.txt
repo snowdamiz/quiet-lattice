@@ -1,0 +1,357 @@
+C.2 VERDICT: REVISE — current-export texel-density scope only
+
+One acceptance-blocking contract gap: the pinned Kestrel LOD0 mapped Hull/Accent/Trim/Dark surfaces are materially below the art-bible hull target of approximately 512 px/m. Hull area-equivalent densities are 113.252590 (base), 113.254070 (damaged), and 113.515282 (husked) px/m: approximately 22.1% of the target, or 4.51–4.52 times less linear density. The area-weighted distributions, not a few tiny triangles, establish the gap. No narrow tolerance band has been invented around the approximate target.
+
+SCOPE / AUTHORITY
+Read-only independent CPU artifact audit of the missed density contract, not a visual grade or a full source rereview. This report qualifies only the current exported geometry/material mapping. Saved-blend density is UNQUALIFIED: the blend was hashed but never opened or executed. Historical SOURCE/CPU PASS remains unchanged in its original tested scope. No claim about pixel quality, appearance, native behavior, release readiness, other hull corrections, other families, or the six additional livery variants is made.
+
+Candidate: /Users/andreyyurlov/.t3/worktrees/space/t3-b4a2c118
+Branch: task/P1-E12-T02-kestrel-r3
+HEAD: f80a78c02ffe0ba158691fedc9a57ced2d56a885
+Tree: 8fecccea75d2d682890bb3d0fbd91f8fc7689ae4
+Git status: empty before and after.
+
+packages/client/public/models/hulls/kestrel.glb
+  SHA256 2c145703c92e53b985d97c705e2c1c5c9ebb3cace91a72535a57ce3e3b97f7cb
+  bytes 20931568
+
+assets/blend/hulls/kestrel.blend
+  SHA256 18c7865bf3b722287c5725dcb9bd3b7fc38a5732c0c7b21b10d90ce5ba318f65
+  bytes 78976965
+
+PREMISE, RECORDED BEFORE MEASUREMENT
+Premise, recorded before density measurement: 4K image dimensions plus a structural PASS imply required physical texel density.
+Test: independently decode the pinned current GLB, apply normalized accessor values, complete node world matrices, material texCoord/KHR_texture_transform and actual KTX2 image dimensions, then compare mapped LOD0 base/damaged/husked surface density to docs/art-bible.md:221-222 (~512 px/m hulls), in the context of DESIGN 19.2. No assumed failure. This is current-export evidence only unless correctly bound prior source density evidence exists. Approximate 512 is not a newly invented strict numerical cutoff.
+
+Result: disproved for these exact exported bytes. Map dimensions and structural PASS do not establish physical density. docs/art-bible.md:40 defines metres; :220-222 separately gives 4K hero textures and hulls ~512 px/m. DESIGN.md:783-791 (19.2) supplies the hero PBR/4K/scale context; it does not replace the density requirement with image dimensions. contract-evidence.txt contains line-numbered excerpts.
+
+PRIOR SOURCE EVIDENCE
+/tmp/kestrel-r3-source-review-f80a78c0/REPORT.txt is bound to this same HEAD/tree/blend/GLB. Its 13 full-mip 4096 images and normalized-uint16 LOD0 UV evidence were checked against the current export; they are structural facts, not a density measurement. No correct source px/m measurement was found in that report or its cited independent.py / independent.json / blender-result.json density terms. The task handoff at :48 explicitly says 4096 storage is not a claim of full 4K effective density; its 28.397% occupancy is an atlas statistic, not physical px/m or a waiver. Narrow inspection of atlas.py:85-114 identifies the Kestrel-owned packing path and its >=25% occupancy gate, not a px/m proof. The source PASS and earlier Lark/Swift reports were read and hashed, never revised. This audit establishes no new saved-blend behavior.
+
+DECODE / MAPPING / MATH
+Installed Node v22.23.3, @gltf-transform/core 4.5.1 and extensions 4.5.1, meshoptimizer 1.3.0. The NodeIO registration/read/getElement/getWorldMatrix route follows the proven Lark decoder. The meshopt decoder itself is the installed, unchanged dependency. A second implementation uses the previously exercised Swift raw buffer-view decode / column-major TRS composition route. Both use meshopt count, byteStride, byteOffset, mode, and filter; integer values are never reinterpreted as float32.
+
+Signed normalized BYTE/SHORT = max(raw/127 or raw/32767, -1). Unsigned normalized BYTE/SHORT = raw/255 or raw/65535. Float attributes stay float. Index buffers are read according to their declared types and stride. Actual selected POSITION accessors are normalized signed int16; TEXCOORD_0 accessors are normalized uint16. 24 unique position/UV accessors have explicit raw/normalized/NodeIO samples in density.json. All 30 mapped primitives are independently decoded in crosscheck.json.
+
+For each triangle, use the complete ancestor world matrix, including node quantization scales. Base Body world scale is 7.390239953994751 on each axis; it is not unit scale. Full world matrices and paths are preserved per primitive. World cross products are computed from exact signed-clamped integer-domain position differences, divided by the normalization denominator squared and multiplied by the world linear cofactor matrix. This is algebraically the same as transforming triangle edges, handles nonuniform scale and shear, and avoids translation-cancellation artifacts on collinear quantized triangles. UV determinants likewise use exact integer-domain values and the normalization divisor. No small-area epsilon discards real triangles.
+
+Each texture slot selects KHR_texture_transform.texCoord when provided, otherwise textureInfo.texCoord, otherwise zero. UV transform is offset + R(rotation) * diag(scale) * UV; its area multiplier is abs(scale.x * scale.y). Actual selected maps all use TEXCOORD_0 and no KHR_texture_transform. All image dimensions come from the embedded KTX2 headers, not filenames or material extras. The GLB contains 13 images, all 4096 x 4096 with 13 levels. No pixel payload is decoded. All four mapped slots (base color, metallic/roughness, normal, occlusion) have the same dimensions and UV transform per material, so their densities are identical and are measured once per equivalent binding.
+
+A_w = ||(P1_world-P0_world) x (P2_world-P0_world)|| / 2 square metres.
+A_uv = abs(det(U1_transformed-U0_transformed, U2_transformed-U0_transformed)) / 2.
+Triangle density d = sqrt(W * H * A_uv / A_w) px/m.
+Area-equivalent density = sqrt(sum(W * H * A_uv) / sum(A_w)): the world-area-weighted RMS of triangle densities.
+Area-weighted mean = sum(A_w * d) / sum(A_w).
+Weighted percentiles are inverse cumulative physical area after sorting triangle density. Count percentiles use floor((n-1)*p), also retained in JSON. All areas are sums of triangle areas, not UV union occupancy; layered surfaces count separately. Double-sided material rendering does not double physical geometric area. This scalar area metric does not assess directional anisotropy, texture content, visibility, or pixel quality.
+
+REACHABILITY / EXCLUSIONS
+The default scene reaches kestrel/kestrel_LOD0, kestrel/kestrel_damaged_LOD0 and kestrel/kestrel_husked_LOD0. Each has 12 render primitives: 10 mapped plus two constant/emissive primitives. The report covers all 30 mapped primitives, grouped into 15 material/state combinations. Glass is included because it actually has maps, while its art-bible full-map exemption is preserved; the blocking finding already holds on Hull/Accent/Trim/Dark without Glass. 148 COL meshes across the export are excluded as auxiliary collision geometry; no REF mesh was encountered. Selected untextured EngineGlow/NavWhite surfaces are excluded because image density is undefined on constant/emissive materials. No skin, animation, or morph pose modifies selected surfaces in this GLB. Lower LODs and other livery roots are outside this density sample.
+
+kestrel_LOD0: mapped triangles 144704, zero-world-area 4944, positive-world-area 139760, zero-UV positive-world triangles 922. Zero-world UV-area sum 2.42151259214e-08.
+
+kestrel_damaged_LOD0: mapped triangles 144586, zero-world-area 4944, positive-world-area 139642, zero-UV positive-world triangles 922. Zero-world UV-area sum 2.42151259214e-08.
+
+kestrel_husked_LOD0: mapped triangles 144000, zero-world-area 4944, positive-world-area 139056, zero-UV positive-world triangles 922. Zero-world UV-area sum 2.42151259214e-08.
+
+Zero-world triangles contribute no physical area and have undefined density; they are listed by primitive/triangle and excluded from density statistics. Zero-UV positive-world triangles remain at density zero with their actual area weights. High-density tiny chart repairs remain included. This is accounting, not a separate topology or visual finding.
+
+MATERIAL RESULTS (all densities px/m; N is positive-world-area triangle count)
+State MaterialID Material N World_m2 UV_area AreaEquivalent AreaWeightedMean Min P1 P10 Median P90 P99 Max
+
+base    50 Hull     3720 53.170681272 0.0406488827 113.252590 113.215484 95.243373 107.202521 109.467613 113.062738 116.658922 118.596240 130.553174
+
+base    51 Accent 102099 253.939801091 0.2145500355 119.058075 114.362657 0.000000 104.203904 109.012092 113.735747 117.066959 120.441375 3691.009790
+
+base    55 Trim    19119 18.757989485 0.0144350333 113.625472 111.373057 0.000000 64.951341 104.571783 112.371230 117.192596 121.260666 1610.615620
+
+base    54 Dark    14542 12.925777276 0.0099583192 113.690620 113.615674 0.000000 100.903388 108.515325 114.759528 117.231508 120.684383 174.270386
+
+base    53 Glass     280 6.417936721 0.0046777951 110.581590 110.365080 94.737016 96.012227 98.834320 112.908617 117.034172 117.428773 117.495330
+
+damaged  8 Hull     3602 50.922805650 0.0389314035 113.254070 113.216390 95.243373 107.168511 109.456525 113.062738 116.669718 118.604479 130.553174
+
+damaged  9 Accent 102099 253.939801091 0.2145500355 119.058075 114.362657 0.000000 104.203904 109.012092 113.735747 117.066959 120.441375 3691.009790
+
+damaged 13 Trim    19119 18.757989485 0.0144350333 113.625472 111.373057 0.000000 64.951341 104.571783 112.371230 117.192596 121.260666 1610.615620
+
+damaged 12 Dark    14542 12.925777276 0.0099583192 113.690620 113.615674 0.000000 100.903388 108.515325 114.759528 117.231508 120.684383 174.270386
+
+damaged 11 Glass     280 6.417936721 0.0046777951 110.581590 110.365080 94.737016 96.012227 98.834320 112.908617 117.034172 117.428773 117.495330
+
+husked  29 Hull     3016 43.048653412 0.0330634629 113.515282 113.478714 95.243373 107.330876 109.702395 113.454423 116.753590 118.604479 130.553174
+
+husked  30 Accent 102099 253.939801091 0.2145500355 119.058075 114.362657 0.000000 104.203904 109.012092 113.735747 117.066959 120.441375 3691.009790
+
+husked  34 Trim    19119 18.757989485 0.0144350333 113.625472 111.373057 0.000000 64.951341 104.571783 112.371230 117.192596 121.260666 1610.615620
+
+husked  33 Dark    14542 12.925777276 0.0099583192 113.690620 113.615674 0.000000 100.903388 108.515325 114.759528 117.231508 120.684383 174.270386
+
+husked  32 Glass     280 6.417936721 0.0046777951 110.581590 110.365080 94.737016 96.012227 98.834320 112.908617 117.034172 117.428773 117.495330
+
+
+P5/P25/P75/P95 and count-weighted percentiles are also preserved for every material and every primitive in attempt3/density.json. UV_area in this table is the sum on positive-world-area triangles, after material transforms; raw and transformed sums coincide here. Per-primitive uvAreaAll includes UV area even on zero-world triangles.
+
+AREA DISTRIBUTION BY MATERIAL (percentage of physical surface area; descriptive bins, not acceptance bands)
+State Material [0,32) [32,64) [64,128) [128,256) [256,512) [512,1024) [1024,infinity)
+
+base    Hull   0.000000000 0.000000000 99.990616228 0.009383772 0.000000000 0.000000000 0.000000000
+
+base    Accent 0.001839916 0.000041696 99.877629467 0.013970074 0.000012472 0.059252951 0.047253423
+
+base    Trim   0.000765275 0.727724696 99.194134001 0.048527030 0.000000000 0.000000000 0.028848999
+
+base    Dark   0.008865936 0.000178658 99.862692568 0.128262839 0.000000000 0.000000000 0.000000000
+
+base    Glass  0.000000000 0.000000000 100.000000000 0.000000000 0.000000000 0.000000000 0.000000000
+
+damaged Hull   0.000000000 0.000000000 99.990202002 0.009797998 0.000000000 0.000000000 0.000000000
+
+damaged Accent 0.001839916 0.000041696 99.877629467 0.013970074 0.000012472 0.059252951 0.047253423
+
+damaged Trim   0.000765275 0.727724696 99.194134001 0.048527030 0.000000000 0.000000000 0.028848999
+
+damaged Dark   0.008865936 0.000178658 99.862692568 0.128262839 0.000000000 0.000000000 0.000000000
+
+damaged Glass  0.000000000 0.000000000 100.000000000 0.000000000 0.000000000 0.000000000 0.000000000
+
+husked  Hull   0.000000000 0.000000000 99.988409822 0.011590178 0.000000000 0.000000000 0.000000000
+
+husked  Accent 0.001839916 0.000041696 99.877629467 0.013970074 0.000012472 0.059252951 0.047253423
+
+husked  Trim   0.000765275 0.727724696 99.194134001 0.048527030 0.000000000 0.000000000 0.028848999
+
+husked  Dark   0.008865936 0.000178658 99.862692568 0.128262839 0.000000000 0.000000000 0.000000000
+
+husked  Glass  0.000000000 0.000000000 100.000000000 0.000000000 0.000000000 0.000000000 0.000000000
+
+
+AGGREGATES (all five mapped material roles, one physical surface count)
+
+base: 345.212185845 m2, UV area 0.2842700659, area-equivalent 117.539125, weighted mean 113.921229, weighted median 113.615986; 99.859608% of area lies in [64,128) px/m.
+
+damaged: 342.964310223 m2, UV area 0.2825525866, area-equivalent 117.566916, weighted mean 113.925989, weighted median 113.623522; 99.858688% of area lies in [64,128) px/m.
+
+husked: 335.090157985 m2, UV area 0.2766846460, area-equivalent 117.698693, weighted mean 113.976364, weighted median 113.676689; 99.855368% of area lies in [64,128) px/m.
+
+
+EXACT EXPORTED LOCATIONS / MAPS
+
+kestrel_LOD0 material[50] Hull:
+
+  nodes[859] kestrel/kestrel_LOD0/Body, meshes[392].primitives[0], POSITION accessor 170, TEXCOORD_0 accessor 171, index accessor 10
+
+  pbrMetallicRoughness.baseColorTexture: texture[11] -> image[11] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[2] -> image[1] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[2] -> image[1] 4096x4096
+
+kestrel_LOD0 material[51] Accent:
+
+  nodes[859] kestrel/kestrel_LOD0/Body, meshes[392].primitives[1], POSITION accessor 172, TEXCOORD_0 accessor 173, index accessor 12
+
+  nodes[860] kestrel/kestrel_LOD0/Canopy/CanopyFrame, meshes[393].primitives[0], POSITION accessor 176, TEXCOORD_0 accessor 177, index accessor 16
+
+  pbrMetallicRoughness.baseColorTexture: texture[11] -> image[11] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[2] -> image[1] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[2] -> image[1] 4096x4096
+
+kestrel_LOD0 material[55] Trim:
+
+  nodes[886] kestrel/kestrel_LOD0/GearFront/GearFront_Assembly, meshes[411].primitives[0], POSITION accessor 191, TEXCOORD_0 accessor 192, index accessor 32
+
+  nodes[889] kestrel/kestrel_LOD0/GearLeft/GearLeft_Assembly, meshes[413].primitives[0], POSITION accessor 194, TEXCOORD_0 accessor 195, index accessor 36
+
+  nodes[892] kestrel/kestrel_LOD0/GearRight/GearRight_Assembly, meshes[415].primitives[0], POSITION accessor 197, TEXCOORD_0 accessor 198, index accessor 40
+
+  pbrMetallicRoughness.baseColorTexture: texture[11] -> image[11] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[2] -> image[1] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[2] -> image[1] 4096x4096
+
+kestrel_LOD0 material[54] Dark:
+
+  nodes[864] kestrel/kestrel_LOD0/CockpitInterior/CockpitInteriorMesh, meshes[396].primitives[0], POSITION accessor 181, TEXCOORD_0 accessor 182, index accessor 20
+
+  nodes[865] kestrel/kestrel_LOD0/CockpitInterior/CockpitStick/CockpitStick_grip, meshes[397].primitives[0], POSITION accessor 183, TEXCOORD_0 accessor 184, index accessor 22
+
+  nodes[867] kestrel/kestrel_LOD0/CockpitInterior/CockpitThrottle/CockpitThrottle_lever, meshes[398].primitives[0], POSITION accessor 185, TEXCOORD_0 accessor 186, index accessor 24
+
+  pbrMetallicRoughness.baseColorTexture: texture[11] -> image[11] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[2] -> image[1] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[2] -> image[1] 4096x4096
+
+kestrel_LOD0 material[53] Glass:
+
+  nodes[861] kestrel/kestrel_LOD0/Canopy/CanopyGlass, meshes[394].primitives[0], POSITION accessor 178, TEXCOORD_0 accessor 179, index accessor 18
+
+  pbrMetallicRoughness.baseColorTexture: texture[11] -> image[11] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[2] -> image[1] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[2] -> image[1] 4096x4096
+
+kestrel_damaged_LOD0 material[8] Hull:
+
+  nodes[139] kestrel/kestrel_damaged/kestrel_damaged_LOD0/Body, meshes[68].primitives[0], POSITION accessor 263, TEXCOORD_0 accessor 264, index accessor 118
+
+  pbrMetallicRoughness.baseColorTexture: texture[3] -> image[4] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[4] -> image[3] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[4] -> image[3] 4096x4096
+
+kestrel_damaged_LOD0 material[9] Accent:
+
+  nodes[139] kestrel/kestrel_damaged/kestrel_damaged_LOD0/Body, meshes[68].primitives[1], POSITION accessor 172, TEXCOORD_0 accessor 173, index accessor 12
+
+  nodes[140] kestrel/kestrel_damaged/kestrel_damaged_LOD0/Canopy/CanopyFrame, meshes[69].primitives[0], POSITION accessor 176, TEXCOORD_0 accessor 177, index accessor 16
+
+  pbrMetallicRoughness.baseColorTexture: texture[3] -> image[4] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[4] -> image[3] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[4] -> image[3] 4096x4096
+
+kestrel_damaged_LOD0 material[13] Trim:
+
+  nodes[166] kestrel/kestrel_damaged/kestrel_damaged_LOD0/GearFront/GearFront_Assembly, meshes[87].primitives[0], POSITION accessor 191, TEXCOORD_0 accessor 192, index accessor 32
+
+  nodes[169] kestrel/kestrel_damaged/kestrel_damaged_LOD0/GearLeft/GearLeft_Assembly, meshes[89].primitives[0], POSITION accessor 194, TEXCOORD_0 accessor 195, index accessor 36
+
+  nodes[172] kestrel/kestrel_damaged/kestrel_damaged_LOD0/GearRight/GearRight_Assembly, meshes[91].primitives[0], POSITION accessor 197, TEXCOORD_0 accessor 198, index accessor 40
+
+  pbrMetallicRoughness.baseColorTexture: texture[3] -> image[4] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[4] -> image[3] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[4] -> image[3] 4096x4096
+
+kestrel_damaged_LOD0 material[12] Dark:
+
+  nodes[144] kestrel/kestrel_damaged/kestrel_damaged_LOD0/CockpitInterior/CockpitInteriorMesh, meshes[72].primitives[0], POSITION accessor 181, TEXCOORD_0 accessor 182, index accessor 20
+
+  nodes[145] kestrel/kestrel_damaged/kestrel_damaged_LOD0/CockpitInterior/CockpitStick/CockpitStick_grip, meshes[73].primitives[0], POSITION accessor 183, TEXCOORD_0 accessor 184, index accessor 22
+
+  nodes[147] kestrel/kestrel_damaged/kestrel_damaged_LOD0/CockpitInterior/CockpitThrottle/CockpitThrottle_lever, meshes[74].primitives[0], POSITION accessor 185, TEXCOORD_0 accessor 186, index accessor 24
+
+  pbrMetallicRoughness.baseColorTexture: texture[3] -> image[4] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[4] -> image[3] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[4] -> image[3] 4096x4096
+
+kestrel_damaged_LOD0 material[11] Glass:
+
+  nodes[141] kestrel/kestrel_damaged/kestrel_damaged_LOD0/Canopy/CanopyGlass, meshes[70].primitives[0], POSITION accessor 178, TEXCOORD_0 accessor 179, index accessor 18
+
+  pbrMetallicRoughness.baseColorTexture: texture[3] -> image[4] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[4] -> image[3] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[4] -> image[3] 4096x4096
+
+kestrel_husked_LOD0 material[29] Hull:
+
+  nodes[499] kestrel/kestrel_husked/kestrel_husked_LOD0/Body, meshes[230].primitives[0], POSITION accessor 274, TEXCOORD_0 accessor 275, index accessor 133
+
+  pbrMetallicRoughness.baseColorTexture: texture[7] -> image[8] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[8] -> image[7] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[8] -> image[7] 4096x4096
+
+kestrel_husked_LOD0 material[30] Accent:
+
+  nodes[499] kestrel/kestrel_husked/kestrel_husked_LOD0/Body, meshes[230].primitives[1], POSITION accessor 172, TEXCOORD_0 accessor 173, index accessor 12
+
+  nodes[500] kestrel/kestrel_husked/kestrel_husked_LOD0/Canopy/CanopyFrame, meshes[231].primitives[0], POSITION accessor 176, TEXCOORD_0 accessor 177, index accessor 16
+
+  pbrMetallicRoughness.baseColorTexture: texture[7] -> image[8] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[8] -> image[7] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[8] -> image[7] 4096x4096
+
+kestrel_husked_LOD0 material[34] Trim:
+
+  nodes[526] kestrel/kestrel_husked/kestrel_husked_LOD0/GearFront/GearFront_Assembly, meshes[249].primitives[0], POSITION accessor 191, TEXCOORD_0 accessor 192, index accessor 32
+
+  nodes[529] kestrel/kestrel_husked/kestrel_husked_LOD0/GearLeft/GearLeft_Assembly, meshes[251].primitives[0], POSITION accessor 194, TEXCOORD_0 accessor 195, index accessor 36
+
+  nodes[532] kestrel/kestrel_husked/kestrel_husked_LOD0/GearRight/GearRight_Assembly, meshes[253].primitives[0], POSITION accessor 197, TEXCOORD_0 accessor 198, index accessor 40
+
+  pbrMetallicRoughness.baseColorTexture: texture[7] -> image[8] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[8] -> image[7] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[8] -> image[7] 4096x4096
+
+kestrel_husked_LOD0 material[33] Dark:
+
+  nodes[504] kestrel/kestrel_husked/kestrel_husked_LOD0/CockpitInterior/CockpitInteriorMesh, meshes[234].primitives[0], POSITION accessor 181, TEXCOORD_0 accessor 182, index accessor 20
+
+  nodes[505] kestrel/kestrel_husked/kestrel_husked_LOD0/CockpitInterior/CockpitStick/CockpitStick_grip, meshes[235].primitives[0], POSITION accessor 183, TEXCOORD_0 accessor 184, index accessor 22
+
+  nodes[507] kestrel/kestrel_husked/kestrel_husked_LOD0/CockpitInterior/CockpitThrottle/CockpitThrottle_lever, meshes[236].primitives[0], POSITION accessor 185, TEXCOORD_0 accessor 186, index accessor 24
+
+  pbrMetallicRoughness.baseColorTexture: texture[7] -> image[8] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[8] -> image[7] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[8] -> image[7] 4096x4096
+
+kestrel_husked_LOD0 material[32] Glass:
+
+  nodes[501] kestrel/kestrel_husked/kestrel_husked_LOD0/Canopy/CanopyGlass, meshes[232].primitives[0], POSITION accessor 178, TEXCOORD_0 accessor 179, index accessor 18
+
+  pbrMetallicRoughness.baseColorTexture: texture[7] -> image[8] 4096x4096, pbrMetallicRoughness.metallicRoughnessTexture: texture[8] -> image[7] 4096x4096, normalTexture: texture[1] -> image[0] 4096x4096, occlusionTexture: texture[8] -> image[7] 4096x4096
+
+
+The failing surfaces are real mapped render primitives: Hull on Body; Accent on Body and CanopyFrame; Trim on front/left/right gear assemblies; Dark on CockpitInteriorMesh, CockpitStick_grip and CockpitThrottle_lever. These are GLB scene reachability facts. HANDOFF-C2.txt:59 still identifies legacy gameplay loading; no claim is made that gameplay currently loads this candidate.
+
+SMALLEST OWNER CORRECTION
+Return this contract gap to the Kestrel source/atlas owner (packages/tools/blender/hulls/kestrel/atlas.py:85-114 and its saved-source bake/export workflow). Correct world-space UV texel allocation for the primary surfaces, rebake the mapped content in the saved source, regenerate the export, and add a density receipt bound to those new bytes. Keep dimensions, physical hull scale, and other contract budgets intact; do not mask the result by changing runtime scale, resampling the same artwork, or treating a 4K header/occupancy gate as density evidence. No shared renderer/codec change is implicated by this finding.
+
+A uniform UV scale multiplier of about 4.52 would express the Hull deficit, but simple repacking of the same unique non-overlapping 4K atlas cannot solve the entire allocation: the measured base mapped area is 345.212186 m2, and ~512 px/m would require summed UV area ~5.393940 at 4096. Even ideal full unique use of one 4K atlas across that area only yields ~220.45 px/m. The owner must therefore make a density-aware allocation/reuse/trim/atlas-layout decision within existing texture/primitive/detail constraints and verify it; this report neither prescribes a new budget nor authorizes visible repetition or blanket waivers. The exact source cause remains unqualified until that owner evaluates the saved blend. No asset edits were made.
+
+ORACLE / INDEPENDENT CHECK
+Analytic oracle PASS before measurement: normalized int16/uint16 unit triangle = 512 px/m; inherited uniform 2x world scale = 256; nonuniform scale plus shear with nonsquare image has analytic area 3 m2; composed parent scale/child rotation yields the expected nonorthogonal world matrix; KHR rotation/offset and area-scale transforms agree; all four signed/unsigned normalized endpoint cases, including signed minimum clamping, pass; texCoord override/default passes; a quantized collinear triangle remains exactly zero area. See attempt3/oracle.json.
+
+Independent raw Meshopt/DataView crosscheck PASS on every selected mapped primitive (30), including separately composed world matrices. Maximum world-matrix difference = 0; maximum summed world-area difference = 8.526512829121202e-14 m2; maximum UV-area difference = 9.71445146547012e-17. Crosscheck totals include zero-world triangles; final weighted density excludes their undefined ratios explicitly. This is corroboration of the current export, not a second source audit.
+
+COMMANDS / EXITS / BOUNDS
+All actual decode commands are preserved as structured argument arrays in the corresponding launch.json, with terminal receipts and stdout/stderr. Direct Python supervisors ran with -B. The environment fixes UV_THREADPOOL_SIZE=1 and numerical-library thread limits to 1; Node --single-threaded disables background V8 tasks, --v8-pool-size=1, --max-old-space-size=512. Meshopt uses synchronous decodeGltfBuffer and no workers. The only parallel resource is the one libuv I/O worker; no >2 numerical/decoder workers were admitted. Each invocation had 90 s wall, 768 MiB sampled RSS, and 32 MiB private-output limits; all process groups were confirmed empty.
+
+first attempted measurement:
+  supervisor /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/run.py
+  cwd /private/tmp/kestrel-density-f80a78c0-3gvyr0p3
+  argv ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "--single-threaded", "--v8-pool-size=1", "--max-old-space-size=512", "/private/tmp/kestrel-density-f80a78c0-3gvyr0p3/measure.cjs"]
+  child exit 1; supervisor exit 1; 1.415320 seconds; peak sampled RSS 291667968 bytes; limitReason None; processGroupEmpty True.
+
+initial successful float-area measurement:
+  supervisor /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt2/run.py
+  cwd /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt2
+  argv ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "--single-threaded", "--v8-pool-size=1", "--max-old-space-size=512", "/private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt2/measure.cjs"]
+  child exit 0; supervisor exit 0; 1.688108 seconds; peak sampled RSS 297762816 bytes; limitReason None; processGroupEmpty True.
+
+authoritative exact quantized-area measurement:
+  supervisor /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt3/run.py
+  cwd /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt3
+  argv ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "--single-threaded", "--v8-pool-size=1", "--max-old-space-size=512", "/private/tmp/kestrel-density-f80a78c0-3gvyr0p3/attempt3/measure.cjs"]
+  child exit 0; supervisor exit 0; 1.769572 seconds; peak sampled RSS 291749888 bytes; limitReason None; processGroupEmpty True.
+
+first raw crosscheck attempt:
+  supervisor /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck-run/run.py
+  cwd /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck-run
+  argv ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "--single-threaded", "--v8-pool-size=1", "--max-old-space-size=512", "/private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck.cjs"]
+  child exit 1; supervisor exit 1; 0.111015 seconds; peak sampled RSS 393216 bytes; limitReason None; processGroupEmpty True.
+
+successful raw crosscheck:
+  supervisor /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck-run2/run.py
+  cwd /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck-run2
+  argv ["/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node", "--single-threaded", "--v8-pool-size=1", "--max-old-space-size=512", "/private/tmp/kestrel-density-f80a78c0-3gvyr0p3/crosscheck2.cjs"]
+  child exit 0; supervisor exit 0; 0.548248 seconds; peak sampled RSS 106676224 bytes; limitReason None; processGroupEmpty True.
+
+The first attempt exited 1 solely because the review script wrongly expected 27 mapped primitives; the raw GLB inventory showed 30 (10 per state), and the next private script corrected that assertion. Attempt2 succeeded, but its translated floating-point triangle subtraction produced spurious ~1.49e8 px/m extrema on 12 quantized-collinear triangles per state. It is retained as superseded; attempt3 uses exact integer-domain determinants/cofactors, with no epsilon, and is authoritative. The first independent crosscheck failed before decoding because the direct CJS decoder exports the decoder object, not a named member; crosscheck2.cjs uses that actual export and exits 0. No failed run is represented as passing, and no old artifact was overwritten.
+
+Protection commands: /opt/homebrew/bin/python3 -B /private/tmp/kestrel-density-f80a78c0-3gvyr0p3/inventory.py before (exit 0); same command with after (exit 0). All git identity/status reads exited 0. Historical report/spec inspections were read-only; rg with no matches legitimately returned 1 for the initial memory lookup and the absence-of-density search.
+
+PROTECTED BEFORE / AFTER
+
+301 protected entries, including source/GLB, all candidate hull assets present, all 214 Kestrel packet files (213 sealed payloads plus the seal), Kestrel task scripts, shared artlib/config/export/validate inputs, relevant docs, historical reports/decoders, node binary and dependency symlinks, match their before hashes and stat identities. 351 dependency/launcher/cache entries also match; .cache checks use metadata, while package/launcher files additionally have hashes. This is a stated coverage boundary, not a whole-machine filesystem audit. before.json and after.json preserve exact entries. integrity.json records zero differences. Git branch/HEAD/tree/status remain exactly pinned and clean.
+
+39 protected Kestrel PNGs are byte/stat unchanged. None was opened for visual inspection or scored. No screenshot cleanup, dependency/launcher/cache editing, source modification, worktree/hydration, Blender, native encoder, image codec, GPU/browser/render, service/DB, install, full suite, nested agent, push/PR/merge/main or orchestration-document action occurred.
+
+ARTIFACT HASHES (SHA256; full artifact inventory in MANIFEST.json)
+
+41f8205a6794ad59c6493d538e4b5a896cf5655f9ec8df542b64a5935b25ef73  PREMISE.txt  640 bytes
+
+ff889a9209f501e7f27c810421d6c7ef28271d574cbfca9de0d51bd23823550c  before.json  249059 bytes
+
+80f91ca0778db5f8ea693a7cdcb76ff18ae2c1280bfa024cc3140dba99dcfe62  after.json  249060 bytes
+
+4c9c9c59cd3805a31ed3d4bae79e84485a10170e9a232a0cfa3ddf2d12c42e6a  integrity.json  41 bytes
+
+70875f5b9968dcc960c3b8ed54d5987377ab533ada408456afdcce563545e166  glb-document.json  628840 bytes
+
+893218cc3ec177919478a619f9bdc0cf86c125e83fa2d18a5d7a742fd5053e60  contract-evidence.txt  14732 bytes
+
+60336c813b9fd506e8a85cd67091fbb9e2a4a73e34dcf1099b67f819562d0e3c  attempt3/measure.cjs  18863 bytes
+
+6b00ec6ec1d3fe8f4a1a4b03a748ae6c7548e5b1578223273532e9a0aa231568  attempt3/oracle.json  2474 bytes
+
+c05dbac1b2c52597d409756b4b9726b6e06b0b86d95e4e769c31a7043745d7fe  attempt3/density.json  1438692 bytes
+
+640ce05f42905b499e594be4e7676cdd7747d6d3cc2b144ea8d40cc2e1fd54ae  attempt3/launch.json  963 bytes
+
+37b1d41a8477c98c5cb97ea533f29d52e98bdfe51509181eb06dbe399bf36a28  attempt3/receipt.json  152 bytes
+
+2ffdbc11e282282016a0c9f489a4635d58d59bca46142222bfe186f869904c48  crosscheck2.cjs  4856 bytes
+
+d230d371da8ce6fdedff1997b3293beb86d0076787992cc5c29ecdf73d8407c5  crosscheck.json  11211 bytes
+
+c7d3198a747f4ec3ee5a3f499fb0ce108f02766a91c31e4ff04730929a4e2fdb  crosscheck-run2/receipt.json  152 bytes
+
+Installed dependency entries:
+
+@gltf-transform/core 4.5.1: /Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/@gltf-transform+core@4.5.1/node_modules/@gltf-transform/core/dist/index.cjs
+  SHA256 710ccd0157ce50c439090892e8919808863b1fd878301641358c08093f387a2c
+
+@gltf-transform/extensions 4.5.1: /Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/@gltf-transform+extensions@4.5.1/node_modules/@gltf-transform/extensions/dist/index.cjs
+  SHA256 873f31a00d1f333923906be7b02f3f9666722fb0c10ab7c88638b3db63bab470
+
+meshoptimizer 1.3.0: /Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/meshoptimizer@1.3.0/node_modules/meshoptimizer/index.js
+  SHA256 0afb975db2733391c2d0cabfbe707ee6d9a9651dddc221aeda5d819379958a89
+
+/Users/andreyyurlov/Documents/dev/space/node_modules/.pnpm/meshoptimizer@1.3.0/node_modules/meshoptimizer/meshopt_decoder.cjs
+  SHA256 fabafaaa29cbb1cfa367f20e896d7f6e95b86e575e2ea86ddb6f8cca1a87152d

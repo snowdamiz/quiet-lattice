@@ -1,0 +1,596 @@
+[WebServer] (node:48642) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 42 tests using 1 worker
+
+(node:48652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  pw:browser <launching> /Users/andreyyurlov/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-angle=metal --enable-gpu --ignore-gpu-blocklist --user-data-dir=/private/tmp/space-standard-redis7-da532383-oleft1lj/tmp/playwright_chromiumdev_profile-Z0h7pL --remote-debugging-pipe --no-startup-window +0ms
+  pw:browser <launched> pid=48694 +106ms
+  pw:browser [pid=48694][err] [1107/060039.599727:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +89ms
+  pw:browser [pid=48694][err] [1107/060039.599971:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060039.645370:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +45ms
+  pw:browser [pid=48694][err] [1107/060039.645433:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060039.797996:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +170ms
+  pw:browser [pid=48694][err] [1107/060039.827595:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +20ms
+  pw:browser [pid=48694][err] [1107/060040.387148:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52308/@vite/client (368) +552ms
+  pw:browser [pid=48694][err] [1107/060040.692644:ERROR:sandbox/mac/system_services.cc:31] SetApplicationIsDaemon: Error Domain=NSOSStatusErrorDomain Code=-50 "paramErr: error in user parameter list" (-50) +305ms
+  pw:browser [pid=48694][err] [1107/060041.229634:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52308/src/remote/RemoteShips.js (133) +537ms
+  pw:browser [pid=48694][err] [1107/060042.046867:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +817ms
+  pw:browser [pid=48694][err] [1107/060042.205647:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +160ms
+  pw:browser [pid=48694][err] [1107/060042.205726:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060042.209677:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +3ms
+  pw:browser [pid=48694][err] [1107/060042.211245:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +2ms
+  ✓   1 src/smoke/account.spec.ts:76:1 › title → a new account → a refused name, then a character of the people picked → enter, by keyboard (2.8s)
+  pw:browser [pid=48694][err] [1107/060042.406176:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +195ms
+  pw:browser [pid=48694][err] [1107/060042.406241:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060042.467595:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +61ms
+  pw:browser [pid=48694][err] [1107/060042.467645:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060042.527304:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +68ms
+  pw:browser [pid=48694][err] [1107/060042.542352:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +9ms
+  pw:browser [pid=48694][err] [1107/060043.017325:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52308/@vite/client (368) +473ms
+  pw:browser [pid=48694][err] [1107/060043.052593:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +35ms
+  ✓   2 src/smoke/account.spec.ts:149:1 › a wrong password is refused on its field; Esc steps back; the session lasts until signing out (2.6s)
+  pw:browser [pid=48694][err] [1107/060044.977132:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060044.977195:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060045.021118:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +44ms
+  pw:browser [pid=48694][err] [1107/060045.021179:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060045.085939:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +72ms
+  pw:browser [pid=48694][err] [1107/060045.096790:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +9ms
+  pw:browser [pid=48694][err] [1107/060045.567837:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52308/@vite/client (368) +466ms
+  pw:browser [pid=48694][err] [1107/060046.012616:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52308/src/remote/RemoteShips.js (133) +444ms
+  pw:browser [pid=48694][err] [1107/060046.677016:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +665ms
+  pw:browser [pid=48694][err] [1107/060047.028894:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +352ms
+  pw:browser [pid=48694][err] [1107/060047.028957:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060047.033179:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060047.045884:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +12ms
+  ✓   3 src/smoke/account.spec.ts:190:1 › dev scenarios go through the dev login: ?dev#foot on foot in its home hangar (2.2s)
+  pw:browser [pid=48694][err] [1107/060047.229605:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +184ms
+  pw:browser [pid=48694][err] [1107/060047.229667:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060047.274952:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +46ms
+  pw:browser [pid=48694][err] [1107/060047.275011:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060047.354477:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +84ms
+  pw:browser [pid=48694][err] [1107/060047.363798:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +7ms
+  pw:browser [pid=48694][err] [1107/060047.817952:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +452ms
+  pw:browser [pid=48694][err] [1107/060047.833588:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52308/@vite/client (368) +15ms
+  pw:browser [pid=48694][err] [1107/060047.883156:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +50ms
+  pw:browser [pid=48694][err] [1107/060048.282715:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52308/src/remote/RemoteShips.js (133) +399ms
+  pw:browser [pid=48694][err] [1107/060049.064582:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +782ms
+  pw:browser [pid=48694][err] [1107/060049.175862:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +112ms
+  pw:browser [pid=48694][err] [1107/060049.175937:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060049.181586:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +5ms
+  pw:browser [pid=48694][err] [1107/060049.182494:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +1ms
+  ✓   4 src/smoke/account.spec.ts:211:1 › ?dev=<name>&people=<id>: that people's dev character, in its home system (2.1s)
+  pw:browser [pid=48694][err] [1107/060049.369130:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +187ms
+  pw:browser [pid=48694][err] [1107/060049.369198:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060049.406592:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +37ms
+  pw:browser [pid=48694][err] [1107/060049.406666:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060049.473632:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52308/@vite/client (946) +72ms
+  pw:browser [pid=48694][err] [1107/060049.488985:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52308/@vite/client (1055) +13ms
+  pw:browser [pid=48694][err] [1107/060049.973554:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52308/@vite/client (368) +482ms
+  pw:browser [pid=48694][err] [1107/060049.974543:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1ms
+  pw:browser [pid=48694][err] [1107/060050.139088:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +165ms
+  pw:browser [pid=48694][err] [1107/060050.637027:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +498ms
+  ✓   5 src/smoke/account.spec.ts:226:1 › #foot without ?dev is still the offline sandbox: no sign-in, no socket (2.9s)
+  pw:browser [pid=48694][err] [1107/060052.608488:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060052.608553:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060052.637939:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +30ms
+  pw:browser [pid=48694][err] [1107/060052.638007:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060052.745234:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +107ms
+  pw:browser [pid=48694][err] [1107/060052.751386:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +6ms
+  pw:browser [pid=48694][err] [1107/060053.212113:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +461ms
+  pw:browser [pid=48694][err] [1107/060053.213262:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1ms
+[WebServer] 6:00:53 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060053.374827:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +161ms
+  ✓   6 src/smoke/boot.spec.ts:4:1 › client boots and renders (1.5s)
+  pw:browser [pid=48694][err] [1107/060054.084752:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +711ms
+  pw:browser [pid=48694][err] [1107/060054.084820:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060054.119473:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +34ms
+  pw:browser [pid=48694][err] [1107/060054.119522:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060054.181946:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +63ms
+  pw:browser [pid=48694][err] [1107/060054.192901:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +10ms
+  pw:browser [pid=48694][err] [1107/060054.671490:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +479ms
+[WebServer] 6:00:54 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  ✓   7 src/smoke/compressed.spec.ts:38:1 › a KTX2 and meshopt model loads and draws through the game loader (870ms)
+  pw:browser [pid=48694][err] [1107/060054.964126:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +293ms
+  pw:browser [pid=48694][err] [1107/060054.964186:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060057.991808:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +3s
+  pw:browser [pid=48694][err] [1107/060057.991864:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1ms
+Chromium 156.0.8078.4: 974553 values compared with Node's, 0 differ (generated in 2730 ms); its own Math differs from Node's on 1053 of 14000 calls
+  ✓   8 src/smoke/cross-engine.spec.ts:58:1 › world generation in Chromium gives Node’s bits (8.8s)
+  pw:browser <launching> /Users/andreyyurlov/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /private/tmp/space-standard-redis7-da532383-oleft1lj/tmp/playwright_firefoxdev_profile-E4vecy -juggler-pipe -silent +6s
+  pw:browser <launched> pid=49185 +29ms
+  pw:browser [pid=49185][err] *** You are running in headless mode. +1s
+  pw:browser [pid=49185][err] Could not find profile folder. +30ms
+  pw:browser [pid=49185] <process did exit: exitCode=1, signal=null> +167ms
+  pw:browser [pid=49185] starting temporary directories cleanup +0ms
+  pw:browser [pid=49185] <gracefully close start> +0ms
+  pw:browser [pid=49185] <kill> +0ms
+  pw:browser [pid=49185] <skipped force kill spawnedProcess.killed=false processClosed=true> +0ms
+  pw:browser [pid=49185] finished temporary directories cleanup +0ms
+  pw:browser [pid=49185] <gracefully close end> +0ms
+Firefox cannot start here: Could not find profile folder.
+  -   9 src/smoke/cross-engine.spec.ts:67:3 › world generation in Firefox gives Node’s bits
+  pw:browser <launching> /Users/andreyyurlov/Library/Caches/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window +11ms
+  pw:browser <launched> pid=49224 +25ms
+WebKit 27.2: 974553 values compared with Node's, 0 differ (generated in 2438 ms); its own Math differs from Node's on 2166 of 14000 calls
+  pw:browser [pid=49224] <gracefully close start> +7s
+  pw:browser [pid=49224] <process did exit: exitCode=0, signal=null> +18ms
+  pw:browser [pid=49224] starting temporary directories cleanup +0ms
+  pw:browser [pid=49224] finished temporary directories cleanup +0ms
+  pw:browser [pid=49224] <gracefully close end> +0ms
+  ✓  10 src/smoke/cross-engine.spec.ts:67:3 › world generation in WebKit gives Node’s bits (7.0s)
+  pw:browser [pid=48694][err] [1107/060113.863266:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060113.863322:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060113.909674:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +46ms
+  pw:browser [pid=48694][err] [1107/060113.909725:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060114.086757:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52549/@vite/client (946) +184ms
+  pw:browser [pid=48694][err] [1107/060114.108502:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52549/@vite/client (1055) +19ms
+  pw:browser [pid=48694][err] [1107/060114.640374:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52549/@vite/client (368) +528ms
+  pw:browser [pid=48694][err] [1107/060117.784178:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52549/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060118.411247:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +627ms
+  pw:browser [pid=48694][err] [1107/060119.952958:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060119.953021:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060119.957245:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52549/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060119.958870:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52549/@vite/client (1055) +1ms
+  ✓  11 src/smoke/cutscene-online.spec.ts:69:1 › plays the test cutscene in the story phase the server places the player in (6.3s)
+  pw:browser [pid=48694][err] [1107/060120.152006:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +194ms
+  pw:browser [pid=48694][err] [1107/060120.152070:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060120.205597:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +53ms
+  pw:browser [pid=48694][err] [1107/060120.205658:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060120.271382:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52549/@vite/client (946) +72ms
+  pw:browser [pid=48694][err] [1107/060120.282682:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52549/@vite/client (1055) +8ms
+  pw:browser [pid=48694][err] [1107/060120.743650:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +458ms
+  pw:browser [pid=48694][err] [1107/060120.761550:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52549/@vite/client (368) +18ms
+  pw:browser [pid=48694][err] [1107/060120.813337:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +52ms
+  pw:browser [pid=48694][err] [1107/060123.862067:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52549/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060124.531396:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +669ms
+  pw:browser [pid=48694][err] [1107/060125.929733:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1s
+  pw:browser [pid=48694][err] [1107/060125.929797:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060125.933536:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52549/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060125.934448:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52549/@vite/client (1055) +1ms
+  ✓  12 src/smoke/cutscene-online.spec.ts:103:1 › plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step (6.0s)
+  pw:browser [pid=48694][err] [1107/060126.316877:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +383ms
+  pw:browser [pid=48694][err] [1107/060126.316956:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060126.356604:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +39ms
+  pw:browser [pid=48694][err] [1107/060126.356687:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060126.418559:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +62ms
+  pw:browser [pid=48694][err] [1107/060126.431908:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +14ms
+  pw:browser [pid=48694][err] [1107/060126.892167:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +460ms
+  pw:browser [pid=48694][err] [1107/060126.903830:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +11ms
+[WebServer] 6:01:26 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060127.013193:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +110ms
+  ✓  13 src/smoke/cutscene.spec.ts:23:1 › plays the test cutscene end to end, and skips it (3.8s)
+  pw:browser [pid=48694][err] [1107/060130.135265:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +3s
+  pw:browser [pid=48694][err] [1107/060130.135325:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060130.172990:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +38ms
+  pw:browser [pid=48694][err] [1107/060130.173047:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060130.233182:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +60ms
+  pw:browser [pid=48694][err] [1107/060130.246381:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +13ms
+  pw:browser [pid=48694][err] [1107/060130.735475:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +489ms
+[WebServer] 6:01:30 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060131.441797:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +706ms
+den roost (predator): natural spread 4.024 m over 873 vertices, levelled spread 3.64e-7 m over 873
+den pad captures: /private/tmp/space-standard-redis7-da532383-oleft1lj/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-before.png /private/tmp/space-standard-redis7-da532383-oleft1lj/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/den-pad-after.png
+  ✓  14 src/smoke/den-pad.spec.ts:70:1 › a Tier 1 den pad is levelled in the engine, and nothing is drawn for the den (3.4s)
+  pw:browser [pid=48694][err] [1107/060133.569610:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060133.569677:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060133.600392:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +31ms
+  pw:browser [pid=48694][err] [1107/060133.600475:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060133.668440:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +68ms
+  pw:browser [pid=48694][err] [1107/060133.677988:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +10ms
+  pw:browser [pid=48694][err] [1107/060134.176649:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +498ms
+[WebServer] 6:01:34 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060134.196424:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +20ms
+  pw:browser [pid=48694][err] [1107/060134.347215:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +151ms
+  pw:browser [pid=48694][err] [1107/060134.577789:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +230ms
+  ✓  15 src/smoke/edge.spec.ts:39:1 › the galaxy map and the sky draw the Edge where the Count puts it, at three Counts (1.5s)
+  pw:browser [pid=48694][err] [1107/060135.078376:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +501ms
+  pw:browser [pid=48694][err] [1107/060135.078440:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060135.111317:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +33ms
+  pw:browser [pid=48694][err] [1107/060135.111368:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060135.178853:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +67ms
+  pw:browser [pid=48694][err] [1107/060135.187603:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +9ms
+  pw:browser [pid=48694][err] [1107/060135.666164:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +479ms
+[WebServer] 6:01:35 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060135.710178:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +44ms
+  pw:browser [pid=48694][err] [1107/060135.908968:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +199ms
+  pw:browser [pid=48694][err] [1107/060136.016138:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +107ms
+  ✓  16 src/smoke/edge.spec.ts:103:1 › the galaxy map marks the dark Waystations the server names, and says so for the system selected, after frames have run (1.5s)
+  pw:browser [pid=48694][err] [1107/060137.952636:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060137.952695:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060137.994319:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +41ms
+  pw:browser [pid=48694][err] [1107/060137.994379:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060138.199577:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52731/@vite/client (946) +216ms
+  pw:browser [pid=48694][err] [1107/060138.222010:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52731/@vite/client (1055) +23ms
+  pw:browser [pid=48694][err] [1107/060138.696880:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52731/@vite/client (368) +464ms
+  pw:browser [pid=48694][err] [1107/060138.748962:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +52ms
+  pw:browser [pid=48694][err] [1107/060139.185748:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52731/src/remote/RemoteShips.js (133) +436ms
+  pw:browser [pid=48694][err] [1107/060139.851436:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +666ms
+  pw:browser [pid=48694][err] [1107/060140.161670:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +311ms
+  pw:browser [pid=48694][err] [1107/060140.161725:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060140.190986:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +29ms
+  pw:browser [pid=48694][err] [1107/060140.191051:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060140.257001:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52731/@vite/client (946) +74ms
+  pw:browser [pid=48694][err] [1107/060140.270814:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52731/@vite/client (1055) +11ms
+  pw:browser [pid=48694][err] [1107/060140.771370:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +495ms
+  pw:browser [pid=48694][err] [1107/060140.791870:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52731/@vite/client (368) +20ms
+  pw:browser [pid=48694][err] [1107/060140.913891:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +123ms
+  pw:browser [pid=48694][err] [1107/060141.272862:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52731/src/remote/RemoteShips.js (133) +358ms
+  pw:browser [pid=48694][err] [1107/060141.953596:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +681ms
+  pw:browser [pid=48694][err] [1107/060142.465655:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +512ms
+  pw:browser [pid=48694][err] [1107/060154.502946:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:376] SharedImageManager::ProduceOverlay: Trying to Produce a Overlay representation from a non-existent mailbox. +12s
+  pw:browser [pid=48694][err] [1107/060154.502968:ERROR:components/viz/service/display_embedder/skia_output_device_buffer_queue.cc:258] Invalid mailbox. +0ms
+  pw:browser [pid=48694][err] [1107/060154.557599:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:376] SharedImageManager::ProduceOverlay: Trying to Produce a Overlay representation from a non-existent mailbox. +54ms
+  pw:browser [pid=48694][err] [1107/060154.557620:ERROR:components/viz/service/display_embedder/skia_output_device_buffer_queue.cc:258] Invalid mailbox. +0ms
+  pw:browser [pid=48694][err] [1107/060154.557626:ERROR:gpu/command_buffer/service/shared_image/shared_image_manager.cc:376] SharedImageManager::ProduceOverlay: Trying to Produce a Overlay representation from a non-existent mailbox. +0ms
+  pw:browser [pid=48694][err] [1107/060154.557628:ERROR:components/viz/service/display_embedder/skia_output_device_buffer_queue.cc:258] Invalid mailbox. +0ms
+  ✓  17 src/smoke/fauna-online.spec.ts:77:1 › two clients draw the same herd from the server’s snapshots, and analyzing a drawn creature works (16.6s)
+  pw:browser [pid=48694][err] [1107/060156.514989:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060156.515040:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060156.546534:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +31ms
+  pw:browser [pid=48694][err] [1107/060156.546586:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060156.747394:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:52838/@vite/client (946) +207ms
+  pw:browser [pid=48694][err] [1107/060156.758230:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:52838/@vite/client (1055) +13ms
+  pw:browser [pid=48694][err] [1107/060157.263790:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:52838/@vite/client (368) +497ms
+  pw:browser [pid=48694][err] [1107/060157.289607:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +26ms
+  pw:browser [pid=48694][err] [1107/060157.483460:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +194ms
+  pw:browser [pid=48694][err] [1107/060200.684920:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:52838/src/remote/RemoteShips.js (133) +3s
+handoff cruise 0 sys:0 pulse
+handoff cruise 200 deep:0 pulse
+handoff cruise 400 deep:0 pulse
+handoff cruise 600 deep:0 pulse
+handoff cruise 800 deep:60 pulse
+handoff cruise 1000 deep:60 pulse
+handoff cruise 1200 deep:60 pulse
+  pw:browser [pid=48694][err] [1107/060310.544969:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1m
+  ✓  18 src/smoke/handoff-online.spec.ts:38:1 › flies from one star through deep space into another, then warps without duplicating its entity (1.2m)
+  -  19 src/smoke/harness-hang.spec.ts:12:1 › a page that never answers
+  -  20 src/smoke/harness-hang.spec.ts:21:1 › the next test gets a working browser
+  ✓  21 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 15 s, cleanup true, CI false, and the next test still runs (22.5s)
+  ✓  22 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup false, CI false, and the next test still runs (8.2s)
+  ✓  23 src/smoke/harness.spec.ts:55:3 › a hung page fails at its 6 s timeout, closing grace 1 s, cleanup true, CI true, and the next test still runs (8.3s)
+  pw:browser [pid=48694][err] [1107/060351.445283:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +41s
+  pw:browser [pid=48694][err] [1107/060351.445335:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060351.482054:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +35ms
+  pw:browser [pid=48694][err] [1107/060351.482111:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060351.678137:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53282/@vite/client (946) +205ms
+  pw:browser [pid=48694][err] [1107/060351.708546:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53282/@vite/client (1055) +28ms
+  pw:browser [pid=48694][err] [1107/060352.283895:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53282/@vite/client (368) +569ms
+  pw:browser [pid=48694][err] [1107/060352.309453:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +25ms
+  pw:browser [pid=48694][err] [1107/060355.408187:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53282/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060356.044366:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +636ms
+  pw:browser [pid=48694][err] [1107/060356.375637:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +331ms
+  pw:browser [pid=48694][err] [1107/060356.375688:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060356.408851:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +33ms
+  pw:browser [pid=48694][err] [1107/060356.408910:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060356.476733:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53282/@vite/client (946) +79ms
+  pw:browser [pid=48694][err] [1107/060356.493803:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53282/@vite/client (1055) +14ms
+  pw:browser [pid=48694][err] [1107/060356.991298:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +490ms
+  pw:browser [pid=48694][err] [1107/060357.012926:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53282/@vite/client (368) +22ms
+  pw:browser [pid=48694][err] [1107/060357.077455:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +64ms
+  pw:browser [pid=48694][err] [1107/060358.808516:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53282/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060359.470403:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +662ms
+  pw:browser [pid=48694][err] [1107/060359.813532:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +343ms
+  pw:browser [pid=48694][err] [1107/060359.813588:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060359.846798:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +33ms
+  pw:browser [pid=48694][err] [1107/060359.846860:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060359.908056:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53282/@vite/client (946) +71ms
+  pw:browser [pid=48694][err] [1107/060359.928762:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53282/@vite/client (1055) +17ms
+  pw:browser [pid=48694][err] [1107/060400.430681:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +496ms
+  pw:browser [pid=48694][err] [1107/060400.462744:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53282/@vite/client (368) +32ms
+  pw:browser [pid=48694][err] [1107/060400.571256:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +109ms
+  pw:browser [pid=48694][err] [1107/060402.793630:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53282/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060403.421637:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +628ms
+  pw:browser [pid=48694][err] [1107/060403.743273:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +322ms
+  ✓  24 src/smoke/mining-online.spec.ts:232:1 › two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back (24.1s)
+  pw:browser [pid=48694][err] [1107/060418.905660:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +15s
+  pw:browser [pid=48694][err] [1107/060418.905722:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060418.936666:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +31ms
+  pw:browser [pid=48694][err] [1107/060418.936736:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060419.084959:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53432/@vite/client (946) +169ms
+  pw:browser [pid=48694][err] [1107/060419.113644:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53432/@vite/client (1055) +19ms
+  pw:browser [pid=48694][err] [1107/060419.680512:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +555ms
+  pw:browser [pid=48694][err] [1107/060419.688217:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53432/@vite/client (368) +8ms
+  pw:browser [pid=48694][err] [1107/060419.828592:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +140ms
+  pw:browser [pid=48694][err] [1107/060422.847938:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53432/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060423.527972:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +680ms
+  pw:browser [pid=48694][err] [1107/060500.301633:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +37s
+  pw:browser [pid=48694][err] [1107/060500.301718:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060500.305441:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53432/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060500.306280:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53432/@vite/client (1055) +1ms
+  ✓  25 src/smoke/movement-online.spec.ts:196:1 › takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction (41.6s)
+  pw:browser [pid=48694][err] [1107/060500.502597:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +196ms
+  pw:browser [pid=48694][err] [1107/060500.502672:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060500.546102:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +44ms
+  pw:browser [pid=48694][err] [1107/060500.546155:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060500.752730:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53455/@vite/client (946) +224ms
+  pw:browser [pid=48694][err] [1107/060500.780689:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53455/@vite/client (1055) +16ms
+  pw:browser [pid=48694][err] [1107/060501.224212:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +438ms
+  pw:browser [pid=48694][err] [1107/060501.232513:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53455/@vite/client (368) +8ms
+  pw:browser [pid=48694][err] [1107/060501.375100:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +143ms
+  pw:browser [pid=48694][err] [1107/060504.361762:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53455/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060505.075457:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +714ms
+  pw:browser [pid=48694][err] [1107/060541.740750:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +37s
+  pw:browser [pid=48694][err] [1107/060541.740808:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060541.745180:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53455/@vite/client (946) +3ms
+  pw:browser [pid=48694][err] [1107/060541.746452:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53455/@vite/client (1055) +1ms
+  ✓  26 src/smoke/movement-online.spec.ts:208:1 › flies on through page stalls of 4 s and 9 s and a hidden tab’s 40 s pause without a correction (41.4s)
+  pw:browser [pid=48694][err] [1107/060543.712248:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060543.712321:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060543.743454:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +30ms
+  pw:browser [pid=48694][err] [1107/060543.743521:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060543.917046:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +185ms
+  pw:browser [pid=48694][err] [1107/060543.936463:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +12ms
+  pw:browser [pid=48694][err] [1107/060544.422531:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +482ms
+  pw:browser [pid=48694][err] [1107/060544.423647:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1ms
+  pw:browser [pid=48694][err] [1107/060544.578039:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +155ms
+  pw:browser [pid=48694][err] [1107/060547.521834:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060548.230373:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +709ms
+  pw:browser [pid=48694][err] [1107/060549.249427:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1s
+  pw:browser [pid=48694][err] [1107/060549.249483:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1ms
+  pw:browser [pid=48694][err] [1107/060549.253782:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060549.255318:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  ✓  27 src/smoke/online.spec.ts:90:1 › sign up, make a character and spawn docked at the home Waystation (5.6s)
+  pw:browser [pid=48694][err] [1107/060549.310949:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +56ms
+  pw:browser [pid=48694][err] [1107/060549.311010:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060549.351411:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +40ms
+  pw:browser [pid=48694][err] [1107/060549.351462:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060549.410922:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +63ms
+  pw:browser [pid=48694][err] [1107/060549.422407:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +12ms
+  pw:browser [pid=48694][err] [1107/060549.891576:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +465ms
+  pw:browser [pid=48694][err] [1107/060549.914840:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +23ms
+  pw:browser [pid=48694][err] [1107/060551.717097:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060552.398089:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +683ms
+  pw:browser [pid=48694][err] [1107/060553.197575:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +798ms
+  pw:browser [pid=48694][err] [1107/060553.197642:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060553.202071:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060553.203021:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  pw:browser [pid=48694][err] [1107/060553.576524:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +373ms
+  pw:browser [pid=48694][err] [1107/060553.591693:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +15ms
+  pw:browser [pid=48694][err] [1107/060553.636819:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +45ms
+  pw:browser [pid=48694][err] [1107/060553.662661:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +26ms
+  pw:browser [pid=48694][err] [1107/060553.662722:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060553.665221:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060553.669646:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +4ms
+  pw:browser [pid=48694][err] [1107/060554.042447:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +372ms
+  pw:browser [pid=48694][err] [1107/060555.398256:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +1s
+  pw:browser [pid=48694][err] [1107/060556.127294:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +729ms
+  pw:browser [pid=48694][err] [1107/060556.229234:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +102ms
+  pw:browser [pid=48694][err] [1107/060556.229288:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060556.233523:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060556.234495:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  ✓  28 src/smoke/online.spec.ts:136:1 › a reload resumes the character where the server holds it (7.1s)
+  pw:browser [pid=48694][err] [1107/060556.432754:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +198ms
+  pw:browser [pid=48694][err] [1107/060556.432828:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1ms
+  pw:browser [pid=48694][err] [1107/060556.487895:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +54ms
+  pw:browser [pid=48694][err] [1107/060556.487945:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1ms
+  pw:browser [pid=48694][err] [1107/060556.571800:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +85ms
+  pw:browser [pid=48694][err] [1107/060556.575985:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +4ms
+  pw:browser [pid=48694][err] [1107/060557.016916:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +440ms
+  pw:browser [pid=48694][err] [1107/060557.032984:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +16ms
+  pw:browser [pid=48694][err] [1107/060557.141625:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +108ms
+  pw:browser [pid=48694][err] [1107/060600.067192:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060600.738572:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +671ms
+  pw:browser [pid=48694][err] [1107/060603.173536:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060603.173593:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060603.177242:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060603.178315:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  ✓  29 src/smoke/online.spec.ts:196:1 › a server restart: the client reconnects, its snapshot store starts over, and it stays where it was (6.9s)
+  pw:browser [pid=48694][err] [1107/060603.374899:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +197ms
+  pw:browser [pid=48694][err] [1107/060603.374978:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060603.418766:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +43ms
+  pw:browser [pid=48694][err] [1107/060603.418820:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060603.482167:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +71ms
+  pw:browser [pid=48694][err] [1107/060603.491866:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +7ms
+  pw:browser [pid=48694][err] [1107/060603.949873:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +454ms
+  pw:browser [pid=48694][err] [1107/060603.951160:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1ms
+  pw:browser [pid=48694][err] [1107/060604.089305:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +138ms
+  pw:browser [pid=48694][err] [1107/060605.908940:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060606.689210:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +780ms
+  pw:browser [pid=48694][err] [1107/060619.875165:WARNING:services/audio/sync_reader.cc:154] ASR: No room in socket buffer.: Broken pipe (32) +13s
+  pw:browser [pid=48694][err] [1107/060619.877964:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +3ms
+  pw:browser [pid=48694][err] [1107/060619.878027:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060619.882360:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060619.883512:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  ✓  30 src/smoke/online.spec.ts:234:1 › a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once (16.7s)
+  pw:browser [pid=48694][err] [1107/060620.077710:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +195ms
+  pw:browser [pid=48694][err] [1107/060620.077759:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060620.119372:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +41ms
+  pw:browser [pid=48694][err] [1107/060620.119423:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060620.191205:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +83ms
+  pw:browser [pid=48694][err] [1107/060620.209536:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +10ms
+  pw:browser [pid=48694][err] [1107/060620.685534:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:53764/@vite/client (368) +473ms
+  pw:browser [pid=48694][err] [1107/060620.708426:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +23ms
+  pw:browser [pid=48694][err] [1107/060622.816690:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:53764/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060623.444562:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +628ms
+  pw:browser [pid=48694][err] [1107/060628.709856:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +5s
+  pw:browser [pid=48694][err] [1107/060628.709918:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060628.714626:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:53764/@vite/client (946) +4ms
+  pw:browser [pid=48694][err] [1107/060628.715519:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:53764/@vite/client (1055) +1ms
+  ✓  31 src/smoke/online.spec.ts:274:1 › a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs (8.8s)
+  pw:browser [pid=48694][err] [1107/060630.406220:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +2s
+  pw:browser [pid=48694][err] [1107/060630.406275:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060630.435670:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +29ms
+  pw:browser [pid=48694][err] [1107/060630.435719:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060630.654613:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54032/@vite/client (946) +230ms
+  pw:browser [pid=48694][err] [1107/060630.675643:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54032/@vite/client (1055) +14ms
+  pw:browser [pid=48694][err] [1107/060631.096405:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +417ms
+  pw:browser [pid=48694][err] [1107/060631.113630:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54032/@vite/client (368) +17ms
+  pw:browser [pid=48694][err] [1107/060631.161689:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +48ms
+  pw:browser [pid=48694][err] [1107/060634.240714:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54032/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060635.018357:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +778ms
+flight {"max":0,"judged":571,"worst":null,"edge":{"max":0,"judged":143,"worst":null},"sentIn":{"docked@2981198913:station":53,"ship@2981198913:station":296,"ship@2981198913:1":296,"pulse@2981198913:1":103},"link":{"released":746,"answered":746,"lostOut":32,"lostIn":16},"rtt":200}
+  ✓  32 src/smoke/prediction-online.spec.ts:293:1 › in flight: out of the Waystation into its world’s frame, boosting and on the pulse drive, within 0.5 m of the server (41.6s)
+  pw:browser [pid=48694][err] [1107/060711.993974:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +37s
+  pw:browser [pid=48694][err] [1107/060711.994027:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060712.037894:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +44ms
+  pw:browser [pid=48694][err] [1107/060712.037946:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060712.101243:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54032/@vite/client (946) +69ms
+  pw:browser [pid=48694][err] [1107/060712.111388:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54032/@vite/client (1055) +8ms
+  pw:browser [pid=48694][err] [1107/060712.566870:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +452ms
+  pw:browser [pid=48694][err] [1107/060712.579911:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54032/@vite/client (368) +13ms
+  pw:browser [pid=48694][err] [1107/060712.631216:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +51ms
+  pw:browser [pid=48694][err] [1107/060714.998237:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54032/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060715.787917:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +790ms
+small {"jump":3,"shown":0.05256928893504664,"after":0.07951722876168787,"apart":2.9474307110649534,"apartAfter":0.0004164720303378999}
+large {"jump":2000.0001968434867,"shown":2000.0000083281202,"after":2000.0000083281202,"apart":0,"apartAfter":0}
+refused {"max":1.4999770885397668e-11,"judged":197,"worst":{"ack":66,"d":1.4999770885397668e-11,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"ship@2981198913:1":223},"link":{"released":221,"answered":221,"lostOut":12,"lostIn":10},"rtt":200}
+rewound {"off":0,"speed":599.88883508874,"since":0.19991913810372353}
+engage {"jump":63.942481674406736,"shown":2.1670934269277495,"after":3.42263103408186,"apart":61.775388247478986,"apartAfter":0.0001389045974065084}
+shadow {"max":1.4999770885397668e-11,"judged":279,"worst":{"ack":66,"d":1.4999770885397668e-11,"mode":"ship","sentMode":"ship","frame":"2981198913:1","sentFrame":"2981198913:1"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"ship@2981198913:1":309,"pulse@2981198913:1":5},"link":{"released":312,"answered":312,"lostOut":17,"lostIn":10},"rtt":200}
+  ✓  33 src/smoke/prediction-online.spec.ts:327:1 › on an empty Charge in its world’s shadow: the engage refused by the client, corrections blended or shown, a mispredicted engage rewound (19.6s)
+  pw:browser [pid=48694][err] [1107/060731.641494:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +16s
+  pw:browser [pid=48694][err] [1107/060731.641572:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060731.687583:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +46ms
+  pw:browser [pid=48694][err] [1107/060731.687638:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060731.795027:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54032/@vite/client (946) +113ms
+  pw:browser [pid=48694][err] [1107/060731.803671:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54032/@vite/client (1055) +8ms
+  pw:browser [pid=48694][err] [1107/060732.218136:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +410ms
+  pw:browser [pid=48694][err] [1107/060732.226367:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54032/@vite/client (368) +8ms
+  pw:browser [pid=48694][err] [1107/060732.343550:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +117ms
+  pw:browser [pid=48694][err] [1107/060734.380897:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54032/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060735.179816:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +799ms
+walked {"max":0.0000461674272713708,"judged":235,"worst":{"ack":229,"d":0.0000461674272713708,"mode":"foot","sentMode":"foot","frame":"2981198913:station","sentFrame":"2981198913:station"},"edge":{"max":0,"judged":0,"worst":null},"sentIn":{"docked@2981198913:station":40,"foot@2981198913:station":212},"link":{"released":250,"answered":250,"lostOut":9,"lostIn":10},"rtt":200}
+small {"jump":1.5000000177622337,"shown":0.026284644770937844,"after":0.03975861487665088,"apart":1.4737153729912957,"apartAfter":0.00020823602053722054}
+large {"jump":38.5,"shown":38.49985591248803,"after":38.5,"apart":0,"apartAfter":0}
+  ✓  34 src/smoke/prediction-online.spec.ts:449:1 › on foot in the hangar: walking, sprinting and jumping within 0.5 m, a small correction blended and a large one shown (20.6s)
+  pw:browser [pid=48694][err] [1107/060752.480764:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +17s
+  pw:browser [pid=48694][err] [1107/060752.480871:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060752.510591:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +29ms
+  pw:browser [pid=48694][err] [1107/060752.510641:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060752.573577:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +63ms
+  pw:browser [pid=48694][err] [1107/060752.584208:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +11ms
+  pw:browser [pid=48694][err] [1107/060753.028781:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +444ms
+  pw:browser [pid=48694][err] [1107/060753.041181:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +13ms
+[WebServer] 6:07:53 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060753.146665:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +105ms
+  pw:browser [pid=48694][err] [1107/060753.615428:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://localhost:52256/src/remote/RemoteShips.js (133) +469ms
+  pw:browser [pid=48694][err] [1107/060756.082926:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +2s
+remote-ships: 450 pilot marks and 294 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 4 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  35 src/smoke/remote-markers.spec.ts:25:3 › remote-ships: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.6s)
+  pw:browser [pid=48694][err] [1107/060759.047088:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +3s
+  pw:browser [pid=48694][err] [1107/060759.047161:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060759.083447:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +36ms
+  pw:browser [pid=48694][err] [1107/060759.083497:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060759.147057:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +64ms
+  pw:browser [pid=48694][err] [1107/060759.154708:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +7ms
+  pw:browser [pid=48694][err] [1107/060759.612505:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +458ms
+[WebServer] 6:07:59 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060800.187918:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://localhost:52256/src/remote/RemoteShips.js (133) +576ms
+remote-ships-crowd: 2028 pilot marks and 1468 labels in 120 frames, 6.8..6.8 px from their marks; 5 side moves, 27 names and 9 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 120
+  ✓  36 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-crowd: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.5s)
+  pw:browser [pid=48694][err] [1107/060805.554212:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +5s
+  pw:browser [pid=48694][err] [1107/060805.554278:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060805.592468:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +38ms
+  pw:browser [pid=48694][err] [1107/060805.592528:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060805.652794:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +60ms
+  pw:browser [pid=48694][err] [1107/060805.663007:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +11ms
+  pw:browser [pid=48694][err] [1107/060806.111321:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +448ms
+[WebServer] 6:08:06 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060806.666846:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://localhost:52256/src/remote/RemoteShips.js (133) +555ms
+  pw:browser [pid=48694][err] [1107/060806.672007:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +6ms
+remote-ships-pads: 419 pilot marks and 412 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 2 names and 1 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  37 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-pads: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.7s)
+  pw:browser [pid=48694][err] [1107/060812.263273:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +6s
+  pw:browser [pid=48694][err] [1107/060812.263327:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060812.304692:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +41ms
+  pw:browser [pid=48694][err] [1107/060812.304746:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060812.367753:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +63ms
+  pw:browser [pid=48694][err] [1107/060812.375439:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +8ms
+  pw:browser [pid=48694][err] [1107/060812.810526:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +435ms
+  pw:browser [pid=48694][err] [1107/060812.824699:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +14ms
+[WebServer] 6:08:12 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060812.873389:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +49ms
+  pw:browser [pid=48694][err] [1107/060813.074019:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +201ms
+  pw:browser [pid=48694][err] [1107/060813.391262:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://localhost:52256/src/remote/RemoteShips.js (133) +317ms
+remote-ships-surface: 288 pilot marks and 166 labels in 150 frames, 6.8..6.8 px from their marks; 0 side moves, 3 names and 2 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 150
+  ✓  38 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-surface: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (17.5s)
+  pw:browser [pid=48694][err] [1107/060829.813704:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +16s
+  pw:browser [pid=48694][err] [1107/060829.813756:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060829.856540:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +42ms
+  pw:browser [pid=48694][err] [1107/060829.856604:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060829.918884:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +62ms
+  pw:browser [pid=48694][err] [1107/060829.931476:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +13ms
+  pw:browser [pid=48694][err] [1107/060830.374186:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +443ms
+  pw:browser [pid=48694][err] [1107/060830.396694:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +22ms
+[WebServer] 6:08:30 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060830.424493:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +28ms
+  pw:browser [pid=48694][err] [1107/060830.681984:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +258ms
+  pw:browser [pid=48694][err] [1107/060830.997579:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://localhost:52256/src/remote/RemoteShips.js (133) +315ms
+remote-ships-bay: 1440 pilot marks and 1200 labels in 120 frames, 6.8..6.8 px from their marks; 0 side moves, 0 names and 0 marks in or out; 0 picked up and unmarked; 0 marks jumping; the ability bar up in 0
+  ✓  39 src/smoke/remote-markers.spec.ts:25:3 › remote-ships-bay: pilots' marks and labels keep off the HUD, the local ship and each other in every frame (6.4s)
+  pw:browser [pid=48694][err] [1107/060837.650763:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +7s
+  pw:browser [pid=48694][err] [1107/060837.650817:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +1ms
+  pw:browser [pid=48694][err] [1107/060837.687099:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +37ms
+  pw:browser [pid=48694][err] [1107/060837.687159:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060837.846248:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54486/@vite/client (946) +178ms
+  pw:browser [pid=48694][err] [1107/060837.875391:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54486/@vite/client (1055) +16ms
+  pw:browser [pid=48694][err] [1107/060838.357186:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +475ms
+  pw:browser [pid=48694][err] [1107/060838.377439:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54486/@vite/client (368) +20ms
+  pw:browser [pid=48694][err] [1107/060838.419387:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +42ms
+  pw:browser [pid=48694][err] [1107/060841.488597:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54486/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060842.194840:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +707ms
+  pw:browser [pid=48694][err] [1107/060842.246416:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +51ms
+  pw:browser [pid=48694][err] [1107/060842.246471:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060842.277632:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +31ms
+  pw:browser [pid=48694][err] [1107/060842.277726:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060842.342131:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54486/@vite/client (946) +72ms
+  pw:browser [pid=48694][err] [1107/060842.356040:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54486/@vite/client (1055) +9ms
+  pw:browser [pid=48694][err] [1107/060842.852728:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54486/@vite/client (368) +494ms
+  pw:browser [pid=48694][err] [1107/060842.870878:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +19ms
+  pw:browser [pid=48694][err] [1107/060843.034934:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +164ms
+  pw:browser [pid=48694][err] [1107/060845.991823:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54486/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060846.719772:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +728ms
+remote-online: station: 491 drawn, -0.025..0.021 s behind the ticks; its own clock up to -0.000 s ahead of the server's; 1: 1267 drawn, -0.026..0.030 s behind the ticks; its own clock up to 0.002 s ahead of the server's; station: 2213 drawn, -0.036..0.017 s behind the ticks; its own clock up to -0.000 s ahead of the server's
+  ✓  40 src/smoke/remote-online.spec.ts:242:1 › two clients each see the other's ship move, across a frame change (17.1s)
+  pw:browser [pid=48694][err] [1107/060854.924214:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +8s
+  pw:browser [pid=48694][err] [1107/060854.924281:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060854.952342:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +28ms
+  pw:browser [pid=48694][err] [1107/060854.952406:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060855.013272:INFO:CONSOLE:946] "[vite] connecting...", source: http://localhost:52256/@vite/client (946) +61ms
+  pw:browser [pid=48694][err] [1107/060855.025309:INFO:CONSOLE:1055] "[vite] connected.", source: http://localhost:52256/@vite/client (1055) +12ms
+  pw:browser [pid=48694][err] [1107/060855.491782:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://localhost:52256/@vite/client (368) +466ms
+[WebServer] 6:08:55 AM [vite] (client) [console.warn] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+  pw:browser [pid=48694][err] [1107/060855.495086:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +4ms
+  pw:browser [pid=48694][err] [1107/060855.641214:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +146ms
+  pw:browser [pid=48694][err] [1107/060856.143362:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +502ms
+  ✓  41 src/smoke/review.spec.ts:27:1 › review scene loads an asset and switches LOD (5.4s)
+  pw:browser [pid=48694][err] [1107/060901.678508:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +6s
+  pw:browser [pid=48694][err] [1107/060901.678584:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060901.706851:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +29ms
+  pw:browser [pid=48694][err] [1107/060901.706904:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060901.735546:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +29ms
+  pw:browser [pid=48694][err] [1107/060901.735607:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060901.929118:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54626/@vite/client (946) +208ms
+  pw:browser [pid=48694][err] [1107/060901.953466:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54626/@vite/client (1055) +15ms
+  pw:browser [pid=48694][err] [1107/060902.388220:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54626/@vite/client (368) +429ms
+  pw:browser [pid=48694][err] [1107/060902.389354:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +1ms
+  pw:browser [pid=48694][err] [1107/060902.523583:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +135ms
+  pw:browser [pid=48694][err] [1107/060905.449057:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54626/src/remote/RemoteShips.js (133) +3s
+  pw:browser [pid=48694][err] [1107/060906.155586:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +706ms
+  pw:browser [pid=48694][err] [1107/060906.312318:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +157ms
+  pw:browser [pid=48694][err] [1107/060906.312386:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060906.374344:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54626/@vite/client (946) +68ms
+  pw:browser [pid=48694][err] [1107/060906.386154:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54626/@vite/client (1055) +8ms
+  pw:browser [pid=48694][err] [1107/060906.868067:INFO:CONSOLE:368] "THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.", source: http://127.0.0.1:54626/@vite/client (368) +480ms
+  pw:browser [pid=48694][err] [1107/060906.885969:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +18ms
+  pw:browser [pid=48694][err] [1107/060907.061064:WARNING:ui/gl/angle_platform_impl.cc:39] SizedMRUCache.h:152 (TrimCache): Overflowed the metal library cache limit of 64 elements, removing the least recently used to make room. +175ms
+  pw:browser [pid=48694][err] [1107/060908.598596:INFO:CONSOLE:133] "remote ships: lark levels generated (meshoptimizer: simplified, then one sloppy shell): 61564 / 30439 / 1949 triangles, the coarsest 3.2% of the model", source: http://127.0.0.1:54626/src/remote/RemoteShips.js (133) +2s
+  pw:browser [pid=48694][err] [1107/060912.314093:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +4s
+  pw:browser [pid=48694][err] [1107/060912.314151:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060912.317177:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +3ms
+  pw:browser [pid=48694][err] [1107/060912.317235:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670 +0ms
+  pw:browser [pid=48694][err] [1107/060912.317303:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54626/@vite/client (946) +0ms
+  pw:browser [pid=48694][err] [1107/060912.319032:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54626/@vite/client (1055) +2ms
+  pw:browser [pid=48694][err] [1107/060912.320905:INFO:CONSOLE:946] "[vite] connecting...", source: http://127.0.0.1:54626/@vite/client (946) +3ms
+  pw:browser [pid=48694][err] [1107/060912.345209:INFO:CONSOLE:1055] "[vite] connected.", source: http://127.0.0.1:54626/@vite/client (1055) +23ms
+  ✓  42 src/smoke/social-online.spec.ts:109:1 › two pilots chat on the shard, party up from an invite card, hand the lead on and part (10.8s)
+  pw:browser [pid=48694] <gracefully close start> +348ms
+  pw:browser [pid=48694] <process did exit: exitCode=0, signal=null> +24ms
+  pw:browser [pid=48694] starting temporary directories cleanup +0ms
+  pw:browser [pid=48694] finished temporary directories cleanup +3ms
+  pw:browser [pid=48694] <gracefully close end> +0ms
+
+  3 skipped
+  39 passed (8.6m)

@@ -1,0 +1,3329 @@
+{
+  "status": "HOLD",
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "RSS cohort birth/departure/duplicate during sample",
+    "details": {
+      "args": [
+        "RSS cohort birth/departure/duplicate during sample"
+      ]
+    }
+  },
+  "purpose": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+  "runtimeAuthorization": false,
+  "dispatchFailure": {
+    "type": "AssertionError",
+    "message": "",
+    "details": {
+      "args": []
+    }
+  },
+  "terminalAudit": [
+    {
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "releaseProved": false,
+      "kernel": {
+        "coalition_absent": true,
+        "live": 0
+      },
+      "members": [],
+      "births": [
+        {
+          "pid": 51693,
+          "recorded": {
+            "pid": 51693,
+            "ppid": 1,
+            "pgid": 51693,
+            "birth": [
+              1794050758,
+              569550
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              43179,
+              43180
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 51695,
+          "recorded": {
+            "pid": 51695,
+            "ppid": 51693,
+            "pgid": 51695,
+            "birth": [
+              1794050758,
+              641231
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              43179,
+              43180
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 51694,
+          "recorded": {
+            "pid": 51694,
+            "ppid": 51693,
+            "pgid": 51694,
+            "birth": [
+              1794050758,
+              638980
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              43179,
+              43180
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 51701,
+          "recorded": {
+            "pid": 51701,
+            "ppid": 51694,
+            "pgid": 51694,
+            "birth": [
+              1794050759,
+              13366
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              43179,
+              43180
+            ]
+          },
+          "current": null
+        },
+        {
+          "pid": 51704,
+          "recorded": {
+            "pid": 51704,
+            "ppid": 51694,
+            "pgid": 51694,
+            "birth": [
+              1794050759,
+              100732
+            ],
+            "status": 2,
+            "uid": 501,
+            "coalition": [
+              43179,
+              43180
+            ]
+          },
+          "current": null
+        }
+      ],
+      "registrationArgv": [
+        "/bin/launchctl",
+        "print",
+        "gui/501/local.stations.round4.bb5469d4509047909c3aa6b7cf676040"
+      ],
+      "registrationExit": 113,
+      "registrationStdout": "",
+      "registrationStderr": "Bad request.\nCould not find service \"local.stations.round4.bb5469d4509047909c3aa6b7cf676040\" in domain for user gui: 501\n",
+      "scratchAbsent": false,
+      "privateTmpAbsent": false,
+      "failure": {
+        "type": "AssertionError",
+        "message": "Owned scratch namespace remains",
+        "details": {
+          "args": [
+            "Owned scratch namespace remains"
+          ]
+        }
+      }
+    }
+  ],
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Owned scratch namespace remains",
+      "details": {
+        "args": [
+          "Owned scratch namespace remains"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+    },
+    {
+      "type": "AssertionError",
+      "message": "Attempt cleanup remains unproved: /private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "details": {
+        "args": [
+          "Attempt cleanup remains unproved: /private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 1,
+      "handles": 1,
+      "audits": 1
+    }
+  ],
+  "nativeJobs": 1,
+  "pipelineSeconds": 0.9700036250287667,
+  "outputInventory": {
+    "normalBytes": 0,
+    "reservedBytes": 0,
+    "files": 0,
+    "reservedFiles": 0,
+    "paths": [],
+    "totalBytes": 0,
+    "complete": true,
+    "enumeration": {
+      "root": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet",
+      "complete": true,
+      "directories": [
+        {
+          "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet",
+          "directories": [
+            "captures",
+            "inspections"
+          ],
+          "files": [],
+          "entries": [
+            {
+              "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/captures",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 490033050,
+              "bytes": 96,
+              "uid": 501
+            },
+            {
+              "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/inspections",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 490033051,
+              "bytes": 64,
+              "uid": 501
+            }
+          ],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/captures",
+          "directories": [
+            "motion-thalune-run-lod0"
+          ],
+          "files": [],
+          "entries": [
+            {
+              "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/captures/motion-thalune-run-lod0",
+              "mode": 16877,
+              "dev": 16777232,
+              "ino": 490033052,
+              "bytes": 64,
+              "uid": 501
+            }
+          ],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/captures/motion-thalune-run-lod0",
+          "directories": [],
+          "files": [],
+          "entries": [],
+          "enumerated": true
+        },
+        {
+          "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/inspections",
+          "directories": [],
+          "files": [],
+          "entries": [],
+          "enumerated": true
+        }
+      ]
+    }
+  },
+  "outputBytes": 0,
+  "freeBytesAfter": 36564975616,
+  "terminalReleaseProved": false,
+  "receiptFallbacks": [
+    {
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "receipt": {
+        "name": "native-189-encode",
+        "primaryFailure": {
+          "type": "AssertionError",
+          "message": "RSS cohort birth/departure/duplicate during sample",
+          "details": {
+            "args": [
+              "RSS cohort birth/departure/duplicate during sample"
+            ]
+          }
+        },
+        "cleanupFailure": {
+          "type": "AssertionError",
+          "message": "Owned drain did not prove clean release",
+          "details": {
+            "args": [
+              "Owned drain did not prove clean release"
+            ]
+          }
+        },
+        "persistenceFailures": [],
+        "terminal": null,
+        "argv": [
+          "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406/packages/tools/blender/characters/animations/thalune-run-candidate/native189_producer.py",
+          "encode",
+          "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/worker-config.json"
+        ],
+        "phase": "start",
+        "privateTmp": {
+          "path": "/private/tmp/sbr-1pq3j901",
+          "admission": {
+            "path": "/private/tmp/sbr-1pq3j901",
+            "uid": 501,
+            "mode": "0o700",
+            "stamp": [
+              16777232,
+              490033062
+            ],
+            "ownership": "Fresh directory created by this caller, exclusively inherited as TMPDIR by its one owned job",
+            "worst_case_tsx_socket": "/private/tmp/sbr-1pq3j901/tsx-501/2147483647.pipe",
+            "socket_path_bytes": 49,
+            "unix_socket_capacity": 104
+          }
+        },
+        "bootstrapObservations": [
+          {
+            "argv": [
+              "/bin/launchctl",
+              "bootstrap",
+              "gui/501",
+              "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg/job.plist"
+            ],
+            "registrationUncertain": true,
+            "result": {
+              "args": [
+                "/bin/launchctl",
+                "bootstrap",
+                "gui/501",
+                "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg/job.plist"
+              ],
+              "returncode": 0,
+              "stdout": "",
+              "stderr": ""
+            }
+          }
+        ],
+        "bootstrapPortRestored": true,
+        "actualExecutables": {
+          "51695:1794050758:641231:501": {
+            "identity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "executable": "/usr/bin/caffeinate",
+            "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          "51694:1794050758:638980:501": {
+            "identity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          "51693:1794050758:569550:501": {
+            "identity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          "51701:1794050759:13366:501": {
+            "identity": {
+              "pid": 51701,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                13366
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "memberIdentity": {
+              "pid": 51701,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                13366
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "executable": "/opt/homebrew/Cellar/git/2.56.0/bin/git",
+            "sha256": "92229f2456a49561ac5d614bbed775224e2fc32a8eca22ac41aeb3ce47d7899c"
+          }
+        },
+        "observerEvents": [
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51701,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                13366
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51701,
+            "priorActualAdmission": null,
+            "beforeIdentity": {
+              "pid": 51701,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                13366
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/opt/homebrew/Cellar/git/2.56.0/bin/git",
+            "postReadIdentity": {
+              "pid": 51701,
+              "ppid": 51694,
+              "pgid": 51694,
+              "birth": [
+                1794050759,
+                13366
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "92229f2456a49561ac5d614bbed775224e2fc32a8eca22ac41aeb3ce47d7899c"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51695,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/usr/bin/caffeinate",
+              "sha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+            },
+            "beforeIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/usr/bin/caffeinate",
+            "postReadIdentity": {
+              "pid": 51695,
+              "ppid": 51693,
+              "pgid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "358c1d62fe31ad408dad84d1ada03ac8a3bd96dd481d9834e082c7af9d6edca3"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51694,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51694,
+              "ppid": 51693,
+              "pgid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          },
+          {
+            "memberIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501,
+              "coalition": [
+                43179,
+                43180
+              ]
+            },
+            "status": "admitted",
+            "pid": 51693,
+            "priorActualAdmission": {
+              "identity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              "memberIdentity": {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              "executable": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+              "sha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+            },
+            "beforeIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "returnedPath": "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+            "postReadIdentity": {
+              "pid": 51693,
+              "ppid": 1,
+              "pgid": 51693,
+              "birth": [
+                1794050758,
+                569550
+              ],
+              "status": 2,
+              "uid": 501
+            },
+            "observedSha256": "a7ac9cb7034de94a80ba88d5584d05ef8f4fc37acdaa1ba21f125ea9147bb1e2"
+          }
+        ],
+        "rssObservations": [
+          {
+            "monotonic": 283365.195765333,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "coalition_absent": false,
+              "started": 6,
+              "exited": 3,
+              "live": 3
+            },
+            "members": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "before": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "51693": 23429120,
+                "51694": 12713984,
+                "51695": 2670592
+              },
+              "stdout": "51693  22880\n51694  12416\n51695   2608\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "kernelAfter": {
+              "coalition_absent": false,
+              "started": 6,
+              "exited": 3,
+              "live": 3
+            },
+            "aggregateBytes": 38813696,
+            "accepted": true
+          },
+          {
+            "monotonic": 283365.409184708,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "coalition_absent": false,
+              "started": 6,
+              "exited": 3,
+              "live": 3
+            },
+            "members": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "before": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "51693": 23429120,
+                "51694": 35487744,
+                "51695": 2670592
+              },
+              "stdout": "51693  22880\n51694  34656\n51695   2608\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "kernelAfter": {
+              "coalition_absent": false,
+              "started": 6,
+              "exited": 3,
+              "live": 3
+            },
+            "aggregateBytes": 61587456,
+            "accepted": true
+          },
+          {
+            "monotonic": 283365.650738208,
+            "limitBytes": 8589934592,
+            "quota": false,
+            "kernelBefore": {
+              "coalition_absent": false,
+              "started": 10,
+              "exited": 7,
+              "live": 3
+            },
+            "members": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "before": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "rss": {
+              "bytesByPid": {
+                "51693": 23429120,
+                "51694": 38354944,
+                "51695": 2670592
+              },
+              "stdout": "51693  22880\n51694  37456\n51695   2608\n",
+              "stderr": ""
+            },
+            "after": [
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501
+              }
+            ],
+            "membersAfter": [
+              {
+                "pid": 51704,
+                "ppid": 51694,
+                "pgid": 51694,
+                "birth": [
+                  1794050759,
+                  100732
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51695,
+                "ppid": 51693,
+                "pgid": 51695,
+                "birth": [
+                  1794050758,
+                  641231
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51694,
+                "ppid": 51693,
+                "pgid": 51694,
+                "birth": [
+                  1794050758,
+                  638980
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              },
+              {
+                "pid": 51693,
+                "ppid": 1,
+                "pgid": 51693,
+                "birth": [
+                  1794050758,
+                  569550
+                ],
+                "status": 2,
+                "uid": 501,
+                "coalition": [
+                  43179,
+                  43180
+                ]
+              }
+            ],
+            "kernelAfter": {
+              "coalition_absent": false,
+              "started": 12,
+              "exited": 8,
+              "live": 4
+            },
+            "failure": {
+              "type": "AssertionError",
+              "message": "RSS cohort birth/departure/duplicate during sample",
+              "details": {
+                "args": [
+                  "RSS cohort birth/departure/duplicate during sample"
+                ]
+              }
+            }
+          }
+        ],
+        "observationFailures": [
+          {
+            "phase": "resource",
+            "failure": {
+              "type": "AssertionError",
+              "message": "RSS cohort birth/departure/duplicate during sample",
+              "details": {
+                "args": [
+                  "RSS cohort birth/departure/duplicate during sample"
+                ]
+              }
+            }
+          }
+        ],
+        "resourceFailures": [
+          {
+            "type": "AssertionError",
+            "message": "RSS cohort birth/departure/duplicate during sample",
+            "details": {
+              "args": [
+                "RSS cohort birth/departure/duplicate during sample"
+              ]
+            }
+          }
+        ],
+        "outcome": "observer_failed",
+        "exits": {},
+        "secondaryFailures": [
+          {
+            "type": "AssertionError",
+            "message": "",
+            "details": {
+              "args": []
+            }
+          }
+        ],
+        "ownedAllocation": {
+          "out": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/owned-job",
+          "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg",
+          "target": "gui/501/local.stations.round4.bb5469d4509047909c3aa6b7cf676040",
+          "coalition_id": "43179",
+          "registered": "True"
+        },
+        "drain": {
+          "scope": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+          "exits": {
+            "capture": -15,
+            "caffeinate": -15
+          },
+          "errors": [
+            "AssertionError: RSS cohort birth/departure/duplicate during sample"
+          ],
+          "signals": [
+            {
+              "pid": 51704,
+              "birth": [
+                1794050759,
+                100732
+              ],
+              "signal": "SIGTERM"
+            },
+            {
+              "pid": 51695,
+              "birth": [
+                1794050758,
+                641231
+              ],
+              "signal": "SIGTERM"
+            },
+            {
+              "pid": 51694,
+              "birth": [
+                1794050758,
+                638980
+              ],
+              "signal": "SIGTERM"
+            }
+          ],
+          "drained": true,
+          "clean": false,
+          "stage": "native-189-encode",
+          "readiness_sha256": "b751c99b5342108441cb3fad8ebc463d21bbfd1def4756674b5ff9f4c0abfdfb",
+          "kernel_before_launch": {
+            "coalition_absent": false,
+            "started": 2,
+            "exited": 1,
+            "live": 1
+          },
+          "kernel_before_root_release": {
+            "coalition_absent": false,
+            "started": 12,
+            "exited": 11,
+            "live": 1
+          },
+          "kernel_terminal": {
+            "coalition_absent": true,
+            "live": 0
+          },
+          "remaining": [],
+          "elapsed_cleanup_seconds": 0.05272137501742691
+        },
+        "drainMembers": [],
+        "drainKernel": {
+          "coalition_absent": true,
+          "live": 0
+        },
+        "releaseAudits": []
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "sha256": "6f75772aba43fd095b86bdd1ecbbd7af4db9996f711825439a70513f5b4ba455"
+    }
+  ],
+  "terminalPersistenceFailures": [],
+  "terminalDelivery": {
+    "proof": {
+      "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/result.json",
+      "status": "written",
+      "sha256": "c913a55c0cc00e6976a29a25ea442a27c547db9e0c179765e11304933f100490",
+      "bytes": 95302
+    },
+    "packet": {
+      "path": "/private/tmp/t02-native189-r10-20261107-t3-11167406/packet/integration-result.json",
+      "status": "attempting"
+    },
+    "completeObservationsPersisted": true,
+    "scope": "Files are snapshots; subsequent delivery errors remain in the returned result"
+  }
+}

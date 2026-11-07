@@ -1,0 +1,80 @@
+{
+  "sourceHead": "ddce6731b1fd465a1160d2f1e49813ff6f8c626c",
+  "slot": "parent:t02-ddce673-native189-r2-20261107",
+  "exit": {
+    "exitCode": 1,
+    "wallSeconds": 2.1251891670399345,
+    "finishedAt": "2026-11-07T11:25:59.186972+00:00"
+  },
+  "primaryFailure": {
+    "type": "AssertionError",
+    "message": "RSS cohort birth/departure/duplicate during sample",
+    "details": {
+      "args": [
+        "RSS cohort birth/departure/duplicate during sample"
+      ]
+    }
+  },
+  "terminalReleaseProved": false,
+  "terminalAuditFailures": [
+    {
+      "type": "AssertionError",
+      "message": "Owned scratch namespace remains",
+      "details": {
+        "args": [
+          "Owned scratch namespace remains"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+    },
+    {
+      "type": "AssertionError",
+      "message": "Attempt cleanup remains unproved: /private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json",
+      "details": {
+        "args": [
+          "Attempt cleanup remains unproved: /private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+        ]
+      },
+      "attemptPath": "/private/tmp/t02-native189-r10-20261107-t3-11167406/proof/jobs/native-189-encode/receipt.json"
+    },
+    {
+      "type": "TerminalAttemptAccountingFailure",
+      "message": "Every allocation attempt requires its own positive terminal audit",
+      "attempts": 1,
+      "handles": 1,
+      "audits": 1
+    }
+  ],
+  "freshPs": {
+    "pids": [
+      51679,
+      51682,
+      51693,
+      51694,
+      51695,
+      51701,
+      51704
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "freshRegistration": {
+    "argv": [
+      "/bin/launchctl",
+      "print",
+      "gui/501/local.stations.round4.bb5469d4509047909c3aa6b7cf676040"
+    ],
+    "exit": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.bb5469d4509047909c3aa6b7cf676040\" in domain for user gui: 501\n"
+  },
+  "retainedOwnedPaths": {
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg": true
+  },
+  "nativeOutputBytes": 0,
+  "validatorDispatched": false,
+  "at": "2026-11-07T11:27:00.166358+00:00",
+  "scratchCleanup": "FAILED_UNCHANGED_PRESERVED",
+  "cpuProcessesReleased": true
+}

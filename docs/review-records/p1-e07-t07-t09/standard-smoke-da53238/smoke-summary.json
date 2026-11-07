@@ -1,0 +1,184 @@
+{
+  "stats": {
+    "startTime": "2026-11-07T11:00:35.854Z",
+    "duration": 516932.93,
+    "expected": 39,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "discoveredTests": 42,
+  "files": [
+    "smoke/account.spec.ts",
+    "smoke/boot.spec.ts",
+    "smoke/compressed.spec.ts",
+    "smoke/cross-engine.spec.ts",
+    "smoke/cutscene-online.spec.ts",
+    "smoke/cutscene.spec.ts",
+    "smoke/den-pad.spec.ts",
+    "smoke/edge.spec.ts",
+    "smoke/fauna-online.spec.ts",
+    "smoke/handoff-online.spec.ts",
+    "smoke/harness-hang.spec.ts",
+    "smoke/harness.spec.ts",
+    "smoke/mining-online.spec.ts",
+    "smoke/movement-online.spec.ts",
+    "smoke/online.spec.ts",
+    "smoke/prediction-online.spec.ts",
+    "smoke/remote-markers.spec.ts",
+    "smoke/remote-online.spec.ts",
+    "smoke/review.spec.ts",
+    "smoke/social-online.spec.ts"
+  ],
+  "fileCount": 20,
+  "testStatusCounts": {
+    "expected": 39,
+    "skipped": 3
+  },
+  "resultStatusCounts": {
+    "passed": 39,
+    "skipped": 3
+  },
+  "retries": [],
+  "skips": [
+    {
+      "file": "smoke/cross-engine.spec.ts",
+      "line": 67,
+      "title": "world generation in Firefox gives Node\u2019s bits",
+      "path": [
+        "smoke/cross-engine.spec.ts"
+      ],
+      "expectedStatus": "skipped",
+      "status": "skipped",
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Firefox cannot start on this machine: Could not find profile folder.",
+          "location": {
+            "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/cross-engine.spec.ts",
+            "line": 74,
+            "column": 12
+          }
+        }
+      ],
+      "results": [
+        {
+          "status": "skipped",
+          "retry": 0,
+          "duration": 1331,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "file": "smoke/harness-hang.spec.ts",
+      "line": 12,
+      "title": "a page that never answers",
+      "path": [
+        "smoke/harness-hang.spec.ts"
+      ],
+      "expectedStatus": "skipped",
+      "status": "skipped",
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "run by harness.spec.ts",
+          "location": {
+            "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-hang.spec.ts",
+            "line": 4,
+            "column": 6
+          }
+        }
+      ],
+      "results": [
+        {
+          "status": "skipped",
+          "retry": 0,
+          "duration": 0,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    },
+    {
+      "file": "smoke/harness-hang.spec.ts",
+      "line": 21,
+      "title": "the next test gets a working browser",
+      "path": [
+        "smoke/harness-hang.spec.ts"
+      ],
+      "expectedStatus": "skipped",
+      "status": "skipped",
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "run by harness.spec.ts",
+          "location": {
+            "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-hang.spec.ts",
+            "line": 4,
+            "column": 6
+          }
+        }
+      ],
+      "results": [
+        {
+          "status": "skipped",
+          "retry": 0,
+          "duration": 0,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "fauna": [
+    {
+      "file": "smoke/fauna-online.spec.ts",
+      "line": 77,
+      "title": "two clients draw the same herd from the server\u2019s snapshots, and analyzing a drawn creature works",
+      "path": [
+        "smoke/fauna-online.spec.ts"
+      ],
+      "expectedStatus": "passed",
+      "status": "expected",
+      "annotations": [],
+      "results": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "duration": 16624,
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    }
+  ],
+  "companionDiscovered": false,
+  "exit": 0,
+  "abort": null,
+  "ownedAlive": [],
+  "groupRemains": false,
+  "runtimeRoutingViolations": [],
+  "runtimeGuardRecords": 70,
+  "runtimeGuardPids": 60,
+  "runtimeWorkerThreadRecords": 10,
+  "runtimeEventCounts": {
+    "pre-import": 70,
+    "live-sql-verified": 72,
+    "live-redis-verified": 70,
+    "guard-ready": 70,
+    "child-spawn": 31,
+    "database-ddl": 22,
+    "connect": 88,
+    "sql-wire-startup": 76,
+    "redis-select": 12,
+    "redis-mutation": 28,
+    "browser-binary": 8,
+    "child-exit": 26,
+    "drop-no-sessions": 11
+  },
+  "verdict": "PASS"
+}

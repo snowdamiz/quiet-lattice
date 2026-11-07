@@ -1,0 +1,112 @@
+{
+  "slot": "parent:fauna-042474f-day16-unit1-20261107",
+  "sourceHead": "042474fa3a5712d0e6654aea7d4dc1f80294b0e5",
+  "finished": {
+    "exitCode": 1,
+    "wallSeconds": 70.52215150004486,
+    "finishedAt": "2026-11-07T11:15:20.823389+00:00"
+  },
+  "callerAccepted": false,
+  "checksPassed": false,
+  "primaryFailure": {
+    "args": [
+      "Independent artifact inspector refused output"
+    ],
+    "attributes": {},
+    "message": "Independent artifact inspector refused output",
+    "type": "Refused"
+  },
+  "cleanupFailures": [],
+  "persistenceFailures": [],
+  "helperDrain": {
+    "clean": true,
+    "drained": true,
+    "elapsed_cleanup_seconds": 0.04124045901698992,
+    "errors": [],
+    "exits": {
+      "caffeinate": 0,
+      "capture": 0
+    },
+    "kernel_before_launch": {
+      "coalition_absent": false,
+      "exited": 2,
+      "live": 1,
+      "started": 3
+    },
+    "kernel_before_root_release": {
+      "coalition_absent": false,
+      "exited": 15,
+      "live": 1,
+      "started": 16
+    },
+    "kernel_terminal": {
+      "coalition_absent": true,
+      "live": 0
+    },
+    "profiles": [
+      "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn"
+    ],
+    "remaining": [],
+    "scope": "CPU_CANDIDATE_BOUNDARY",
+    "signals": []
+  },
+  "freshPs": {
+    "pids": [
+      96878,
+      96887,
+      96903,
+      96904,
+      96905,
+      96908,
+      96910,
+      96911,
+      96912,
+      96914,
+      96919,
+      96921,
+      97450
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "launchctl": {
+    "returncode": 113,
+    "stdout": "",
+    "stderr": "Bad request.\nCould not find service \"local.stations.round4.7b30d00099a04092923676cf506d8335\" in domain for user gui: 501\n"
+  },
+  "pathsAbsent": {
+    "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-b3mtkqe6": true,
+    "/private/tmp/sbr-u2fmy8tm": true,
+    "/private/tmp/sbr-u2fmy8tm/playwright_chromiumdev_profile-5IfIkn": true
+  },
+  "files": 82,
+  "images": 81,
+  "outputBytes": 59246455,
+  "inspection": {
+    "argv": [
+      "/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10",
+      "-I",
+      "-B",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/inspect.py",
+      "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/readiness.json",
+      "fauna-hit-turn-day-16x9"
+    ],
+    "result": {
+      "args": [
+        "/Users/andreyyurlov/.local/share/uv/python/cpython-3.10.22-macos-aarch64-none/bin/python3.10",
+        "-I",
+        "-B",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/inspect.py",
+        "/Users/andreyyurlov/.t3/worktrees/space/t3-06487465/packages/tools/src/capture/fauna_packet/readiness.json",
+        "fauna-hit-turn-day-16x9"
+      ],
+      "returncode": 1,
+      "stderr": "{\"accepted\": false, \"failure\": {\"type\": \"ValueError\", \"message\": \"Authoritative local position changed\", \"args\": [\"Authoritative local position changed\"], \"attributes\": {}}}\n",
+      "stdout": ""
+    }
+  },
+  "resultSha256": "adb320c15cff9a72c194ded97a25bcb952adf39231033ebdf85493d156da75f5",
+  "releasedAt": "2026-11-07T11:20:29.246704+00:00",
+  "gpuReleased": true
+}

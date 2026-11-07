@@ -1,0 +1,149 @@
+{
+  "scope": "THALUNE_NATIVE189_DIAGNOSTIC_ONLY",
+  "exits": {
+    "capture": -15,
+    "caffeinate": -15
+  },
+  "errors": [
+    "AssertionError: RSS cohort birth/departure/duplicate during sample"
+  ],
+  "signals": [
+    {
+      "pid": 51704,
+      "birth": [
+        1794050759,
+        100732
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 51695,
+      "birth": [
+        1794050758,
+        641231
+      ],
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 51694,
+      "birth": [
+        1794050758,
+        638980
+      ],
+      "signal": "SIGTERM"
+    }
+  ],
+  "drained": true,
+  "clean": false,
+  "stage": "native-189-encode",
+  "readiness_sha256": "b751c99b5342108441cb3fad8ebc463d21bbfd1def4756674b5ff9f4c0abfdfb",
+  "kernel_before_launch": {
+    "coalition_absent": false,
+    "started": 2,
+    "exited": 1,
+    "live": 1
+  },
+  "kernel_before_root_release": {
+    "coalition_absent": false,
+    "started": 12,
+    "exited": 11,
+    "live": 1
+  },
+  "kernel_terminal": {
+    "coalition_absent": true,
+    "live": 0
+  },
+  "remaining": [],
+  "elapsed_cleanup_seconds": 0.05272137501742691,
+  "target": "gui/501/local.stations.round4.bb5469d4509047909c3aa6b7cf676040",
+  "scratch": "/var/folders/w6/vbftz74j4jzb2t9ry9r724g00000gn/T/stations-round4-owned-meirkxrg",
+  "root": {
+    "pid": 51693,
+    "ppid": 1,
+    "pgid": 51693,
+    "birth": [
+      1794050758,
+      569550
+    ],
+    "status": 2,
+    "uid": 501
+  },
+  "coalition_id": 43179,
+  "identities": {
+    "51693": {
+      "pid": 51693,
+      "ppid": 1,
+      "pgid": 51693,
+      "birth": [
+        1794050758,
+        569550
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43179,
+        43180
+      ]
+    },
+    "51695": {
+      "pid": 51695,
+      "ppid": 51693,
+      "pgid": 51695,
+      "birth": [
+        1794050758,
+        641231
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43179,
+        43180
+      ]
+    },
+    "51694": {
+      "pid": 51694,
+      "ppid": 51693,
+      "pgid": 51694,
+      "birth": [
+        1794050758,
+        638980
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43179,
+        43180
+      ]
+    },
+    "51701": {
+      "pid": 51701,
+      "ppid": 51694,
+      "pgid": 51694,
+      "birth": [
+        1794050759,
+        13366
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43179,
+        43180
+      ]
+    },
+    "51704": {
+      "pid": 51704,
+      "ppid": 51694,
+      "pgid": 51694,
+      "birth": [
+        1794050759,
+        100732
+      ],
+      "status": 2,
+      "uid": 501,
+      "coalition": [
+        43179,
+        43180
+      ]
+    }
+  }
+}

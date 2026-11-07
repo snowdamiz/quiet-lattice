@@ -1,0 +1,332 @@
+[
+  {
+    "command": {
+      "name": "focused",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_publication",
+        "test_encoder",
+        "test_r2",
+        "test_protocol"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 8.420213165984023,
+      "logSha256": "70eb04bd9d571266229082d88dd45e1c664ae9c9f7b0c19f3771c7e2251d7e48",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+        "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "review-harness correction retained",
+    "last20Lines": [
+      "----------------------------------------------------------------------",
+      "Traceback (most recent call last):",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_protocol.py\", line 95, in test_changed_receipt_hash_and_reauthenticated_wrong_schema_stop_next_job",
+      "    child = process(repo, 0); self.assertEqual(child.returncode, 0, child.stdout+child.stderr)",
+      "                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError: 1 != 0 : b'{\"case\": \"success\", \"root\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-wg0huemm\", \"head\": \"7be817fd8a9b188b2e1ea305eb51cfeb4beadba4\", \"code\": 1, \"durable\": true, \"memoryChecksPassed\": false, \"diskKeys\": [\"schema\", \"authorizationId\", \"unit\", \"sourceHead\", \"readySha256\", \"grantSha256\", \"grantPath\", \"entryToken\", \"freeBytesAtAdmission\", \"admission\", \"previousOutputs\", \"consumptionSha256\", \"accepted\", \"checksPassed\", \"status\", \"released\", \"output\", \"primaryFailure\", \"secondaryFailures\", \"persistenceErrors\", \"observationEncoding\", \"observations\"], \"trace\": [], \"resultPath\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-wg0huemm/evidence/review-thalune/result.json\", \"consumptionPath\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-wg0huemm/review-thalune.consumed.json\"}\\n'",
+      "",
+      "======================================================================",
+      "FAIL: test_seven_actual_helper_processes_publish_admissible_protocol_receipts (test_protocol.ProtocolTests.test_seven_actual_helper_processes_publish_admissible_protocol_receipts)",
+      "----------------------------------------------------------------------",
+      "Traceback (most recent call last):",
+      "  File \"/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet/test_protocol.py\", line 46, in test_seven_actual_helper_processes_publish_admissible_protocol_receipts",
+      "    self.assertEqual(child.returncode, 0, child.stdout + child.stderr)",
+      "    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError: 1 != 0 : b'{\"case\": \"success\", \"root\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-n0m0w31o\", \"head\": \"aa5af25f84448e7e1ae5f2f13dd3f944e1d7c8f0\", \"code\": 1, \"durable\": true, \"memoryChecksPassed\": false, \"diskKeys\": [\"schema\", \"authorizationId\", \"unit\", \"sourceHead\", \"readySha256\", \"grantSha256\", \"grantPath\", \"entryToken\", \"freeBytesAtAdmission\", \"admission\", \"previousOutputs\", \"consumptionSha256\", \"accepted\", \"checksPassed\", \"status\", \"released\", \"output\", \"primaryFailure\", \"secondaryFailures\", \"persistenceErrors\", \"observationEncoding\", \"observations\"], \"trace\": [], \"resultPath\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-n0m0w31o/evidence/review-thalune/result.json\", \"consumptionPath\": \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp/vm-protocol-n0m0w31o/review-thalune.consumed.json\"}\\n'",
+      "",
+      "----------------------------------------------------------------------",
+      "Ran 24 tests in 8.239s",
+      "",
+      "FAILED (failures=5)"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-red",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/replay-v2.py",
+        "red"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 2.5835132090141997,
+      "logSha256": "7b73bf185b4c84236e2af7ebad58b90374031f2849ef06b372140fe1c4414078",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"type\": \"SystemExit\", \"message\": \"1\", \"attributes\": {}}",
+      "{\"mode\": \"red\", \"case\": \"/private/tmp/nfr-sl_u7j7v/red-replay-8zbc4zt3\", \"exit\": 1, \"durable\": false, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 548028, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/red-replay-8zbc4zt3/evidence/review-thalune/result.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/red-replay-8zbc4zt3/review-thalune.consumed.json.fallback.json\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}, {\"sink\": \"stderr\", \"error\": {\"type\": \"ValueError\", \"message\": \"Raw observation node ceiling\", \"attributes\": {}}}], \"encoding\": {\"primaryFailure\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}, \"observations\": {\"bytes\": 2403509}, \"whole\": {\"error\": \"Raw observation node ceiling\", \"type\": \"ValueError\"}}, \"resultExists\": false, \"fallbackExists\": false}",
+      "{\"exit\": 1, \"durable\": false, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "replay-green",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/replay-v2.py",
+        "green"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.7731062090024352,
+      "logSha256": "64228c5940d52b636cd4273ca73be5115fc037c28be5a19b2af58106ccf89734",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"mode\": \"green\", \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-km2kyawc\", \"exit\": 1, \"durable\": true, \"parentAllPidCount\": 1297, \"helperCalls\": 6748, \"helperObservationBytes\": 548148, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"primary\": {\"type\": \"AssertionError\", \"message\": \"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\", \"attributes\": {}}, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [], \"encoding\": {\"primaryFailure\": {\"bytes\": 2402341}, \"observations\": {\"bytes\": 2403664}, \"whole\": {\"bytes\": 4806959}, \"completeNativeEqual\": {\"sha256\": \"bfda96169bbeb066d52a9ec69bc4de9fe99d865c5fbd17f04b08414ff0f78eec\", \"bytes\": 575712}}, \"resultExists\": true, \"fallbackExists\": false}",
+      "{\"exit\": 1, \"durable\": true, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-partial",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "partial"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.5923646250157617,
+      "logSha256": "11878415885a2b336dec45d9c60454dc130bc397e4ab98e490dedaf3addef743",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"fault\": \"partial\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-jj3erk5m\", \"durable\": true, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-jj3erk5m/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-jj3erk5m/evidence/review-thalune/result.json\", \"bytes\": 4806961, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-jj3erk5m/review-thalune.consumed.json.fallback.json\", \"bytes\": 4807414, \"cap\": 20971520}], \"encodingAttempts\": 2, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"OSError\", \"message\": \"AFTER_FSYNC_FULL_RESULT\"}], \"summaryPath\": null}",
+      "{\"exit\": 1, \"durable\": true, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-encode-first",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "encode-first"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.3142780410125852,
+      "logSha256": "6804a42bd9512ef315621a45b8f3396e247e5de3fc659d696c44b2474303f072",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"fault\": \"encode-first\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-tj41dbd5\", \"durable\": true, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-tj41dbd5/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-tj41dbd5/review-thalune.consumed.json.fallback.json\", \"bytes\": 4807172, \"cap\": 20971520}], \"encodingAttempts\": 2, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"ValueError\", \"message\": \"FINAL_ENCODER_FAILURE\"}], \"summaryPath\": null}",
+      "{\"exit\": 1, \"durable\": true, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-both",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "both"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.0154709999915212,
+      "logSha256": "14f0da2e93ea62c7f5e1bc9acab3e5a1c6b967a1396f3548c33dd467217268bc",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"schema\":\"viewmodel-publication-failure/1\",\"accepted\":false,\"completeRecordDurable\":false,\"completeFacts\":\"retained-in-memory-only-unless-full-sink-succeeded\",\"primaryFailure\":{\"type\":\"AssertionError\",\"messagePrefix\":\"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"},\"secondaryFailureCount\":2,\"secondaryFailurePrefixes\":[{\"type\":\"HelperWaitOutcome\",\"messagePrefix\":\"Structured failure; see full record\"},{\"type\":\"AssertionError\",\"messagePrefix\":\"\"}],\"persistenceErrorCount\":2,\"persistenceErrorPrefixes\":[{\"type\":\"OSError\",\"messagePrefix\":\"IO_FAILURE_result.json\"},{\"type\":\"OSError\",\"messagePrefix\":\"IO_FAILURE_review-thalune.consumed.json.fallback.json\"}]}",
+      "{\"fault\": \"both\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1\", \"durable\": false, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1/evidence/review-thalune/result.json\", \"bytes\": 4806961, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1/review-thalune.consumed.json.fallback.json\", \"bytes\": 4807413, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1/review-thalune.consumed.json.failure-summary.json\", \"bytes\": 760, \"cap\": 16384}], \"encodingAttempts\": 2, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"OSError\", \"message\": \"IO_FAILURE_result.json\"}, {\"type\": \"OSError\", \"message\": \"IO_FAILURE_review-thalune.consumed.json.fallback.json\"}], \"summaryPath\": \"/private/tmp/nfr-sl_u7j7v/green-replay-fezxj6x1/review-thalune.consumed.json.failure-summary.json\"}",
+      "{\"exit\": 1, \"durable\": false, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-encode-all",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "encode-all"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 0.47591750003630295,
+      "logSha256": "6b961346358556530a59d986dc688cbc7ceab0a126bd4bb8ce97a34929247edb",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"schema\":\"viewmodel-publication-failure/1\",\"accepted\":false,\"completeRecordDurable\":false,\"completeFacts\":\"retained-in-memory-only-unless-full-sink-succeeded\",\"primaryFailure\":{\"type\":\"AssertionError\",\"messagePrefix\":\"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"},\"secondaryFailureCount\":2,\"secondaryFailurePrefixes\":[{\"type\":\"HelperWaitOutcome\",\"messagePrefix\":\"Structured failure; see full record\"},{\"type\":\"AssertionError\",\"messagePrefix\":\"\"}],\"persistenceErrorCount\":2,\"persistenceErrorPrefixes\":[{\"type\":\"ValueError\",\"messagePrefix\":\"FINAL_ENCODER_FAILURE\"},{\"type\":\"ValueError\",\"messagePrefix\":\"FINAL_ENCODER_FAILURE\"}]}",
+      "{\"fault\": \"encode-all\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-66xnv743\", \"durable\": false, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-66xnv743/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-66xnv743/review-thalune.consumed.json.failure-summary.json\", \"bytes\": 733, \"cap\": 16384}], \"encodingAttempts\": 2, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"ValueError\", \"message\": \"FINAL_ENCODER_FAILURE\"}, {\"type\": \"ValueError\", \"message\": \"FINAL_ENCODER_FAILURE\"}], \"summaryPath\": \"/private/tmp/nfr-sl_u7j7v/green-replay-66xnv743/review-thalune.consumed.json.failure-summary.json\"}",
+      "{\"exit\": 1, \"durable\": false, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-all",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "all"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.0572914159856737,
+      "logSha256": "12676563ed88167cd02ab9ab7fbb70b1182dba960820ba2b431f76d5ee2f7d13",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"fault\": \"all\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-643p9evx\", \"durable\": false, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-643p9evx/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-643p9evx/evidence/review-thalune/result.json\", \"bytes\": 4806961, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-643p9evx/review-thalune.consumed.json.fallback.json\", \"bytes\": 4807413, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-643p9evx/review-thalune.consumed.json.failure-summary.json\", \"bytes\": 760, \"cap\": 16384}], \"encodingAttempts\": 2, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"OSError\", \"message\": \"IO_FAILURE_result.json\"}, {\"type\": \"OSError\", \"message\": \"IO_FAILURE_review-thalune.consumed.json.fallback.json\"}, {\"type\": \"OSError\", \"message\": \"IO_FAILURE_review-thalune.consumed.json.failure-summary.json\"}, {\"type\": \"OSError\", \"message\": \"FINAL_STDERR_FAILURE\"}], \"summaryPath\": null}",
+      "{\"exit\": 1, \"durable\": false, \"accepted\": false}"
+    ]
+  },
+  {
+    "command": {
+      "name": "neighbor-deadline",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+        "deadline"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 0.7377871669596061,
+      "logSha256": "454f436de2caae4f82ac9905186cac88e09007f3de3f71d6fb87156e3fbdf9b7",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "expected injected failure at actual CPU process exit",
+    "last20Lines": [
+      "{\"schema\":\"viewmodel-publication-failure/1\",\"accepted\":false,\"completeRecordDurable\":false,\"completeFacts\":\"retained-in-memory-only-unless-full-sink-succeeded\",\"primaryFailure\":{\"type\":\"AssertionError\",\"messagePrefix\":\"Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"},\"secondaryFailureCount\":2,\"secondaryFailurePrefixes\":[{\"type\":\"HelperWaitOutcome\",\"messagePrefix\":\"Structured failure; see full record\"},{\"type\":\"AssertionError\",\"messagePrefix\":\"\"}],\"persistenceErrorCount\":1,\"persistenceErrorPrefixes\":[{\"type\":\"DeadlineExpired\",\"messagePrefix\":\"Deadline expired after 0.005s\"}]}",
+      "{\"fault\": \"deadline\", \"actualExit\": 1, \"case\": \"/private/tmp/nfr-sl_u7j7v/green-replay-hddnav2h\", \"durable\": false, \"trace\": [\"inert-start\", \"mandatory-inert-drain\", \"inert-archive-no-deletion\"], \"writes\": [{\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-hddnav2h/review-thalune.consumed.json\", \"bytes\": 653, \"cap\": 20971520}, {\"path\": \"/private/tmp/nfr-sl_u7j7v/green-replay-hddnav2h/evidence/review-thalune/result.json\", \"bytes\": 4806961, \"cap\": 20971520}], \"encodingAttempts\": 1, \"memoryOriginalKept\": true, \"helperCalls\": 6748, \"secondary\": [{\"type\": \"HelperWaitOutcome\", \"outcome\": \"observer_failed\", \"errors\": [\"AssertionError: Unbound owned executable: /System/Library/Frameworks/Metal.framework/Versions/A/XPCServices/MTLCompilerService.xpc/Contents/MacOS/MTLCompilerService\"]}, {\"type\": \"AssertionError\", \"message\": \"\", \"attributes\": {}}], \"persistenceErrors\": [{\"type\": \"DeadlineExpired\", \"message\": \"Deadline expired after 0.005s\"}], \"summaryPath\": null}"
+    ]
+  },
+  {
+    "command": {
+      "name": "reuse-before",
+      "argv": [
+        "/usr/bin/sandbox-exec",
+        "-f",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/static-review.py",
+        "before"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+      "exit": 1,
+      "seconds": 1.0210129999904893,
+      "logSha256": "9eeb9ee7f7d3869c71642b849cde7601838c0cf1cac1c41a3e335c6ed2a9ab6f",
+      "env": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+        "NODE_DISABLE_COMPILE_CACHE": "1",
+        "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+        "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+      }
+    },
+    "classification": "review-harness correction retained",
+    "last20Lines": [
+      "Traceback (most recent call last):",
+      "  File \"/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/static-review.py\", line 57, in <module>",
+      "    assert set(actual)==set(expected)",
+      "           ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "AssertionError"
+    ]
+  }
+]

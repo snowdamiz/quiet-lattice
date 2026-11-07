@@ -1,0 +1,82 @@
+VERDICT: REVISE (one P2 cancellation/publication race; bounded tooling only)
+TASK: P1.E12.T02 / Swift R4 independent READ-ONLY source/CPU tooling correction review
+STATUS: DONE (review complete; candidate requires revision)
+SUMMARY: Both exact f4fd0ea tooling failures reproduce RED and are fixed at the candidate: repeated real ps failure/timeout now signals and reaps the owned producer, and terminal fsync failure no longer yields an eligible receipt. Unknown cleanup remains explicitly unproven and promotion refuses it. The original startup/ownership and actual stock exit-23 rejection still hold. One neighboring cancellation race remains: cancellation recorded before the documented commit unlink is discarded by the already-selected success branch, and the real promotion CLI accepts that stage. This is not asset/source/density/native/visual/performance/whole-task or merge acceptance.
+
+PINNED SCOPE / C.2:
+  Checkout: /Users/andreyyurlov/.t3/worktrees/space/t3-38ed9196
+  Branch: task/P1-E12-T02-swift-r4
+  HEAD: 2bd0ae57f9d26bfb49fbf02d390f80a6de45d3f4
+  Tree: 012a0dfbfd3dd3917bae8c848f686c4f8e4d8238
+  Tooling base: f4fd0ea574bb74fdaac6628556985a55046186f4; tree b8311ecebdd615be396562cc8c214d795c3294eb
+  Original tooling/art revision: 7415bfa5ec9f2115c6304cdfa70c36129702f593; original base 73f51ba436e2a8c4e3828f60439c441db4f7ef38
+  Separate recovery: 82c3d50ff79a60b9dac38f0bdfbe421381c8dd73; not modified.
+  Clean at entry and exit; exact HEAD/tree/branch unchanged.
+  Read docs/IMPLEMENTATION_PLAN.md 0.3, 0.9.5, C.2 and C.4 before source review. Explicit bounded user brief supersedes general build/art/verification requirements. No nested agents.
+  Runtime: local macOS arm64, Python 3.14; no services/dependencies imported by fixture producers.
+  Heavy hold remains active; screenshot cleanup remains STOPPED.
+
+PRIOR FINDINGS / DISPOSITION:
+  Density: UNRESOLVED and outside this correction. Prior measured 60.5238-79.6447 px/m versus nominal approximately 512. The measured canonical bytes remain identical; no fresh measurement or decoding here.
+  Original unguarded dispatch: FIXED for the retained exact boundary and neighbors. Fresh actual lane/supervisor interruptions before handshake, immediately before producer Popen, and after Popen/before dispatch publication produce no eligible receipt and leave independently observed empty groups. No broader native claim.
+  Original actual upstream stock exit 23: FIXED. Fresh stock publisher copies the retained validated payload then actually exits 23; lane exits 23; real promote exits 1 and preserves private destination inode/hash. An audit exit-23 neighbor is likewise rejected.
+  Prior tooling R1 ps failure/timeout: FIXED for both exact cases. At f4fd0ea, actual PATH ps exit31 and /bin/sleep 6 observation timeout leave live orphaned producers. Reviewer reaped only recorded owned private groups. At candidate, both cases exit1, raw observer exceptions are preserved, the actual owned child is signalled/waited, and independent group observations are empty. When both observers fail, remaining=null, childGroupEmpty=false, no publication manifest, and the lock remains charged despite direct-child reaping.
+  Prior tooling R2 terminal receipt fsync failure: EXACT REPRO FIXED; overall cancellation/publication contract still needs R1 below. Base lane exits1 with readable receipt exit0 and promotion exits0/replaces destination. Candidate lane exits1 with private failed bytes plus refusal file; final receipt absent and promotion exits1/preserves destination. Neighboring finalization/commit failures also refuse promotion.
+
+FINDING R1 — P2: Make the cancellation decision and publication commit one coordinated transition.
+  Location: packages/tools/blender/hulls/swift-round4/lane.py:194-200, especially :198-199; cancellation handler :91-95. Consumer: promote.py:49-71.
+  Contract: preserve cancellation/errors and publish success only after successful terminal finalization; PUBLICATION_PROTOCOL.md steps 3-4 define unlink of .publication-open as the commit point. Cancellation received while committed is false is explicitly recorded by the handler.
+  Reachability: line194 tests not reason. A SIGTERM/SIGINT can arrive after that condition but before line198 unlinks the refusal file. cancel() sets reason, but execution continues inside the previously selected branch; the refusal file is removed, committed becomes True, and line200 returns0 regardless of the newly recorded cancellation. receipt.json/publication.json were already serialized as success. Promotion has no durable cancellation fact to reject.
+  Fresh real-boundary reproduction: the private byte-identical lane PID 38875 ran an actual audit publisher; actual producer 38879 and supervisor 38878 returned0 and cleanup completed. A bounded trace barrier paused immediately before the actual line198 unlink, after the condition evaluated. The test sent real SIGTERM from the controller's actual Popen handle. Before releasing the barrier, the recorded frame showed reasonAfter='cancelled signal 15', committedAfter=false, gateStillExists=true. No handler/receipt/outcome was fabricated or mutated.
+  Observed outcome: the lane then returned 0; refusal file absent; receipt.exit=0 and receipt.reason=None. Real unmodified promote returned 0, replaced private destination inode 490031163 -> 490031623, and wrote promotion.json. Content hash remains the canonical hash because the fixture deliberately republishes the exact existing bytes; inode replacement and the promotion receipt prove actual acceptance.
+  Controls: same held stage is rejected while refusal file exists; cancellation at line180 preserves refusal and exits1; no-signal pause at line198 commits normally and is accepted. This distinguishes the final check/unlink race from blanket cancellation failure or invalid fixture payloads.
+  Impact: a cancelled precommit stage can be durably represented and consumed as successful; the cancellation error is lost. Narrow race, P2, substantive correctness finding rather than style. No leaked producer is alleged for this case.
+  Correction: serialize the final cancellation decision with the gate transition using a defined signal/cancellation critical section, checking any cancellation observed before that boundary and preserving refusal/failure evidence. A further unsynchronized reason check merely moves the race. Add this actual lane -> real signal -> promotion boundary test and a no-cancellation control; do not rewrite the existing successful receipt to conceal the cancellation.
+  Evidence: candidate-publication/cancel-before-commit-event.json; audit-cancel-before-commit-result.json; audit-cancel-before-commit.log; CANDIDATE-accepts-cancel-before-commit/{result,command,promotion} files; actual stage records under assets/renders/hulls/swift-round4-current/audit-cancel-before-commit/; scripts/run_review.py HOOK/publications.
+
+VERIFY:
+  48 actual CLI commands have observed exit records in command-exit-ledger.json; exact argv/cwd/PID/environment, exit-evidence paths and failure tails are in VERIFY.txt. All driver commands and observed exit0 are recorded in driver-exits.json. Driver exit0 means expected assertions INCLUDING the REVISE reproduction, not a green candidate.
+  python3 -B scripts/run_review.py baseline -> exit0, baseline-run.log; exact two observer RED cases plus fsync/promotion RED against f4fd0ea Git bytes.
+  python3 -B scripts/run_review.py candidate -> exit0, candidate-run.log; targeted observer/unknown-observer cases, three startup cuts, terminal fsync/link/context-exit/manifest-directory-sync/unlink-error/kill-before-commit/cancellation boundaries, actual audit exit23 and valid promotion.
+  python3 -B scripts/neighbors.py -> exit0, neighbors-run.log; exact stock exit23 and actual successful audit payload with both observers unavailable. Producer exits0 but cleanup remains null/unproven, controller exits1, refusal/lock retained, real promotion exits1, destination unchanged.
+  python3 -B scripts/final_checks.py -> exit0; changed Python AST syntax, git diff --check base HEAD exit0, helper hashes unchanged, all 1811 author inventory entries match, fixture byte pins match, hold/historical checks, independent empty groups and no owned aliases.
+  Actual canonical lane hold probe -> exit1 before lock/job/producer creation. No production writer admitted.
+  Read-only canonical promote.validate historical 70/71/66/67 chain -> exit1: historical/provisional receipt is not a completed publication. No canonical destination touched. This is the intended tightened policy, not fresh asset validation.
+  python3 -B scripts/protect.py before / after -> exit0; 3299 files/directory/link sentinels, all 1477 original protected files match, zero hash/size/inode/mtime/mode drift, status clean. Full logs retained; no failing assertion was discarded or retried.
+  36 case observation rows are indexed in case-index.json (rows can include both producer and consumer records; this is not a claim of 36 independent tests). The author's 36-case claim was not broadly rerun or adopted as independent proof.
+
+PROTECTION / OWNERSHIP:
+  Source: 42,959,316 bytes, SHA256 7627b0c32db665890273a93ed251321aec12dff03a1f0f7f0bd59c9005be1480.
+  GLB: 24,721,524 bytes, SHA256 5873c5caa4cb3be67e6715462fdeae0c112d32544ee202e08f5190c7761d4a3d.
+  All 34 PNGs + 2 old EXRs remain unchanged, 68,708,456 bytes. Images viewed/generated/copied/removed:0. Historical receipts, failed private records, canonical assets and prior reviewer directories preserved.
+  Unchanged protected helper/hold hashes are in final-checks.json; dependency manifest/lockfile and node_modules symlink/.modules/.pnpm lock sentinels in protection-before/after.json. No installs or shared dependency writes.
+  Fixtures copy source and validation/export bytes into fresh private roots only; no image copies, codec work, geometry edits or new asset validation. All terminal receipts/manifests are produced by real lane/supervisor runs.
+  One producer active at a time; no nested workers/agents. Actual controller handles were waited. Both old orphan groups were killed only after matching recorded private identities; all recorded producer/supervisor groups independently empty afterward. No owned temporary alias remains. Failed private locks/bytes retained as evidence (locks renamed only within private fixture roots after verified cleanup to permit the next isolated stage).
+
+FILES CHANGED:
+  Candidate repository: NONE. No source/dependency edits, branch switches, pnpm installs, Blender/render/bake/codec/native/browser/service/full-suite/asset production, screenshot cleanup, push, PR or merge.
+  Only new review evidence/harnesses/copy-isolated fixtures under /private/tmp/swift-r4-tooling-review2-4c8jcnsv; owned /tmp lane aliases removed after cleanup proof.
+
+DECISIONS:
+  Read-only review -> source/process boundary tests only -> explicit scope and active heavy hold.
+  Exact prior cases -> replay baseline and candidate with real CLI/producer/consumer -> preserve red evidence and distinguish exact fixes from neighboring gaps.
+  Failure injection -> trace only named I/O/cancellation boundaries; real PATH observation subprocesses -> no fabricated terminal receipts or mock child handles. The context-exit case injects at the with-statement close boundary, not a naturally failing disk close. No natural disk fault was induced.
+  Unknown cleanup -> retain null/charged state and test actual promotion -> direct-child exit alone is not proof of full drain.
+  New cancellation race -> REVISE P2 -> observed cancellation precedes the documented commit, yet becomes eligible success. No implementation attempted in this reviewer.
+  Preserve protected helpers -> verify exact hashes instead of broadly rerunning unchanged suites -> targeted review, bounded CPU.
+
+OUT OF SCOPE FOUND:
+  Density remains UNRESOLVED; native, visual, whole-task, integrated/full-suite/performance and merge gates are not accepted. Heavy hold and screenshot-cleanup STOP remain. Prior density numbers are cited from the preserved original source report; this review only reverified the corresponding byte hashes.
+  Ordinary JSON output on stdout is not final publication; tests distinguish it from the v2 gate. A kill after the documented commit is outside the precommit cancellation finding.
+  Actual hostile process escape from the owned group, natural I/O failures and crash-recovery filesystem behavior were not exercised; no production-runtime qualification is implied.
+
+ARTIFACTS:
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/REPORT.txt
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/VERIFY.txt
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/command-exit-ledger.json
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/driver-exits.json
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/case-index.json
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/final-checks.json
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/protection-before.json and protection-after.json
+  /private/tmp/swift-r4-tooling-review2-4c8jcnsv/SEAL.json (all file sizes/SHA256 except the seal itself; seal hash supplied in handoff)
+  All raw case records, failure logs, actual source copies, injections, command ledgers and reviewer scripts remain in this fresh directory.

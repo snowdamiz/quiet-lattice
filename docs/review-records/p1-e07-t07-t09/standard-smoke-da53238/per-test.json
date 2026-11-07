@@ -1,0 +1,888 @@
+[
+  {
+    "file": "smoke/account.spec.ts",
+    "line": 76,
+    "title": "title \u2192 a new account \u2192 a refused name, then a character of the people picked \u2192 enter, by keyboard",
+    "path": [
+      "smoke/account.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 2817,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/account.spec.ts",
+    "line": 149,
+    "title": "a wrong password is refused on its field; Esc steps back; the session lasts until signing out",
+    "path": [
+      "smoke/account.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 2564,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/account.spec.ts",
+    "line": 190,
+    "title": "dev scenarios go through the dev login: ?dev#foot on foot in its home hangar",
+    "path": [
+      "smoke/account.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 2247,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/account.spec.ts",
+    "line": 211,
+    "title": "?dev=<name>&people=<id>: that people's dev character, in its home system",
+    "path": [
+      "smoke/account.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 2134,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/account.spec.ts",
+    "line": 226,
+    "title": "#foot without ?dev is still the offline sandbox: no sign-in, no socket",
+    "path": [
+      "smoke/account.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 2944,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/boot.spec.ts",
+    "line": 4,
+    "title": "client boots and renders",
+    "path": [
+      "smoke/boot.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 1469,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/compressed.spec.ts",
+    "line": 38,
+    "title": "a KTX2 and meshopt model loads and draws through the game loader",
+    "path": [
+      "smoke/compressed.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 870,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cross-engine.spec.ts",
+    "line": 58,
+    "title": "world generation in Chromium gives Node\u2019s bits",
+    "path": [
+      "smoke/cross-engine.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 8842,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cross-engine.spec.ts",
+    "line": 67,
+    "title": "world generation in Firefox gives Node\u2019s bits",
+    "path": [
+      "smoke/cross-engine.spec.ts"
+    ],
+    "expectedStatus": "skipped",
+    "status": "skipped",
+    "annotations": [
+      {
+        "type": "skip",
+        "description": "Firefox cannot start on this machine: Could not find profile folder.",
+        "location": {
+          "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/cross-engine.spec.ts",
+          "line": 74,
+          "column": 12
+        }
+      }
+    ],
+    "results": [
+      {
+        "status": "skipped",
+        "retry": 0,
+        "duration": 1331,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cross-engine.spec.ts",
+    "line": 67,
+    "title": "world generation in WebKit gives Node\u2019s bits",
+    "path": [
+      "smoke/cross-engine.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6986,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cutscene-online.spec.ts",
+    "line": 69,
+    "title": "plays the test cutscene in the story phase the server places the player in",
+    "path": [
+      "smoke/cutscene-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6288,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cutscene-online.spec.ts",
+    "line": 103,
+    "title": "plays the first cutscene of a session when the server starts it from a quest step, and its done ends the step",
+    "path": [
+      "smoke/cutscene-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 5972,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/cutscene.spec.ts",
+    "line": 23,
+    "title": "plays the test cutscene end to end, and skips it",
+    "path": [
+      "smoke/cutscene.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 3810,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/den-pad.spec.ts",
+    "line": 70,
+    "title": "a Tier 1 den pad is levelled in the engine, and nothing is drawn for the den",
+    "path": [
+      "smoke/den-pad.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [
+      {
+        "type": "den",
+        "description": "roost (predator: Hooked Lunys Shrike) relief 3.99 m, base 361.22 m"
+      }
+    ],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 3407,
+        "errors": [],
+        "attachments": [
+          {
+            "name": "den pad before",
+            "contentType": "image/png",
+            "path": "/private/tmp/space-standard-redis7-da532383-oleft1lj/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/attachments/den-pad-before-d46ddf96178bbf7463e8d382e0d4f48d933b4fcf.png"
+          },
+          {
+            "name": "den pad after",
+            "contentType": "image/png",
+            "path": "/private/tmp/space-standard-redis7-da532383-oleft1lj/test-results/smoke-den-pad-a-Tier-1-den-ea0db-othing-is-drawn-for-the-den/attachments/den-pad-after-becd8991e2b6a820d1e2ea418e80fadb52ad6650.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "smoke/edge.spec.ts",
+    "line": 39,
+    "title": "the galaxy map and the sky draw the Edge where the Count puts it, at three Counts",
+    "path": [
+      "smoke/edge.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 1496,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/edge.spec.ts",
+    "line": 103,
+    "title": "the galaxy map marks the dark Waystations the server names, and says so for the system selected, after frames have run",
+    "path": [
+      "smoke/edge.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 1502,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/fauna-online.spec.ts",
+    "line": 77,
+    "title": "two clients draw the same herd from the server\u2019s snapshots, and analyzing a drawn creature works",
+    "path": [
+      "smoke/fauna-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 16624,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/handoff-online.spec.ts",
+    "line": 38,
+    "title": "flies from one star through deep space into another, then warps without duplicating its entity",
+    "path": [
+      "smoke/handoff-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 74244,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/harness-hang.spec.ts",
+    "line": 12,
+    "title": "a page that never answers",
+    "path": [
+      "smoke/harness-hang.spec.ts"
+    ],
+    "expectedStatus": "skipped",
+    "status": "skipped",
+    "annotations": [
+      {
+        "type": "skip",
+        "description": "run by harness.spec.ts",
+        "location": {
+          "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-hang.spec.ts",
+          "line": 4,
+          "column": 6
+        }
+      }
+    ],
+    "results": [
+      {
+        "status": "skipped",
+        "retry": 0,
+        "duration": 0,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/harness-hang.spec.ts",
+    "line": 21,
+    "title": "the next test gets a working browser",
+    "path": [
+      "smoke/harness-hang.spec.ts"
+    ],
+    "expectedStatus": "skipped",
+    "status": "skipped",
+    "annotations": [
+      {
+        "type": "skip",
+        "description": "run by harness.spec.ts",
+        "location": {
+          "file": "/Users/andreyyurlov/.t3/worktrees/space/t3-2a0b7521/packages/tools/src/smoke/harness-hang.spec.ts",
+          "line": 4,
+          "column": 6
+        }
+      }
+    ],
+    "results": [
+      {
+        "status": "skipped",
+        "retry": 0,
+        "duration": 0,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/harness.spec.ts",
+    "line": 55,
+    "title": "a hung page fails at its 6 s timeout, closing grace 15 s, cleanup true, CI false, and the next test still runs",
+    "path": [
+      "smoke/harness.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 22533,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/harness.spec.ts",
+    "line": 55,
+    "title": "a hung page fails at its 6 s timeout, closing grace 1 s, cleanup false, CI false, and the next test still runs",
+    "path": [
+      "smoke/harness.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 8222,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/harness.spec.ts",
+    "line": 55,
+    "title": "a hung page fails at its 6 s timeout, closing grace 1 s, cleanup true, CI true, and the next test still runs",
+    "path": [
+      "smoke/harness.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 8259,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/mining-online.spec.ts",
+    "line": 232,
+    "title": "two clients mine one node and a third watches: all see it vanish, none asks for it while it is gone, all see it grow back",
+    "path": [
+      "smoke/mining-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 24143,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/movement-online.spec.ts",
+    "line": 196,
+    "title": "takes off, flies out of the Waystation, boosts and engages the pulse drive without a correction",
+    "path": [
+      "smoke/movement-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 41595,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/movement-online.spec.ts",
+    "line": 208,
+    "title": "flies on through page stalls of 4 s and 9 s and a hidden tab\u2019s 40 s pause without a correction",
+    "path": [
+      "smoke/movement-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 41427,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/online.spec.ts",
+    "line": 90,
+    "title": "sign up, make a character and spawn docked at the home Waystation",
+    "path": [
+      "smoke/online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 5598,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/online.spec.ts",
+    "line": 136,
+    "title": "a reload resumes the character where the server holds it",
+    "path": [
+      "smoke/online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 7117,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/online.spec.ts",
+    "line": 196,
+    "title": "a server restart: the client reconnects, its snapshot store starts over, and it stays where it was",
+    "path": [
+      "smoke/online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6936,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/online.spec.ts",
+    "line": 234,
+    "title": "a page stalled for 9 s keeps its session: the snapshots it missed are acknowledged once",
+    "path": [
+      "smoke/online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 16697,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/online.spec.ts",
+    "line": 274,
+    "title": "a frame loop stopped for a while (a hidden tab) comes back on the server's clock at once, and so do its inputs",
+    "path": [
+      "smoke/online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 8822,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/prediction-online.spec.ts",
+    "line": 293,
+    "title": "in flight: out of the Waystation into its world\u2019s frame, boosting and on the pulse drive, within 0.5 m of the server",
+    "path": [
+      "smoke/prediction-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 41588,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/prediction-online.spec.ts",
+    "line": 327,
+    "title": "on an empty Charge in its world\u2019s shadow: the engage refused by the client, corrections blended or shown, a mispredicted engage rewound",
+    "path": [
+      "smoke/prediction-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 19640,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/prediction-online.spec.ts",
+    "line": 449,
+    "title": "on foot in the hangar: walking, sprinting and jumping within 0.5 m, a small correction blended and a large one shown",
+    "path": [
+      "smoke/prediction-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 20595,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-markers.spec.ts",
+    "line": 25,
+    "title": "remote-ships: pilots' marks and labels keep off the HUD, the local ship and each other in every frame",
+    "path": [
+      "smoke/remote-markers.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6563,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-markers.spec.ts",
+    "line": 25,
+    "title": "remote-ships-crowd: pilots' marks and labels keep off the HUD, the local ship and each other in every frame",
+    "path": [
+      "smoke/remote-markers.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6503,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-markers.spec.ts",
+    "line": 25,
+    "title": "remote-ships-pads: pilots' marks and labels keep off the HUD, the local ship and each other in every frame",
+    "path": [
+      "smoke/remote-markers.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6702,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-markers.spec.ts",
+    "line": 25,
+    "title": "remote-ships-surface: pilots' marks and labels keep off the HUD, the local ship and each other in every frame",
+    "path": [
+      "smoke/remote-markers.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 17542,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-markers.spec.ts",
+    "line": 25,
+    "title": "remote-ships-bay: pilots' marks and labels keep off the HUD, the local ship and each other in every frame",
+    "path": [
+      "smoke/remote-markers.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 6431,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/remote-online.spec.ts",
+    "line": 242,
+    "title": "two clients each see the other's ship move, across a frame change",
+    "path": [
+      "smoke/remote-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 17089,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/review.spec.ts",
+    "line": 27,
+    "title": "review scene loads an asset and switches LOD",
+    "path": [
+      "smoke/review.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 5416,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  },
+  {
+    "file": "smoke/social-online.spec.ts",
+    "line": 109,
+    "title": "two pilots chat on the shard, party up from an invite card, hand the lead on and part",
+    "path": [
+      "smoke/social-online.spec.ts"
+    ],
+    "expectedStatus": "passed",
+    "status": "expected",
+    "annotations": [],
+    "results": [
+      {
+        "status": "passed",
+        "retry": 0,
+        "duration": 10838,
+        "errors": [],
+        "attachments": []
+      }
+    ]
+  }
+]

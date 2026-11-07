@@ -1,0 +1,445 @@
+Exact verification argv, environment, cwd, exits, duration and full-log hashes.
+Commands listed below ran only in SOURCE/CPU scope.
+Replay/neighbor exits1 are expected work-failure exits, not capture success.
+Each command can be reproduced through run.py (initial long root) or run-v2.py (short CPU root), with its unique log name.
+The old read-only evidence roots must not be reused as output directories.
+
+{
+  "name": "preservation-before",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/audit.py",
+    "before"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 16.349276749999262,
+  "logSha256": "8f0a4827aaea642aa34fd5a35c0b8e92c663798fb29e5e50f4d2bea62824a9aa",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "focused",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_publication",
+    "test_encoder",
+    "test_r2",
+    "test_protocol"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 8.420213165984023,
+  "logSha256": "70eb04bd9d571266229082d88dd45e1c664ae9c9f7b0c19f3771c7e2251d7e48",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/tmp",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "protocol-short-root",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_protocol",
+    "test_boundary"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 9.415257707994897,
+  "logSha256": "1dde3555160272c66285c425e34873c68860c3157ab02414986fbbf1c1b1523b",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PYTHONPATH": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8/packages/tools/src/capture/viewmodel_packet",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "replay-red",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/replay-v2.py",
+    "red"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 2.5835132090141997,
+  "logSha256": "7b73bf185b4c84236e2af7ebad58b90374031f2849ef06b372140fe1c4414078",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "replay-green",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/replay-v2.py",
+    "green"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.7731062090024352,
+  "logSha256": "64228c5940d52b636cd4273ca73be5115fc037c28be5a19b2af58106ccf89734",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-partial",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "partial"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.5923646250157617,
+  "logSha256": "11878415885a2b336dec45d9c60454dc130bc397e4ab98e490dedaf3addef743",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-encode-first",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "encode-first"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.3142780410125852,
+  "logSha256": "6804a42bd9512ef315621a45b8f3396e247e5de3fc659d696c44b2474303f072",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-both",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "both"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.0154709999915212,
+  "logSha256": "14f0da2e93ea62c7f5e1bc9acab3e5a1c6b967a1396f3548c33dd467217268bc",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-encode-all",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "encode-all"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 0.47591750003630295,
+  "logSha256": "6b961346358556530a59d986dc688cbc7ceab0a126bd4bb8ce97a34929247edb",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-all",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "all"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.0572914159856737,
+  "logSha256": "12676563ed88167cd02ab9ab7fbb70b1182dba960820ba2b431f76d5ee2f7d13",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "neighbor-deadline",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/neighbors.py",
+    "deadline"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 0.7377871669596061,
+  "logSha256": "454f436de2caae4f82ac9905186cac88e09007f3de3f71d6fb87156e3fbdf9b7",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "mtl-review",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/mtl-review.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.36595695896539837,
+  "logSha256": "1f69c6590345cefb49491a996fd354499ca633b94ec91f02b43868edb32f7af7",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "auth-review",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/auth-review.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.798756041971501,
+  "logSha256": "c4f894a5ec69af5853bf1652e8c3f8fe99fc79fb28e83f91c09e02067fa24743",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "reuse-before",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/static-review.py",
+    "before"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 1,
+  "seconds": 1.0210129999904893,
+  "logSha256": "9eeb9ee7f7d3869c71642b849cde7601838c0cf1cac1c41a3e335c6ed2a9ab6f",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "reuse-corrected",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/static-review-v2.py",
+    "before"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.9367651250213385,
+  "logSha256": "b05f02565acf4d36bcfdc8ed45a5c8c92a3409a7f38f7416fb2da160d55014f6",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "binding-review",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/binding-review.py"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 10.44595141604077,
+  "logSha256": "34e1ae6b67e0d63d7db0c890e093609f57a090303d8a8b0d36472b8765f1682c",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "reuse-after",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/static-review-v2.py",
+    "after"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 0.817184499988798,
+  "logSha256": "b05f02565acf4d36bcfdc8ed45a5c8c92a3409a7f38f7416fb2da160d55014f6",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+
+{
+  "name": "preservation-after",
+  "argv": [
+    "/usr/bin/sandbox-exec",
+    "-f",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/readonly-v2.sb",
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/p1-e05-t03-nativefix-review-a8Dbsr/audit.py",
+    "after"
+  ],
+  "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-8301ecc8",
+  "exit": 0,
+  "seconds": 10.3962927920511,
+  "logSha256": "8f0a4827aaea642aa34fd5a35c0b8e92c663798fb29e5e50f4d2bea62824a9aa",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "TMPDIR": "/private/tmp/nfr-sl_u7j7v",
+    "NODE_DISABLE_COMPILE_CACHE": "1",
+    "VM_REVISION_TMP": "/private/tmp/nfr-sl_u7j7v",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg0mmbALP:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/75053_1794032395752/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin:/Users/andreyyurlov/.docker/bin"
+  }
+}
+

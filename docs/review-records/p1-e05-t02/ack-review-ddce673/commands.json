@@ -1,0 +1,137 @@
+{
+  "commands": [
+    {
+      "name": "snapshot-before",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot.py",
+        "before"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:08:31.089134+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot-before.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot-before.stderr",
+      "exit": 0,
+      "wallSeconds": 8.512595875014085
+    },
+    {
+      "name": "exact-red",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/red/guard.py",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/red/replay.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:09:27.630849+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/exact-red.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/exact-red.stderr",
+      "exit": 1,
+      "wallSeconds": 0.4730479590361938
+    },
+    {
+      "name": "exact-green",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/green/guard.py",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/green/ack-count-regression.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:09:28.141304+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/exact-green.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/exact-green.stderr",
+      "exit": 0,
+      "wallSeconds": 0.3714151669992134
+    },
+    {
+      "name": "boundary",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/guard.py",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/boundary.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:10:56.108997+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/boundary.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/boundary.stderr",
+      "exit": 0,
+      "wallSeconds": 1.3386657499941066
+    },
+    {
+      "name": "verify",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/verify.py"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:12:31.741718+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/verify.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/verify.stderr",
+      "exit": 0,
+      "wallSeconds": 1.9830498750088736
+    },
+    {
+      "name": "snapshot-after",
+      "argv": [
+        "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-B",
+        "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot.py",
+        "after"
+      ],
+      "cwd": "/Users/andreyyurlov/.t3/worktrees/space/t3-11167406",
+      "environmentOverrides": {
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "PATH": "/Users/andreyyurlov/.local/share/vite-plus/bin:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/65656_1794021628835/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/opt/homebrew/bin:/Users/andreyyurlov/.codex/tmp/arg0-macos/codex-arg00Uwg2a:/Users/andreyyurlov/.codex/packages/standalone/releases/0.166.0-aarch64-apple-darwin/codex-path:/Users/andreyyurlov/.local/bin:/Users/andreyyurlov/.bun/bin:/Users/andreyyurlov/.local/state/fnm_multishells/93884_1793920893185/bin:/opt/homebrew/sbin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.docker/bin:/Users/andreyyurlov/.local/share/vite-plus/fallback-bin"
+      },
+      "startedUtc": "2026-11-07T11:13:33.993856+00:00",
+      "stdout": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot-after.stdout",
+      "stderr": "/private/tmp/t02-ack-c2-independent-dg3xfe2f/snapshot-after.stderr",
+      "exit": 0,
+      "wallSeconds": 7.828401541977655
+    }
+  ],
+  "expectedRedExit": 1,
+  "runner": "run.py records authoritative child exits; runner exit itself is not the test result.",
+  "readOnlyInspectionTools": [
+    "rg",
+    "cat",
+    "sed",
+    "git diff/status/rev-parse/ls-files",
+    "bounded Python JSON reads"
+  ],
+  "sealArgv": [
+    "/Users/andreyyurlov/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-B",
+    "/private/tmp/t02-ack-c2-independent-dg3xfe2f/seal.py"
+  ]
+}

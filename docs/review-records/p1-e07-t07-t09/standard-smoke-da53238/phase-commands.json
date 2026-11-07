@@ -1,0 +1,69 @@
+[
+  {
+    "args": [
+      "/Users/andreyyurlov/.local/share/fnm/node-versions/v22.23.3/installation/bin/node",
+      "--import",
+      "tsx",
+      "src/smoke/run.ts",
+      "--workers=1",
+      "--retries=0",
+      "--repeat-each=1",
+      "--max-failures=1",
+      "--global-timeout=900000",
+      "--trace=off",
+      "--reporter=list,json",
+      "--output",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/test-results"
+    ],
+    "exit": 0,
+    "seconds": 517.9590699580149,
+    "log": "smoke.log"
+  },
+  {
+    "args": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/summarize.py"
+    ],
+    "exit": 0,
+    "seconds": 0.4621924160164781,
+    "log": "summarize-finalize.log"
+  },
+  {
+    "args": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/cleanup.py"
+    ],
+    "exit": 0,
+    "seconds": 0.3533780840225518,
+    "log": "cleanup-finalize.log"
+  },
+  {
+    "args": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/pin.py",
+      "after"
+    ],
+    "exit": 0,
+    "seconds": 4.386533916986082,
+    "log": "pin-after-finalize.log"
+  },
+  {
+    "args": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/reuse.py",
+      "after"
+    ],
+    "exit": 0,
+    "seconds": 0.31103687500581145,
+    "log": "reuse-after-finalize.log"
+  },
+  {
+    "args": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/space-standard-redis7-da532383-oleft1lj/report.py"
+    ],
+    "exit": 0,
+    "seconds": 0.023831792001146823,
+    "log": "report-finalize.log"
+  }
+]

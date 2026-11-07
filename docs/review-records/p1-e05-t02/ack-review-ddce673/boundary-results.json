@@ -1,0 +1,395 @@
+{
+  "count": 33,
+  "cases": [
+    {
+      "name": "full-pixels first",
+      "status": "PASS",
+      "facts": {
+        "mode": "first",
+        "frame": 0,
+        "fullPixels": true,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "full-pixels newline",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline",
+        "frame": 0,
+        "fullPixels": true,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "full-pixels flush",
+      "status": "PASS",
+      "facts": {
+        "mode": "flush",
+        "frame": 0,
+        "fullPixels": true,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 1
+      }
+    },
+    {
+      "name": "first at 1",
+      "status": "PASS",
+      "facts": {
+        "mode": "first",
+        "frame": 1,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 1
+      }
+    },
+    {
+      "name": "newline at 1",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline",
+        "frame": 1,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 1
+      }
+    },
+    {
+      "name": "flush at 1",
+      "status": "PASS",
+      "facts": {
+        "mode": "flush",
+        "frame": 1,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 2
+      }
+    },
+    {
+      "name": "first at 188",
+      "status": "PASS",
+      "facts": {
+        "mode": "first",
+        "frame": 188,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 188
+      }
+    },
+    {
+      "name": "newline at 188",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline",
+        "frame": 188,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 188
+      }
+    },
+    {
+      "name": "flush at 188",
+      "status": "PASS",
+      "facts": {
+        "mode": "flush",
+        "frame": 188,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 189
+      }
+    },
+    {
+      "name": "prefix-raise",
+      "status": "PASS",
+      "facts": {
+        "mode": "prefix-raise",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "body-after",
+      "status": "PASS",
+      "facts": {
+        "mode": "body-after",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "newline-after",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline-after",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 1
+      }
+    },
+    {
+      "name": "body-return-short",
+      "status": "PASS",
+      "facts": {
+        "mode": "body-return-short",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "body-return-none",
+      "status": "PASS",
+      "facts": {
+        "mode": "body-return-none",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "body-return-bool",
+      "status": "PASS",
+      "facts": {
+        "mode": "body-return-bool",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "newline-return-short",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline-return-short",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "newline-return-none",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline-return-none",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "newline-return-bool",
+      "status": "PASS",
+      "facts": {
+        "mode": "newline-return-bool",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "encoder-partial-raise",
+      "status": "PASS",
+      "facts": {
+        "mode": "encoder-partial-raise",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "encoder-flush",
+      "status": "PASS",
+      "facts": {
+        "mode": "encoder-flush",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "cancel",
+      "status": "PASS",
+      "facts": {
+        "mode": "cancel",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "interrupted",
+      "status": "PASS",
+      "facts": {
+        "mode": "interrupted",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "alarm",
+      "status": "PASS",
+      "facts": {
+        "mode": "alarm",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "success",
+      "status": "PASS",
+      "facts": {
+        "mode": "success",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 189
+      }
+    },
+    {
+      "name": "chunked-success",
+      "status": "PASS",
+      "facts": {
+        "mode": "chunked-success",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 189
+      }
+    },
+    {
+      "name": "emitted-unseen",
+      "status": "PASS",
+      "facts": {
+        "mode": "emitted-unseen",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "ok",
+        "observerFailure": false,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "primary through file",
+      "status": "PASS",
+      "facts": {
+        "mode": "first",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "file",
+        "observerFailure": true,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "primary through all",
+      "status": "PASS",
+      "facts": {
+        "mode": "first",
+        "frame": 0,
+        "fullPixels": false,
+        "sinks": "all",
+        "observerFailure": true,
+        "producerReceiptCount": 0
+      }
+    },
+    {
+      "name": "actual last-frame hashes and alpha",
+      "status": "PASS",
+      "facts": {
+        "hashes": {
+          "sourcePngSha256": "4b7946e600db524f0885b40e5acd6f0b77e0b95078c0edd47532d0b0c877450b",
+          "rgbSha256": "f44534d5615660465c58c15cb73172bffb50abaddf568309bba5ce19da747f72",
+          "rgbaSha256": "536d9ad7c6d516364e246b8b6bc61fb2a74de761f2b114c0a3eb2760af8f4183"
+        },
+        "nonopaqueRefused": true
+      }
+    },
+    {
+      "name": "actual caller primary",
+      "status": "PASS",
+      "facts": {
+        "attemptedJobs": 1,
+        "status": "HOLD",
+        "noValidator": true,
+        "primaryFailureType": "BrokenPipeError"
+      }
+    },
+    {
+      "name": "actual caller all-sinks",
+      "status": "PASS",
+      "facts": {
+        "attemptedJobs": 1,
+        "status": "HOLD",
+        "noValidator": true,
+        "primaryFailureType": "BrokenPipeError"
+      }
+    },
+    {
+      "name": "actual caller all-files",
+      "status": "PASS",
+      "facts": {
+        "attemptedJobs": 1,
+        "status": "HOLD",
+        "noValidator": true,
+        "primaryFailureType": "BrokenPipeError"
+      }
+    },
+    {
+      "name": "actual caller cli-all-sinks",
+      "status": "PASS",
+      "facts": {
+        "attemptedJobs": 1,
+        "status": "HOLD",
+        "noValidator": true,
+        "primaryFailureType": "BrokenPipeError"
+      }
+    }
+  ],
+  "nativeProcesses": 0,
+  "qualification": "Actual producer.encode/DiagnosticStream/encoder; inert Popen and rlimit. Small pixel port except four full-size controls. Actual caller adapters/dispatcher with inert StationJob. No media or runtime qualification."
+}
